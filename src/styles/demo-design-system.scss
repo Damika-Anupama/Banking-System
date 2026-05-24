@@ -165,3 +165,45 @@
 .demo-detail-row strong {
   color: #f8fafc;
 }
+
+@media (max-width: 1024px) {
+  .glass-navbar {
+    margin: 0.75rem;
+    border-radius: 1.25rem;
+  }
+
+  main[class*="p-6"],
+  main[class*="lg:p-8"] {
+    padding: 1rem !important;
+  }
+
+  .demo-page-header,
+  .demo-section-card,
+  .demo-kpi-card,
+  .glass-card {
+    border-radius: 1.25rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .demo-title {
+    font-size: 1.85rem;
+    line-height: 2.2rem;
+  }
+
+  .demo-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .glass-button,
+  .glass-button-secondary,
+  .demo-action-card {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sidebar-wrapper,
+  aside.glass-sidebar {
+    max-width: min(20rem, 88vw);
+  }
+}
