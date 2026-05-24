@@ -1,97 +1,22 @@
-<main class="min-h-screen relative overflow-hidden bg-slate-950 text-white">
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.34),_transparent_32%),radial-gradient(circle_at_80%_20%,_rgba(6,182,212,0.22),_transparent_28%),linear-gradient(135deg,#07111f_0%,#0f172a_48%,#102554_100%)]" aria-hidden="true"></div>
-  <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/10 to-transparent" aria-hidden="true"></div>
-
-  <section class="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl items-center px-5 py-10 sm:px-8 lg:px-10">
-    <div class="grid w-full items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-      <div class="space-y-8">
-        <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-cyan-100 shadow-lg shadow-blue-950/20 backdrop-blur">
-          <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_16px_rgba(52,211,153,0.9)]"></span>
-          Live client demo · Angular frontend · Role-based banking workflow
-        </div>
-
-        <div class="space-y-5">
-          <img src="assets/logo.png" alt="Banking System logo" class="h-20 w-auto rounded-2xl bg-white/95 px-4 py-3 shadow-2xl shadow-blue-950/30 sm:h-24" />
-          <h1 class="max-w-4xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Modern banking operations demo for transactions, accounts, and loans.
-          </h1>
-          <p class="max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
-            Banking System is a polished demonstration frontend for customer self-service, employee branch operations, and manager loan approvals — built to show real business workflows without requiring a live backend.
-          </p>
-        </div>
-
-        <div class="flex flex-col gap-3 sm:flex-row">
-          <button type="button" class="group inline-flex items-center justify-center rounded-2xl bg-blue-500 px-7 py-4 text-base font-bold text-white shadow-xl shadow-blue-900/30 transition hover:-translate-y-0.5 hover:bg-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300/40" (click)="gotoSignin()" aria-label="Open the Banking System demo sign in page">
-            Open role demo
-            <i class="fas fa-arrow-right ml-3 transition group-hover:translate-x-1"></i>
-          </button>
-          <button type="button" class="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-7 py-4 text-base font-semibold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/15 focus:outline-none focus:ring-4 focus:ring-cyan-300/30" (click)="gotoSignin()" aria-label="View available demo roles">
-            View Customer · Employee · Manager
-          </button>
-        </div>
-
-        <div class="grid gap-3 sm:grid-cols-3">
-          <div class="rounded-2xl border border-white/10 bg-white/[0.08] p-4 backdrop-blur">
-            <p class="text-2xl font-black text-white">3</p>
-            <p class="mt-1 text-sm text-slate-300">Demo roles</p>
-          </div>
-          <div class="rounded-2xl border border-white/10 bg-white/[0.08] p-4 backdrop-blur">
-            <p class="text-2xl font-black text-white">Loans</p>
-            <p class="mt-1 text-sm text-slate-300">Approval pipeline</p>
-          </div>
-          <div class="rounded-2xl border border-white/10 bg-white/[0.08] p-4 backdrop-blur">
-            <p class="text-2xl font-black text-white">Demo</p>
-            <p class="mt-1 text-sm text-slate-300">No backend required</p>
-          </div>
-        </div>
-
-        <p class="text-xs text-slate-400">Press <span class="font-semibold text-slate-200">Enter</span> to continue to sign in.</p>
+<main class="auth-shell">
+  <section class="auth-panel max-w-5xl">
+    <div class="auth-brand-card">
+      <img src="assets/logo.png" alt="Banking System logo" class="auth-logo" />
+      <span class="demo-status-pill demo-status-info">Live client demo</span>
+      <h1 class="auth-title">Banking operations demo for clients.</h1>
+      <p class="auth-subtitle">
+        A simple Angular demo for customer banking, employee operations, and manager loan approvals using realistic sample data.
+      </p>
+      <div class="auth-actions">
+        <button type="button" class="glass-button" (click)="gotoSignin()" aria-label="Open the demo sign in page">
+          Open demo
+          <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+        <button type="button" class="glass-button-secondary" (click)="gotoSignin()" aria-label="View available demo roles">
+          View demo roles
+        </button>
       </div>
-
-      <div class="relative">
-        <div class="absolute -inset-6 rounded-[2rem] bg-cyan-400/10 blur-3xl" aria-hidden="true"></div>
-        <div class="relative overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.09] p-5 shadow-2xl shadow-blue-950/40 backdrop-blur-xl sm:p-6">
-          <div class="mb-5 flex items-center justify-between">
-            <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-200">Workflow preview</p>
-              <h2 class="mt-2 text-2xl font-black text-white">Client-ready demo paths</h2>
-            </div>
-            <div class="rounded-2xl bg-emerald-400/15 px-3 py-2 text-sm font-bold text-emerald-200">Ready</div>
-          </div>
-
-          <div class="space-y-4">
-            <article class="rounded-2xl border border-white/10 bg-slate-950/45 p-5 transition hover:border-blue-300/40 hover:bg-slate-900/70">
-              <div class="flex items-start gap-4">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-200"><i class="fas fa-user"></i></div>
-                <div>
-                  <h3 class="font-bold text-white">Customer portal</h3>
-                  <p class="mt-1 text-sm leading-6 text-slate-300">Account overview, recent transactions, deposits, transfers, fixed deposits, and loan requests.</p>
-                </div>
-              </div>
-            </article>
-
-            <article class="rounded-2xl border border-white/10 bg-slate-950/45 p-5 transition hover:border-cyan-300/40 hover:bg-slate-900/70">
-              <div class="flex items-start gap-4">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/20 text-cyan-200"><i class="fas fa-briefcase"></i></div>
-                <div>
-                  <h3 class="font-bold text-white">Employee workspace</h3>
-                  <p class="mt-1 text-sm leading-6 text-slate-300">Customer registration, branch transactions, deposits, withdrawals, and account support flows.</p>
-                </div>
-              </div>
-            </article>
-
-            <article class="rounded-2xl border border-white/10 bg-slate-950/45 p-5 transition hover:border-amber-300/40 hover:bg-slate-900/70">
-              <div class="flex items-start gap-4">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-200"><i class="fas fa-chart-line"></i></div>
-                <div>
-                  <h3 class="font-bold text-white">Manager dashboard</h3>
-                  <p class="mt-1 text-sm leading-6 text-slate-300">Portfolio KPIs, employee management, loan review queue, and operational summaries.</p>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
+      <p class="auth-note">No backend setup required. Choose a role on the next screen.</p>
     </div>
   </section>
 </main>

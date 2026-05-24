@@ -1,6 +1,68 @@
 /* Shared client-demo dashboard design system.
    Use these primitives before adding page-specific one-off classes. */
 
+.auth-shell {
+  @apply min-h-screen overflow-x-hidden bg-slate-950 px-4 py-8 text-white sm:px-6 lg:px-8;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.28), transparent 32%),
+    radial-gradient(circle at 80% 10%, rgba(6, 182, 212, 0.18), transparent 28%),
+    linear-gradient(135deg, #07111f 0%, #0f172a 52%, #102554 100%);
+}
+
+.auth-panel {
+  @apply mx-auto flex min-h-[calc(100vh-4rem)] w-full items-center justify-center;
+}
+
+.auth-brand-card,
+.auth-card {
+  @apply w-full rounded-[2rem] border border-white/15 bg-white/[0.09] p-6 shadow-2xl shadow-blue-950/30 backdrop-blur-xl sm:p-8;
+}
+
+.auth-brand-card {
+  @apply mx-auto max-w-3xl text-center;
+}
+
+.auth-card {
+  @apply max-w-xl;
+}
+
+.auth-logo {
+  @apply mx-auto mb-5 h-24 w-auto rounded-3xl bg-white px-5 py-3 shadow-2xl shadow-blue-950/30 ring-1 ring-slate-200;
+  object-fit: contain;
+}
+
+.auth-title {
+  @apply mt-5 text-3xl font-black tracking-tight text-white sm:text-5xl;
+}
+
+.auth-subtitle {
+  @apply mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg;
+}
+
+.auth-actions {
+  @apply mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row;
+}
+
+.auth-note {
+  @apply mt-5 text-sm text-slate-400;
+}
+
+.auth-field-label {
+  @apply mb-2 block text-sm font-semibold text-slate-200;
+}
+
+.auth-demo-grid {
+  @apply grid grid-cols-1 gap-3 sm:grid-cols-3;
+}
+
+.auth-demo-btn {
+  @apply flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:border-cyan-200/40 hover:bg-cyan-300/10 focus-visible:outline-cyan-300;
+}
+
+.auth-link {
+  @apply font-semibold text-cyan-200 transition hover:text-white;
+}
+
 .demo-page-header {
   @apply mb-6 rounded-3xl border border-white/10 bg-slate-950/45 p-6 shadow-2xl backdrop-blur-xl;
 }
