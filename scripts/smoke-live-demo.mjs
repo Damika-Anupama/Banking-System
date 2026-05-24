@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const baseUrl = process.env.DEMO_URL || 'https://banking-system-nine-sooty.vercel.app/';
-const routes = ['/', '/welcome', '/sign-in'];
+const routes = ['/', '/welcome', '/sign-in', '/sign-up'];
 
 async function checkRoute(route) {
   const url = new URL(route, baseUrl).toString();
