@@ -58,6 +58,12 @@ npm run lint
 npm test -- --watch=false --browsers=ChromeHeadless --progress=false
 ```
 
+For deployment walkthrough verification, use:
+
+```text
+docs/smoke-test-checklist.md
+```
+
 ## Production deployment
 
 Deploy the `main` branch from the repository root.
