@@ -1,19 +1,11 @@
 {
   "version": 2,
-  "name": "bank-app-frontend",
-  "builds": [
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist/bank-transaction-and-loan-processing-system-frontend",
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/Frontend"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
