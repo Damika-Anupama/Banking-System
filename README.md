@@ -1,4 +1,4 @@
-# FinFlow Banking Suite - Full Stack Source
+# Banking System - Full Stack Source
 
 This branch preserves the complete application source for engineering review.
 
