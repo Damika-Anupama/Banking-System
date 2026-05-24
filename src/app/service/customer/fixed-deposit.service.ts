@@ -1,8 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { DEMO_SAVING_ACCOUNTS } from 'src/app/shared/demo-banking-fixtures';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,10 @@ export class FixedDepositService {
    * @returns Observable with savings account data
    */
   getSavingAccountsDetails(): Observable<any> {
+    if (localStorage.getItem('demoMode') === 'true') {
+      return of({ result: DEMO_SAVING_ACCOUNTS });
+    }
+
     const userId = localStorage.getItem('userId');
     if (!userId) {
       return throwError(() => new Error('User ID not found in local storage'));

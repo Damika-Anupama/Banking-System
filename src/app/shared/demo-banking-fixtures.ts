@@ -64,3 +64,18 @@ export const DEMO_LOAN_APPLICATIONS: DemoLoanApplication[] = [
   { loan_basic_detail_id: 'LN-50208', amount: 1850000, customer_id: 'CUS-1003', duration_days: 1095, interest: 14.2, loan_type: 'Business', status: 'Documents verified', purpose: 'Inventory expansion' },
   { loan_basic_detail_id: 'LN-50201', amount: 420000, customer_id: 'CUS-1004', duration_days: 365, interest: 11.8, loan_type: 'Personal', status: 'Risk check', purpose: 'Education support' }
 ];
+
+export const DEMO_SAVING_ACCOUNTS = [
+  { saving_account_id: 492810, account_type: 'SAVING', amount: 1245800 },
+  { saving_account_id: 492812, account_type: 'SAVING', amount: 2000000 }
+];
+
+export const DEMO_FIXED_DEPOSITS = [
+  { fd_id: 7001, saving_account_id: 492810, duration: 'SIX_MONTHS', rate_per_annum: 13, fd_opening_date: '2026-02-12', amount: 350000 },
+  { fd_id: 7002, saving_account_id: 492812, duration: 'ONE_YEAR', rate_per_annum: 14, fd_opening_date: '2026-04-04', amount: 900000 }
+];
+
+export const DEMO_CUSTOMER_LOANS = [
+  { loan_basic_detail_id: 'LN-49201', amount: 210000, starting_date: '2026-05-12', duration_days: 180, interest: 13, loan_type: 'Personal' },
+  { loan_basic_detail_id: 'LN-49202', amount: 480000, starting_date: '2026-03-20', duration_days: 365, interest: 14, loan_type: 'Business' }
+];
