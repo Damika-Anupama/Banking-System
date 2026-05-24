@@ -15,6 +15,7 @@ export class UnifiedDashboardComponent implements OnInit {
   isDarkMode$!: Observable<boolean>;
   config!: DashboardConfig;
   navigationItems: NavigationItem[] = [];
+  currentYear = new Date().getFullYear();
 
   constructor(
     private router: Router,
@@ -62,5 +63,13 @@ export class UnifiedDashboardComponent implements OnInit {
   // Check if this is customer dashboard (different layout)
   isCustomerDashboard(): boolean {
     return this.config.dashboardType === 'customer';
+  }
+
+  getSettingsRoute(): string {
+    if (this.config.dashboardType === 'customer') {
+      return './settings';
+    }
+
+    return this.config.dashboardType === 'employee' ? './employee-settings' : './manager-settings';
   }
 }
