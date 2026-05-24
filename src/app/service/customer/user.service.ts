@@ -176,9 +176,9 @@ export class UserService {
           username: 'Amara Perera',
           type: 'CUSTOMER',
           accounts: [
-            { account_id: 'ACC-492810', account_type: 'Savings', amount: '1,245,800.00' },
-            { account_id: 'ACC-492811', account_type: 'Current', amount: '485,250.00' },
-            { account_id: 'ACC-492812', account_type: 'Fixed Deposit', amount: '2,000,000.00' }
+            { account_id: 'ACC-492810', account_type: 'PERSONAL', saving_type: 'SAVING', branch_name: 'Colombo Main Branch', amount: '1245800' },
+            { account_id: 'ACC-492811', account_type: 'PERSONAL', saving_type: 'CURRENT', branch_name: 'Colombo Main Branch', amount: '485250' },
+            { account_id: 'ACC-492812', account_type: 'ORGANIZATION', saving_type: 'SAVING', branch_name: 'Kandy City Branch', amount: '2000000' }
           ]
         }
       ]);

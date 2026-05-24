@@ -20,9 +20,10 @@ export class EmployeeHomeService {
     if (localStorage.getItem('demoMode') === 'true') {
       return of({
         data: [
-          { user_id: 'CUS-1001', username: 'Amara Perera', email: 'amara@finflow.demo', contact_num: '+94 77 123 4567', account_count: 3 },
-          { user_id: 'CUS-1002', username: 'Nuwan Silva', email: 'nuwan@finflow.demo', contact_num: '+94 71 555 0199', account_count: 2 },
-          { user_id: 'CUS-1003', username: 'Sofia Fernando', email: 'sofia@finflow.demo', contact_num: '+94 76 222 8899', account_count: 4 }
+          { user_id: 'CUS-1001', username: 'amara.perera', fullname: 'Amara Perera', gender: 'Female', dob: '1991-04-18', address: 'No. 24, Marine Drive, Colombo 03', email: 'amara@banking.demo', contact_no: '+94 77 123 4567', account_count: 3, status: 'KYC verified' },
+          { user_id: 'CUS-1002', username: 'nuwan.silva', fullname: 'Nuwan Silva', gender: 'Male', dob: '1988-09-02', address: 'Lake Road, Kandy', email: 'nuwan@banking.demo', contact_no: '+94 71 555 0199', account_count: 2, status: 'Loan review' },
+          { user_id: 'CUS-1003', username: 'sofia.fernando', fullname: 'Sofia Fernando', gender: 'Female', dob: '1995-12-11', address: 'Galle Fort, Galle', email: 'sofia@banking.demo', contact_no: '+94 76 222 8899', account_count: 4, status: 'Priority customer' },
+          { user_id: 'CUS-1004', username: 'ishan.jay', fullname: 'Ishan Jayawardena', gender: 'Male', dob: '1984-06-25', address: 'Negombo Road, Wattala', email: 'ishan@banking.demo', contact_no: '+94 70 445 7812', account_count: 1, status: 'New onboarding' }
         ]
       });
     }
