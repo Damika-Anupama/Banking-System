@@ -3,6 +3,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse} fr
 import {Observable, of, throwError} from 'rxjs';
 import {catchError, retry, timeout} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { DEMO_ACCOUNTS } from 'src/app/shared/demo-banking-fixtures';
 
 
 @Injectable({
@@ -175,11 +176,7 @@ export class UserService {
           user_id: 'CUS-1001',
           username: 'Amara Perera',
           type: 'CUSTOMER',
-          accounts: [
-            { account_id: 'ACC-492810', account_type: 'PERSONAL', saving_type: 'SAVING', branch_name: 'Colombo Main Branch', amount: '1245800' },
-            { account_id: 'ACC-492811', account_type: 'PERSONAL', saving_type: 'CURRENT', branch_name: 'Colombo Main Branch', amount: '485250' },
-            { account_id: 'ACC-492812', account_type: 'ORGANIZATION', saving_type: 'SAVING', branch_name: 'Kandy City Branch', amount: '2000000' }
-          ]
+          accounts: DEMO_ACCOUNTS
         }
       ]);
     }

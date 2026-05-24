@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { DEMO_ACCOUNTS, DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,7 @@ export class TransactionService {
   getAccountDetails(): Observable<any> {
     if (localStorage.getItem('demoMode') === 'true') {
       return of({
-        data: [
-          { account_id: 'ACC-492810', account_type: 'PERSONAL', saving_type: 'SAVING', branch_name: 'Colombo Main Branch', amount: '1245800' },
-          { account_id: 'ACC-492811', account_type: 'PERSONAL', saving_type: 'CURRENT', branch_name: 'Colombo Main Branch', amount: '485250' },
-          { account_id: 'ACC-492812', account_type: 'ORGANIZATION', saving_type: 'SAVING', branch_name: 'Kandy City Branch', amount: '2000000' }
-        ]
+        data: DEMO_ACCOUNTS
       });
     }
 
@@ -106,21 +103,7 @@ export class TransactionService {
     }
 
     if (localStorage.getItem('demoMode') === 'true') {
-      const demoTransactions: Record<string, any[]> = {
-        'ACC-492810': [
-          { date: '2026-05-24T09:40:00', type: 'Salary Credit', sender_remarks: 'Monthly payroll received', amount: 185000, status: 'up' },
-          { date: '2026-05-23T14:20:00', type: 'Utility Payment', sender_remarks: 'Electricity and water bill', amount: 18500, status: 'down' },
-          { date: '2026-05-22T11:05:00', type: 'Card Settlement', sender_remarks: 'Supermarket purchase', amount: 9450, status: 'down' }
-        ],
-        'ACC-492811': [
-          { date: '2026-05-24T08:15:00', type: 'Client Transfer', sender_remarks: 'Invoice BS-1024 paid', amount: 64000, status: 'up' },
-          { date: '2026-05-21T16:10:00', type: 'Vendor Payment', sender_remarks: 'Office equipment supplier', amount: 42000, status: 'down' }
-        ],
-        'ACC-492812': [
-          { date: '2026-05-20T10:00:00', type: 'Fixed Deposit Interest', sender_remarks: 'Quarterly interest posting', amount: 31500, status: 'up' },
-          { date: '2026-05-18T13:25:00', type: 'Internal Transfer', sender_remarks: 'Moved to savings account', amount: 50000, status: 'down' }
-        ]
-      };
+      const demoTransactions = DEMO_TRANSACTIONS;
 
       return of({ data: demoTransactions[accountIdStr] || [] });
     }
