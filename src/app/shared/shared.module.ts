@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 
 // Third-party modules
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NgChartsModule } from 'ng2-charts';
 
 // Shared Components
 import { UnifiedDashboardComponent } from './components/unified-dashboard/unified-dashboard.component';
@@ -24,7 +23,7 @@ import { FilterPipe } from '../pipes/filter.pipe';
  * - Reusable UI components (UnifiedDashboard, Preloader)
  * - Custom pipes (FilterPipe)
  * - Common Angular modules (Forms, Router, etc.)
- * - Third-party UI libraries (FontAwesome, NgCharts)
+ * - Third-party UI libraries (FontAwesome)
  */
 @NgModule({
   declarations: [
@@ -40,8 +39,7 @@ import { FilterPipe } from '../pipes/filter.pipe';
     ReactiveFormsModule,
     RouterModule,
     // Third-party modules
-    FontAwesomeModule,
-    NgChartsModule
+    FontAwesomeModule
   ],
   exports: [
     // Re-export Angular modules for convenience
@@ -51,7 +49,6 @@ import { FilterPipe } from '../pipes/filter.pipe';
     RouterModule,
     // Re-export third-party modules
     FontAwesomeModule,
-    NgChartsModule,
     // Export shared components
     UnifiedDashboardComponent,
     // Export shared pipes

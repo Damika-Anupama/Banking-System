@@ -16,7 +16,7 @@ export class WelcomeComponent {
 
   // Let users press Enter to continue
   @HostListener('window:keydown.enter', ['$event'])
-  onEnterPress(event: KeyboardEvent): void {
+  onEnterPress(event: Event): void {
     event.preventDefault();
     this.gotoSignin();
   }

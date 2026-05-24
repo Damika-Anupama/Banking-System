@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -15,6 +15,19 @@ export class ManagerHomeService {
    * @returns Observable with dashboard block data
    */
   getDashboardBlockDetails(): Observable<any> {
+    if (localStorage.getItem('demoMode') === 'true') {
+      return of({
+        data: [{
+          user_id: 'MGR-1001',
+          branch_id: 'BR-001',
+          branch_name: 'Colombo Main Branch',
+          manager_id: 'MAN-502',
+          num_accounts: 1284,
+          num_employees: 24
+        }]
+      });
+    }
+
     const email = localStorage.getItem('email');
     if (!email) {
       return throwError(() => new Error('Manager email not found in local storage'));
@@ -34,6 +47,10 @@ export class ManagerHomeService {
    * @returns Observable with total transactions data
    */
   getTotalTransactions(branch_id: any): Observable<any> {
+    if (localStorage.getItem('demoMode') === 'true') {
+      return of({ result: 4825 });
+    }
+
     if (!branch_id) {
       return throwError(() => new Error('Branch ID is required'));
     }
@@ -52,6 +69,10 @@ export class ManagerHomeService {
    * @returns Observable with total withdrawals data
    */
   getTotalWithdrawals(branch_id: any): Observable<any> {
+    if (localStorage.getItem('demoMode') === 'true') {
+      return of({ result: 731 });
+    }
+
     if (!branch_id) {
       return throwError(() => new Error('Branch ID is required'));
     }
@@ -70,6 +91,10 @@ export class ManagerHomeService {
    * @returns Observable with late loans data
    */
   getLateLoans(branch_id: any): Observable<any> {
+    if (localStorage.getItem('demoMode') === 'true') {
+      return of({ result: 12 });
+    }
+
     if (!branch_id) {
       return throwError(() => new Error('Branch ID is required'));
     }

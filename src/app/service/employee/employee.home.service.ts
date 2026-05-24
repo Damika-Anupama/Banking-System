@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
 import {catchError, retry, timeout} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -17,6 +17,16 @@ export class EmployeeHomeService {
    * @returns Observable with employee home data
    */
   getEmployeeHome(): Observable<any> {
+    if (localStorage.getItem('demoMode') === 'true') {
+      return of({
+        data: [
+          { user_id: 'CUS-1001', username: 'Amara Perera', email: 'amara@finflow.demo', contact_num: '+94 77 123 4567', account_count: 3 },
+          { user_id: 'CUS-1002', username: 'Nuwan Silva', email: 'nuwan@finflow.demo', contact_num: '+94 71 555 0199', account_count: 2 },
+          { user_id: 'CUS-1003', username: 'Sofia Fernando', email: 'sofia@finflow.demo', contact_num: '+94 76 222 8899', account_count: 4 }
+        ]
+      });
+    }
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });

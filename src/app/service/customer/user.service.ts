@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
 import {catchError, retry, timeout} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -169,6 +169,21 @@ export class UserService {
    * @returns Observable with dashboard data
    */
   getDashboardDetails(): Observable<any> {
+    if (localStorage.getItem('demoMode') === 'true') {
+      return of([
+        {
+          user_id: 'CUS-1001',
+          username: 'Amara Perera',
+          type: 'CUSTOMER',
+          accounts: [
+            { account_id: 'ACC-492810', account_type: 'Savings', amount: '1,245,800.00' },
+            { account_id: 'ACC-492811', account_type: 'Current', amount: '485,250.00' },
+            { account_id: 'ACC-492812', account_type: 'Fixed Deposit', amount: '2,000,000.00' }
+          ]
+        }
+      ]);
+    }
+
     const email = localStorage.getItem('email');
     if (!email) {
       return throwError(() => new Error('User email not found in local storage'));
@@ -189,6 +204,11 @@ export class UserService {
    * @returns Observable with authentication response
    */
   authenticate(email: string, password: string): Observable<any> {
+    if (email.endsWith('@finflow.demo')) {
+      const type = email.includes('employee') ? 'EMPLOYEE' : email.includes('manager') ? 'MANAGER' : 'CUSTOMER';
+      return of({ token: 'demo.header.signature', type });
+    }
+
     if (!email || !email.includes('@')) {
       return throwError(() => new Error('Invalid email address'));
     }

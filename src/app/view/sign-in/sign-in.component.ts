@@ -129,6 +129,41 @@ export class SignInComponent implements OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  launchDemo(type: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER'): void {
+    const demoProfiles = {
+      CUSTOMER: { email: 'client.customer@finflow.demo', route: '/dashboard/home' },
+      EMPLOYEE: { email: 'client.employee@finflow.demo', route: '/employee-dashboard/employee-home' },
+      MANAGER: { email: 'client.manager@finflow.demo', route: '/manager-dashboard/manager-home' }
+    };
+    const profile = demoProfiles[type];
+    const token = this.createDemoToken(type);
+
+    localStorage.setItem('demoMode', 'true');
+    localStorage.setItem('token', token);
+    localStorage.setItem('email', profile.email);
+    localStorage.setItem('userType', type);
+
+    this.router.navigate([profile.route]);
+  }
+
+  private createDemoToken(type: string): string {
+    const header = this.base64UrlEncode({ alg: 'HS256', typ: 'JWT' });
+    const payload = this.base64UrlEncode({
+      sub: `demo-${type.toLowerCase()}`,
+      role: type,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
+    });
+
+    return `${header}.${payload}.ZGVtby1zaWduYXR1cmU`;
+  }
+
+  private base64UrlEncode(value: object): string {
+    return btoa(JSON.stringify(value))
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
