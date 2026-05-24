@@ -8,10 +8,10 @@ Client-ready Angular demo for a banking operations platform covering transaction
 
 Deployed from the `main` branch on Vercel. Use the role demo buttons on the sign-in page to explore the app without backend credentials.
 
-If you are sharing this with a client, add the deployed Vercel URL here:
+Live URL:
 
 ```text
-https://your-banking-system-demo.vercel.app
+https://banking-system-nine-sooty.vercel.app/
 ```
 
 ## Demo highlights
