@@ -81,27 +81,24 @@ export class SignInComponent implements OnDestroy {
 
           this.isLoading = false;
 
-          // Use setTimeout to ensure navigation happens outside SweetAlert's context
-          setTimeout(() => {
-            switch (type) {
-              case 'CUSTOMER':
-                this.router.navigate(['/dashboard/home']);
-                break;
-              case 'EMPLOYEE':
-                this.router.navigate(['/employee-dashboard/employee-home']);
-                break;
-              case 'MANAGER':
-                this.router.navigate(['/manager-dashboard/manager-home']);
-                break;
-              default:
-                this.errorMessage = 'Invalid user type';
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Authentication Error',
-                  text: this.errorMessage
-                });
-            }
-          }, 0);
+          switch (type) {
+            case 'CUSTOMER':
+              this.router.navigate(['/dashboard/home']);
+              break;
+            case 'EMPLOYEE':
+              this.router.navigate(['/employee-dashboard/employee-home']);
+              break;
+            case 'MANAGER':
+              this.router.navigate(['/manager-dashboard/manager-home']);
+              break;
+            default:
+              this.errorMessage = 'Invalid user type';
+              Swal.fire({
+                icon: 'error',
+                title: 'Authentication Error',
+                text: this.errorMessage
+              });
+          }
         } catch (error) {
           console.error('Error storing authentication data:', error);
           this.errorMessage = 'Failed to store authentication data';
