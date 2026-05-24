@@ -14,6 +14,31 @@
   <article class="demo-kpi-card demo-tone-violet"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">This month inflow</p><h2 class="mt-2 text-3xl font-black text-white">Rs. 249K</h2><p class="mt-1 text-xs text-violet-100">Salary + client transfers</p></div><div class="demo-kpi-icon"><i class="fas fa-arrow-trend-up"></i></div></div></article>
   <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next action</p><h2 class="mt-2 text-xl font-black text-white">Review spending</h2><p class="mt-1 text-xs text-amber-100">Check latest transfers</p></div><div class="demo-kpi-icon"><i class="fas fa-bolt"></i></div></div></article>
 </section>
+<section class="grid grid-cols-1 gap-5 xl:grid-cols-3 mb-8">
+  <article class="demo-section-card xl:col-span-2">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div><h2 class="demo-section-title">Balance and spending snapshot</h2><p class="demo-section-helper">A viewer-friendly summary of where the customer stands today.</p></div>
+      <span class="demo-status-pill demo-status-info"><i class="fas fa-circle-info"></i> Demo account</span>
+    </div>
+    <div class="mt-5 grid gap-4 md:grid-cols-3">
+      <div class="rounded-2xl bg-white/[0.06] p-4"><p class="text-xs text-slate-400">Income</p><strong class="text-2xl text-emerald-100">Rs. 249K</strong><p class="mt-1 text-xs text-slate-400">Salary + transfers</p></div>
+      <div class="rounded-2xl bg-white/[0.06] p-4"><p class="text-xs text-slate-400">Payments</p><strong class="text-2xl text-rose-100">Rs. 70K</strong><p class="mt-1 text-xs text-slate-400">Bills + vendors</p></div>
+      <div class="rounded-2xl bg-white/[0.06] p-4"><p class="text-xs text-slate-400">Savings rate</p><strong class="text-2xl text-cyan-100">72%</strong><p class="mt-1 text-xs text-slate-400">Healthy cashflow</p></div>
+    </div>
+    <div class="mt-5 flex h-28 items-end gap-2 rounded-2xl bg-slate-950/35 p-4">
+      <div class="flex-1 rounded-t-lg bg-cyan-300/60" style="height:35%"></div><div class="flex-1 rounded-t-lg bg-cyan-300/60" style="height:48%"></div><div class="flex-1 rounded-t-lg bg-blue-300/70" style="height:44%"></div><div class="flex-1 rounded-t-lg bg-blue-300/70" style="height:63%"></div><div class="flex-1 rounded-t-lg bg-emerald-300/80" style="height:78%"></div><div class="flex-1 rounded-t-lg bg-emerald-300/80" style="height:68%"></div>
+    </div>
+  </article>
+  <article class="demo-section-card">
+    <h2 class="demo-section-title">Quick actions</h2>
+    <p class="demo-section-helper">Make the demo immediately usable.</p>
+    <div class="mt-5 space-y-3">
+      <a routerLink="/customer-dashboard/transaction" class="demo-action-card"><i class="fas fa-paper-plane text-cyan-200"></i><span><strong class="block text-white">Transfer money</strong><span class="text-sm text-slate-300">Send and review history</span></span></a>
+      <a routerLink="/customer-dashboard/fd" class="demo-action-card"><i class="fas fa-vault text-amber-200"></i><span><strong class="block text-white">Fixed deposits</strong><span class="text-sm text-slate-300">View savings products</span></span></a>
+      <a routerLink="/customer-dashboard/loan" class="demo-action-card"><i class="fas fa-hand-holding-dollar text-emerald-200"></i><span><strong class="block text-white">Loan options</strong><span class="text-sm text-slate-300">Explore loan workflow</span></span></a>
+    </div>
+  </article>
+</section>
 <!-- Page Header -->
 <div class="mb-8 animate-fade-in">
   <h1 class="text-4xl font-bold  mb-2">Welcome back, {{ username }}! 👋</h1>
