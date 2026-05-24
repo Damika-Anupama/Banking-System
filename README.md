@@ -28,10 +28,11 @@ https://banking-system-nine-sooty.vercel.app/
 
 1. Open the deployed site or run it locally.
 2. Click `Open role demo` on the landing page.
-3. On the sign-in page, choose one of the demo buttons:
-   - Customer Demo
-   - Employee Demo
-   - Manager Demo
+3. Use the simplified welcome page to open the demo gateway.
+4. Choose one of the role buttons on the sign-in page:
+   - Customer
+   - Employee
+   - Manager
 4. Click rows in transaction, customer, or loan approval tables to open detail modals.
 
 No real banking data is used. All demo data is mock/sample data for presentation.

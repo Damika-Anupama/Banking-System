@@ -21,8 +21,8 @@ The project was converted into a frontend-only demo branch with mock service dat
 ## What to show a client
 
 1. Open the live demo URL.
-2. Click `Open role demo`.
-3. Start with `Manager Demo` to show executive KPIs and analytics.
+2. Click `Open demo` on the simplified welcome page.
+3. Start with `Manager` on the sign-in demo gateway to show executive KPIs and analytics.
 4. Open Loan Approvals and click a loan row to show the detail modal.
 5. Switch to `Customer Demo` and open Transactions.
 6. Click a transaction row and show the detail modal.
