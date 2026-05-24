@@ -1,0 +1,74 @@
+/* Shared client-demo dashboard design system.
+   Use these primitives before adding page-specific one-off classes. */
+
+.demo-page-header {
+  @apply mb-6 rounded-3xl border border-white/10 bg-slate-950/45 p-6 shadow-2xl backdrop-blur-xl;
+}
+
+.demo-eyebrow {
+  @apply mb-2 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.24em] text-cyan-100;
+}
+
+.demo-title {
+  @apply text-3xl font-black tracking-tight text-white md:text-4xl;
+}
+
+.demo-subtitle {
+  @apply mt-2 max-w-3xl text-sm leading-6 text-slate-300 md:text-base;
+}
+
+.demo-kpi-grid {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4;
+}
+
+.demo-kpi-card {
+  @apply rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-xl backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-200/30 hover:bg-white/[0.10];
+}
+
+.demo-kpi-icon {
+  @apply flex h-12 w-12 items-center justify-center rounded-2xl text-lg shadow-lg;
+}
+
+.demo-tone-blue .demo-kpi-icon { @apply bg-blue-500/20 text-blue-100; }
+.demo-tone-cyan .demo-kpi-icon { @apply bg-cyan-500/20 text-cyan-100; }
+.demo-tone-emerald .demo-kpi-icon { @apply bg-emerald-500/20 text-emerald-100; }
+.demo-tone-amber .demo-kpi-icon { @apply bg-amber-500/20 text-amber-100; }
+.demo-tone-rose .demo-kpi-icon { @apply bg-rose-500/20 text-rose-100; }
+.demo-tone-violet .demo-kpi-icon { @apply bg-violet-500/20 text-violet-100; }
+
+.demo-section-card {
+  @apply rounded-3xl border border-white/10 bg-slate-950/35 p-5 shadow-xl backdrop-blur-xl;
+}
+
+.demo-section-title {
+  @apply text-lg font-bold text-white;
+}
+
+.demo-section-helper {
+  @apply mt-1 text-sm text-slate-300;
+}
+
+.demo-action-card {
+  @apply flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-left transition hover:border-cyan-200/30 hover:bg-white/[0.10];
+}
+
+.demo-status-pill {
+  @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold;
+}
+
+.demo-status-success { @apply border-emerald-300/20 bg-emerald-300/10 text-emerald-100; }
+.demo-status-warning { @apply border-amber-300/20 bg-amber-300/10 text-amber-100; }
+.demo-status-info { @apply border-cyan-300/20 bg-cyan-300/10 text-cyan-100; }
+.demo-status-danger { @apply border-rose-300/20 bg-rose-300/10 text-rose-100; }
+
+.demo-table-shell {
+  @apply overflow-hidden rounded-3xl border border-white/10 bg-slate-950/30 shadow-xl backdrop-blur-xl;
+}
+
+.demo-table-toolbar {
+  @apply flex flex-col gap-3 border-b border-white/10 p-4 md:flex-row md:items-center md:justify-between;
+}
+
+.demo-input {
+  @apply w-full rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/20;
+}
