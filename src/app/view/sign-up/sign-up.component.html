@@ -1,137 +1,53 @@
-<div class="h-screen flex items-center justify-center px-4 py-4 overflow-hidden">
-  <div class="max-w-2xl w-full h-full flex items-center justify-center">
-    <div class="w-full max-h-full overflow-y-auto animate-scale-in">
-      <!-- Register Card -->
-      <div class="glass-card p-6 md:p-8 lg:p-10">
-        <!-- Logo -->
-        <div class="text-center mb-4 md:mb-5">
-          <img
-            src="assets/logo.png"
-            alt="Banking System logo"
-            class="h-14 md:h-16 lg:h-20 w-auto mx-auto mb-2 md:mb-3 drop-shadow-2xl glow"
-          >
-          <h2 class="text-xl md:text-2xl lg:text-3xl font-bold text-theme-primary mb-1 md:mb-2">Create Account</h2>
-          <p class="text-xs md:text-sm text-theme-secondary">Register for a new membership</p>
-        </div>
-
-        <!-- Register Form -->
-        <form action="./dashboard" method="get" class="space-y-3 md:space-y-4">
-          <!-- Name and Email Row -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            <!-- Full Name Field -->
-            <div>
-              <label class="block text-white/80 text-sm font-medium mb-2">
-                <i class="fas fa-user mr-2"></i>Full Name
-              </label>
-              <input
-                type="text"
-                placeholder="Enter your full name"
-                class="glass-input w-full"
-              >
-            </div>
-
-            <!-- Email Field -->
-            <div>
-              <label class="block text-white/80 text-sm font-medium mb-2">
-                <i class="fas fa-envelope mr-2"></i>Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                class="glass-input w-full"
-              >
-            </div>
-          </div>
-
-          <!-- Password Row -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            <!-- Password Field -->
-            <div>
-              <label class="block text-white/80 text-sm font-medium mb-2">
-                <i class="fas fa-lock mr-2"></i>Password
-              </label>
-              <input
-                type="password"
-                placeholder="Create a password"
-                class="glass-input w-full"
-              >
-            </div>
-
-            <!-- Confirm Password Field -->
-            <div>
-              <label class="block text-white/80 text-sm font-medium mb-2">
-                <i class="fas fa-lock mr-2"></i>Confirm Password
-              </label>
-              <input
-                type="password"
-                placeholder="Retype your password"
-                class="glass-input w-full"
-              >
-            </div>
-          </div>
-
-          <!-- Terms Checkbox -->
-          <div class="flex items-start gap-3 pt-1 md:pt-2">
-            <input
-              type="checkbox"
-              id="agreeTerms"
-              name="terms"
-              value="agree"
-              class="mt-1 w-4 h-4 md:w-5 md:h-5 rounded bg-white/20 border-white/30 text-glass-purple focus:ring-2 focus:ring-white/50 cursor-pointer"
-            >
-            <label for="agreeTerms" class="text-white/80 text-xs md:text-sm cursor-pointer">
-              I agree to the
-              <a href="#" class="text-glass-cyan hover:text-glass-blue font-semibold transition-colors duration-300">
-                terms and conditions
-              </a>
-            </label>
-          </div>
-
-          <!-- Register Button -->
-          <button
-            type="submit"
-            class="glass-button w-full text-base md:text-lg py-3 md:py-4 group mt-3 md:mt-4 focus:outline-none"
-          >
-            <span class="flex items-center justify-center gap-3">
-              Create Account
-              <i class="fas fa-user-plus"></i>
-            </span>
-          </button>
-        </form>
-
-        <!-- Divider -->
-        <div class="relative my-3 md:my-4">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-white/20"></div>
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-4 bg-white/10 backdrop-blur-sm text-white/60 rounded-full">
-              Or
-            </span>
-          </div>
-        </div>
-
-        <!-- Sign In Link -->
-        <div class="text-center">
-          <p class="text-xs md:text-sm text-theme-secondary">
-            Already have an account?
-            <a
-              routerLink="/sign-in"
-              class="text-glass-cyan hover:text-glass-blue font-semibold ml-2 transition-colors duration-300"
-            >
-              Sign In
-            </a>
-          </p>
-        </div>
+<main class="auth-shell">
+  <section class="auth-panel">
+    <div class="auth-card max-w-2xl animate-scale-in">
+      <div class="text-center">
+        <img src="assets/logo.png" alt="Banking System logo" class="auth-logo" />
+        <span class="demo-status-pill demo-status-info">Demo account</span>
+        <h1 class="auth-title text-3xl sm:text-4xl">Create account</h1>
+        <p class="auth-subtitle text-sm sm:text-base">This demo form is styled for client presentation. Submit returns you to sign in.</p>
       </div>
 
-      <!-- Additional Info -->
-      <div class="mt-3 md:mt-4 text-center">
-        <p class="text-theme-secondary text-xs md:text-sm">
-          <i class="fas fa-shield-alt mr-2"></i>
-          Your information is protected and secure
-        </p>
-      </div>
+      <form #signupForm="ngForm" (ngSubmit)="submitDemoSignup()" class="mt-7 space-y-5">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label for="signup-name" class="auth-field-label"><i class="fas fa-user mr-2"></i>Full name</label>
+            <input id="signup-name" name="fullName" type="text" required autocomplete="name" placeholder="Amara Perera" class="glass-input w-full" />
+          </div>
+          <div>
+            <label for="signup-email" class="auth-field-label"><i class="fas fa-envelope mr-2"></i>Email address</label>
+            <input id="signup-email" name="email" type="email" required autocomplete="email" placeholder="amara@banking.demo" class="glass-input w-full" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label for="signup-password" class="auth-field-label"><i class="fas fa-lock mr-2"></i>Password</label>
+            <input id="signup-password" name="password" type="password" required autocomplete="new-password" placeholder="Create a password" class="glass-input w-full" />
+          </div>
+          <div>
+            <label for="signup-confirm-password" class="auth-field-label"><i class="fas fa-lock mr-2"></i>Confirm password</label>
+            <input id="signup-confirm-password" name="confirmPassword" type="password" required autocomplete="new-password" placeholder="Retype password" class="glass-input w-full" />
+          </div>
+        </div>
+
+        <label for="agreeTerms" class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
+          <input id="agreeTerms" name="terms" type="checkbox" required class="mt-1 h-4 w-4 rounded border-white/30 bg-white/20 text-cyan-500 focus:ring-cyan-300" />
+          <span>I understand this is a client demo account flow using sample data.</span>
+        </label>
+
+        <button type="submit" class="glass-button w-full justify-center py-4">
+          <span class="flex items-center justify-center gap-3">
+            Continue to sign in
+            <i class="fas fa-arrow-right"></i>
+          </span>
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-slate-300">
+        Already have access?
+        <a routerLink="/sign-in" class="auth-link ml-1">Sign in</a>
+      </p>
     </div>
-  </div>
-</div>
+  </section>
+</main>
