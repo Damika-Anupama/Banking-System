@@ -1,0 +1,85 @@
+// Dashboard specific styles - Combined from all dashboards
+
+// Customer dashboard styles
+.nav-link-item {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+
+  &.active-link {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3));
+    color: var(--text-primary);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  }
+}
+
+// Employee/Manager dashboard styles
+.nav-item {
+  color: var(--text-secondary);
+  background: transparent;
+  @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--glass-bg);
+  }
+}
+
+.active-nav-item {
+  color: var(--text-primary);
+  @apply bg-gradient-to-r from-glass-purple/30 to-glass-blue/30 shadow-lg;
+}
+
+// Common icon button styles
+.nav-icon-btn {
+  color: var(--text-secondary);
+  background: transparent;
+  @apply flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--glass-bg);
+  }
+}
+
+.navbar-icon-btn {
+  color: var(--text-secondary);
+  background: transparent;
+  @apply flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--glass-bg);
+  }
+}
+
+.nav-icon {
+  @apply text-xl;
+}
+
+// Animations
+.animate-slide-right {
+  animation: slideRight 0.3s ease-out;
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .sidebar-wrapper {
+    left: 0;
+  }
+}

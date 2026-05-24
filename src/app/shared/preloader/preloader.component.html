@@ -1,0 +1,40 @@
+<div *ngIf="loading" class="preloader-overlay fixed inset-0 z-[9999] flex items-center justify-center">
+  <!-- Glassmorphism Background Blur -->
+  <div class="absolute inset-0 bg-gradient-to-br from-blue-50/90 to-purple-50/90 dark:from-gray-900/95 dark:to-gray-800/95 backdrop-blur-md"></div>
+
+  <!-- Preloader Content -->
+  <div class="relative z-10 flex flex-col items-center gap-6">
+    <!-- Glassmorphism Card -->
+    <div class="glassmorphism-card p-8 rounded-3xl shadow-2xl">
+      <!-- Animated Logo/Spinner -->
+      <div class="relative w-24 h-24">
+        <!-- Outer Ring -->
+        <div class="absolute inset-0 border-4 border-blue-200 dark:border-blue-900 rounded-full animate-ping opacity-75"></div>
+
+        <!-- Middle Ring -->
+        <div class="absolute inset-2 border-4 border-transparent border-t-blue-500 dark:border-t-blue-400 rounded-full animate-spin"></div>
+
+        <!-- Inner Circle -->
+        <div class="absolute inset-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Text -->
+    <div class="glassmorphism-card px-6 py-3 rounded-2xl">
+      <p class="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent animate-pulse">
+        Loading...
+      </p>
+    </div>
+
+    <!-- Loading Dots Animation -->
+    <div class="flex gap-2">
+      <span class="w-3 h-3 bg-blue-500 dark:bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+      <span class="w-3 h-3 bg-purple-500 dark:bg-purple-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+      <span class="w-3 h-3 bg-pink-500 dark:bg-pink-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+    </div>
+  </div>
+</div>

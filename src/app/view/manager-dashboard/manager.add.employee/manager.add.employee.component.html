@@ -1,0 +1,102 @@
+<!-- Page Header -->
+<div class="mb-8 animate-fade-in">
+  <h1 class="text-4xl font-bold text-white mb-2">Add Employee</h1>
+  <p class="text-white/70">Create a new employee account</p>
+</div>
+
+<!-- Registration Form -->
+<div class="glass-card p-6 animate-slide-up max-w-4xl">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
+      <i class="fas fa-user-tie mr-3 text-glass-cyan"></i>
+      Employee Information
+    </h2>
+    <p class="text-white/60 text-sm">Fill in the employee details below</p>
+  </div>
+
+  <form class="space-y-5">
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">Full Name <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i class="fas fa-id-card absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+        <input type="text" class="glass-input pl-12" placeholder="Enter full name" [(ngModel)]="fullname" name="fullname" />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">Username <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+        <input type="text" class="glass-input pl-12" placeholder="Enter username" [(ngModel)]="username" name="username" />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">Password <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+        <input type="password" class="glass-input pl-12" placeholder="Enter password" [(ngModel)]="password" name="password" />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">User Type</label>
+      <div class="relative">
+        <i class="fas fa-users absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+        <input type="text" class="glass-input pl-12 cursor-not-allowed opacity-70" value="Employee" disabled />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">Email <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+        <input type="email" class="glass-input pl-12" placeholder="Enter email address" [(ngModel)]="email" name="email" />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">Address <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i class="fas fa-map-marker-alt absolute left-4 top-4 text-white/50"></i>
+        <textarea class="glass-input pl-12 resize-none" rows="3" placeholder="Enter address" [(ngModel)]="address" name="address"></textarea>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">Contact Number <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i class="fas fa-phone absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+        <input type="tel" class="glass-input pl-12" placeholder="Enter contact number" [(ngModel)]="contact_no" name="contact_no" />
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">Gender <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i class="fas fa-venus-mars absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+        <select class="glass-input pl-12 appearance-none cursor-pointer" [(ngModel)]="gender" name="gender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">Date of Birth <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i class="fas fa-calendar absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+        <input type="date" class="glass-input pl-12 appearance-none cursor-pointer" [(ngModel)]="dob" name="dob" />
+      </div>
+    </div>
+
+    <div class="flex gap-3 pt-4">
+      <button type="button" class="glass-button justify-center" (click)="submit()">
+        <i class="fas fa-user-plus mr-2"></i>
+        Add Employee
+      </button>
+    </div>
+  </form>
+</div>

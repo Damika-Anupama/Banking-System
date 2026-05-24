@@ -1,0 +1,134 @@
+<!-- Page Header -->
+<div class="mb-8 animate-fade-in">
+  <h1 class="text-4xl font-bold text-white mb-2">Manual Loan Application</h1>
+  <p class="text-white/70">Create loan applications for customers</p>
+</div>
+
+<!-- Create Loan Form -->
+<div class="glass-card p-6 animate-slide-up max-w-4xl">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
+      <i class="fas fa-hand-holding-usd mr-3 text-glass-cyan"></i>
+      Create Loan Application
+    </h2>
+    <p class="text-white/60 text-sm">Fill out the form to create a loan for a customer</p>
+  </div>
+
+  <form class="space-y-6">
+    <!-- Customer ID -->
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">
+        Customer ID <span class="text-red-400">*</span>
+      </label>
+      <div class="relative">
+        <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+        <input
+          type="number"
+          class="glass-input pl-12"
+          placeholder="Enter customer ID"
+          [(ngModel)]="customerID"
+          name="customerID"
+        />
+      </div>
+    </div>
+
+    <!-- Loan Amount -->
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">
+        Loan Amount <span class="text-red-400">*</span>
+      </label>
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50">Rs.</span>
+        <input
+          type="number"
+          class="glass-input pl-14"
+          placeholder="Enter loan amount"
+          [(ngModel)]="loanAmount"
+          name="loanAmount"
+        />
+      </div>
+    </div>
+
+    <!-- Loan Package Selection -->
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-2">
+        Select Loan Payment Plan <span class="text-red-400">*</span>
+      </label>
+      <div class="relative">
+        <i class="fas fa-calendar-alt absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+        <select
+          class="glass-input pl-12 appearance-none cursor-pointer"
+          [(ngModel)]="selectedLoan"
+          (ngModelChange)="onLoanSelected()"
+          name="selectedPackage"
+        >
+          <option value="" disabled selected>Select a payment plan</option>
+          <option *ngFor="let package of packageArray" [value]="package.index">
+            Package {{ package.index }} | Duration: {{ package.period }} | Interest Rate: {{ package.interest }}%
+          </option>
+        </select>
+        <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+      </div>
+    </div>
+
+    <!-- Loan Type Selection -->
+    <div>
+      <label class="block text-white/80 text-sm font-medium mb-3">
+        Select Loan Type <span class="text-red-400">*</span>
+      </label>
+      <div class="grid grid-cols-2 gap-4">
+        <label class="cursor-pointer">
+          <input
+            type="radio"
+            [(ngModel)]="selectedLoanType"
+            name="loanType"
+            value="Personal"
+            class="hidden peer"
+            checked
+          />
+          <div class="p-4 rounded-xl backdrop-blur-md bg-white/5 border-2 border-white/10 transition-all duration-300 peer-checked:border-glass-purple peer-checked:bg-white/10">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-user text-glass-purple text-2xl"></i>
+              <div>
+                <div class="text-white font-semibold">Personal</div>
+                <div class="text-white/60 text-xs">For personal use</div>
+              </div>
+            </div>
+          </div>
+        </label>
+
+        <label class="cursor-pointer">
+          <input
+            type="radio"
+            [(ngModel)]="selectedLoanType"
+            name="loanType"
+            value="Business"
+            class="hidden peer"
+          />
+          <div class="p-4 rounded-xl backdrop-blur-md bg-white/5 border-2 border-white/10 transition-all duration-300 peer-checked:border-glass-cyan peer-checked:bg-white/10">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-briefcase text-glass-cyan text-2xl"></i>
+              <div>
+                <div class="text-white font-semibold">Business</div>
+                <div class="text-white/60 text-xs">For business purposes</div>
+              </div>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="button"
+      class="glass-button w-full md:w-auto justify-center"
+      (click)="proceed()"
+      [disabled]="!customerID || !loanAmount || !selectedLoan || !selectedLoanType"
+      [class.opacity-50]="!customerID || !loanAmount || !selectedLoan || !selectedLoanType"
+      [class.cursor-not-allowed]="!customerID || !loanAmount || !selectedLoan || !selectedLoanType"
+    >
+      <i class="fas fa-paper-plane mr-2"></i>
+      Send to Manager
+    </button>
+  </form>
+</div>

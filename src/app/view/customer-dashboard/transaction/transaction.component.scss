@@ -1,0 +1,26 @@
+.header-block{
+    margin: 0 20px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+  }
+
+  .selected {
+    background-color: var(--glass-bg);
+    color: var(--text-primary);
+  }
+
+  .required {
+    color: #dc2626;
+  }
+
+  // Ensure theme support for this component
+  .dark .selected {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .required {
+    color: #fca5a5;
+  }
+  

@@ -1,0 +1,302 @@
+<!-- Page Header -->
+<div class="mb-8 animate-fade-in">
+  <h1 class="text-4xl font-bold mb-2">Transactions</h1>
+  <p class="text-white/70">Transfer money and view transaction history</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-slide-up">
+  <!-- Account Info Card -->
+  <div class="stat-card bg-gradient-to-br from-glass-emerald/30 to-glass-cyan/30">
+    <div class="flex items-center justify-between">
+      <div class="flex-1">
+        <p class="text-white/70 text-sm mb-2">Current Account</p>
+        <h3 class="text-2xl font-bold mb-3">{{ account_id }}</h3>
+        <div class="flex items-center gap-3">
+          <span class="glass-badge bg-gradient-to-r from-glass-orange/80 to-glass-pink/80">
+            <i class="fas fa-map-marker-alt mr-1"></i> {{ branch }}
+          </span>
+        </div>
+      </div>
+      <div class="text-6xl text-white/20">
+        <i class="fas fa-university"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Balance Card -->
+  <div class="stat-card bg-gradient-to-br from-glass-purple/30 to-glass-blue/30" style="animation-delay: 0.1s;">
+    <div class="flex items-center justify-between">
+      <div class="flex-1">
+        <p class="text-white/70 text-sm mb-2">Available Balance</p>
+        <h3 class="text-3xl font-bold mb-3">Rs. {{ balance | number }}</h3>
+        <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
+          <i class="fas fa-check-circle mr-1"></i> {{ saving_type }}
+        </span>
+      </div>
+      <div class="text-6xl text-white/20">
+        <i class="fas fa-wallet"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Transfer & Accounts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <!-- Transfer Money Form -->
+  <div class="lg:col-span-2 glass-card p-6 animate-slide-up" style="animation-delay: 0.2s;">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold mb-1 flex items-center">
+        <i class="fas fa-exchange-alt mr-3 text-glass-cyan"></i>
+        Transfer Money
+      </h2>
+      <p class="text-white/60 text-sm">Send money to another account</p>
+    </div>
+
+    <form class="space-y-5">
+      <div>
+        <label class="block text-white/80 text-sm font-medium mb-2">
+          Transfer Amount <span class="text-red-400">*</span>
+        </label>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50">Rs.</span>
+          <input
+            type="number"
+            class="glass-input pl-14"
+            placeholder="Enter amount"
+            [(ngModel)]="transfer_amount"
+            name="transfer_amount"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-white/80 text-sm font-medium mb-2">
+          To Account Number <span class="text-red-400">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+          <input
+            type="text"
+            class="glass-input pl-12"
+            placeholder="Enter account number"
+            [(ngModel)]="to_account"
+            name="to_account"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-white/80 text-sm font-medium mb-2">
+          Sender Remarks <span class="text-red-400">*</span>
+        </label>
+        <textarea
+          class="glass-input resize-none"
+          rows="2"
+          placeholder="Enter your remarks"
+          [(ngModel)]="sender_remarks"
+          name="sender_remarks"
+        ></textarea>
+      </div>
+
+      <div>
+        <label class="block text-white/80 text-sm font-medium mb-2">
+          Beneficiary Remarks <span class="text-red-400">*</span>
+        </label>
+        <textarea
+          class="glass-input resize-none"
+          rows="2"
+          placeholder="Enter beneficiary remarks"
+          [(ngModel)]="beneficiary_remarks"
+          name="beneficiary_remarks"
+        ></textarea>
+      </div>
+
+      <button
+        type="button"
+        class="glass-button w-full justify-center"
+        data-toggle="modal"
+        data-target="#exampleModal"
+        [disabled]="!transfer_amount || !sender_remarks || !beneficiary_remarks || !to_account"
+        [class.opacity-50]="!transfer_amount || !sender_remarks || !beneficiary_remarks || !to_account"
+        [class.cursor-not-allowed]="!transfer_amount || !sender_remarks || !beneficiary_remarks || !to_account"
+      >
+        <i class="fas fa-paper-plane mr-2"></i>
+        Proceed with Transfer
+      </button>
+    </form>
+  </div>
+
+  <!-- All Accounts Card -->
+  <div class="glass-card p-6 animate-slide-up" style="animation-delay: 0.3s;">
+    <div class="mb-6">
+      <h3 class="text-xl font-bold mb-1 flex items-center">
+        <i class="fas fa-list mr-2 text-glass-purple"></i>
+        Your Accounts
+      </h3>
+      <p class="text-white/60 text-xs">Select account to view details</p>
+    </div>
+
+    <div class="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar">
+      <div
+        *ngFor="let account of accounts"
+        (click)="updateSmallBox(account); selectedAccount = account"
+        class="p-4 rounded-xl backdrop-blur-md bg-white/5 border border-white/10 cursor-pointer transition-all duration-300 hover:bg-white/10"
+        [ngClass]="{'bg-white/15 border-glass-cyan/50': selectedAccount == account}"
+      >
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-white/90 font-mono text-sm">
+            {{ '*'.repeat(account.account_id.toString().length - 2) }}{{ account.account_id.toString().substr(-2) }}
+          </span>
+          <i
+            class="text-glass-cyan text-lg"
+            [ngClass]="{
+              'fas fa-check-circle': selectedAccount == account,
+              'far fa-circle': selectedAccount != account
+            }"
+          ></i>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-white/60">
+            <i class="fas fa-map-marker-alt mr-1"></i>
+            {{ account.branch_name }}
+          </span>
+          <span class="text-xs">
+            <i
+              [ngClass]="{
+                'fas fa-money-check-alt text-glass-purple': account.saving_type == 'CURRENT',
+                'fas fa-piggy-bank text-glass-pink': account.saving_type != 'CURRENT'
+              }"
+            ></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Transaction History -->
+<div class="glass-card p-6 animate-slide-up" style="animation-delay: 0.4s;">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+      <h2 class="text-2xl font-bold mb-1 flex items-center">
+        <i class="fas fa-history mr-3 text-glass-pink"></i>
+        Transaction History
+      </h2>
+      <p class="text-white/60 text-sm">View your recent transactions</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="relative">
+      <input
+        type="text"
+        name="table_search"
+        placeholder="Search transactions..."
+        class="glass-input pl-10 w-full md:w-64"
+      />
+      <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
+            <i class="fas fa-hashtag mr-2"></i>ID
+          </th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Date</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Description</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let transaction of transactions; index as i"
+          class="transition-all duration-300 hover:bg-white/5"
+        >
+          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="px-6 py-4 text-white/90">
+            <i class="far fa-calendar mr-2 text-glass-cyan"></i>
+            {{ transaction.date | date: 'yyyy-MM-dd' }}
+          </td>
+          <td class="px-6 py-4">
+            <div class="text-white/90">
+              <span class="font-medium">{{ transaction.type }}</span>
+            </div>
+            <p *ngIf="transaction.sender_remarks" class="text-white/60 text-sm mt-1">
+              <i class="fas fa-comment-alt mr-1"></i>
+              {{ transaction.sender_remarks }}
+            </p>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <span class="text-white/90 font-semibold">Rs. {{ transaction.amount | number }}</span>
+              <span
+                *ngIf="transaction.status == 'up'"
+                class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80"
+              >
+                <i class="fas fa-arrow-up"></i>
+              </span>
+              <span
+                *ngIf="transaction.status == 'down'"
+                class="glass-badge bg-gradient-to-r from-glass-pink/80 to-glass-orange/80"
+              >
+                <i class="fas fa-arrow-down"></i>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="!transactions || transactions.length === 0" class="text-center py-12">
+      <div class="text-6xl text-white/20 mb-4">
+        <i class="fas fa-receipt"></i>
+      </div>
+      <p class="text-white/60">No transactions found</p>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <h5 class="modal-title text-white font-bold" id="exampleModalLabel">
+          <i class="fas fa-exclamation-circle text-glass-orange mr-2"></i>
+          Confirm Transaction
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-white/80" style="padding: 1.5rem;">
+        <p class="mb-4">Are you sure you want to proceed with this transaction?</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-white/60">Amount:</span>
+            <span class="font-semibold">Rs. {{ transfer_amount | number }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-white/60">To Account:</span>
+            <span class="font-semibold">{{ to_account }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <button type="button" class="glass-button-secondary" data-dismiss="modal">
+          <i class="fas fa-times mr-2"></i>
+          Cancel
+        </button>
+        <button type="button" class="glass-button" (click)="proceedTransaction()" data-dismiss="modal">
+          <i class="fas fa-check mr-2"></i>
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

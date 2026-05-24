@@ -1,0 +1,193 @@
+<!-- Page Header -->
+<div class="mb-8 animate-fade-in">
+  <h1 class="text-4xl font-bold mb-2">Fixed Deposits</h1>
+  <p class="text-white/70">Manage your fixed deposit accounts and investments</p>
+</div>
+
+<!-- Alert for no saving accounts -->
+<div *ngIf="!savingAccounts || savingAccounts.length === 0" class="animate-slide-up">
+  <div class="glass-card p-6 border-l-4 border-red-500/50">
+    <div class="flex items-start gap-4">
+      <div class="flex-shrink-0">
+        <i class="fas fa-exclamation-circle text-red-400 text-3xl"></i>
+      </div>
+      <div class="flex-1">
+        <h3 class="text-xl font-bold text-white mb-2">No Saving Account Found</h3>
+        <p class="text-white/70">
+          You don't have any saving account. Please create a saving account to be able to create a fixed deposit.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div *ngIf="savingAccounts && savingAccounts.length !== 0">
+  <!-- Create Fixed Deposit Form -->
+  <div class="glass-card p-6 mb-8 animate-slide-up">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold mb-1 flex items-center">
+        <i class="fas fa-piggy-bank mr-3 text-glass-emerald"></i>
+        Place a Fixed Deposit
+      </h2>
+      <p class="text-white/60 text-sm">Create a new fixed deposit investment</p>
+    </div>
+
+    <form class="space-y-6">
+      <!-- Saving Account Selection -->
+      <div>
+        <label class="block text-white/80 text-sm font-medium mb-2">
+          Choose a Saving Account <span class="text-red-400">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-university absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+          <select
+            class="glass-input pl-12 appearance-none cursor-pointer"
+            [(ngModel)]="selectedSavingAccount"
+            (change)="onAccountSelected()"
+            name="selectedSavingAccount"
+          >
+            <option [ngValue]="null" disabled selected>Select a saving account</option>
+            <option *ngFor="let account of savingAccounts" [ngValue]="account">
+              Account: {{ account.saving_account_id }} | Type: {{ account.account_type }} | Balance: Rs. {{ account.amount | number }}
+            </option>
+          </select>
+          <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+        </div>
+      </div>
+
+      <!-- Package Selection -->
+      <div>
+        <label class="block text-white/80 text-sm font-medium mb-2">
+          Select Fixed Deposit Package <span class="text-red-400">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-box absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+          <select
+            class="glass-input pl-12 appearance-none cursor-pointer"
+            [(ngModel)]="selectedPackage"
+            (ngModelChange)="onPackageSelected()"
+            name="selectedPackage"
+          >
+            <option value="" disabled selected>Select a package</option>
+            <option *ngFor="let package of packageArray" [value]="package.index">
+              Package {{ package.index }} | Duration: {{ package.period }} | Interest Rate: {{ package.interest }}%
+            </option>
+          </select>
+          <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+        </div>
+      </div>
+
+      <!-- Amount Input -->
+      <div>
+        <label class="block text-white/80 text-sm font-medium mb-2">
+          Deposit Amount <span class="text-red-400">*</span>
+        </label>
+        <p class="text-white/50 text-xs mb-2">
+          <i class="fas fa-info-circle mr-1"></i>
+          Amount must be less than your saving account balance
+        </p>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50">Rs.</span>
+          <input
+            type="number"
+            class="glass-input pl-14"
+            placeholder="Enter deposit amount"
+            [(ngModel)]="fdAmount"
+            name="fdAmount"
+          />
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="button"
+        class="glass-button w-full md:w-auto justify-center"
+        (click)="checkForm()"
+        [disabled]="!selectedSavingAccount || !selectedPackage || !fdAmount"
+        [class.opacity-50]="!selectedSavingAccount || !selectedPackage || !fdAmount"
+        [class.cursor-not-allowed]="!selectedSavingAccount || !selectedPackage || !fdAmount"
+      >
+        <i class="fas fa-check-circle mr-2"></i>
+        Proceed with Fixed Deposit
+      </button>
+    </form>
+  </div>
+
+  <!-- Previous Fixed Deposits Table -->
+  <div class="glass-card p-6 animate-slide-up" style="animation-delay: 0.2s;">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold mb-1 flex items-center">
+        <i class="fas fa-history mr-3 text-glass-purple"></i>
+        Your Fixed Deposits
+      </h2>
+      <p class="text-white/60 text-sm">View all your fixed deposit accounts</p>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
+              <i class="fas fa-hashtag mr-2"></i>#
+            </th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">FD ID</th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Saving Account</th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Duration</th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Interest Rate</th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Opened Date</th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let fd of fds; let i = index"
+            class="transition-all duration-300 hover:bg-white/5"
+          >
+            <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
+            <td class="px-6 py-4">
+              <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
+                <i class="fas fa-fingerprint mr-1"></i>
+                {{ fd.fd_id }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-white/90 font-mono">
+              {{ fd.saving_account_id }}
+            </td>
+            <td class="px-6 py-4">
+              <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
+                <i class="far fa-clock mr-1"></i>
+                {{ convertDuration(fd.duration) }}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <span class="text-glass-cyan font-semibold">
+                <i class="fas fa-percentage mr-1"></i>
+                {{ fd.rate_per_annum }}%
+              </span>
+            </td>
+            <td class="px-6 py-4 text-white/90">
+              <i class="far fa-calendar mr-2 text-glass-pink"></i>
+              {{ fd.fd_opening_date | date: 'yyyy-MM-dd' }}
+            </td>
+            <td class="px-6 py-4">
+              <span class="font-semibold text-lg">
+                Rs. {{ fd.amount | number }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div *ngIf="!fds || fds.length === 0" class="text-center py-12">
+        <div class="text-6xl text-white/20 mb-4">
+          <i class="fas fa-piggy-bank"></i>
+        </div>
+        <p class="text-white/60">No fixed deposits found</p>
+        <p class="text-white/40 text-sm mt-2">Create your first fixed deposit to start earning interest</p>
+      </div>
+    </div>
+  </div>
+</div>

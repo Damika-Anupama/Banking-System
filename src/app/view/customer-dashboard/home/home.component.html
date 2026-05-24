@@ -1,0 +1,137 @@
+<!-- Page Header -->
+<div class="mb-8 animate-fade-in">
+  <h1 class="text-4xl font-bold  mb-2">Welcome back, {{ username }}! 👋</h1>
+  <p class="text-white/70">Manage your accounts and track your finances</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-slide-up">
+  <!-- Welcome Card -->
+  <div class="stat-card bg-gradient-to-br from-glass-purple/30 to-glass-blue/30 animate-scale-in">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-white/70 text-sm mb-2">Account Type</p>
+        <h3 class="text-3xl font-bold mb-3">{{ userType }}</h3>
+        <span class="glass-badge">
+          <i class="fas fa-user mr-1"></i> Active
+        </span>
+      </div>
+      <div class="text-6xl text-white/20">
+        <i class="fas fa-user-circle"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Balance Card -->
+  <div class="stat-card bg-gradient-to-br from-glass-pink/30 to-glass-orange/30 animate-scale-in" style="animation-delay: 0.1s;">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-white/70 text-sm mb-2">Current Balance</p>
+        <h3 class="text-3xl font-bold mb-3">Rs. {{ balance | number }}</h3>
+        <span class="glass-badge bg-gradient-to-r from-glass-orange/80 to-glass-pink/80">
+          <i class="fas fa-wallet mr-1"></i> {{ accountNumber }}
+        </span>
+      </div>
+      <div class="text-6xl text-white/20">
+        <i class="fas fa-money-bill-wave"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Accounts Table -->
+<div class="glass-card p-6 animate-slide-up" style="animation-delay: 0.2s;">
+  <!-- Table Header -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+      <h2 class="text-2xl font-bold mb-1">All Accounts</h2>
+      <p class="text-white/60 text-sm">Select an account to view details</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="relative">
+      <input
+        type="text"
+        name="table_search"
+        placeholder="Search accounts..."
+        [(ngModel)]="searchTerm"
+        class="glass-input pl-10 w-full md:w-64"
+      />
+      <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
+            <i class="fas fa-check-circle mr-2"></i>Select
+          </th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Saving Type</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Account Number</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Account Type</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Branch</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let account of accounts ? accounts : [] | filterPipe:searchTerm"
+          (click)="updateSmallBox(account); selectedAccount = account"
+          class="cursor-pointer transition-all duration-300 hover:bg-white/5"
+          [ngClass]="{'bg-white/10': selectedAccount == account}">
+          <td class="px-6 py-4">
+            <i class="text-glass-cyan text-xl" [ngClass]="{'fas': selectedAccount == account, 'far': selectedAccount != account, 'fa-check-circle': true}"></i>
+          </td>
+          <td class="px-6 py-4">
+            <span
+              class="glass-badge bg-gradient-to-r"
+              [ngClass]="{
+                'from-glass-purple/80 to-glass-blue/80': account.saving_type == 'CURRENT',
+                'from-glass-pink/80 to-glass-orange/80': account.saving_type == 'SAVING'
+              }">
+              <i class="fas mr-1" [ngClass]="{'fa-money-check-alt': account.saving_type == 'CURRENT', 'fa-piggy-bank': account.saving_type == 'SAVING'}"></i>
+              {{ account.saving_type == 'CURRENT' ? 'Current' : 'Saving' }}
+            </span>
+          </td>
+          <td class="px-6 py-4 font-mono text-white/90">
+            {{ '*'.repeat(account.account_id.toString().length - 2) }}{{ account.account_id.toString().substr(-2) }}
+          </td>
+          <td class="px-6 py-4">
+            <span
+              class="glass-badge bg-gradient-to-r"
+              [ngClass]="{
+                'from-glass-emerald/80 to-glass-cyan/80': account.account_type == 'ORGANIZATION',
+                'from-glass-orange/80 to-glass-pink/80': account.account_type == 'PERSONAL'
+              }">
+              <i class="fas mr-1" [ngClass]="{'fa-building': account.account_type == 'ORGANIZATION', 'fa-user': account.account_type == 'PERSONAL'}"></i>
+              {{ account.account_type == 'ORGANIZATION' ? 'Organization' : 'Personal' }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-white/90">
+            <i class="fas fa-map-marker-alt mr-2 text-glass-cyan"></i>
+            {{ account.branch_name }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="!accounts || accounts.length === 0" class="text-center py-12">
+      <div class="text-6xl text-white/20 mb-4">
+        <i class="fas fa-inbox"></i>
+      </div>
+      <p class="text-white/60">No accounts found</p>
+    </div>
+  </div>
+</div>
+
+<!-- Chart Section (Optional - if you want to add the chart back) -->
+<div class="glass-card p-6 mt-8 animate-slide-up" style="animation-delay: 0.3s;" *ngIf="false">
+  <h2 class="text-2xl font-bold text-white mb-6">
+    <i class="fas fa-chart-bar mr-2 text-glass-purple"></i>
+    Monthly Expenses
+  </h2>
+  <canvas id="lineChart"></canvas>
+</div>

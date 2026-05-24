@@ -1,0 +1,160 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "Bank-Transaction-And-Loan-Processing-System-Frontend": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/bank-transaction-and-loan-processing-system-frontend",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/sweetalert2/dist/sweetalert2.min.css",
+              "node_modules/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css",
+              "node_modules/bs-stepper/dist/css/bs-stepper.min.css",
+              "node_modules/tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.min.css",
+              "node_modules/icheck-bootstrap/icheck-bootstrap.min.css",
+              "node_modules/jqvmap/dist/jqvmap.min.css",
+              "node_modules/daterangepicker/daterangepicker.css",
+              "node_modules/summernote/dist/summernote-bs4.min.css",
+              "node_modules/select2/dist/css/select2.min.css",
+              "node_modules/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css",
+              "node_modules/bootstrap4-duallistbox/dist/bootstrap-duallistbox.min.css",
+              "node_modules/dropzone/dist/dropzone.css",
+              "node_modules/toastr/build/toastr.min.css",
+              "node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css",
+              "node_modules/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css",
+              "node_modules/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/chart.js/dist/chart.umd.min.js",
+              "node_modules/jquery-sparkline/jquery.sparkline.min.js",
+              "node_modules/jqvmap/dist/jquery.vmap.min.js",
+              "node_modules/jqvmap/dist/maps/jquery.vmap.usa.js",
+              "node_modules/jquery-knob/dist/jquery.knob.min.js",
+              "node_modules/moment/min/moment.min.js",
+              "node_modules/daterangepicker/daterangepicker.js",
+              "node_modules/tempusdominus-bootstrap-4/build/js/tempusdominus-bootstrap-4.min.js",
+              "node_modules/summernote/dist/summernote-bs4.min.js",
+              "node_modules/overlayscrollbars/js/OverlayScrollbars.min.js",
+              "node_modules/sweetalert2/dist/sweetalert2.min.js",
+              "node_modules/datatables.net/js/jquery.dataTables.min.js",
+              "node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js",
+              "node_modules/datatables.net-responsive/js/dataTables.responsive.min.js",
+              "node_modules/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js",
+              "node_modules/datatables.net-buttons/js/dataTables.buttons.min.js",
+              "node_modules/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js",
+              "node_modules/jszip/dist/jszip.min.js",
+              "node_modules/pdfmake/build/pdfmake.min.js",
+              "node_modules/pdfmake/build/vfs_fonts.js",
+              "node_modules/datatables.net-buttons/js/buttons.html5.min.js",
+              "node_modules/datatables.net-buttons/js/buttons.print.min.js",
+              "node_modules/datatables.net-buttons/js/buttons.colVis.min.js",
+              "node_modules/bs-stepper/dist/js/bs-stepper.min.js",
+              "node_modules/admin-lte/dist/js/adminlte.js",
+              "node_modules/admin-lte/dist/js/demo.js",
+              "node_modules/admin-lte/dist/js/pages/dashboard.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "bootstrap/dist/js/bootstrap.bundle.min.js",
+              "overlayscrollbars/js/OverlayScrollbars.min.js",
+              "admin-lte/dist/js/adminlte.js",
+              "sweetalert2"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "8mb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50kb",
+                  "maximumError": "100kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "Bank-Transaction-And-Loan-Processing-System-Frontend:build:production"
+            },
+            "development": {
+              "buildTarget": "Bank-Transaction-And-Loan-Processing-System-Frontend:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "Bank-Transaction-And-Loan-Processing-System-Frontend:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "ad188c9f-e993-4e29-9dbe-263761bd0119"
+  }
+}

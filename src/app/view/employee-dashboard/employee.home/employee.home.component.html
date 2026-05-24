@@ -1,0 +1,100 @@
+<!-- Page Header -->
+<div class="mb-8 animate-fade-in">
+  <h1 class="text-4xl font-bold text-white mb-2">Customer Management</h1>
+  <p class="text-white/70">View and manage all customer details</p>
+</div>
+
+<!-- Customers Table -->
+<div class="glass-card p-6 animate-slide-up">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
+      <i class="fas fa-users mr-3 text-glass-cyan"></i>
+      All Customers
+    </h2>
+    <p class="text-white/60 text-sm">Complete customer information</p>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
+            <i class="fas fa-hashtag mr-2"></i>#
+          </th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">User ID</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Username</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Full Name</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Gender</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Date of Birth</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Address</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Email</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Contact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let customer of customers; let i = index"
+          class="transition-all duration-300 hover:bg-white/5"
+        >
+          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="px-6 py-4">
+            <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
+              <i class="fas fa-fingerprint mr-1"></i>
+              {{ customer.user_id }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-white/90">
+            <i class="fas fa-user mr-2 text-glass-cyan"></i>
+            {{ customer.username }}
+          </td>
+          <td class="px-6 py-4 text-white/90 font-medium">{{ customer.fullname }}</td>
+          <td class="px-6 py-4">
+            <span
+              class="glass-badge"
+              [ngClass]="{
+                'bg-gradient-to-r from-glass-blue/80 to-glass-cyan/80': customer.gender === 'Male',
+                'bg-gradient-to-r from-glass-pink/80 to-glass-purple/80': customer.gender === 'Female',
+                'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80': customer.gender !== 'Male' && customer.gender !== 'Female'
+              }"
+            >
+              <i
+                [ngClass]="{
+                  'fas fa-mars': customer.gender === 'Male',
+                  'fas fa-venus': customer.gender === 'Female',
+                  'fas fa-genderless': customer.gender !== 'Male' && customer.gender !== 'Female'
+                }"
+                class="mr-1"
+              ></i>
+              {{ customer.gender }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-white/90">
+            <i class="far fa-calendar mr-2 text-glass-pink"></i>
+            {{ customer.dob | date: 'yyyy-MM-dd' }}
+          </td>
+          <td class="px-6 py-4 text-white/70 text-sm max-w-xs truncate">
+            <i class="fas fa-map-marker-alt mr-2 text-glass-orange"></i>
+            {{ customer.address }}
+          </td>
+          <td class="px-6 py-4 text-white/70 text-sm">
+            <i class="fas fa-envelope mr-2 text-glass-purple"></i>
+            {{ customer.email }}
+          </td>
+          <td class="px-6 py-4 text-white/90 font-mono text-sm">
+            <i class="fas fa-phone mr-2 text-glass-emerald"></i>
+            {{ customer.contact_no }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="!customers || customers.length === 0" class="text-center py-12">
+      <div class="text-6xl text-white/20 mb-4">
+        <i class="fas fa-users"></i>
+      </div>
+      <p class="text-white/60">No customers found</p>
+    </div>
+  </div>
+</div>

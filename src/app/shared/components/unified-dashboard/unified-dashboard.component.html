@@ -1,0 +1,270 @@
+<!-- Customer Dashboard Layout (original style with different structure) -->
+<div *ngIf="isCustomerDashboard()" class="min-h-screen flex">
+  <!-- Sidebar -->
+  <aside class="sidebar-wrapper glass-sidebar hidden lg:flex lg:flex-col w-64 fixed h-full z-20">
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10">
+      <a [routerLink]="config.logoRoute" class="flex items-center justify-center">
+        <img
+          src="assets/logo.png"
+          alt="Bank Logo"
+          class="h-16 w-auto drop-shadow-xl"
+        >
+      </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-6 overflow-y-auto">
+      <ul class="space-y-2">
+        <li *ngFor="let item of navigationItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
+          >
+            <i [class]="'fas ' + item.icon + ' text-xl'"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer Links -->
+    <div class="p-4 border-t border-white/10">
+      <p class="text-white/50 text-xs text-center">
+        &copy; 2025 Banking System<br>
+        <span class="text-white/40">Version 2.0.0</span>
+      </p>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col lg:ml-64">
+    <!-- Top Navbar -->
+    <header class="glass-navbar sticky top-0 z-10">
+      <div class="flex items-center justify-between px-4 lg:px-8 py-4">
+        <!-- Mobile Menu Button & Logo -->
+        <div class="flex items-center gap-4">
+          <button
+            class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+            (click)="toggleSidebar()"
+          >
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+          <img
+            src="assets/logo.png"
+            alt="Logo"
+            class="h-10 w-auto lg:hidden"
+          >
+        </div>
+
+        <!-- Quick Navigation (Desktop) -->
+        <nav class="hidden lg:flex items-center gap-2">
+          <a
+            *ngFor="let item of navigationItems"
+            [routerLink]="item.route"
+            class="nav-icon-btn"
+            [title]="item.title"
+          >
+            <i [class]="'fas ' + item.icon"></i>
+          </a>
+        </nav>
+
+        <!-- Right Actions -->
+        <div class="flex items-center gap-2">
+          <!-- Theme Toggle -->
+          <button class="navbar-icon-btn" (click)="toggleTheme()" [title]="(isDarkMode$ | async) ? 'Light Mode' : 'Dark Mode'">
+            <i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i>
+          </button>
+          <a
+            routerLink="./settings"
+            class="nav-icon-btn"
+            title="Settings"
+          >
+            <i class="fas fa-cog"></i>
+          </a>
+          <button
+            class="nav-icon-btn hidden md:flex"
+            title="Fullscreen"
+            data-widget="fullscreen"
+          >
+            <i class="fas fa-expand-arrows-alt"></i>
+          </button>
+          <button
+            class="nav-icon-btn hover:bg-red-500/20"
+            title="Logout"
+            (click)="exit()"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
+      <div class="max-w-7xl mx-auto">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div
+    *ngIf="isSidebarOpen"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <!-- Mobile Sidebar -->
+  <aside
+    *ngIf="isSidebarOpen"
+    class="sidebar-wrapper glass-sidebar flex flex-col w-64 fixed h-full z-40 lg:hidden animate-slide-right"
+  >
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+      <a [routerLink]="config.logoRoute" class="flex items-center">
+        <img
+          src="assets/logo.png"
+          alt="Bank Logo"
+          class="h-12 w-auto drop-shadow-xl"
+        >
+      </a>
+      <button
+        class="text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+        (click)="toggleSidebar()"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-6 overflow-y-auto">
+      <ul class="space-y-2">
+        <li *ngFor="let item of navigationItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
+            (click)="toggleSidebar()"
+          >
+            <i [class]="'fas ' + item.icon + ' text-xl'"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer Links -->
+    <div class="p-4 border-t border-white/10">
+      <p class="text-white/50 text-xs text-center">
+        &copy; 2025 Banking System<br>
+        <span class="text-white/40">Version 1.0.0</span>
+      </p>
+    </div>
+  </aside>
+</div>
+
+<!-- Employee/Manager Dashboard Layout -->
+<div *ngIf="!isCustomerDashboard()" class="min-h-screen">
+  <!-- Mobile Sidebar Overlay -->
+  <div
+    *ngIf="isSidebarOpen"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <!-- Sidebar -->
+  <aside
+    class="fixed left-0 top-0 h-full w-72 glass-sidebar z-50 transform transition-transform duration-300 ease-in-out"
+    [ngClass]="{'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen, 'lg:translate-x-0': true}"
+  >
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10">
+      <a [routerLink]="config.logoRoute" class="flex items-center gap-3">
+        <img src="assets/logo.png" alt="Logo" class="h-16 w-auto" />
+      </a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="p-4 space-y-2">
+      <a
+        *ngFor="let item of navigationItems"
+        [routerLink]="item.route"
+        routerLinkActive="active-nav-item"
+        class="nav-item"
+      >
+        <i [class]="'fas ' + item.icon + ' nav-icon'"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <!-- Footer -->
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+      <div class="text-white/60 text-xs text-center">
+        <p class="font-semibold text-white/80 mb-1">Banking System</p>
+        <p>Version 1.0.0</p>
+        <p class="mt-2">© 2025</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="lg:ml-72">
+    <!-- Top Navbar -->
+    <nav class="glass-navbar sticky top-0 z-30">
+      <div class="flex items-center justify-between">
+        <!-- Left: Mobile Menu Button -->
+        <button
+          class="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+          (click)="toggleSidebar()"
+        >
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+
+        <!-- Left: Quick Actions (Desktop) -->
+        <div class="hidden lg:flex items-center justify-center gap-2 flex-1">
+          <a
+            *ngFor="let item of navigationItems"
+            [routerLink]="item.route"
+            class="navbar-icon-btn"
+            [title]="item.title"
+          >
+            <i [class]="'fas ' + item.icon"></i>
+          </a>
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="flex items-center gap-2">
+          <!-- Theme Toggle -->
+          <button class="navbar-icon-btn" (click)="toggleTheme()" [title]="(isDarkMode$ | async) ? 'Light Mode' : 'Dark Mode'">
+            <i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i>
+          </button>
+          <!-- Settings -->
+          <a
+            [routerLink]="config.dashboardType === 'employee' ? './employee-settings' : './manager-settings'"
+            class="navbar-icon-btn"
+            title="Settings"
+          >
+            <i class="fas fa-cog"></i>
+          </a>
+
+          <!-- Fullscreen -->
+          <button class="navbar-icon-btn" data-widget="fullscreen" title="Fullscreen">
+            <i class="fas fa-expand-arrows-alt"></i>
+          </button>
+
+          <!-- Logout -->
+          <button class="navbar-icon-btn" (click)="exit()" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="p-6 min-h-[calc(100vh-73px)]">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

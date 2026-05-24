@@ -1,0 +1,147 @@
+<div
+  class="min-h-screen relative flex items-center justify-center px-4 py-8 md:px-8 md:py-12 lg:px-10 lg:py-16 overflow-hidden animate-fade-in"
+>
+  <!-- Main content wrapper -->
+  <div class="relative max-w-4xl w-full flex items-center justify-center z-10">
+    <!-- Gradient frame around the glass card (no scroll here) -->
+    <div
+      class="w-full rounded-3xl p-2 md:p-3 shadow-glass-lg bg-gradient-to-br from-glass-purple/30 via-glass-blue/25 to-glass-pink/30"
+    >
+      <!-- Floating Logo + Content Card -->
+      <div
+        class="glass-card glass-card-hover text-center p-6 md:p-8 lg:p-10 animate-float"
+        style="animation-duration: 7s;"
+      >
+        <!-- Small badge / tagline -->
+        <div class="mb-4 md:mb-5 flex justify-center">
+          <span class="glass-badge inline-flex items-center gap-2">
+            <i class="fas fa-shield-alt text-xs"></i>
+            <span class="text-xs md:text-sm tracking-wide uppercase">
+              Smart · Secure · Modern
+            </span>
+          </span>
+        </div>
+
+        <!-- Logo with Glow Effect -->
+        <div
+          class="mb-4 md:mb-6 inline-block animate-scale-in"
+          style="animation-delay: 0.05s;"
+        >
+          <img
+            src="assets/logo.png"
+            alt="Bank Logo"
+            class="h-16 md:h-24 lg:h-28 w-auto mx-auto drop-shadow-2xl glow"
+          />
+        </div>
+
+        <!-- Title with Gradient Text -->
+        <h1
+          class="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 neon-text animate-slide-down text-shadow"
+          style="animation-delay: 0.1s;"
+        >
+          Digital Banking System
+        </h1>
+
+        <!-- Subtitle -->
+        <p
+          class="text-lg md:text-xl lg:text-2xl hero-text-soft mb-3 md:mb-4 font-light animate-slide-up"
+          style="animation-delay: 0.18s;"
+        >
+          Bank Transaction &amp; Loan Processing
+        </p>
+
+        <!-- Description -->
+        <p
+          class="text-sm md:text-base hero-text-muted mb-5 md:mb-7 max-w-2xl mx-auto leading-relaxed hidden sm:block animate-fade-in"
+          style="animation-delay: 0.25s;"
+        >
+          Experience seamless banking with our cutting-edge transaction and loan
+          processing system. Secure, fast, and designed for the modern era.
+        </p>
+
+        <!-- CTA Button + hint -->
+        <div class="flex flex-col items-center gap-2 md:gap-3">
+          <button
+            type="button"
+            class="glass-button text-base md:text-lg px-8 md:px-10 py-3 md:py-4 group focus:outline-none focus:ring-2 focus:ring-glass-cyan/70 focus:ring-offset-2 focus:ring-offset-glass-darker"
+            (click)="gotoSignin()"
+            aria-label="Get started with the digital banking system"
+          >
+            <span class="flex items-center justify-center gap-3">
+              Let&apos;s Get Started
+              <i
+                class="fas fa-arrow-right transform group-hover:translate-x-2 transition-transform duration-300"
+              ></i>
+            </span>
+          </button>
+
+          <p class="text-xs hero-text-muted mt-1 md:mt-2">
+            Press <span class="font-semibold">Enter</span> to continue
+          </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div
+          class="hidden md:grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-10"
+        >
+          <div
+            class="glass-card p-4 md:p-6 text-center hover:scale-105 transition-transform duration-300"
+          >
+            <div class="text-3xl md:text-4xl mb-2 md:mb-3">
+              <i class="fas fa-lock text-glass-purple"></i>
+            </div>
+            <h3 class="hero-text-soft font-semibold mb-1 md:mb-2">Secure</h3>
+            <p class="hero-text-muted text-xs md:text-sm">
+              Bank-grade security for your transactions
+            </p>
+          </div>
+
+          <div
+            class="glass-card p-4 md:p-6 text-center hover:scale-105 transition-transform duration-300"
+          >
+            <div class="text-3xl md:text-4xl mb-2 md:mb-3">
+              <i class="fas fa-bolt text-glass-cyan"></i>
+            </div>
+            <h3 class="hero-text-soft font-semibold mb-1 md:mb-2">Fast</h3>
+            <p class="hero-text-muted text-xs md:text-sm">
+              Lightning-fast processing &amp; transfers
+            </p>
+          </div>
+
+          <div
+            class="glass-card p-4 md:p-6 text-center hover:scale-105 transition-transform duration-300"
+          >
+            <div class="text-3xl md:text-4xl mb-2 md:mb-3">
+              <i class="fas fa-mobile-alt text-glass-pink"></i>
+            </div>
+            <h3 class="hero-text-soft font-semibold mb-1 md:mb-2">
+              Accessible
+            </h3>
+            <p class="hero-text-muted text-xs md:text-sm">
+              Bank anywhere, anytime, on any device
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Decorative Elements (background only) -->
+  <div
+    class="pointer-events-none absolute -top-8 -left-16 md:-top-10 md:-left-24 w-40 h-40 md:w-52 md:h-52 bg-glass-purple/25 rounded-full blur-3xl animate-float -z-10"
+    style="animation-delay: 0.4s; animation-duration: 9s;"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="pointer-events-none absolute -bottom-12 -right-10 md:-bottom-16 md:-right-20 w-48 h-48 md:w-60 md:h-60 bg-glass-blue/25 rounded-full blur-3xl animate-float -z-10"
+    style="animation-delay: 1.6s; animation-duration: 10s;"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="pointer-events-none absolute top-1/2 right-[-40px] md:right-[-60px] w-24 h-24 md:w-28 md:h-28 bg-glass-pink/25 rounded-full blur-3xl animate-float -z-10"
+    style="animation-delay: 2.6s; animation-duration: 11s;"
+    aria-hidden="true"
+  ></div>
+</div>

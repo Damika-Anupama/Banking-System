@@ -1,0 +1,439 @@
+// Tailwind CSS imports
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Import Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+// Base styles
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+// CSS Variables for theming
+:root {
+  // Light theme (default)
+  --bg-gradient-start: #f0f4f8;
+  --bg-gradient-mid: #e2e8f0;
+  --bg-gradient-end: #cbd5e1;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(100, 116, 139, 0.2);
+  --glass-hover: rgba(255, 255, 255, 0.9);
+  --sidebar-bg: rgba(248, 250, 252, 0.8);
+  --navbar-bg: rgba(255, 255, 255, 0.8);
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --input-border: rgba(100, 116, 139, 0.3);
+  --scrollbar-track: rgba(0, 0, 0, 0.05);
+  --scrollbar-thumb: linear-gradient(135deg, rgba(139, 92, 246, 0.6), rgba(59, 130, 246, 0.6));
+  --table-header-bg: rgba(100, 116, 139, 0.1);
+  --table-row-hover: rgba(100, 116, 139, 0.05);
+}
+
+.dark {
+  // Dark theme
+  --bg-gradient-start: #1a1a2e;
+  --bg-gradient-mid: #16213e;
+  --bg-gradient-end: #0f1419;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-hover: rgba(255, 255, 255, 0.2);
+  --sidebar-bg: rgba(15, 20, 25, 0.4);
+  --navbar-bg: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.2);
+  --input-border: rgba(255, 255, 255, 0.3);
+  --scrollbar-track: rgba(255, 255, 255, 0.05);
+  --scrollbar-thumb: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(59, 130, 246, 0.8));
+  --table-header-bg: rgba(255, 255, 255, 0.1);
+  --table-row-hover: rgba(255, 255, 255, 0.05);
+}
+
+body {
+  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+  min-height: 100vh;
+  color: var(--text-primary) !important;
+  transition: background 0.3s ease, color 0.3s ease;
+
+  // Global text color inheritance
+  * {
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  // Force all child elements to inherit theme colors
+  & > * {
+    color: var(--text-primary);
+  }
+}
+
+// Glassmorphism utility classes
+@layer components {
+  .glass-card {
+    background: var(--glass-bg);
+    @apply backdrop-blur-md rounded-2xl shadow-glass;
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s ease;
+  }
+
+  .glass-card-hover {
+    @apply transition-all duration-300 hover:shadow-glass-lg hover:scale-[1.02];
+    &:hover {
+      background: var(--glass-hover);
+    }
+  }
+
+  .glass-input {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-primary);
+    @apply backdrop-blur-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-purple/50 transition-all;
+
+    &::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+  }
+
+  .glass-button {
+    @apply bg-gradient-to-r from-glass-purple to-glass-blue text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-neon-purple transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .glass-button-secondary {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    @apply backdrop-blur-sm font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95;
+
+    &:hover {
+      background: var(--glass-hover);
+    }
+  }
+
+  .glass-sidebar {
+    background: var(--sidebar-bg);
+    @apply backdrop-blur-xl;
+    border-right: 1px solid var(--glass-border);
+    color: var(--text-primary);
+  }
+
+  .glass-navbar {
+    background: var(--navbar-bg);
+    @apply backdrop-blur-xl;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-primary);
+  }
+
+  .glass-badge {
+    @apply bg-gradient-to-r from-glass-purple/80 to-glass-blue/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-white;
+  }
+
+  .glass-table {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    @apply backdrop-blur-md rounded-2xl overflow-hidden;
+  }
+
+  .neon-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-glass-purple via-glass-pink to-glass-cyan;
+  }
+
+  .stat-card {
+    @apply glass-card p-6 transition-all duration-300 hover:shadow-glass-lg cursor-pointer;
+  }
+
+  // Text color utilities for theme support
+  .text-theme-primary {
+    color: var(--text-primary) !important;
+  }
+
+  .text-theme-secondary {
+    color: var(--text-secondary) !important;
+  }
+
+  .text-theme-muted {
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+}
+
+// Global overrides for hardcoded text colors to support theming
+// This ensures text colors adapt to light/dark mode
+h1, h2, h3, h4, h5, h6, p, span, label, div,
+a:not(.glass-button):not(.glass-button-secondary),
+li, td, th, input, textarea, select, option {
+  color: var(--text-primary);
+}
+
+// Ensure labels in forms use theme colors
+label {
+  color: var(--text-primary) !important;
+}
+
+// Force main content areas to use theme colors
+main, .glass-card, .stat-card {
+  color: var(--text-primary);
+
+  h1, h2, h3, h4, h5, h6, p, span, div, label {
+    color: var(--text-primary);
+  }
+}
+
+// Override Tailwind's text-white utilities for theme support
+.text-white {
+  color: var(--text-primary) !important;
+}
+
+.text-white\/90 {
+  color: var(--text-primary) !important;
+  opacity: 0.9;
+}
+
+.text-white\/80 {
+  color: var(--text-secondary) !important;
+}
+
+.text-white\/70 {
+  color: var(--text-secondary) !important;
+  opacity: 0.85;
+}
+
+.text-white\/60 {
+  color: var(--text-secondary) !important;
+  opacity: 0.75;
+}
+
+.text-white\/50 {
+  color: var(--text-secondary) !important;
+  opacity: 0.7;
+}
+
+.text-white\/40 {
+  color: var(--text-secondary) !important;
+  opacity: 0.6;
+}
+
+.text-white\/30 {
+  color: var(--text-secondary) !important;
+  opacity: 0.5;
+}
+
+.text-white\/20 {
+  color: var(--text-secondary) !important;
+  opacity: 0.3;
+}
+
+.text-white\/10 {
+  color: var(--text-secondary) !important;
+  opacity: 0.2;
+}
+
+// Placeholder text color
+::placeholder {
+  color: var(--text-secondary) !important;
+  opacity: 0.6 !important;
+}
+
+// Icon color support (FontAwesome)
+i, .fa, .fas, .far, .fal, .fab {
+  color: inherit;
+}
+
+// Links and buttons should inherit theme colors
+a:not(.glass-button):not(.glass-button-secondary) {
+  color: var(--text-primary);
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+}
+
+button:not(.glass-button):not(.glass-button-secondary) {
+  color: var(--text-primary);
+}
+
+// Override Tailwind gray colors to adapt to theme
+.text-gray-100, .text-gray-200, .text-gray-300 {
+  color: var(--text-secondary) !important;
+  opacity: 0.9;
+}
+
+.text-gray-400, .text-gray-500 {
+  color: var(--text-secondary) !important;
+  opacity: 0.8;
+}
+
+.text-gray-600, .text-gray-700 {
+  color: var(--text-primary) !important;
+  opacity: 0.85;
+}
+
+.text-gray-800, .text-gray-900 {
+  color: var(--text-primary) !important;
+}
+
+.text-slate-400, .text-slate-500, .text-slate-600,
+.text-zinc-400, .text-zinc-500, .text-zinc-600 {
+  color: var(--text-secondary) !important;
+  opacity: 0.8;
+}
+
+// Dark mode variants are handled automatically by our CSS variables
+.dark\:text-white {
+  color: var(--text-primary) !important;
+}
+
+.dark\:text-gray-100, .dark\:text-gray-200, .dark\:text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+
+// Keep semantic colors (red, green, blue, yellow) visible in both themes
+// Red colors for errors and required fields
+.text-red-300, .text-red-400, .text-red-500 {
+  color: #dc2626 !important; // Darker red for light mode (default)
+}
+
+.dark .text-red-300, .dark .text-red-400, .dark .text-red-500 {
+  color: #fca5a5 !important; // Lighter red for dark mode
+}
+
+// Green colors for success
+.text-green-300, .text-green-400, .text-green-500 {
+  color: #16a34a !important; // Darker green for light mode
+}
+
+.dark .text-green-300, .dark .text-green-400, .dark .text-green-500 {
+  color: #86efac !important; // Lighter green for dark mode
+}
+
+// Blue colors for info
+.text-blue-300, .text-blue-400, .text-blue-500 {
+  color: #2563eb !important; // Darker blue for light mode
+}
+
+.dark .text-blue-300, .dark .text-blue-400, .dark .text-blue-500 {
+  color: #93c5fd !important; // Lighter blue for dark mode
+}
+
+// Yellow colors for warnings
+.text-yellow-300, .text-yellow-400, .text-yellow-500 {
+  color: #ca8a04 !important; // Darker yellow for light mode
+}
+
+.dark .text-yellow-300, .dark .text-yellow-400, .dark .text-yellow-500 {
+  color: #fde047 !important; // Lighter yellow for dark mode
+}
+
+// Custom scrollbar with glassmorphism
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+  border: 2px solid var(--glass-border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 1), rgba(59, 130, 246, 1));
+}
+
+// Form elements styling
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0px 1000px var(--input-bg) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+// Table styling
+table {
+  @apply w-full;
+
+  thead {
+    background: var(--table-header-bg);
+    @apply backdrop-blur-sm;
+
+    th {
+      color: var(--text-secondary);
+      @apply px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid var(--glass-border);
+      @apply transition-colors;
+
+      &:hover {
+        background: var(--table-row-hover);
+      }
+
+      td {
+        color: var(--text-primary);
+        @apply px-6 py-4 text-sm;
+      }
+    }
+  }
+}
+
+// Animation utilities
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientFlow 3s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+// Loading spinner
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Utility classes
+.text-shadow {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.glow {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.4);
+}
+
+// Print styles
+@media print {
+  body {
+    background: white;
+  }
+}
