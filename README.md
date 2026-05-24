@@ -1,4 +1,4 @@
-# FinFlow Banking Suite
+# Banking System
 
 Client-ready Angular demo for a bank transaction and loan processing platform.
 
