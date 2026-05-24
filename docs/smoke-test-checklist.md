@@ -53,6 +53,14 @@ Open DevTools Console and confirm:
 - No failed asset loads for logo or favicon.
 - No API failure popups during demo-mode flows.
 
+## Automated live shell check
+
+```bash
+npm run smoke:live
+# or override the target:
+DEMO_URL=https://banking-system-nine-sooty.vercel.app/ npm run smoke:live
+```
+
 ## Local verification commands
 
 Run these before pushing UI/demo changes:

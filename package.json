@@ -9,7 +9,8 @@
     "vercel-build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "smoke:live": "node scripts/smoke-live-demo.mjs"
   },
   "private": true,
   "dependencies": {
