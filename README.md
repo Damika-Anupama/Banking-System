@@ -97,3 +97,11 @@ The repository also includes `vercel.json` with the output directory and SPA rew
 ## Notes for clients
 
 This demo focuses on frontend UX and workflow presentation. Backend integration can be connected from the preserved `fullstack-source` branch by deploying the backend API and updating the Angular environment base URL.
+
+## Portfolio material
+
+Use this case-study document when sharing the project with clients or recruiters:
+
+```text
+docs/client-case-study.md
+```
