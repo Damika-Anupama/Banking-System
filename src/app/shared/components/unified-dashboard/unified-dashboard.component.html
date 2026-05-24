@@ -104,6 +104,19 @@
     <!-- Page Content -->
     <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
       <div class="max-w-7xl mx-auto">
+        <section class="mb-5 rounded-3xl border border-cyan-200/20 bg-cyan-300/10 p-4 text-cyan-50 shadow-xl backdrop-blur-xl">
+          <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-xs font-black uppercase tracking-[0.22em] text-cyan-100">Demo walkthrough</p>
+              <p class="mt-1 text-sm text-slate-200">Sample data only. Try: review accounts, open transaction history, then click a row for details.</p>
+            </div>
+            <div class="flex flex-wrap gap-2 text-xs font-semibold">
+              <a routerLink="/customer-dashboard/home" class="demo-status-pill demo-status-info">Customer</a>
+              <a routerLink="/employee-dashboard/home" class="demo-status-pill demo-status-info">Employee</a>
+              <a routerLink="/manager-dashboard/home" class="demo-status-pill demo-status-info">Manager</a>
+            </div>
+          </div>
+        </section>
         <router-outlet></router-outlet>
       </div>
     </main>
@@ -264,6 +277,19 @@
 
     <!-- Page Content -->
     <main class="p-6 min-h-[calc(100vh-73px)]">
+      <section class="mb-5 rounded-3xl border border-cyan-200/20 bg-cyan-300/10 p-4 text-cyan-50 shadow-xl backdrop-blur-xl">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p class="text-xs font-black uppercase tracking-[0.22em] text-cyan-100">Demo walkthrough</p>
+            <p class="mt-1 text-sm text-slate-200">Sample data only. Use the role switcher, review the next action, and click rows for detail modals.</p>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs font-semibold">
+            <a routerLink="/customer-dashboard/home" class="demo-status-pill demo-status-info">Customer</a>
+            <a routerLink="/employee-dashboard/home" class="demo-status-pill demo-status-info">Employee</a>
+            <a routerLink="/manager-dashboard/home" class="demo-status-pill demo-status-info">Manager</a>
+          </div>
+        </div>
+      </section>
       <router-outlet></router-outlet>
     </main>
   </div>
