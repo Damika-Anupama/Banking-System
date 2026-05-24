@@ -97,16 +97,17 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
     }
 
     Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
       title: loan.loan_basic_detail_id || 'Loan application',
       html: `
-        <div style="text-align:left;line-height:1.8">
-          <strong>Customer:</strong> ${loan.customer_id || 'N/A'}<br>
-          <strong>Amount:</strong> Rs. ${Number(loan.amount || 0).toLocaleString()}<br>
-          <strong>Duration:</strong> ${loan.duration_days || 'N/A'} days<br>
-          <strong>Interest:</strong> ${loan.interest || 'N/A'}%<br>
-          <strong>Type:</strong> ${loan.loan_type || 'N/A'}<br>
-          <strong>Purpose:</strong> ${loan.purpose || 'Not specified'}<br>
-          <strong>Status:</strong> ${loan.status || 'Pending'}
+        <div class="demo-detail-grid">
+          <div class="demo-detail-row"><span>Customer</span><strong>${loan.customer_id || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Amount</span><strong>Rs. ${Number(loan.amount || 0).toLocaleString()}</strong></div>
+          <div class="demo-detail-row"><span>Duration</span><strong>${loan.duration_days || 'N/A'} days</strong></div>
+          <div class="demo-detail-row"><span>Interest</span><strong>${loan.interest || 'N/A'}%</strong></div>
+          <div class="demo-detail-row"><span>Type</span><strong>${loan.loan_type || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Purpose</span><strong>${loan.purpose || 'Not specified'}</strong></div>
+          <div class="demo-detail-row"><span>Status</span><strong>${loan.status || 'Pending'}</strong></div>
         </div>
       `,
       icon: 'question',
@@ -127,6 +128,7 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
 
     // Show confirmation dialog
     Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
       title: 'Approve Loan',
       text: 'Are you sure you want to approve this loan?',
       icon: 'question',
@@ -199,6 +201,7 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
 
     // Show confirmation dialog with reason input
     Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
       title: 'Reject Loan',
       text: 'Are you sure you want to reject this loan?',
       input: 'textarea',

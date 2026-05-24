@@ -289,13 +289,15 @@ export class TransactionComponent implements OnInit, OnDestroy {
     }
 
     Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
       title: transaction.type || 'Transaction detail',
       html: `
-        <div style="text-align:left;line-height:1.8">
-          <strong>Date:</strong> ${transaction.date ? new Date(transaction.date).toLocaleDateString() : 'N/A'}<br>
-          <strong>Amount:</strong> Rs. ${Number(transaction.amount || 0).toLocaleString()}<br>
-          <strong>Direction:</strong> ${transaction.status === 'up' ? 'Incoming' : 'Outgoing'}<br>
-          <strong>Remarks:</strong> ${transaction.sender_remarks || 'No remarks'}
+        <div class="demo-detail-grid">
+          <div class="demo-detail-row"><span>Date</span><strong>${transaction.date ? new Date(transaction.date).toLocaleDateString() : 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Amount</span><strong>Rs. ${Number(transaction.amount || 0).toLocaleString()}</strong></div>
+          <div class="demo-detail-row"><span>Direction</span><strong>${transaction.status === 'up' ? 'Incoming' : 'Outgoing'}</strong></div>
+          <div class="demo-detail-row"><span>Remarks</span><strong>${transaction.sender_remarks || 'No remarks'}</strong></div>
+          <div class="demo-detail-row"><span>Audit state</span><strong>Posted to ledger</strong></div>
         </div>
       `,
       icon: transaction.status === 'up' ? 'success' : 'info',

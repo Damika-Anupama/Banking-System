@@ -97,15 +97,16 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
     }
 
     Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
       title: customer.fullname || customer.username || 'Customer detail',
       html: `
-        <div style="text-align:left;line-height:1.8">
-          <strong>User ID:</strong> ${customer.user_id || 'N/A'}<br>
-          <strong>Email:</strong> ${customer.email || 'N/A'}<br>
-          <strong>Contact:</strong> ${customer.contact_no || customer.contact_num || 'N/A'}<br>
-          <strong>Address:</strong> ${customer.address || 'N/A'}<br>
-          <strong>Accounts:</strong> ${customer.account_count || 0}<br>
-          <strong>Status:</strong> ${customer.status || 'Active'}
+        <div class="demo-detail-grid">
+          <div class="demo-detail-row"><span>User ID</span><strong>${customer.user_id || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Email</span><strong>${customer.email || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Contact</span><strong>${customer.contact_no || customer.contact_num || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Address</span><strong>${customer.address || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Accounts</span><strong>${customer.account_count || 0}</strong></div>
+          <div class="demo-detail-row"><span>Status</span><strong>${customer.status || 'Active'}</strong></div>
         </div>
       `,
       icon: 'info',
