@@ -65,6 +65,52 @@
   @apply overflow-hidden rounded-3xl border border-white/10 bg-slate-950/30 shadow-xl backdrop-blur-xl;
 }
 
+.demo-table-shell table,
+.glass-card table {
+  min-width: 760px;
+}
+
+.demo-table-shell thead th,
+.glass-card thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  backdrop-filter: blur(14px);
+}
+
+.demo-table-shell tbody tr,
+.glass-card tbody tr {
+  cursor: pointer;
+}
+
+.demo-table-shell tbody tr:hover,
+.glass-card tbody tr:hover {
+  box-shadow: inset 3px 0 0 rgba(103, 232, 249, 0.7);
+}
+
+@media (max-width: 768px) {
+  .demo-table-shell,
+  .glass-card .overflow-x-auto {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .demo-table-shell table,
+  .glass-card table {
+    min-width: 680px;
+  }
+
+  .demo-table-shell th,
+  .demo-table-shell td,
+  .glass-card th,
+  .glass-card td {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
 .demo-table-toolbar {
   @apply flex flex-col gap-3 border-b border-white/10 p-4 md:flex-row md:items-center md:justify-between;
 }
