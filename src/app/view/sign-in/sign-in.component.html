@@ -1,145 +1,50 @@
-<div class="h-screen flex items-center justify-center px-4 py-4 overflow-hidden">
-  <div class="max-w-md w-full h-full flex items-center justify-center">
-    <div class="w-full max-h-full overflow-y-auto animate-scale-in">
-      <!-- Login Card -->
-      <div class="glass-card p-6 md:p-8 lg:p-10">
-        <!-- Logo -->
-        <div class="text-center mb-6 md:mb-8">
-          <img
-            src="assets/logo.png"
-            alt="Banking System logo"
-            class="h-16 md:h-20 lg:h-24 w-auto mx-auto mb-4 md:mb-6 drop-shadow-2xl glow"
-          >
-          <h2 class="text-2xl md:text-3xl font-bold text-theme-primary mb-2">Welcome Back</h2>
-          <p class="text-sm md:text-base text-theme-secondary">Sign in to access your account</p>
-        </div>
-
-        <!-- Login Form -->
-        <form #frm="ngForm" (ngSubmit)="authenticate()" class="space-y-4 md:space-y-6">
-          <!-- Email Field -->
-          <div>
-            <label class="block text-white/80 text-sm font-medium mb-2">
-              <i class="fas fa-envelope mr-2"></i>Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              #emailModel="ngModel"
-              [(ngModel)]="email"
-              required
-              placeholder="Enter your email"
-              class="glass-input w-full"
-            >
-            <div
-              *ngIf="emailModel.invalid && emailModel.dirty"
-              class="mt-2 text-red-300 text-sm space-y-1"
-            >
-              <p class="flex items-center gap-2">
-                <i class="fas fa-exclamation-circle"></i>
-                Please enter a valid email address
-              </p>
-            </div>
-          </div>
-
-          <!-- Password Field -->
-          <div>
-            <label class="block text-white/80 text-sm font-medium mb-2">
-              <i class="fas fa-lock mr-2"></i>Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              #passwordModel="ngModel"
-              [(ngModel)]="password"
-              required
-              placeholder="Enter your password"
-              class="glass-input w-full"
-            >
-            <div
-              *ngIf="passwordModel.invalid && passwordModel.dirty"
-              class="mt-2 text-red-300 text-sm flex items-center gap-2"
-            >
-              <i class="fas fa-exclamation-circle"></i>
-              Password is required
-            </div>
-          </div>
-
-          <!-- Sign In Button -->
-          <button
-            type="submit"
-            class="glass-button w-full text-base md:text-lg py-3 md:py-4 group"
-            [disabled]="frm.invalid"
-            [class.opacity-50]="frm.invalid"
-            [class.cursor-not-allowed]="frm.invalid"
-          >
-            <span class="flex items-center justify-center gap-3">
-              Sign In
-              <i class="fas fa-arrow-right transform group-hover:translate-x-2 transition-transform duration-300"></i>
-            </span>
-          </button>
-        </form>
-
-        <!-- Demo Access -->
-        <div class="mt-6 rounded-2xl border border-white/15 bg-white/8 p-4 backdrop-blur-sm">
-          <div class="mb-3 flex items-start justify-between gap-3">
-            <div>
-              <p class="text-sm font-semibold text-white">Client demo access</p>
-              <p class="text-xs text-white/60">Open a ready-made dashboard without connecting the backend.</p>
-            </div>
-            <span class="rounded-full bg-emerald-400/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-200">
-              Demo mode
-            </span>
-          </div>
-
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-            <button type="button" class="demo-role-btn" (click)="launchDemo('CUSTOMER')">
-              <i class="fas fa-user"></i>
-              Customer
-            </button>
-            <button type="button" class="demo-role-btn" (click)="launchDemo('EMPLOYEE')">
-              <i class="fas fa-user-tie"></i>
-              Employee
-            </button>
-            <button type="button" class="demo-role-btn" (click)="launchDemo('MANAGER')">
-              <i class="fas fa-chart-line"></i>
-              Manager
-            </button>
-          </div>
-        </div>
-
-        <!-- Divider -->
-        <div class="relative my-6 md:my-8">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-white/20"></div>
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-4 bg-white/10 backdrop-blur-sm text-white/60 rounded-full">
-              Or
-            </span>
-          </div>
-        </div>
-
-        <!-- Sign Up Link -->
-        <div class="text-center">
-          <p class="text-sm md:text-base text-white/70">
-            Don't have an account?
-            <a
-              routerLink="/sign-up"
-              class="text-glass-cyan hover:text-glass-blue font-semibold ml-2 transition-colors duration-300"
-            >
-              Sign Up
-            </a>
-          </p>
-        </div>
+<main class="auth-shell">
+  <section class="auth-panel">
+    <div class="auth-card animate-scale-in">
+      <div class="text-center">
+        <img src="assets/logo.png" alt="Banking System logo" class="auth-logo" />
+        <span class="demo-status-pill demo-status-info">Demo gateway</span>
+        <h1 class="auth-title text-3xl sm:text-4xl">Sign in</h1>
+        <p class="auth-subtitle text-sm sm:text-base">Use credentials for a real backend, or open a ready-made role demo.</p>
       </div>
 
-      <!-- Additional Info -->
-      <div class="mt-4 md:mt-6 text-center">
-        <p class="text-white/60 text-xs md:text-sm">
-          <i class="fas fa-shield-alt mr-2"></i>
-          Your data is secured with bank-grade encryption
-        </p>
+      <form #frm="ngForm" (ngSubmit)="authenticate()" class="mt-7 space-y-5">
+        <div>
+          <label for="signin-email" class="auth-field-label"><i class="fas fa-envelope mr-2"></i>Email address</label>
+          <input id="signin-email" type="email" name="email" #emailModel="ngModel" [(ngModel)]="email" required autocomplete="email" placeholder="client.customer@finflow.demo" class="glass-input w-full" />
+          <p *ngIf="emailModel.invalid && emailModel.dirty" class="mt-2 text-sm text-red-200">Please enter a valid email address.</p>
+        </div>
+
+        <div>
+          <label for="signin-password" class="auth-field-label"><i class="fas fa-lock mr-2"></i>Password</label>
+          <input id="signin-password" type="password" name="password" #passwordModel="ngModel" [(ngModel)]="password" required autocomplete="current-password" placeholder="Enter your password" class="glass-input w-full" />
+          <p *ngIf="passwordModel.invalid && passwordModel.dirty" class="mt-2 text-sm text-red-200">Password is required.</p>
+        </div>
+
+        <button type="submit" class="glass-button w-full justify-center py-4" [disabled]="frm.invalid || isLoading" [class.opacity-50]="frm.invalid || isLoading">
+          <span class="flex items-center justify-center gap-3">
+            {{ isLoading ? 'Signing in...' : 'Sign in' }}
+            <i class="fas fa-arrow-right"></i>
+          </span>
+        </button>
+      </form>
+
+      <div class="my-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+        <span class="h-px flex-1 bg-white/15"></span>
+        Demo roles
+        <span class="h-px flex-1 bg-white/15"></span>
       </div>
+
+      <div class="auth-demo-grid">
+        <button type="button" class="auth-demo-btn" aria-label="Open customer demo dashboard" (click)="launchDemo('CUSTOMER')"><i class="fas fa-user"></i>Customer</button>
+        <button type="button" class="auth-demo-btn" aria-label="Open employee demo dashboard" (click)="launchDemo('EMPLOYEE')"><i class="fas fa-user-tie"></i>Employee</button>
+        <button type="button" class="auth-demo-btn" aria-label="Open manager demo dashboard" (click)="launchDemo('MANAGER')"><i class="fas fa-chart-line"></i>Manager</button>
+      </div>
+
+      <p class="mt-6 text-center text-sm text-slate-300">
+        Need a demo account?
+        <a routerLink="/sign-up" class="auth-link ml-1">Create one</a>
+      </p>
     </div>
-  </div>
-</div>
+  </section>
+</main>
