@@ -214,7 +214,9 @@
       <tbody>
         <tr
           *ngFor="let transaction of transactions; index as i"
-          class="transition-all duration-300 hover:bg-white/5"
+          class="cursor-pointer transition-all duration-300 hover:bg-white/5"
+          (click)="showTransactionDetails(transaction)"
+          title="View transaction details"
         >
           <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
           <td class="px-6 py-4 text-white/90">

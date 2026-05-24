@@ -283,6 +283,26 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  showTransactionDetails(transaction: any): void {
+    if (!transaction) {
+      return;
+    }
+
+    Swal.fire({
+      title: transaction.type || 'Transaction detail',
+      html: `
+        <div style="text-align:left;line-height:1.8">
+          <strong>Date:</strong> ${transaction.date ? new Date(transaction.date).toLocaleDateString() : 'N/A'}<br>
+          <strong>Amount:</strong> Rs. ${Number(transaction.amount || 0).toLocaleString()}<br>
+          <strong>Direction:</strong> ${transaction.status === 'up' ? 'Incoming' : 'Outgoing'}<br>
+          <strong>Remarks:</strong> ${transaction.sender_remarks || 'No remarks'}
+        </div>
+      `,
+      icon: transaction.status === 'up' ? 'success' : 'info',
+      confirmButtonText: 'Close'
+    });
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }

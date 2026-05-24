@@ -91,6 +91,29 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  showLoanDetails(loan: any): void {
+    if (!loan) {
+      return;
+    }
+
+    Swal.fire({
+      title: loan.loan_basic_detail_id || 'Loan application',
+      html: `
+        <div style="text-align:left;line-height:1.8">
+          <strong>Customer:</strong> ${loan.customer_id || 'N/A'}<br>
+          <strong>Amount:</strong> Rs. ${Number(loan.amount || 0).toLocaleString()}<br>
+          <strong>Duration:</strong> ${loan.duration_days || 'N/A'} days<br>
+          <strong>Interest:</strong> ${loan.interest || 'N/A'}%<br>
+          <strong>Type:</strong> ${loan.loan_type || 'N/A'}<br>
+          <strong>Purpose:</strong> ${loan.purpose || 'Not specified'}<br>
+          <strong>Status:</strong> ${loan.status || 'Pending'}
+        </div>
+      `,
+      icon: 'question',
+      confirmButtonText: 'Close'
+    });
+  }
+
   approve(loanId?: any): void {
     // Null/undefined check for loanId
     if (!loanId) {

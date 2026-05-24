@@ -91,6 +91,28 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  showCustomerDetails(customer: any): void {
+    if (!customer) {
+      return;
+    }
+
+    Swal.fire({
+      title: customer.fullname || customer.username || 'Customer detail',
+      html: `
+        <div style="text-align:left;line-height:1.8">
+          <strong>User ID:</strong> ${customer.user_id || 'N/A'}<br>
+          <strong>Email:</strong> ${customer.email || 'N/A'}<br>
+          <strong>Contact:</strong> ${customer.contact_no || customer.contact_num || 'N/A'}<br>
+          <strong>Address:</strong> ${customer.address || 'N/A'}<br>
+          <strong>Accounts:</strong> ${customer.account_count || 0}<br>
+          <strong>Status:</strong> ${customer.status || 'Active'}
+        </div>
+      `,
+      icon: 'info',
+      confirmButtonText: 'Close'
+    });
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }

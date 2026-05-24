@@ -33,7 +33,9 @@
       <tbody>
         <tr
           *ngFor="let loan of loans; let i = index"
-          class="transition-all duration-300 hover:bg-white/5"
+          class="cursor-pointer transition-all duration-300 hover:bg-white/5"
+          (click)="showLoanDetails(loan)"
+          title="View loan details"
         >
           <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
           <td class="px-6 py-4">
@@ -82,14 +84,14 @@
             <div class="flex items-center justify-center gap-2">
               <button
                 class="glass-button-sm bg-gradient-to-r from-glass-emerald/30 to-glass-cyan/30 hover:from-glass-emerald/50 hover:to-glass-cyan/50"
-                (click)="approve()"
+                (click)="$event.stopPropagation(); approve(loan.loan_basic_detail_id)"
               >
                 <i class="fas fa-check mr-1"></i>
                 Approve
               </button>
               <button
                 class="glass-button-sm bg-gradient-to-r from-glass-pink/30 to-glass-orange/30 hover:from-glass-pink/50 hover:to-glass-orange/50"
-                (click)="reject()"
+                (click)="$event.stopPropagation(); reject(loan.loan_basic_detail_id)"
               >
                 <i class="fas fa-times mr-1"></i>
                 Reject
