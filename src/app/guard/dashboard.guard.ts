@@ -26,6 +26,11 @@ export class DashboardGuard  {
       }
 
       const token = localStorage.getItem('token');
+      const isDemoMode = localStorage.getItem('demoMode') === 'true';
+
+      if (isDemoMode) {
+        return true;
+      }
 
       // Check if token exists
       if (!token) {
