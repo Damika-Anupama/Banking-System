@@ -198,6 +198,11 @@
           <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Duration</th>
           <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Interest</th>
           <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Type</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Status</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Outstanding</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Next Due</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Remaining</th>
+          <th class="text-right px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -250,6 +255,17 @@
               ></i>
               {{ loan.loan_type }}
             </span>
+          </td>
+          <td class="px-6 py-4"><span class="glass-badge bg-white/10">{{ loanStatus(loan) }}</span></td>
+          <td class="px-6 py-4 font-semibold text-emerald-100">Rs. {{ loanOutstanding(loan) | number }}</td>
+          <td class="px-6 py-4 text-white/90">{{ loanNextDueDate(loan) | date: 'yyyy-MM-dd' }}</td>
+          <td class="px-6 py-4 text-white/90">{{ remainingTenure(loan) }}</td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex flex-wrap justify-end gap-2">
+              <button type="button" class="glass-button-secondary text-xs" (click)="viewLoanSchedule(loan)">Schedule</button>
+              <button type="button" class="glass-button-secondary text-xs" (click)="downloadLoanAgreement(loan)">Agreement</button>
+              <button type="button" class="glass-button-secondary text-xs" (click)="startRepayment(loan)">Repay</button>
+            </div>
           </td>
         </tr>
       </tbody>

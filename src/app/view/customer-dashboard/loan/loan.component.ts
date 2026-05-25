@@ -136,6 +136,54 @@ export class LoanComponent implements OnInit, OnDestroy {
     return this.duration === '6 months' ? 180 : this.duration === '1 year' ? 360 : this.duration === '3 years' ? 1080 : 0;
   }
 
+  loanStatus(loan: any): string {
+    return loan.status || 'Under Review';
+  }
+
+  loanOutstanding(loan: any): number {
+    const principal = Number(loan?.amount || 0);
+    const rate = Number(loan?.interest || 0) / 100;
+    return Math.round(principal + principal * rate * (Number(loan?.duration_days || 0) / 365));
+  }
+
+  loanNextDueDate(loan: any): Date {
+    const date = new Date(loan?.starting_date || new Date());
+    date.setDate(date.getDate() + 30);
+    return date;
+  }
+
+  remainingTenure(loan: any): string {
+    const days = Number(loan?.duration_days || 0);
+    return days >= 360 ? `${Math.round(days / 30)} months` : `${days} days`;
+  }
+
+  viewLoanSchedule(loan: any): void {
+    Swal.fire({
+      icon: 'info',
+      title: `Loan schedule ${loan.loan_basic_detail_id}`,
+      html: `Outstanding: <strong>Rs. ${this.loanOutstanding(loan).toLocaleString()}</strong><br>Next due date: <strong>${this.loanNextDueDate(loan).toLocaleDateString()}</strong><br>Remaining tenure: <strong>${this.remainingTenure(loan)}</strong>`,
+      confirmButtonText: 'Close'
+    });
+  }
+
+  downloadLoanAgreement(loan: any): void {
+    Swal.fire({
+      icon: 'info',
+      title: 'Agreement ready',
+      html: `Loan agreement <strong>${loan.loan_basic_detail_id}</strong> is ready for the client demo.`,
+      confirmButtonText: 'Close'
+    });
+  }
+
+  startRepayment(loan: any): void {
+    Swal.fire({
+      icon: 'question',
+      title: 'Repayment preview',
+      html: `Next repayment for <strong>${loan.loan_basic_detail_id}</strong><br>Due: ${this.loanNextDueDate(loan).toLocaleDateString()}<br>Outstanding: Rs. ${this.loanOutstanding(loan).toLocaleString()}`,
+      confirmButtonText: 'Close'
+    });
+  }
+
   onFDSelected() {
     // Null check for selectedFD
     if (!this.selectedFD || !this.selectedFD.amount || !this.selectedFD.fd_id) {
