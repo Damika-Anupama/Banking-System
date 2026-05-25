@@ -34,122 +34,122 @@
     </div>
 
     <form class="space-y-6">
-      <!-- Fixed Deposit Selection -->
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Choose a Fixed Deposit <span class="text-red-400">*</span>
-        </label>
-        <div class="relative">
-          <i class="fas fa-piggy-bank absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
-          <select
-            class="glass-input pl-12 appearance-none cursor-pointer"
-            [(ngModel)]="selectedFD"
-            (change)="onFDSelected()"
-            name="selectedFD"
-          >
-            <option [ngValue]="null" disabled selected>Select a fixed deposit</option>
-            <option *ngFor="let account of fds" [ngValue]="account">
-              FD ID: {{ account.fd_id }} | Duration: {{ convertDuration(account.duration) }} | Amount: Rs. {{ account.amount | number }}
-            </option>
-          </select>
-          <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-piggy-bank mr-2"></i>Choose a Fixed Deposit <span class="text-red-300">*</span>
+          </label>
+          <div class="relative">
+            <i class="fas fa-piggy-bank absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/50"></i>
+            <select
+              class="glass-input pl-12 appearance-none cursor-pointer"
+              [(ngModel)]="selectedFD"
+              (change)="onFDSelected()"
+              name="selectedFD"
+            >
+              <option [ngValue]="null" disabled selected>Select a fixed deposit</option>
+              <option *ngFor="let account of fds" [ngValue]="account">
+                FD ID: {{ account.fd_id }} | Duration: {{ convertDuration(account.duration) }} | Amount: Rs. {{ account.amount | number }}
+              </option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
+          </div>
         </div>
-      </div>
 
-      <!-- Loan Amount -->
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Loan Amount <span class="text-red-400">*</span>
-        </label>
-        <p class="text-white/50 text-xs mb-2" *ngIf="maximumLoanAmount">
-          <i class="fas fa-info-circle mr-1"></i>
-          Maximum amount: Rs. {{ maximumLoanAmount | number }}
-        </p>
-        <div class="relative">
-          <span class="absolute left-4 top-1/2 transform -translate-y-1/2">Rs.</span>
-          <input
-            type="number"
-            class="glass-input pl-14"
-            placeholder="Enter loan amount"
-            [(ngModel)]="loanAmount"
-            name="loanAmount"
-            (ngModelChange)="checkLoanAmount()"
-          />
-        </div>
-      </div>
-
-      <!-- Loan Package Selection -->
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Select Loan Payment Plan <span class="text-red-400">*</span>
-        </label>
-        <div class="relative">
-          <i class="fas fa-calendar-alt absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
-          <select
-            class="glass-input pl-12 appearance-none cursor-pointer"
-            [(ngModel)]="selectedLoan"
-            (ngModelChange)="onLoanSelected()"
-            name="selectedPackage"
-          >
-            <option value="" disabled selected>Select a payment plan</option>
-            <option *ngFor="let package of packageArray" [value]="package.index">
-              Package {{ package.index }} | Duration: {{ package.period }} | Interest Rate: {{ package.interest }}%
-            </option>
-          </select>
-          <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
-        </div>
-      </div>
-
-      <!-- Loan Type Selection -->
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-3">
-          Select Loan Type <span class="text-red-400">*</span>
-        </label>
-        <div class="flex gap-4">
-          <label class="flex-1 cursor-pointer">
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-money-bill-wave mr-2"></i>Loan Amount <span class="text-red-300">*</span>
+          </label>
+          <p class="text-white/50 text-xs mb-2" *ngIf="maximumLoanAmount">
+            <i class="fas fa-info-circle mr-1"></i>
+            Maximum amount: Rs. {{ maximumLoanAmount | number }}
+          </p>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
             <input
-              type="radio"
-              [(ngModel)]="selectedLoanType"
-              name="loanType"
-              value="Personal"
-              class="hidden peer"
+              type="number"
+              class="glass-input pl-14"
+              placeholder="Enter loan amount"
+              [(ngModel)]="loanAmount"
+              name="loanAmount"
+              min="1"
+              (ngModelChange)="checkLoanAmount()"
             />
-            <div class="p-4 rounded-xl backdrop-blur-md bg-white/5 border-2 border-white/10 transition-all duration-300 peer-checked:border-glass-purple peer-checked:bg-white/10">
-              <div class="flex items-center gap-3">
-                <i class="fas fa-user text-glass-purple text-2xl"></i>
-                <div>
-                  <div class="text-white font-semibold">Personal</div>
-                  <div class="text-white/60 text-xs">For personal use</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-calendar-alt mr-2"></i>Select Loan Payment Plan <span class="text-red-300">*</span>
+          </label>
+          <div class="relative">
+            <i class="fas fa-calendar-alt absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/50"></i>
+            <select
+              class="glass-input pl-12 appearance-none cursor-pointer"
+              [(ngModel)]="selectedLoan"
+              (ngModelChange)="onLoanSelected()"
+              name="selectedPackage"
+            >
+              <option value="" disabled selected>Select a payment plan</option>
+              <option *ngFor="let package of packageArray" [value]="package.index">
+                Package {{ package.index }} | Duration: {{ package.period }} | Interest Rate: {{ package.interest }}%
+              </option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
+          </div>
+        </div>
+
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-tags mr-2"></i>Select Loan Type <span class="text-red-300">*</span>
+          </label>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label class="cursor-pointer">
+              <input
+                type="radio"
+                [(ngModel)]="selectedLoanType"
+                name="loanType"
+                value="Personal"
+                class="hidden peer"
+              />
+              <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-4 transition-all duration-300 peer-checked:border-glass-purple peer-checked:bg-white/[0.12]">
+                <div class="flex items-center gap-3">
+                  <i class="fas fa-user text-glass-purple text-2xl"></i>
+                  <div>
+                    <div class="text-white font-semibold">Personal</div>
+                    <div class="text-white/60 text-xs">For personal use</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </label>
+            </label>
 
-          <label class="flex-1 cursor-pointer">
-            <input
-              type="radio"
-              [(ngModel)]="selectedLoanType"
-              name="loanType"
-              value="Business"
-              class="hidden peer"
-            />
-            <div class="p-4 rounded-xl backdrop-blur-md bg-white/5 border-2 border-white/10 transition-all duration-300 peer-checked:border-glass-cyan peer-checked:bg-white/10">
-              <div class="flex items-center gap-3">
-                <i class="fas fa-briefcase text-glass-cyan text-2xl"></i>
-                <div>
-                  <div class="text-white font-semibold">Business</div>
-                  <div class="text-white/60 text-xs">For business purposes</div>
+            <label class="cursor-pointer">
+              <input
+                type="radio"
+                [(ngModel)]="selectedLoanType"
+                name="loanType"
+                value="Business"
+                class="hidden peer"
+              />
+              <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-4 transition-all duration-300 peer-checked:border-glass-cyan peer-checked:bg-white/[0.12]">
+                <div class="flex items-center gap-3">
+                  <i class="fas fa-briefcase text-glass-cyan text-2xl"></i>
+                  <div>
+                    <div class="text-white font-semibold">Business</div>
+                    <div class="text-white/60 text-xs">For business purposes</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </label>
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- Submit Button -->
       <button
         type="button"
-        class="glass-button w-full md:w-auto justify-center"
+        class="glass-button w-full justify-center md:w-auto"
         (click)="proceed()"
         [disabled]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType"
         [class.opacity-50]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType"
