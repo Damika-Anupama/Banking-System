@@ -3,170 +3,127 @@
   <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
     <div>
       <h1 class="demo-title">Welcome back, {{ username }}! 👋</h1>
-      <p class="demo-subtitle">Manage your accounts, track balances, and continue key banking actions from one clean workspace.</p>
+      <p class="demo-subtitle">A clean overview of balances, accounts, and the next banking actions customers care about most.</p>
     </div>
-    <a routerLink="/dashboard/transaction" class="glass-button w-fit"><i class="fas fa-paper-plane mr-2"></i>Start transfer</a>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <a routerLink="/dashboard/transaction" class="glass-button w-fit"><i class="fas fa-paper-plane mr-2"></i>Transfer money</a>
+      <a routerLink="/dashboard/loan" class="demo-action-card min-w-[12rem]"><i class="fas fa-hand-holding-dollar text-emerald-200"></i><span><strong class="block text-white">Apply loan</strong><span class="text-sm text-slate-300">Start request</span></span></a>
+    </div>
   </div>
 </section>
-<section class="demo-kpi-grid mb-8">
-  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Available balance</p><h2 class="mt-2 text-3xl font-black text-white">Rs. 1.24M</h2><p class="mt-1 text-xs text-emerald-100">Primary savings account</p></div><div class="demo-kpi-icon"><i class="fas fa-wallet"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Active accounts</p><h2 class="mt-2 text-3xl font-black text-white">3</h2><p class="mt-1 text-xs text-blue-100">Savings, current, fixed deposit</p></div><div class="demo-kpi-icon"><i class="fas fa-layer-group"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-violet"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">This month inflow</p><h2 class="mt-2 text-3xl font-black text-white">Rs. 249K</h2><p class="mt-1 text-xs text-violet-100">Salary + client transfers</p></div><div class="demo-kpi-icon"><i class="fas fa-arrow-trend-up"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next action</p><h2 class="mt-2 text-xl font-black text-white">Review spending</h2><p class="mt-1 text-xs text-amber-100">Check latest transfers</p></div><div class="demo-kpi-icon"><i class="fas fa-bolt"></i></div></div></article>
+
+<section class="grid grid-cols-1 gap-5 mb-8 xl:grid-cols-3">
+  <article class="demo-section-card xl:col-span-2">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-100">Primary selected account</p>
+        <h2 class="mt-2 text-4xl font-black text-white">Rs. {{ balance | number }}</h2>
+        <p class="mt-2 text-sm text-slate-300">{{ selectedSavingLabel }} • {{ maskedAccountNumber }} • {{ selectedBranch }}</p>
+      </div>
+      <span class="demo-status-pill demo-status-success"><i class="fas fa-shield-check"></i> Ready for transactions</span>
+    </div>
+
+    <div class="mt-6 grid gap-4 md:grid-cols-3">
+      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+        <p class="text-xs text-slate-400">Total portfolio balance</p>
+        <strong class="mt-2 block text-2xl text-emerald-100">Rs. {{ totalBalance | number }}</strong>
+        <p class="mt-1 text-xs text-slate-400">Across {{ accountCount }} linked accounts</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+        <p class="text-xs text-slate-400">Account category</p>
+        <strong class="mt-2 block text-2xl text-cyan-100">{{ selectedAccountTypeLabel }}</strong>
+        <p class="mt-1 text-xs text-slate-400">Selected account profile</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+        <p class="text-xs text-slate-400">Access status</p>
+        <strong class="mt-2 block text-2xl text-blue-100">{{ userType || 'Customer' }}</strong>
+        <p class="mt-1 text-xs text-slate-400">Secure customer workspace</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="demo-section-card">
+    <h2 class="demo-section-title">Next best actions</h2>
+    <p class="demo-section-helper">Common customer tasks are grouped together for a smoother client demo.</p>
+    <div class="mt-5 space-y-3">
+      <a routerLink="/dashboard/transaction" class="demo-action-card"><i class="fas fa-paper-plane text-cyan-200"></i><span><strong class="block text-white">Transfer money</strong><span class="text-sm text-slate-300">Send funds and review history</span></span></a>
+      <a routerLink="/dashboard/fixed-deposit" class="demo-action-card"><i class="fas fa-vault text-amber-200"></i><span><strong class="block text-white">Grow savings</strong><span class="text-sm text-slate-300">Open or review fixed deposits</span></span></a>
+      <a routerLink="/dashboard/loan" class="demo-action-card"><i class="fas fa-hand-holding-dollar text-emerald-200"></i><span><strong class="block text-white">Loan services</strong><span class="text-sm text-slate-300">Explore application workflow</span></span></a>
+    </div>
+  </article>
 </section>
-<section class="grid grid-cols-1 gap-5 xl:grid-cols-3 mb-8">
+
+<section class="grid grid-cols-1 gap-5 mb-8 xl:grid-cols-3">
   <article class="demo-section-card xl:col-span-2">
     <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-      <div><h2 class="demo-section-title">Balance and spending snapshot</h2><p class="demo-section-helper">A viewer-friendly summary of where the customer stands today.</p></div>
-      <span class="demo-status-pill demo-status-info"><i class="fas fa-circle-info"></i> Demo account</span>
-    </div>
-    <div class="mt-5 grid gap-4 md:grid-cols-3">
-      <div class="rounded-2xl bg-white/[0.06] p-4"><p class="text-xs text-slate-400">Income</p><strong class="text-2xl text-emerald-100">Rs. 249K</strong><p class="mt-1 text-xs text-slate-400">Salary + transfers</p></div>
-      <div class="rounded-2xl bg-white/[0.06] p-4"><p class="text-xs text-slate-400">Payments</p><strong class="text-2xl text-rose-100">Rs. 70K</strong><p class="mt-1 text-xs text-slate-400">Bills + vendors</p></div>
-      <div class="rounded-2xl bg-white/[0.06] p-4"><p class="text-xs text-slate-400">Savings rate</p><strong class="text-2xl text-cyan-100">72%</strong><p class="mt-1 text-xs text-slate-400">Healthy cashflow</p></div>
-    </div>
-    <div class="mt-5 flex h-28 items-end gap-2 rounded-2xl bg-slate-950/35 p-4">
-      <div class="flex-1 rounded-t-lg bg-cyan-300/60" style="height:35%"></div><div class="flex-1 rounded-t-lg bg-cyan-300/60" style="height:48%"></div><div class="flex-1 rounded-t-lg bg-blue-300/70" style="height:44%"></div><div class="flex-1 rounded-t-lg bg-blue-300/70" style="height:63%"></div><div class="flex-1 rounded-t-lg bg-emerald-300/80" style="height:78%"></div><div class="flex-1 rounded-t-lg bg-emerald-300/80" style="height:68%"></div>
-    </div>
-  </article>
-  <article class="demo-section-card">
-    <h2 class="demo-section-title">Quick actions</h2>
-    <p class="demo-section-helper">Make the demo immediately usable.</p>
-    <div class="mt-5 space-y-3">
-      <a routerLink="/dashboard/transaction" class="demo-action-card"><i class="fas fa-paper-plane text-cyan-200"></i><span><strong class="block text-white">Transfer money</strong><span class="text-sm text-slate-300">Send and review history</span></span></a>
-      <a routerLink="/dashboard/fixed-deposit" class="demo-action-card"><i class="fas fa-vault text-amber-200"></i><span><strong class="block text-white">Fixed deposits</strong><span class="text-sm text-slate-300">View savings products</span></span></a>
-      <a routerLink="/dashboard/loan" class="demo-action-card"><i class="fas fa-hand-holding-dollar text-emerald-200"></i><span><strong class="block text-white">Loan options</strong><span class="text-sm text-slate-300">Explore loan workflow</span></span></a>
-    </div>
-  </article>
-</section>
-<!-- Stat Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-slide-up">
-  <!-- Welcome Card -->
-  <div class="stat-card bg-gradient-to-br from-glass-purple/30 to-glass-blue/30 animate-scale-in">
-    <div class="flex items-center justify-between">
       <div>
-        <p class="text-white/70 text-sm mb-2">Account Type</p>
-        <h3 class="text-3xl font-bold mb-3">{{ userType }}</h3>
-        <span class="glass-badge">
-          <i class="fas fa-user mr-1"></i> Active
-        </span>
+        <h2 class="demo-section-title">Linked accounts</h2>
+        <p class="demo-section-helper">Choose an account to update the balance overview above.</p>
       </div>
-      <div class="text-6xl text-white/20">
-        <i class="fas fa-user-circle"></i>
+      <div class="relative">
+        <input type="text" name="table_search" placeholder="Search accounts..." [(ngModel)]="searchTerm" class="glass-input pl-10 w-full md:w-64" />
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
       </div>
     </div>
-  </div>
 
-  <!-- Balance Card -->
-  <div class="stat-card bg-gradient-to-br from-glass-pink/30 to-glass-orange/30 animate-scale-in" style="animation-delay: 0.1s;">
-    <div class="flex items-center justify-between">
-      <div>
-        <p class="text-white/70 text-sm mb-2">Current Balance</p>
-        <h3 class="text-3xl font-bold mb-3">Rs. {{ balance | number }}</h3>
-        <span class="glass-badge bg-gradient-to-r from-glass-orange/80 to-glass-pink/80">
-          <i class="fas fa-wallet mr-1"></i> {{ accountNumber }}
-        </span>
-      </div>
-      <div class="text-6xl text-white/20">
-        <i class="fas fa-money-bill-wave"></i>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Accounts Table -->
-<div class="glass-card p-6 animate-slide-up" style="animation-delay: 0.2s;">
-  <!-- Table Header -->
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-      <h2 class="text-2xl font-bold mb-1">All Accounts</h2>
-      <p class="text-white/60 text-sm">Select an account to view details</p>
-    </div>
-
-    <!-- Search Bar -->
-    <div class="relative">
-      <input
-        type="text"
-        name="table_search"
-        placeholder="Search accounts..."
-        [(ngModel)]="searchTerm"
-        class="glass-input pl-10 w-full md:w-64"
-      />
-      <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
-    </div>
-  </div>
-
-  <!-- Table -->
-  <div class="overflow-x-auto">
-    <table class="w-full">
-      <thead>
-        <tr>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
-            <i class="fas fa-check-circle mr-2"></i>Select
-          </th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Saving Type</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Account Number</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Account Type</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Branch</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let account of accounts ? accounts : [] | filterPipe:searchTerm"
-          (click)="updateSmallBox(account); selectedAccount = account"
-          class="cursor-pointer transition-all duration-300 hover:bg-white/5"
-          [ngClass]="{'bg-white/10': selectedAccount == account}">
-          <td class="px-6 py-4">
-            <i class="text-glass-cyan text-xl" [ngClass]="{'fas': selectedAccount == account, 'far': selectedAccount != account, 'fa-check-circle': true}"></i>
-          </td>
-          <td class="px-6 py-4">
-            <span
-              class="glass-badge bg-gradient-to-r"
-              [ngClass]="{
-                'from-glass-purple/80 to-glass-blue/80': account.saving_type == 'CURRENT',
-                'from-glass-pink/80 to-glass-orange/80': account.saving_type == 'SAVING'
-              }">
-              <i class="fas mr-1" [ngClass]="{'fa-money-check-alt': account.saving_type == 'CURRENT', 'fa-piggy-bank': account.saving_type == 'SAVING'}"></i>
-              {{ account.saving_type == 'CURRENT' ? 'Current' : 'Saving' }}
-            </span>
-          </td>
-          <td class="px-6 py-4 font-mono text-white/90">
-            {{ '*'.repeat(account.account_id.toString().length - 2) }}{{ account.account_id.toString().substr(-2) }}
-          </td>
-          <td class="px-6 py-4">
-            <span
-              class="glass-badge bg-gradient-to-r"
-              [ngClass]="{
+    <div class="demo-table-shell mt-5 overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Account</th>
+            <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Type</th>
+            <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Branch</th>
+            <th class="text-right px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let account of filteredAccounts; trackBy: trackByAccountId" (click)="updateSmallBox(account)" class="cursor-pointer transition-all duration-300 hover:bg-white/5" [ngClass]="{'bg-cyan-300/10': selectedAccount === account}">
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-3">
+                <i class="text-xl text-cyan-200" [ngClass]="selectedAccount === account ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                <div>
+                  <p class="font-mono text-sm text-white/90">{{ maskAccountId(account.account_id) }}</p>
+                  <p class="text-xs text-slate-400">{{ formatSavingType(account.saving_type) }} account</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-5 py-4">
+              <span class="glass-badge bg-gradient-to-r" [ngClass]="{
                 'from-glass-emerald/80 to-glass-cyan/80': account.account_type == 'ORGANIZATION',
                 'from-glass-orange/80 to-glass-pink/80': account.account_type == 'PERSONAL'
               }">
-              <i class="fas mr-1" [ngClass]="{'fa-building': account.account_type == 'ORGANIZATION', 'fa-user': account.account_type == 'PERSONAL'}"></i>
-              {{ account.account_type == 'ORGANIZATION' ? 'Organization' : 'Personal' }}
-            </span>
-          </td>
-          <td class="px-6 py-4 text-white/90">
-            <i class="fas fa-map-marker-alt mr-2 text-glass-cyan"></i>
-            {{ account.branch_name }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+                {{ formatAccountType(account.account_type) }}
+              </span>
+            </td>
+            <td class="px-5 py-4 text-white/80"><i class="fas fa-map-marker-alt mr-2 text-glass-cyan"></i>{{ account.branch_name }}</td>
+            <td class="px-5 py-4 text-right font-bold text-white">Rs. {{ amountOf(account) | number }}</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- Empty State -->
-    <div *ngIf="!accounts || accounts.length === 0" class="text-center py-12">
-      <div class="text-6xl text-white/20 mb-4">
-        <i class="fas fa-inbox"></i>
+      <div *ngIf="filteredAccounts.length === 0" class="text-center py-12">
+        <div class="text-6xl text-white/20 mb-4"><i class="fas fa-inbox"></i></div>
+        <p class="text-white/60">No accounts match your search.</p>
       </div>
-      <p class="text-white/60">No accounts found</p>
     </div>
-  </div>
-</div>
+  </article>
 
-<!-- Chart Section (Optional - if you want to add the chart back) -->
-<div class="glass-card p-6 mt-8 animate-slide-up" style="animation-delay: 0.3s;" *ngIf="false">
-  <h2 class="text-2xl font-bold text-white mb-6">
-    <i class="fas fa-chart-bar mr-2 text-glass-purple"></i>
-    Monthly Expenses
-  </h2>
-  <canvas id="lineChart"></canvas>
-</div>
+  <article class="demo-section-card">
+    <h2 class="demo-section-title">Money movement snapshot</h2>
+    <p class="demo-section-helper">Simple visual context for customer balances.</p>
+    <div class="mt-5 space-y-4">
+      <div class="rounded-2xl bg-white/[0.06] p-4">
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Income</span><strong class="text-emerald-100">Rs. 249K</strong></div>
+        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-emerald-300" style="width: 82%"></div></div>
+      </div>
+      <div class="rounded-2xl bg-white/[0.06] p-4">
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Payments</span><strong class="text-rose-100">Rs. 70K</strong></div>
+        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-rose-300" style="width: 34%"></div></div>
+      </div>
+      <div class="rounded-2xl bg-white/[0.06] p-4">
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Savings rate</span><strong class="text-cyan-100">72%</strong></div>
+        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-cyan-300" style="width: 72%"></div></div>
+      </div>
+    </div>
+  </article>
+</section>

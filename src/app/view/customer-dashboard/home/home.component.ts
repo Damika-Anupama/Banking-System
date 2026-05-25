@@ -27,6 +27,47 @@ export class HomeComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   private chartInstance: Chart | null = null;
 
+  get accountCount(): number {
+    return this.accounts?.length || 0;
+  }
+
+  get totalBalance(): number {
+    return (this.accounts || []).reduce((sum, account) => sum + this.amountOf(account), 0);
+  }
+
+  get filteredAccounts(): any[] {
+    const accounts = this.accounts || [];
+    const query = this.searchTerm.trim().toLowerCase();
+
+    if (!query) {
+      return accounts;
+    }
+
+    return accounts.filter(account => [
+      account.account_id,
+      account.account_type,
+      account.saving_type,
+      account.branch_name,
+      account.amount
+    ].some(value => String(value || '').toLowerCase().includes(query)));
+  }
+
+  get selectedSavingLabel(): string {
+    return this.formatSavingType(this.selectedAccount?.saving_type);
+  }
+
+  get selectedAccountTypeLabel(): string {
+    return this.formatAccountType(this.selectedAccount?.account_type);
+  }
+
+  get selectedBranch(): string {
+    return this.selectedAccount?.branch_name || 'No branch selected';
+  }
+
+  get maskedAccountNumber(): string {
+    return this.maskAccountId(this.accountNumber);
+  }
+
   constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit() {
@@ -192,6 +233,32 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  amountOf(account: any): number {
+    const amount = Number(account?.amount || 0);
+    return Number.isFinite(amount) ? amount : 0;
+  }
+
+  formatSavingType(value: string | null | undefined): string {
+    return value === 'CURRENT' ? 'Current' : value === 'SAVING' ? 'Saving' : 'Account';
+  }
+
+  formatAccountType(value: string | null | undefined): string {
+    return value === 'ORGANIZATION' ? 'Organization' : value === 'PERSONAL' ? 'Personal' : 'Customer';
+  }
+
+  maskAccountId(value: string | number | null | undefined): string {
+    const accountId = String(value || 'N/A');
+    if (accountId === 'N/A' || accountId.length <= 4) {
+      return accountId;
+    }
+
+    return `${'*'.repeat(Math.max(accountId.length - 4, 0))}${accountId.slice(-4)}`;
+  }
+
+  trackByAccountId(_index: number, account: any): string {
+    return String(account?.account_id || _index);
+  }
+
   updateSmallBox(account: any) {
     // Null check for account
     if (!account) {
@@ -215,3 +282,4 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 }
+
