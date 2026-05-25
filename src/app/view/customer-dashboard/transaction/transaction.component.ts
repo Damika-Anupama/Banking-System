@@ -32,7 +32,92 @@ export class TransactionComponent implements OnInit, OnDestroy {
   dailyTransferLimit = 500000;
   transferFee = 0;
   errorMessage = '';
+  transactionSearchTerm = '';
+  transactionDirectionFilter: 'all' | 'in' | 'out' = 'all';
+  transactionStatusFilter: 'all' | 'posted' | 'review' = 'all';
   private subscriptions: Subscription[] = [];
+
+  get selectedSavingLabel(): string {
+    return this.formatSavingType(this.selectedAccount?.saving_type || this.saving_type);
+  }
+
+  get selectedAccountTypeLabel(): string {
+    return this.formatAccountType(this.selectedAccount?.account_type || this.account_type);
+  }
+
+  get selectedBranch(): string {
+    return this.selectedAccount?.branch_name || this.branch || 'No branch selected';
+  }
+
+  get maskedAccountNumber(): string {
+    return this.maskAccountId(this.account_id);
+  }
+
+  get availableBalance(): number {
+    return this.amountOf({ amount: this.balance });
+  }
+
+  get transferAmountNumber(): number {
+    const amount = Number(this.transfer_amount || 0);
+    return Number.isFinite(amount) ? amount : 0;
+  }
+
+  get remainingLimit(): number {
+    return Math.max(this.dailyTransferLimit - this.totalOutgoing, 0);
+  }
+
+  get transferReady(): boolean {
+    return Boolean(this.account_id && this.to_account && this.transfer_amount && this.sender_remarks && this.beneficiary_remarks && !this.isProcessingTransaction);
+  }
+
+  get filteredTransactions(): any[] {
+    const rows = this.transactions || [];
+    const query = this.transactionSearchTerm.trim().toLowerCase();
+
+    return rows.filter((transaction, index) => {
+      const direction = this.transactionDirection(transaction);
+      const matchesDirection = this.transactionDirectionFilter === 'all'
+        || (this.transactionDirectionFilter === 'in' && direction === 'Incoming')
+        || (this.transactionDirectionFilter === 'out' && direction === 'Outgoing');
+      const matchesStatus = this.transactionStatusFilter === 'all' || this.transactionAuditState(transaction).toLowerCase().includes(this.transactionStatusFilter);
+      const searchable = [
+        this.transactionReference(transaction, index),
+        transaction?.type,
+        transaction?.sender_remarks,
+        transaction?.beneficiary_remarks,
+        transaction?.amount,
+        transaction?.date,
+        direction,
+        this.transactionAuditState(transaction)
+      ].join(' ').toLowerCase();
+
+      return matchesDirection && matchesStatus && (!query || searchable.includes(query));
+    });
+  }
+
+  get totalIncoming(): number {
+    return (this.transactions || [])
+      .filter(transaction => this.transactionDirection(transaction) === 'Incoming')
+      .reduce((sum, transaction) => sum + Number(transaction?.amount || 0), 0);
+  }
+
+  get totalOutgoing(): number {
+    return (this.transactions || [])
+      .filter(transaction => this.transactionDirection(transaction) === 'Outgoing')
+      .reduce((sum, transaction) => sum + Number(transaction?.amount || 0), 0);
+  }
+
+  get netMovement(): number {
+    return this.totalIncoming - this.totalOutgoing;
+  }
+
+  get latestTransactionDate(): Date | null {
+    const latest = (this.transactions || [])
+      .map(transaction => new Date(transaction?.date).getTime())
+      .filter(timestamp => Number.isFinite(timestamp))
+      .sort((a, b) => b - a)[0];
+    return latest ? new Date(latest) : null;
+  }
 
   constructor(private router: Router, private transactionService: TransactionService, private cdr: ChangeDetectorRef) {}
 
@@ -59,7 +144,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         }
 
         try {
-          this.accounts = data.data;
+          this.accounts = [...data.data];
 
           // Safe access to first account
           if (data.data[0]) {
@@ -205,8 +290,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const normalizedToAccount = this.to_account.trim().toUpperCase();
+    this.to_account = normalizedToAccount;
+
     // Check if transferring to same account
-    if (this.account_id === this.to_account) {
+    if (this.account_id === normalizedToAccount) {
       Swal.fire({
         icon: 'error',
         title: 'Invalid Transfer',
@@ -222,10 +310,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
       html: `
         <div style="text-align:left;line-height:1.8">
           <strong>Reference:</strong> ${reference}<br>
-          <strong>From account:</strong> ${this.account_id}<br>
-          <strong>To account:</strong> ${this.to_account}<br>
+          <strong>From account:</strong> ${this.account_id} (${this.selectedSavingLabel})<br>
+          <strong>To account:</strong> ${normalizedToAccount}<br>
           <strong>Amount:</strong> Rs. ${amount.toLocaleString()}<br>
-          <strong>Remarks:</strong> ${this.sender_remarks || 'Not provided'}
+          <strong>Fee:</strong> Rs. ${this.transferFee.toLocaleString()}<br>
+          <strong>Purpose:</strong> ${this.sender_remarks || 'Not provided'}
         </div>
       `,
       showCancelButton: true,
@@ -250,8 +339,25 @@ export class TransactionComponent implements OnInit, OnDestroy {
       next: (data) => {
         try {
           const destinationAccount = this.to_account;
-          // Update balance
-          this.balance = String(Number(this.balance) - Number(this.transfer_amount));
+          const newBalance = Number(this.balance) - Number(this.transfer_amount);
+          this.balance = String(newBalance);
+          if (this.selectedAccount) {
+            this.selectedAccount.amount = String(newBalance);
+          }
+          this.accounts = (this.accounts || []).map(account => account.account_id === this.account_id ? { ...account, amount: String(newBalance) } : account);
+          this.transactions = [
+            {
+              date: new Date().toISOString(),
+              type: 'Customer Transfer',
+              sender_remarks: this.sender_remarks,
+              beneficiary_remarks: this.beneficiary_remarks,
+              amount,
+              status: 'down',
+              audit_status: 'Posted',
+              reference
+            },
+            ...(this.transactions || [])
+          ];
 
           // Clear form
           this.transfer_amount = '';
@@ -267,8 +373,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
             confirmButtonText: 'Done'
           });
 
-          // Reload transactions
-          if (this.account_id) {
+          if (this.account_id && localStorage.getItem('demoMode') !== 'true') {
             this.loadDataToTable(this.account_id);
           }
         } catch (error) {
@@ -331,37 +436,104 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  amountOf(account: any): number {
+    const amount = Number(account?.amount || 0);
+    return Number.isFinite(amount) ? amount : 0;
+  }
+
+  formatSavingType(value: string | null | undefined): string {
+    return value === 'CURRENT' ? 'Current' : value === 'SAVING' ? 'Saving' : 'Account';
+  }
+
+  formatAccountType(value: string | null | undefined): string {
+    return value === 'ORGANIZATION' ? 'Organization' : value === 'PERSONAL' ? 'Personal' : 'Customer';
+  }
+
+  maskAccountId(value: string | number | null | undefined): string {
+    const accountId = String(value || 'N/A');
+    if (accountId === 'N/A' || accountId.length <= 4) {
+      return accountId;
+    }
+
+    return `${'*'.repeat(Math.max(accountId.length - 4, 0))}${accountId.slice(-4)}`;
+  }
+
+  accountStatus(account: any): string {
+    return account === this.selectedAccount ? 'Selected' : 'Active';
+  }
+
+  trackByAccountId(_index: number, account: any): string {
+    return String(account?.account_id || _index);
+  }
+
+  trackByTransaction(index: number, transaction: any): string {
+    return transaction?.reference || this.transactionReference(transaction, index);
+  }
+
   transactionReference(transaction: any, index: number = 0): string {
+    if (transaction?.reference) {
+      return transaction.reference;
+    }
     const rawDate = transaction?.date ? new Date(transaction.date).getTime().toString().slice(-6) : '000000';
-    return `TXN-${rawDate}-${String(index + 1).padStart(2, '0')}`;
+    const accountSuffix = String(this.account_id || 'ACCT').slice(-4);
+    return `TXN-${accountSuffix}-${rawDate}-${String(index + 1).padStart(2, '0')}`;
+  }
+
+  transactionDirection(transaction: any): 'Incoming' | 'Outgoing' {
+    return transaction?.status === 'up' ? 'Incoming' : 'Outgoing';
+  }
+
+  transactionAuditState(transaction: any): string {
+    return transaction?.audit_status || transaction?.ledger_status || 'Posted';
+  }
+
+  transactionCounterparty(transaction: any): string {
+    if (transaction?.to_account) {
+      return transaction.to_account;
+    }
+    if (transaction?.from_account) {
+      return transaction.from_account;
+    }
+    return this.transactionDirection(transaction) === 'Incoming' ? 'External sender' : 'Beneficiary account';
   }
 
   downloadReceipt(transaction: any, index: number): void {
     const reference = this.transactionReference(transaction, index);
     Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
       icon: 'info',
-      title: 'Receipt ready',
-      html: `Receipt <strong>${reference}</strong><br>Status: Posted<br>Amount: Rs. ${Number(transaction?.amount || 0).toLocaleString()}`,
+      title: 'Transaction receipt',
+      html: `
+        <div class="demo-detail-grid">
+          <div class="demo-detail-row"><span>Reference</span><strong>${reference}</strong></div>
+          <div class="demo-detail-row"><span>Ledger status</span><strong>${this.transactionAuditState(transaction)}</strong></div>
+          <div class="demo-detail-row"><span>Amount</span><strong>Rs. ${Number(transaction?.amount || 0).toLocaleString()}</strong></div>
+          <div class="demo-detail-row"><span>Source account</span><strong>${this.maskAccountId(this.account_id)}</strong></div>
+          <div class="demo-detail-row"><span>Generated</span><strong>${new Date().toLocaleString()}</strong></div>
+        </div>
+      `,
       confirmButtonText: 'Close'
     });
   }
 
-  showTransactionDetails(transaction: any): void {
+  showTransactionDetails(transaction: any, index: number = 0): void {
     if (!transaction) {
       return;
     }
 
     Swal.fire({
       customClass: { popup: 'demo-detail-modal' },
-      title: this.transactionReference(transaction),
+      title: this.transactionReference(transaction, index),
       html: `
         <div class="demo-detail-grid">
-          <div class="demo-detail-row"><span>Type</span><strong>${transaction.type || 'Transaction'}</strong></div>
-          <div class="demo-detail-row"><span>Date</span><strong>${transaction.date ? new Date(transaction.date).toLocaleDateString() : 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Transaction type</span><strong>${transaction.type || 'Transaction'}</strong></div>
+          <div class="demo-detail-row"><span>Value date</span><strong>${transaction.date ? new Date(transaction.date).toLocaleString() : 'N/A'}</strong></div>
           <div class="demo-detail-row"><span>Amount</span><strong>Rs. ${Number(transaction.amount || 0).toLocaleString()}</strong></div>
-          <div class="demo-detail-row"><span>Direction</span><strong>${transaction.status === 'up' ? 'Incoming' : 'Outgoing'}</strong></div>
-          <div class="demo-detail-row"><span>Remarks</span><strong>${transaction.sender_remarks || 'No remarks'}</strong></div>
-          <div class="demo-detail-row"><span>Audit state</span><strong>Posted to ledger</strong></div>
+          <div class="demo-detail-row"><span>Direction</span><strong>${this.transactionDirection(transaction)}</strong></div>
+          <div class="demo-detail-row"><span>Counterparty</span><strong>${this.transactionCounterparty(transaction)}</strong></div>
+          <div class="demo-detail-row"><span>Purpose</span><strong>${transaction.sender_remarks || 'No purpose captured'}</strong></div>
+          <div class="demo-detail-row"><span>Beneficiary note</span><strong>${transaction.beneficiary_remarks || 'No beneficiary note'}</strong></div>
+          <div class="demo-detail-row"><span>Audit state</span><strong>${this.transactionAuditState(transaction)}</strong></div>
         </div>
       `,
       icon: transaction.status === 'up' ? 'success' : 'info',
