@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { DEMO_SAVING_ACCOUNTS } from 'src/app/shared/demo-banking-fixtures';
+import { DEMO_SAVING_ACCOUNTS, createDemoFixedDeposit } from 'src/app/shared/demo-banking-fixtures';
 
 @Injectable({
   providedIn: 'root',
@@ -68,6 +68,13 @@ export class FixedDepositService {
       rate_per_annum: interest,
       amount: amount,
     };
+
+    if (localStorage.getItem('demoMode') === 'true') {
+      const created = createDemoFixedDeposit(body);
+      const existing = JSON.parse(localStorage.getItem('demoFixedDeposits') || '[]');
+      localStorage.setItem('demoFixedDeposits', JSON.stringify([...existing, created]));
+      return of({ message: 'Fixed deposit created successfully!', data: created });
+    }
 
     return this.http.post<any>(environment.baseUrl + `/api/v1/fd`, body)
       .pipe(

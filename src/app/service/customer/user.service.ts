@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse} fr
 import {Observable, of, throwError} from 'rxjs';
 import {catchError, retry, timeout} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { DEMO_ACCOUNTS } from 'src/app/shared/demo-banking-fixtures';
+import { DEMO_ACCOUNTS, DEMO_PROFILE } from 'src/app/shared/demo-banking-fixtures';
 
 
 @Injectable({
@@ -238,6 +238,12 @@ export class UserService {
       return throwError(() => new Error('User ID is required'));
     }
 
+    if (localStorage.getItem('demoMode') === 'true') {
+      const storedProfile = localStorage.getItem('demoProfile');
+      const profile = storedProfile ? JSON.parse(storedProfile) : DEMO_PROFILE;
+      return of({ data: [profile] });
+    }
+
     return this.http.get(environment.baseUrl + `/api/v1/user/${userIdStr}`).pipe(
       timeout(30000),
       retry(2),
@@ -274,6 +280,17 @@ export class UserService {
       gender: userData.gender || '',
       password: userData.password || '' // Optional - only if changing password
     };
+
+    if (localStorage.getItem('demoMode') === 'true') {
+      const updatedProfile = {
+        ...DEMO_PROFILE,
+        user_id: userIdStr,
+        ...body,
+        contact_no: body.contact_no
+      };
+      localStorage.setItem('demoProfile', JSON.stringify(updatedProfile));
+      return of({ message: 'Demo profile updated successfully', data: [updatedProfile] });
+    }
 
     return this.http.put(environment.baseUrl + `/api/v1/user/${userIdStr}`, body).pipe(
       timeout(30000),

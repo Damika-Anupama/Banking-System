@@ -30,6 +30,32 @@ export interface DemoLoanApplication {
   purpose: string;
 }
 
+export interface DemoProfile {
+  user_id: string;
+  username: string;
+  fullname: string;
+  gender: string;
+  dob: string;
+  address: string;
+  email: string;
+  contact_no: string;
+  kyc_status: string;
+  last_login: string;
+}
+
+export const DEMO_PROFILE: DemoProfile = {
+  user_id: 'CUS-1001',
+  username: 'amara.perera',
+  fullname: 'Amara Perera',
+  gender: 'FEMALE',
+  dob: '1991-04-18',
+  address: 'No. 24, Marine Drive, Colombo 03',
+  email: 'amara@banking.demo',
+  contact_no: '+94 77 123 4567',
+  kyc_status: 'Verified',
+  last_login: '2026-05-25T08:45:00'
+};
+
 export const DEMO_ACCOUNTS: DemoAccount[] = [
   { account_id: 'ACC-492810', account_type: 'PERSONAL', saving_type: 'SAVING', branch_name: 'Colombo Main Branch', amount: '1245800' },
   { account_id: 'ACC-492811', account_type: 'PERSONAL', saving_type: 'CURRENT', branch_name: 'Colombo Main Branch', amount: '485250' },
@@ -75,7 +101,27 @@ export const DEMO_FIXED_DEPOSITS = [
   { fd_id: 7002, saving_account_id: 492812, duration: 'ONE_YEAR', rate_per_annum: 14, fd_opening_date: '2026-04-04', amount: 900000 }
 ];
 
+export const createDemoFixedDeposit = (payload: { saving_account_id: number | string; duration: string; rate_per_annum: string | number; amount: number }) => ({
+  fd_id: Math.floor(8000 + Math.random() * 900),
+  saving_account_id: Number(payload.saving_account_id),
+  duration: payload.duration,
+  rate_per_annum: Number(payload.rate_per_annum),
+  fd_opening_date: new Date().toISOString().slice(0, 10),
+  amount: Number(payload.amount),
+  status: 'Pending confirmation'
+});
+
 export const DEMO_CUSTOMER_LOANS = [
   { loan_basic_detail_id: 'LN-49201', amount: 210000, starting_date: '2026-05-12', duration_days: 180, interest: 13, loan_type: 'Personal' },
   { loan_basic_detail_id: 'LN-49202', amount: 480000, starting_date: '2026-03-20', duration_days: 365, interest: 14, loan_type: 'Business' }
 ];
+
+export const createDemoLoan = (payload: { amount: number; duration_days: string | number; interest: string | number; loan_type: string }) => ({
+  loan_basic_detail_id: 'LN-DEMO-' + Math.floor(1000 + Math.random() * 9000),
+  amount: Number(payload.amount),
+  starting_date: new Date().toISOString().slice(0, 10),
+  duration_days: Number(payload.duration_days),
+  interest: Number(payload.interest),
+  loan_type: payload.loan_type === 'BUSINESS' ? 'Business' : 'Personal',
+  status: 'Submitted'
+});

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { DEMO_CUSTOMER_LOANS, DEMO_FIXED_DEPOSITS } from 'src/app/shared/demo-banking-fixtures';
+import { DEMO_CUSTOMER_LOANS, DEMO_FIXED_DEPOSITS, createDemoLoan } from 'src/app/shared/demo-banking-fixtures';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,8 @@ export class LoanService {
    */
   getFDs(): Observable<any> {
     if (localStorage.getItem('demoMode') === 'true') {
-      return of({ data: DEMO_FIXED_DEPOSITS });
+      const created = JSON.parse(localStorage.getItem('demoFixedDeposits') || '[]');
+      return of({ data: [...DEMO_FIXED_DEPOSITS, ...created] });
     }
 
     const userId = localStorage.getItem('userId');
@@ -40,7 +41,8 @@ export class LoanService {
    */
   getLoans(): Observable<any> {
     if (localStorage.getItem('demoMode') === 'true') {
-      return of({ data: DEMO_CUSTOMER_LOANS });
+      const created = JSON.parse(localStorage.getItem('demoLoans') || '[]');
+      return of({ data: [...DEMO_CUSTOMER_LOANS, ...created] });
     }
 
     const userId = localStorage.getItem('userId');
@@ -95,6 +97,13 @@ export class LoanService {
       interest: interest,
       loan_type: selectedLoanType
     };
+
+    if (localStorage.getItem('demoMode') === 'true') {
+      const created = createDemoLoan(body);
+      const existing = JSON.parse(localStorage.getItem('demoLoans') || '[]');
+      localStorage.setItem('demoLoans', JSON.stringify([...existing, created]));
+      return of({ message: 'Loan applied successfully', data: created });
+    }
 
     return this.http.post<any>(environment.baseUrl + `/api/v1/loan/online`, body)
       .pipe(
