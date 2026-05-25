@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run vercel-build",
-  "outputDirectory": "dist/bank-transaction-and-loan-processing-system-frontend",
+  "outputDirectory": "dist/banking-system",
   "rewrites": [
     {
       "source": "/(.*)",

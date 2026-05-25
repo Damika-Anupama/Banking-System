@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Bank-Transaction-And-Loan-Processing-System-Frontend": {
+    "banking-system": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/bank-transaction-and-loan-processing-system-frontend",
+            "outputPath": "dist/banking-system",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -83,10 +83,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Bank-Transaction-And-Loan-Processing-System-Frontend:build:production"
+              "buildTarget": "banking-system:build:production"
             },
             "development": {
-              "buildTarget": "Bank-Transaction-And-Loan-Processing-System-Frontend:build:development"
+              "buildTarget": "banking-system:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -94,7 +94,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "Bank-Transaction-And-Loan-Processing-System-Frontend:build"
+            "buildTarget": "banking-system:build"
           }
         },
         "test": {

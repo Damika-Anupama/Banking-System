@@ -74,7 +74,7 @@ Recommended Vercel settings:
 ```text
 Framework Preset: Angular
 Build Command: npm run vercel-build
-Output Directory: dist/bank-transaction-and-loan-processing-system-frontend
+Output Directory: dist/banking-system
 Install Command: npm install
 Root Directory: ./
 ```
