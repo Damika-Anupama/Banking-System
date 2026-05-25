@@ -29,6 +29,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   isLoading = false;
   isLoadingTransactions = false;
   isProcessingTransaction = false;
+  dailyTransferLimit = 500000;
+  transferFee = 0;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
@@ -181,6 +183,24 @@ export class TransactionComponent implements OnInit, OnDestroy {
         icon: 'error',
         title: 'Insufficient Balance',
         text: 'Transfer amount exceeds available balance'
+      });
+      return;
+    }
+
+    if (amount > this.dailyTransferLimit) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Daily Limit Exceeded',
+        text: `Single demo transfers are limited to Rs. ${this.dailyTransferLimit.toLocaleString()}`
+      });
+      return;
+    }
+
+    if (!/^ACC-?\d{6,}$/.test(this.to_account.trim())) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Check beneficiary account',
+        text: 'Use a valid account format such as ACC-492811 before continuing.'
       });
       return;
     }
