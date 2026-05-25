@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { UserService } from 'src/app/service/customer/user.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -17,30 +18,30 @@ export class SignInComponent implements OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userService: UserService) {}
 
-  authenticate(isValid: boolean | null): void {
+  authenticate(isValid: boolean | null = true): void {
     this.submitted = true;
 
-    if (!isValid) {
-      this.errorMessage = 'Please complete the sign-in form with valid details.';
-      Swal.fire({
-        icon: 'warning',
-        title: 'Check your details',
-        text: this.errorMessage,
-        confirmButtonText: 'Review form'
-      });
+    if (!this.email || !this.password) {
+      this.showValidationError('Email and password are required');
+      return;
+    }
+
+    if (!isValid || !this.isValidEmail(this.email)) {
+      this.showValidationError('Please enter a valid email address');
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
 
-    setTimeout(() => {
-      this.seedDemoSession('CUSTOMER', this.email || 'customer@banking-system.app');
-      this.isLoading = false;
-      this.router.navigate(['/dashboard/home']);
-    }, 250);
+    const subscription = this.userService.authenticate(this.email, this.password).subscribe({
+      next: user => this.handleAuthenticationSuccess(user),
+      error: error => this.handleAuthenticationFailure(error)
+    });
+
+    this.subscriptions.push(subscription);
   }
 
   launchDemo(type: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER'): void {
@@ -52,6 +53,94 @@ export class SignInComponent implements OnDestroy {
     const profile = demoProfiles[type];
     this.seedDemoSession(type, profile.email);
     this.router.navigate([profile.route]);
+  }
+
+  private handleAuthenticationSuccess(user: any): void {
+    if (!user) {
+      this.showAuthenticationError('Invalid response from server');
+      return;
+    }
+
+    if (!user.token || !user.type) {
+      this.showAuthenticationError('Invalid authentication credentials');
+      return;
+    }
+
+    const route = this.getRouteForUserType(user.type);
+    if (!route) {
+      this.showAuthenticationError('Invalid user type');
+      return;
+    }
+
+    try {
+      localStorage.setItem('token', user.token);
+      localStorage.setItem('email', this.email);
+      localStorage.setItem('userType', user.type);
+      localStorage.setItem('demoMode', 'false');
+    } catch (error) {
+      console.error('Error storing authentication data:', error);
+      this.isLoading = false;
+      this.errorMessage = 'Failed to store authentication data';
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: this.errorMessage
+      });
+      return;
+    }
+
+    this.isLoading = false;
+    this.errorMessage = '';
+    this.router.navigate([route]);
+  }
+
+  private handleAuthenticationFailure(error: any): void {
+    console.error('Authentication error:', error);
+    const message = error?.error?.message || error?.message || 'Invalid email or password';
+    this.isLoading = false;
+    this.errorMessage = message;
+    Swal.fire({
+      icon: 'error',
+      title: 'Authentication Failed',
+      text: message
+    });
+  }
+
+  private showValidationError(message: string): void {
+    this.isLoading = false;
+    this.errorMessage = message;
+    Swal.fire({
+      icon: 'error',
+      title: 'Validation Error',
+      text: message
+    });
+  }
+
+  private showAuthenticationError(message: string): void {
+    this.isLoading = false;
+    this.errorMessage = message;
+    Swal.fire({
+      icon: 'error',
+      title: 'Authentication Error',
+      text: message
+    });
+  }
+
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  private getRouteForUserType(type: string): string | null {
+    switch (type) {
+      case 'CUSTOMER':
+        return '/dashboard/home';
+      case 'EMPLOYEE':
+        return '/employee-dashboard/employee-home';
+      case 'MANAGER':
+        return '/manager-dashboard/manager-home';
+      default:
+        return null;
+    }
   }
 
   private seedDemoSession(type: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER', email: string): void {
