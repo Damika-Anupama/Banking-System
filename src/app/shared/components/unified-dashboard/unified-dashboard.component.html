@@ -1,5 +1,5 @@
 <!-- Customer Dashboard Layout (original style with different structure) -->
-<div *ngIf="isCustomerDashboard()" class="min-h-screen flex">
+<div *ngIf="isCustomerDashboard()" class="customer-dashboard-shell min-h-screen lg:h-screen lg:overflow-hidden lg:flex">
   <!-- Sidebar -->
   <aside class="sidebar-wrapper glass-sidebar hidden lg:flex lg:flex-col w-64 fixed h-full z-20">
     <!-- Logo -->
@@ -47,7 +47,7 @@
   </aside>
 
   <!-- Main Content Area -->
-  <div class="flex-1 flex flex-col lg:ml-64 min-w-0">
+  <div class="flex-1 flex flex-col lg:ml-64 min-w-0 lg:h-screen lg:overflow-hidden">
     <!-- Top Navbar -->
     <header class="glass-navbar sticky top-0 z-10 lg:hidden">
       <div class="flex items-center justify-between px-4 lg:px-8 py-4">
@@ -70,7 +70,7 @@
     </header>
 
     <!-- Page Content -->
-    <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
+    <main class="customer-dashboard-content flex-1 min-h-0 p-4 lg:p-8 overflow-y-auto overscroll-contain">
       <div class="max-w-7xl mx-auto">
         <router-outlet></router-outlet>
       </div>

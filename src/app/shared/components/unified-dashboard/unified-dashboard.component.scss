@@ -118,6 +118,21 @@ html:not(.dark) .active-nav-item {
   }
 }
 
+@media (min-width: 1024px) {
+  .customer-dashboard-shell {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .customer-dashboard-content {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+  }
+}
+
 // Responsive adjustments
 @media (max-width: 1024px) {
   .sidebar-wrapper {
