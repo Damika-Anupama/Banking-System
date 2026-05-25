@@ -27,6 +27,7 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
   duration: any;
   rpa: any;
   fdAmount: any;
+  acceptedTerms = false;
 
   isLoadingSavingAccounts = false;
   isLoadingFDs = false;
@@ -150,6 +151,26 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
     return duration.replace(/_/g, ' ').toLowerCase();
   }
 
+  get selectedAccountBalance(): number {
+    return Number(this.selectedSavingAccount?.amount || 0);
+  }
+
+  get estimatedInterest(): number {
+    return (Number(this.fdAmount || 0) * Number(String(this.rpa || '0').replace('%', ''))) / 100;
+  }
+
+  get maturityAmount(): number {
+    return Number(this.fdAmount || 0) + this.estimatedInterest;
+  }
+
+  get maturityDate(): Date | null {
+    if (!this.duration) return null;
+    const date = new Date();
+    const months = this.duration === '6 months' ? 6 : this.duration === '1 year' ? 12 : 36;
+    date.setMonth(date.getMonth() + months);
+    return date;
+  }
+
   async checkForm() {
     // Form validation
     if (!this.selectedSavingAccount || !this.selectedPackage || !this.fdAmount) {
@@ -188,6 +209,24 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
         title: 'Error',
         text: 'Invalid saving account selected.',
         icon: 'error',
+      });
+      return;
+    }
+
+    if (amount > this.selectedAccountBalance) {
+      Swal.fire({
+        title: 'Insufficient Account Balance',
+        text: 'Deposit amount cannot exceed the selected saving account balance.',
+        icon: 'error',
+      });
+      return;
+    }
+
+    if (!this.acceptedTerms) {
+      Swal.fire({
+        title: 'Terms Required',
+        text: 'Please accept the maturity and early withdrawal terms before placing the fixed deposit.',
+        icon: 'warning',
       });
       return;
     }
