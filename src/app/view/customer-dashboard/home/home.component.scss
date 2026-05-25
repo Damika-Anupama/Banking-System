@@ -53,6 +53,64 @@
   text-align: center;
 }
 
+.linked-accounts-table {
+  min-width: 0 !important;
+  table-layout: fixed;
+}
+
+.linked-accounts-table th,
+.linked-accounts-table td {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.linked-accounts-table th {
+  white-space: nowrap;
+}
+
+.linked-accounts-table .glass-badge {
+  max-width: 100%;
+  overflow: hidden;
+  justify-content: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linked-account-col-account { width: 24%; }
+.linked-account-col-product { width: 15%; }
+.linked-account-col-ownership { width: 16%; }
+.linked-account-col-branch { width: 19%; }
+.linked-account-col-status { width: 12%; }
+.linked-account-col-balance { width: 14%; }
+
+.linked-account-branch {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.linked-account-branch i {
+  flex: 0 0 auto;
+}
+
+.linked-account-branch span,
+.linked-account-balance {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .linked-accounts-table {
+    min-width: 620px !important;
+  }
+}
+
 :host-context(html:not(.dark)) .customer-home-surface {
   color: #0f172a;
 }

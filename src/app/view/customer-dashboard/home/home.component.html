@@ -66,7 +66,15 @@
     </div>
 
     <div class="demo-table-shell mt-5 overflow-x-auto">
-      <table class="w-full">
+      <table class="linked-accounts-table w-full table-fixed">
+        <colgroup>
+          <col class="linked-account-col-account" />
+          <col class="linked-account-col-product" />
+          <col class="linked-account-col-ownership" />
+          <col class="linked-account-col-branch" />
+          <col class="linked-account-col-status" />
+          <col class="linked-account-col-balance" />
+        </colgroup>
         <thead>
           <tr>
             <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Account</th>
@@ -80,11 +88,11 @@
         <tbody>
           <tr *ngFor="let account of filteredAccounts; trackBy: trackByAccountId" (click)="updateSmallBox(account)" class="cursor-pointer transition-all duration-300 hover:bg-white/5" [ngClass]="{'bg-cyan-300/10': selectedAccount === account}">
             <td class="px-5 py-4">
-              <div class="flex items-center gap-3">
-                <i class="text-xl text-cyan-200" [ngClass]="selectedAccount === account ? 'fas fa-check-circle' : 'far fa-circle'"></i>
-                <div>
-                  <p class="font-mono text-sm text-white/90">{{ maskAccountId(account.account_id) }}</p>
-                  <p class="text-xs text-slate-400">{{ formatSavingType(account.saving_type) }} account</p>
+              <div class="flex min-w-0 items-center gap-3">
+                <i class="shrink-0 text-xl text-cyan-200" [ngClass]="selectedAccount === account ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                <div class="min-w-0">
+                  <p class="truncate font-mono text-sm text-white/90">{{ maskAccountId(account.account_id) }}</p>
+                  <p class="truncate text-xs text-slate-400">{{ formatSavingType(account.saving_type) }} account</p>
                 </div>
               </div>
             </td>
@@ -101,13 +109,13 @@
                 {{ formatAccountType(account.account_type) }}
               </span>
             </td>
-            <td class="px-5 py-4 text-white/80"><i class="fas fa-map-marker-alt mr-2 text-glass-cyan"></i>{{ account.branch_name }}</td>
+            <td class="px-5 py-4 text-white/80"><span class="linked-account-branch"><i class="fas fa-map-marker-alt text-glass-cyan"></i><span>{{ account.branch_name }}</span></span></td>
             <td class="px-5 py-4">
               <span class="glass-badge" [ngClass]="selectedAccount === account ? 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80' : 'bg-white/10'">
                 {{ accountStatus(account) }}
               </span>
             </td>
-            <td class="px-5 py-4 text-right font-bold text-white">Rs. {{ amountOf(account) | number }}</td>
+            <td class="px-5 py-4 text-right font-bold text-white"><span class="linked-account-balance">Rs. {{ amountOf(account) | number }}</span></td>
           </tr>
         </tbody>
       </table>
