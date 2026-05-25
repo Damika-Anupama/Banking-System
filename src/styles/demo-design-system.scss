@@ -80,6 +80,31 @@
   @apply mt-5 text-sm text-slate-400;
 }
 
+.welcome-bank-card {
+  @apply relative overflow-hidden;
+}
+
+.welcome-bank-card::before {
+  content: '';
+  position: absolute;
+  inset: 1rem;
+  z-index: -1;
+  border-radius: 1.75rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%, rgba(34, 211, 238, 0.08));
+}
+
+.welcome-value-grid {
+  @apply mx-auto mt-8 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+.welcome-value-card {
+  @apply flex min-h-28 flex-col items-center justify-center gap-3 rounded-3xl border border-white/10 bg-white/[0.07] px-4 py-5 text-sm font-bold text-slate-100 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-cyan-200/30 hover:bg-white/[0.11];
+}
+
+.welcome-value-card i {
+  @apply text-2xl text-cyan-200;
+}
+
 .auth-field-label {
   @apply mb-2 block text-sm font-semibold text-slate-200;
 }
@@ -134,6 +159,17 @@
 html:not(.dark) .demo-page-header {
   border-color: rgba(37, 99, 235, 0.16);
   background: rgba(255, 255, 255, 0.88);
+}
+
+html:not(.dark) .welcome-value-card {
+  border-color: rgba(37, 99, 235, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+}
+
+html:not(.dark) .welcome-value-card i {
+  color: #0e7490;
 }
 
 html:not(.dark) .demo-eyebrow {

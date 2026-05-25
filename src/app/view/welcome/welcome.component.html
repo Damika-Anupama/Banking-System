@@ -1,15 +1,39 @@
 <main class="auth-shell">
-  <section class="auth-panel max-w-5xl">
-    <div class="auth-brand-card">
+  <section class="auth-panel max-w-6xl">
+    <div class="auth-brand-card welcome-bank-card">
       <img src="assets/logo-dark.png" alt="Banking System logo" class="auth-logo logo-dark-static" />
-      <span class="demo-status-pill demo-status-info">Digital banking workspace</span>
-      <h1 class="auth-title">Modern banking operations, presented clearly.</h1>
+
+      <span class="demo-status-pill demo-status-info">Trusted digital banking</span>
+
+      <h1 class="auth-title">A refined banking experience for modern financial institutions.</h1>
+
       <p class="auth-subtitle">
-        A polished customer banking experience for account visibility, transfers, fixed deposits, and loan workflows.
+        Welcome customers with a secure, intuitive, and beautifully organized way to manage accounts,
+        transfers, deposits, and loan services from one trusted place.
       </p>
+
+      <div class="welcome-value-grid" aria-label="Banking service highlights">
+        <div class="welcome-value-card">
+          <i class="fas fa-wallet"></i>
+          <span>Clear account visibility</span>
+        </div>
+        <div class="welcome-value-card">
+          <i class="fas fa-paper-plane"></i>
+          <span>Smooth fund transfers</span>
+        </div>
+        <div class="welcome-value-card">
+          <i class="fas fa-piggy-bank"></i>
+          <span>Deposit growth planning</span>
+        </div>
+        <div class="welcome-value-card">
+          <i class="fas fa-hand-holding-usd"></i>
+          <span>Loan application support</span>
+        </div>
+      </div>
+
       <div class="auth-actions">
-        <button type="button" class="glass-button" (click)="gotoSignin()" aria-label="Open sign in page">
-          Get started
+        <button type="button" class="glass-button" (click)="gotoSignin()" aria-label="Continue to online banking">
+          Continue to online banking
           <i class="fas fa-arrow-right ml-2"></i>
         </button>
       </div>
