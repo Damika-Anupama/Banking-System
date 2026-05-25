@@ -34,68 +34,76 @@
     </div>
 
     <form class="space-y-6">
-      <!-- Saving Account Selection -->
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Choose a Saving Account <span class="text-red-400">*</span>
-        </label>
-        <div class="relative">
-          <i class="fas fa-university absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
-          <select
-            class="glass-input pl-12 appearance-none cursor-pointer"
-            [(ngModel)]="selectedSavingAccount"
-            (change)="onAccountSelected()"
-            name="selectedSavingAccount"
-          >
-            <option [ngValue]="null" disabled selected>Select a saving account</option>
-            <option *ngFor="let account of savingAccounts" [ngValue]="account">
-              Account: {{ account.saving_account_id }} | Type: {{ account.account_type }} | Balance: Rs. {{ account.amount | number }}
-            </option>
-          </select>
-          <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-university mr-2"></i>Choose a Saving Account <span class="text-red-300">*</span>
+          </label>
+          <div class="relative">
+            <i class="fas fa-university absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+            <select
+              class="glass-input pl-12 appearance-none cursor-pointer"
+              [(ngModel)]="selectedSavingAccount"
+              (change)="onAccountSelected()"
+              name="selectedSavingAccount"
+            >
+              <option [ngValue]="null" disabled selected>Select a saving account</option>
+              <option *ngFor="let account of savingAccounts" [ngValue]="account">
+                Account: {{ account.saving_account_id }} | Type: {{ account.account_type }} | Balance: Rs. {{ account.amount | number }}
+              </option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+          </div>
+        </div>
+
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-box mr-2"></i>Select Fixed Deposit Package <span class="text-red-300">*</span>
+          </label>
+          <div class="relative">
+            <i class="fas fa-box absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+            <select
+              class="glass-input pl-12 appearance-none cursor-pointer"
+              [(ngModel)]="selectedPackage"
+              (ngModelChange)="onPackageSelected()"
+              name="selectedPackage"
+            >
+              <option value="" disabled selected>Select a package</option>
+              <option *ngFor="let package of packageArray" [value]="package.index">
+                Package {{ package.index }} | Duration: {{ package.period }} | Interest Rate: {{ package.interest }}%
+              </option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+          </div>
         </div>
       </div>
 
-      <!-- Package Selection -->
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Select Fixed Deposit Package <span class="text-red-400">*</span>
-        </label>
-        <div class="relative">
-          <i class="fas fa-box absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
-          <select
-            class="glass-input pl-12 appearance-none cursor-pointer"
-            [(ngModel)]="selectedPackage"
-            (ngModelChange)="onPackageSelected()"
-            name="selectedPackage"
-          >
-            <option value="" disabled selected>Select a package</option>
-            <option *ngFor="let package of packageArray" [value]="package.index">
-              Package {{ package.index }} | Duration: {{ package.period }} | Interest Rate: {{ package.interest }}%
-            </option>
-          </select>
-          <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2 xl:items-end">
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-money-bill-wave mr-2"></i>Deposit Amount <span class="text-red-300">*</span>
+          </label>
+          <p class="text-white/50 text-xs mb-2">
+            <i class="fas fa-info-circle mr-1"></i>
+            Amount must be less than your saving account balance
+          </p>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50">Rs.</span>
+            <input
+              type="number"
+              class="glass-input pl-14"
+              placeholder="Enter deposit amount"
+              [(ngModel)]="fdAmount"
+              name="fdAmount"
+              min="1"
+            />
+          </div>
         </div>
-      </div>
 
-      <!-- Amount Input -->
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Deposit Amount <span class="text-red-400">*</span>
-        </label>
-        <p class="text-white/50 text-xs mb-2">
-          <i class="fas fa-info-circle mr-1"></i>
-          Amount must be less than your saving account balance
-        </p>
-        <div class="relative">
-          <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50">Rs.</span>
-          <input
-            type="number"
-            class="glass-input pl-14"
-            placeholder="Enter deposit amount"
-            [(ngModel)]="fdAmount"
-            name="fdAmount"
-          />
+        <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
+          <p class="font-semibold text-white">Selected plan</p>
+          <p class="mt-1">Duration: {{ duration || 'Choose a package' }}</p>
+          <p>Rate: {{ rpa || '—' }}</p>
         </div>
       </div>
 
