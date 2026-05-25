@@ -6,8 +6,11 @@
   text-decoration: none;
   transition: all 0.3s ease;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: var(--text-primary);
+    outline: 2px solid rgba(34, 211, 238, 0.75);
+    outline-offset: 3px;
   }
 
   &.active-link {
@@ -23,9 +26,12 @@
   background: transparent;
   @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: var(--text-primary);
     background: var(--glass-bg);
+    outline: 2px solid rgba(34, 211, 238, 0.75);
+    outline-offset: 3px;
   }
 }
 
@@ -40,9 +46,12 @@
   background: transparent;
   @apply flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: var(--text-primary);
     background: var(--glass-bg);
+    outline: 2px solid rgba(34, 211, 238, 0.75);
+    outline-offset: 3px;
   }
 }
 
@@ -51,9 +60,12 @@
   background: transparent;
   @apply flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: var(--text-primary);
     background: var(--glass-bg);
+    outline: 2px solid rgba(34, 211, 238, 0.75);
+    outline-offset: 3px;
   }
 }
 
@@ -63,10 +75,13 @@
   border: 1px solid var(--glass-border);
   @apply flex h-10 items-center justify-center rounded-xl transition-all duration-300;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: var(--text-primary);
     background: var(--glass-hover);
     transform: translateY(-1px);
+    outline: 2px solid rgba(34, 211, 238, 0.75);
+    outline-offset: 3px;
   }
 }
 

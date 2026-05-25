@@ -21,6 +21,8 @@
           <a
             [routerLink]="item.route"
             routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: false }"
+            [attr.aria-label]="item.label"
             class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
           >
             <i [class]="'fas ' + item.icon + ' text-xl'"></i>
@@ -33,9 +35,9 @@
     <!-- Footer Links -->
     <div class="p-4 border-t border-white/10">
       <div class="mb-4 grid grid-cols-3 gap-2">
-        <button class="sidebar-action-btn" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
+        <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
         <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
-        <button class="sidebar-action-btn" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
+        <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
       </div>
       <p class="text-white/50 text-xs text-center">
         &copy; {{ currentYear }} Banking System<br>
@@ -53,7 +55,7 @@
         <div class="flex items-center gap-4">
           <button
             class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
-            aria-label="Open navigation menu"
+            aria-label="Open navigation menu" title="Open navigation menu"
             (click)="toggleSidebar()"
           >
             <i class="fas fa-bars text-xl"></i>
@@ -99,7 +101,7 @@
       </a>
       <button
         class="text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
-        aria-label="Close navigation menu"
+        aria-label="Close navigation menu" title="Close navigation menu"
         (click)="toggleSidebar()"
       >
         <i class="fas fa-times text-xl"></i>
@@ -113,6 +115,8 @@
           <a
             [routerLink]="item.route"
             routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: false }"
+            [attr.aria-label]="item.label"
             class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
             (click)="toggleSidebar()"
           >
@@ -126,9 +130,9 @@
     <!-- Footer Links -->
     <div class="p-4 border-t border-white/10">
       <div class="mb-4 grid grid-cols-3 gap-2">
-        <button class="sidebar-action-btn" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
+        <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
         <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
-        <button class="sidebar-action-btn" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
+        <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
       </div>
       <p class="text-white/50 text-xs text-center">
         &copy; {{ currentYear }} Banking System<br>
@@ -166,6 +170,7 @@
         *ngFor="let item of navigationItems"
         [routerLink]="item.route"
         routerLinkActive="active-nav-item"
+        [attr.aria-label]="item.label"
         class="nav-item"
       >
         <i [class]="'fas ' + item.icon + ' nav-icon'"></i>
@@ -176,9 +181,9 @@
     <!-- Footer -->
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
       <div class="mb-4 grid grid-cols-3 gap-2">
-        <button class="sidebar-action-btn" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
+        <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
         <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
-        <button class="sidebar-action-btn" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
+        <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
       </div>
       <div class="text-white/60 text-xs text-center">
         <p class="font-semibold text-white/80 mb-1">Banking System</p>
@@ -196,7 +201,7 @@
         <!-- Left: Mobile Menu Button -->
         <button
           class="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
-          aria-label="Open navigation menu"
+          aria-label="Open navigation menu" title="Open navigation menu"
           (click)="toggleSidebar()"
         >
           <i class="fas fa-bars text-xl"></i>
