@@ -70,8 +70,10 @@
         <thead>
           <tr>
             <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Account</th>
-            <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Type</th>
+            <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Product</th>
+            <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Ownership</th>
             <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Branch</th>
+            <th class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Status</th>
             <th class="text-right px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Balance</th>
           </tr>
         </thead>
@@ -87,14 +89,24 @@
               </div>
             </td>
             <td class="px-5 py-4">
+              <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
+                {{ formatSavingType(account.saving_type) }}
+              </span>
+            </td>
+            <td class="px-5 py-4">
               <span class="glass-badge bg-gradient-to-r" [ngClass]="{
-                'from-glass-emerald/80 to-glass-cyan/80': account.account_type == 'ORGANIZATION',
+                'from-glass-purple/80 to-glass-cyan/80': account.account_type == 'ORGANIZATION',
                 'from-glass-orange/80 to-glass-pink/80': account.account_type == 'PERSONAL'
               }">
                 {{ formatAccountType(account.account_type) }}
               </span>
             </td>
             <td class="px-5 py-4 text-white/80"><i class="fas fa-map-marker-alt mr-2 text-glass-cyan"></i>{{ account.branch_name }}</td>
+            <td class="px-5 py-4">
+              <span class="glass-badge" [ngClass]="selectedAccount === account ? 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80' : 'bg-white/10'">
+                {{ accountStatus(account) }}
+              </span>
+            </td>
             <td class="px-5 py-4 text-right font-bold text-white">Rs. {{ amountOf(account) | number }}</td>
           </tr>
         </tbody>

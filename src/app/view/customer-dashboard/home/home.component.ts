@@ -293,6 +293,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     return `${'*'.repeat(Math.max(accountId.length - 4, 0))}${accountId.slice(-4)}`;
   }
 
+  accountStatus(account: any): string {
+    return account === this.selectedAccount ? 'Selected' : 'Active';
+  }
+
   trackByAccountId(_index: number, account: any): string {
     return String(account?.account_id || _index);
   }
