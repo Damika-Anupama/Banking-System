@@ -131,6 +131,60 @@
 .demo-tone-rose .demo-kpi-icon { @apply bg-rose-500/20 text-rose-100; }
 .demo-tone-violet .demo-kpi-icon { @apply bg-violet-500/20 text-violet-100; }
 
+html:not(.dark) .demo-page-header {
+  border-color: rgba(37, 99, 235, 0.16);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+html:not(.dark) .demo-eyebrow {
+  border-color: rgba(14, 165, 233, 0.24);
+  background: rgba(224, 242, 254, 0.9);
+  color: #075985;
+}
+
+html:not(.dark) .demo-title,
+html:not(.dark) .demo-section-title,
+html:not(.dark) .demo-kpi-card h2,
+html:not(.dark) .demo-action-card strong {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .demo-subtitle,
+html:not(.dark) .demo-section-helper,
+html:not(.dark) .demo-kpi-card p,
+html:not(.dark) .demo-action-card span span,
+html:not(.dark) .demo-section-card .text-slate-300,
+html:not(.dark) .demo-section-card .text-slate-400 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .demo-kpi-card,
+html:not(.dark) .demo-section-card {
+  border-color: rgba(37, 99, 235, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+}
+
+html:not(.dark) .demo-action-card {
+  border-color: rgba(37, 99, 235, 0.14);
+  background: rgba(248, 250, 252, 0.9);
+}
+
+html:not(.dark) .demo-action-card:hover {
+  background: rgba(239, 246, 255, 0.96);
+}
+
+html:not(.dark) .demo-kpi-icon {
+  color: #0f172a;
+}
+
+html:not(.dark) .demo-tone-blue .demo-kpi-icon { background: rgba(59, 130, 246, 0.16); color: #1d4ed8; }
+html:not(.dark) .demo-tone-cyan .demo-kpi-icon { background: rgba(6, 182, 212, 0.16); color: #0e7490; }
+html:not(.dark) .demo-tone-emerald .demo-kpi-icon { background: rgba(16, 185, 129, 0.16); color: #047857; }
+html:not(.dark) .demo-tone-amber .demo-kpi-icon { background: rgba(245, 158, 11, 0.18); color: #92400e; }
+html:not(.dark) .demo-tone-rose .demo-kpi-icon { background: rgba(244, 63, 94, 0.16); color: #be123c; }
+html:not(.dark) .demo-tone-violet .demo-kpi-icon { background: rgba(139, 92, 246, 0.16); color: #6d28d9; }
+
 .demo-section-card {
   @apply rounded-3xl border border-white/10 bg-slate-950/35 p-5 shadow-xl backdrop-blur-xl;
 }

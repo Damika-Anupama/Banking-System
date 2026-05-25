@@ -2,10 +2,10 @@
   <span class="demo-eyebrow"><i class="fas fa-user-shield"></i> Customer workspace</span>
   <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
     <div>
-      <h1 class="demo-title">Your money overview, in one clean workspace</h1>
-      <p class="demo-subtitle">Track balances, recent movement, fixed deposits, and loan activity with quick access to the actions a banking customer uses most.</p>
+      <h1 class="demo-title">Welcome back, {{ username }}! 👋</h1>
+      <p class="demo-subtitle">Manage your accounts, track balances, and continue key banking actions from one clean workspace.</p>
     </div>
-    <a routerLink="/customer-dashboard/transaction" class="glass-button w-fit"><i class="fas fa-paper-plane mr-2"></i>Start transfer</a>
+    <a routerLink="/dashboard/transaction" class="glass-button w-fit"><i class="fas fa-paper-plane mr-2"></i>Start transfer</a>
   </div>
 </section>
 <section class="demo-kpi-grid mb-8">
@@ -33,18 +33,12 @@
     <h2 class="demo-section-title">Quick actions</h2>
     <p class="demo-section-helper">Make the demo immediately usable.</p>
     <div class="mt-5 space-y-3">
-      <a routerLink="/customer-dashboard/transaction" class="demo-action-card"><i class="fas fa-paper-plane text-cyan-200"></i><span><strong class="block text-white">Transfer money</strong><span class="text-sm text-slate-300">Send and review history</span></span></a>
-      <a routerLink="/customer-dashboard/fd" class="demo-action-card"><i class="fas fa-vault text-amber-200"></i><span><strong class="block text-white">Fixed deposits</strong><span class="text-sm text-slate-300">View savings products</span></span></a>
-      <a routerLink="/customer-dashboard/loan" class="demo-action-card"><i class="fas fa-hand-holding-dollar text-emerald-200"></i><span><strong class="block text-white">Loan options</strong><span class="text-sm text-slate-300">Explore loan workflow</span></span></a>
+      <a routerLink="/dashboard/transaction" class="demo-action-card"><i class="fas fa-paper-plane text-cyan-200"></i><span><strong class="block text-white">Transfer money</strong><span class="text-sm text-slate-300">Send and review history</span></span></a>
+      <a routerLink="/dashboard/fixed-deposit" class="demo-action-card"><i class="fas fa-vault text-amber-200"></i><span><strong class="block text-white">Fixed deposits</strong><span class="text-sm text-slate-300">View savings products</span></span></a>
+      <a routerLink="/dashboard/loan" class="demo-action-card"><i class="fas fa-hand-holding-dollar text-emerald-200"></i><span><strong class="block text-white">Loan options</strong><span class="text-sm text-slate-300">Explore loan workflow</span></span></a>
     </div>
   </article>
 </section>
-<!-- Page Header -->
-<div class="mb-8 animate-fade-in">
-  <h1 class="text-4xl font-bold  mb-2">Welcome back, {{ username }}! 👋</h1>
-  <p class="text-white/70">Manage your accounts and track your finances</p>
-</div>
-
 <!-- Stat Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-slide-up">
   <!-- Welcome Card -->
