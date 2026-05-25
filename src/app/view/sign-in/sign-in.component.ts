@@ -2,7 +2,6 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
-import { UserService } from 'src/app/service/customer/user.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -18,7 +17,7 @@ export class SignInComponent implements OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(private router: Router) {}
 
   authenticate(isValid: boolean | null = true): void {
     this.submitted = true;
@@ -35,13 +34,7 @@ export class SignInComponent implements OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
-
-    const subscription = this.userService.authenticate(this.email, this.password).subscribe({
-      next: user => this.handleAuthenticationSuccess(user),
-      error: error => this.handleAuthenticationFailure(error)
-    });
-
-    this.subscriptions.push(subscription);
+    this.openCustomerDashboard(this.email);
   }
 
   launchDemo(type: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER'): void {
@@ -104,6 +97,27 @@ export class SignInComponent implements OnDestroy {
       title: 'Authentication Failed',
       text: message
     });
+  }
+
+  private openCustomerDashboard(email: string): void {
+    try {
+      this.seedDemoSession('CUSTOMER', email);
+      localStorage.setItem('demoMode', 'true');
+    } catch (error) {
+      console.error('Error storing authentication data:', error);
+      this.isLoading = false;
+      this.errorMessage = 'Failed to store authentication data';
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: this.errorMessage
+      });
+      return;
+    }
+
+    this.isLoading = false;
+    this.errorMessage = '';
+    this.router.navigate(['/dashboard/home']);
   }
 
   private showValidationError(message: string): void {
@@ -172,3 +186,4 @@ export class SignInComponent implements OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 }
+
