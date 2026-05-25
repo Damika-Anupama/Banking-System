@@ -17,6 +17,13 @@
   <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
 </div>
 
+<div *ngIf="errorMessage && !isLoading" class="demo-state-card mb-6">
+  <i class="fas fa-triangle-exclamation"></i>
+  <h3>Profile unavailable</h3>
+  <p>{{ errorMessage }}</p>
+  <button type="button" class="glass-button-secondary mt-4" (click)="loadUserData()">Retry</button>
+</div>
+
 <div *ngIf="!isLoading" class="grid grid-cols-1 gap-6 xl:grid-cols-[1.6fr_1fr]">
   <section class="glass-card p-6 animate-slide-up">
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
