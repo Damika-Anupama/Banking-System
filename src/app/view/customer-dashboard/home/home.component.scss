@@ -3,3 +3,167 @@
   display: block;
   width: 100%;
 }
+
+.customer-home-surface {
+  display: block;
+}
+
+.dashboard-top-actions {
+  align-items: stretch;
+}
+
+.dashboard-header-button {
+  min-height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.dashboard-loan-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.dashboard-loan-button:hover {
+  border-color: rgba(110, 231, 183, 0.35);
+  background: rgba(16, 185, 129, 0.12);
+  transform: translateY(-1px);
+}
+
+:host-context(html:not(.dark)) .customer-home-surface {
+  color: #0f172a;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-page-header,
+:host-context(html:not(.dark)) .customer-home-surface .demo-section-card,
+:host-context(html:not(.dark)) .customer-home-surface .dashboard-metric-card,
+:host-context(html:not(.dark)) .customer-home-surface .dashboard-progress-card,
+:host-context(html:not(.dark)) .customer-home-surface .demo-table-shell {
+  border-color: rgba(37, 99, 235, 0.16) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12) !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-page-header {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.96)) !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-title,
+:host-context(html:not(.dark)) .customer-home-surface .demo-section-title,
+:host-context(html:not(.dark)) .customer-home-surface h2,
+:host-context(html:not(.dark)) .customer-home-surface strong,
+:host-context(html:not(.dark)) .customer-home-surface .font-bold,
+:host-context(html:not(.dark)) .customer-home-surface .font-black,
+:host-context(html:not(.dark)) .customer-home-surface .font-mono,
+:host-context(html:not(.dark)) .customer-home-surface th,
+:host-context(html:not(.dark)) .customer-home-surface td {
+  color: #0f172a !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface p,
+:host-context(html:not(.dark)) .customer-home-surface .demo-section-helper,
+:host-context(html:not(.dark)) .customer-home-surface .text-sm,
+:host-context(html:not(.dark)) .customer-home-surface .text-xs {
+  color: #334155 !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-eyebrow,
+:host-context(html:not(.dark)) .customer-home-surface .demo-status-pill {
+  border-color: rgba(14, 165, 233, 0.28) !important;
+  background: rgba(224, 242, 254, 0.92) !important;
+  color: #075985 !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-status-success {
+  border-color: rgba(5, 150, 105, 0.24) !important;
+  background: rgba(209, 250, 229, 0.92) !important;
+  color: #047857 !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface i,
+:host-context(html:not(.dark)) .customer-home-surface .text-glass-cyan,
+:host-context(html:not(.dark)) .customer-home-surface .text-cyan-200,
+:host-context(html:not(.dark)) .customer-home-surface .text-cyan-100 {
+  color: #0e7490 !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .text-emerald-200,
+:host-context(html:not(.dark)) .customer-home-surface .text-emerald-100 {
+  color: #047857 !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .text-amber-200,
+:host-context(html:not(.dark)) .customer-home-surface .text-amber-100 {
+  color: #92400e !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .text-rose-100 {
+  color: #be123c !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .text-blue-100 {
+  color: #1d4ed8 !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-action-card,
+:host-context(html:not(.dark)) .customer-home-surface .dashboard-loan-button {
+  border-color: rgba(37, 99, 235, 0.16) !important;
+  background: rgba(248, 250, 252, 0.96) !important;
+  color: #0f172a !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-action-card:hover,
+:host-context(html:not(.dark)) .customer-home-surface .dashboard-loan-button:hover {
+  background: rgba(239, 246, 255, 1) !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .glass-button {
+  color: #ffffff !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .glass-button i {
+  color: #ffffff !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .dashboard-loan-button {
+  background: #ffffff !important;
+  color: #065f46 !important;
+  border-color: rgba(5, 150, 105, 0.35) !important;
+  box-shadow: 0 12px 28px rgba(5, 150, 105, 0.14) !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .dashboard-loan-button i {
+  color: #047857 !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-table-shell thead th {
+  background: rgba(239, 246, 255, 0.98) !important;
+  color: #1e3a8a !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-table-shell tbody tr {
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .demo-table-shell tbody tr:hover,
+:host-context(html:not(.dark)) .customer-home-surface .demo-table-shell tbody tr.bg-cyan-300\/10 {
+  background: rgba(224, 242, 254, 0.72) !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .glass-input {
+  border-color: rgba(37, 99, 235, 0.2) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  color: #0f172a !important;
+}
+
+:host-context(html:not(.dark)) .customer-home-surface .glass-input::placeholder {
+  color: #64748b !important;
+}

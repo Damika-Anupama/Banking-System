@@ -1,13 +1,13 @@
+<div class="customer-home-surface">
 <section class="demo-page-header animate-fade-in">
   <span class="demo-eyebrow"><i class="fas fa-user-shield"></i> Customer workspace</span>
   <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
     <div>
       <h1 class="demo-title">Welcome back, {{ username }}! 👋</h1>
-      <p class="demo-subtitle">A clean overview of balances, accounts, and the next banking actions customers care about most.</p>
     </div>
-    <div class="flex flex-col gap-3 sm:flex-row">
-      <a routerLink="/dashboard/transaction" class="glass-button w-fit"><i class="fas fa-paper-plane mr-2"></i>Transfer money</a>
-      <a routerLink="/dashboard/loan" class="demo-action-card min-w-[12rem]"><i class="fas fa-hand-holding-dollar text-emerald-200"></i><span><strong class="block text-white">Apply loan</strong><span class="text-sm text-slate-300">Start request</span></span></a>
+    <div class="dashboard-top-actions flex flex-col gap-3 sm:flex-row">
+      <a routerLink="/dashboard/transaction" class="dashboard-header-button glass-button"><i class="fas fa-paper-plane"></i>Transfer Money</a>
+      <a routerLink="/dashboard/loan" class="dashboard-header-button dashboard-loan-button"><i class="fas fa-hand-holding-dollar"></i>Apply Loan</a>
     </div>
   </div>
 </section>
@@ -24,17 +24,17 @@
     </div>
 
     <div class="mt-6 grid gap-4 md:grid-cols-3">
-      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+      <div class="dashboard-metric-card rounded-2xl border border-white/10 bg-white/[0.06] p-4">
         <p class="text-xs text-slate-400">Total portfolio balance</p>
         <strong class="mt-2 block text-2xl text-emerald-100">Rs. {{ totalBalance | number }}</strong>
         <p class="mt-1 text-xs text-slate-400">Across {{ accountCount }} linked accounts</p>
       </div>
-      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+      <div class="dashboard-metric-card rounded-2xl border border-white/10 bg-white/[0.06] p-4">
         <p class="text-xs text-slate-400">Account category</p>
         <strong class="mt-2 block text-2xl text-cyan-100">{{ selectedAccountTypeLabel }}</strong>
         <p class="mt-1 text-xs text-slate-400">Selected account profile</p>
       </div>
-      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+      <div class="dashboard-metric-card rounded-2xl border border-white/10 bg-white/[0.06] p-4">
         <p class="text-xs text-slate-400">Access status</p>
         <strong class="mt-2 block text-2xl text-blue-100">{{ userType || 'Customer' }}</strong>
         <p class="mt-1 text-xs text-slate-400">Secure customer workspace</p>
@@ -112,18 +112,19 @@
     <h2 class="demo-section-title">Money movement snapshot</h2>
     <p class="demo-section-helper">Simple visual context for customer balances.</p>
     <div class="mt-5 space-y-4">
-      <div class="rounded-2xl bg-white/[0.06] p-4">
+      <div class="dashboard-progress-card rounded-2xl bg-white/[0.06] p-4">
         <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Income</span><strong class="text-emerald-100">Rs. 249K</strong></div>
         <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-emerald-300" style="width: 82%"></div></div>
       </div>
-      <div class="rounded-2xl bg-white/[0.06] p-4">
+      <div class="dashboard-progress-card rounded-2xl bg-white/[0.06] p-4">
         <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Payments</span><strong class="text-rose-100">Rs. 70K</strong></div>
         <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-rose-300" style="width: 34%"></div></div>
       </div>
-      <div class="rounded-2xl bg-white/[0.06] p-4">
+      <div class="dashboard-progress-card rounded-2xl bg-white/[0.06] p-4">
         <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Savings rate</span><strong class="text-cyan-100">72%</strong></div>
         <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-cyan-300" style="width: 72%"></div></div>
       </div>
     </div>
   </article>
 </section>
+</div>
