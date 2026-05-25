@@ -77,7 +77,6 @@
               "node_modules/datatables.net-buttons/js/buttons.colVis.min.js",
               "node_modules/bs-stepper/dist/js/bs-stepper.min.js",
               "node_modules/admin-lte/dist/js/adminlte.js",
-              "node_modules/admin-lte/dist/js/demo.js",
               "node_modules/admin-lte/dist/js/pages/dashboard.js"
             ],
             "allowedCommonJsDependencies": [
