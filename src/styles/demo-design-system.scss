@@ -84,6 +84,11 @@
   @apply relative overflow-hidden;
 }
 
+.welcome-logo,
+.auth-entry-logo {
+  @apply mb-6 h-32 px-6 py-4 sm:h-36;
+}
+
 .welcome-bank-card::before {
   content: '';
   position: absolute;
