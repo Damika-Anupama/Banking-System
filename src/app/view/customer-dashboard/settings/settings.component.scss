@@ -1,3 +1,50 @@
-.gender-selection{
-    margin:0 100px 0 30px;
+.settings-readonly-card,
+.settings-security-row {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.settings-readonly-card span,
+.settings-security-row span {
+  display: block;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+}
+
+.settings-readonly-card strong,
+.settings-security-row strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.settings-security-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.settings-security-row span {
+  margin-bottom: 0;
+}
+
+:host-context(html:not(.dark)) .settings-readonly-card,
+:host-context(html:not(.dark)) .settings-security-row {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(37, 99, 235, 0.12);
+}
+
+:host-context(html:not(.dark)) .settings-readonly-card span,
+:host-context(html:not(.dark)) .settings-security-row span {
+  color: #64748b;
+}
+
+:host-context(html:not(.dark)) .settings-readonly-card strong,
+:host-context(html:not(.dark)) .settings-security-row strong {
+  color: #0f172a;
 }

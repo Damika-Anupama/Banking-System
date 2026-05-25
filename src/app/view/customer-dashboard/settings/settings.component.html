@@ -1,7 +1,15 @@
 <!-- Page Header -->
 <div class="mb-8 animate-fade-in">
-  <h1 class="text-4xl font-bold text-white mb-2">Settings</h1>
-  <p class="text-white/70">Update your personal information and preferences</p>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="text-4xl font-bold text-white mb-2">Profile & Security</h1>
+      <p class="text-white/70">Manage your customer profile, contact details, and account security.</p>
+    </div>
+    <div class="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white/70">
+      <i class="fas fa-shield-alt mr-2 text-glass-emerald"></i>
+      Verified online banking profile
+    </div>
+  </div>
 </div>
 
 <!-- Loading Indicator -->
@@ -9,228 +17,106 @@
   <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
 </div>
 
-<!-- Settings Form -->
-<div *ngIf="!isLoading" class="glass-card p-6 animate-slide-up max-w-4xl">
-  <div class="mb-6">
-    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
-      <i class="fas fa-user-edit mr-3 text-glass-purple"></i>
-      Change Your Details
-    </h2>
-    <p class="text-white/60 text-sm">Update your account information</p>
-  </div>
-
-  <form (ngSubmit)="saveSettings()" #settingsForm="ngForm" class="space-y-5">
-    <!-- Username -->
-    <div>
-      <label class="block text-white/80 text-sm font-medium mb-2">
-        Username <span class="text-red-400">*</span>
-      </label>
-      <div class="relative">
-        <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
-        <input
-          type="text"
-          [(ngModel)]="username"
-          name="username"
-          class="glass-input pl-12"
-          placeholder="Enter username"
-          required
-          minlength="3"
-        />
+<div *ngIf="!isLoading" class="grid grid-cols-1 gap-6 xl:grid-cols-[1.6fr_1fr]">
+  <section class="glass-card p-6 animate-slide-up">
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
+          <i class="fas fa-user-circle mr-3 text-glass-purple"></i>
+          Customer profile
+        </h2>
+        <p class="text-white/60 text-sm">{{ isEditingProfile ? 'Edit verified contact details.' : 'Review your verified customer information.' }}</p>
       </div>
+      <button *ngIf="!isEditingProfile" type="button" class="glass-button-secondary justify-center" (click)="enableProfileEdit()">
+        <i class="fas fa-pen mr-2"></i>Edit profile
+      </button>
     </div>
 
-    <!-- Full Name -->
-    <div>
-      <label class="block text-white/80 text-sm font-medium mb-2">
-        Full Name <span class="text-red-400">*</span>
-      </label>
-      <div class="relative">
-        <i class="fas fa-id-card absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
-        <input
-          type="text"
-          [(ngModel)]="fullname"
-          name="fullname"
-          class="glass-input pl-12"
-          placeholder="Enter full name"
-          required
-        />
-      </div>
+    <div *ngIf="!isEditingProfile" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="settings-readonly-card"><span>Full name</span><strong>{{ fullname || 'Not provided' }}</strong></div>
+      <div class="settings-readonly-card"><span>Username</span><strong>{{ username || 'Not provided' }}</strong></div>
+      <div class="settings-readonly-card"><span>Email</span><strong>{{ maskedEmail }}</strong></div>
+      <div class="settings-readonly-card"><span>Mobile</span><strong>{{ maskedContactNo }}</strong></div>
+      <div class="settings-readonly-card"><span>Date of birth</span><strong>{{ dob || 'Not provided' }}</strong></div>
+      <div class="settings-readonly-card"><span>Gender</span><strong>{{ gender || 'Not provided' }}</strong></div>
+      <div class="settings-readonly-card md:col-span-2"><span>Address</span><strong>{{ address || 'Not provided' }}</strong></div>
     </div>
 
-    <!-- Email -->
-    <div>
-      <label class="block text-white/80 text-sm font-medium mb-2">
-        Email Address <span class="text-red-400">*</span>
-      </label>
-      <div class="relative">
-        <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
-        <input
-          type="email"
-          [(ngModel)]="email"
-          name="email"
-          class="glass-input pl-12"
-          placeholder="Enter email address"
-          required
-          email
-        />
+    <form *ngIf="isEditingProfile" (ngSubmit)="saveSettings()" #settingsForm="ngForm" class="space-y-5">
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div>
+          <label class="auth-field-label">Username <span class="text-red-300">*</span></label>
+          <input type="text" [(ngModel)]="username" name="username" class="glass-input" required minlength="3" />
+        </div>
+        <div>
+          <label class="auth-field-label">Full name <span class="text-red-300">*</span></label>
+          <input type="text" [(ngModel)]="fullname" name="fullname" class="glass-input" required />
+        </div>
+        <div>
+          <label class="auth-field-label">Email address <span class="text-red-300">*</span></label>
+          <input type="email" [(ngModel)]="email" name="email" class="glass-input" required email />
+        </div>
+        <div>
+          <label class="auth-field-label">Contact number</label>
+          <input type="tel" [(ngModel)]="contactNo" name="contactNo" class="glass-input" pattern="[0-9]{10}" />
+        </div>
+        <div>
+          <label class="auth-field-label">Date of birth</label>
+          <input type="date" [(ngModel)]="dob" name="dob" class="glass-input" />
+        </div>
+        <div>
+          <label class="auth-field-label">Gender</label>
+          <select [(ngModel)]="gender" name="gender" class="glass-input">
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <!-- Password -->
-    <div>
-      <label class="block text-white/80 text-sm font-medium mb-2">
-        Password <span class="text-white/50 text-xs">(leave empty to keep current)</span>
-      </label>
-      <div class="relative">
-        <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          [(ngModel)]="password"
-          name="password"
-          class="glass-input pl-12 pr-12"
-          placeholder="Enter new password"
-        />
-        <button
-          type="button"
-          (click)="togglePasswordVisibility()"
-          class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors"
-        >
-          <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+      <div>
+        <label class="auth-field-label">Address</label>
+        <textarea [(ngModel)]="address" name="address" class="glass-input resize-none" rows="3"></textarea>
+      </div>
+
+      <div class="flex flex-wrap gap-3 pt-2">
+        <button type="submit" [disabled]="isSaving || !settingsForm.valid" class="glass-button justify-center" [class.opacity-50]="isSaving || !settingsForm.valid">
+          <i *ngIf="!isSaving" class="fas fa-save mr-2"></i>
+          <i *ngIf="isSaving" class="fas fa-spinner fa-spin mr-2"></i>
+          {{ isSaving ? 'Saving...' : 'Save profile' }}
+        </button>
+        <button type="button" (click)="cancelProfileEdit()" [disabled]="isSaving" class="glass-button-secondary justify-center">
+          <i class="fas fa-times mr-2"></i>Cancel
         </button>
       </div>
-    </div>
+    </form>
+  </section>
 
-    <!-- Address -->
-    <div>
-      <label class="block text-white/80 text-sm font-medium mb-2">
-        Address
-      </label>
-      <div class="relative">
-        <i class="fas fa-map-marker-alt absolute left-4 top-4 text-white/50"></i>
-        <textarea
-          [(ngModel)]="address"
-          name="address"
-          class="glass-input pl-12 resize-none"
-          rows="3"
-          placeholder="Enter address"
-        ></textarea>
+  <aside class="space-y-6">
+    <section class="glass-card p-6 animate-slide-up">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center"><i class="fas fa-lock mr-3 text-glass-cyan"></i>Security center</h2>
+      <div class="space-y-3 text-sm">
+        <div class="settings-security-row"><span>Password</span><strong>Protected</strong></div>
+        <div class="settings-security-row"><span>Two-step verification</span><strong>Demo enabled</strong></div>
+        <div class="settings-security-row"><span>Login alerts</span><strong>Active</strong></div>
+        <div class="settings-security-row"><span>Last profile sync</span><strong>{{ lastSavedAt || 'Not synced yet' }}</strong></div>
       </div>
-    </div>
+    </section>
 
-    <!-- Contact Number -->
-    <div>
-      <label class="block text-white/80 text-sm font-medium mb-2">
-        Contact Number
-      </label>
-      <div class="relative">
-        <i class="fas fa-phone absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
-        <input
-          type="tel"
-          [(ngModel)]="contactNo"
-          name="contactNo"
-          class="glass-input pl-12"
-          placeholder="Enter contact number"
-          pattern="[0-9]{10}"
-        />
-      </div>
-    </div>
-
-    <!-- Date of Birth -->
-    <div>
-      <label class="block text-white/80 text-sm font-medium mb-2">
-        Date of Birth
-      </label>
-      <div class="relative">
-        <i class="fas fa-calendar absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
-        <input
-          type="date"
-          [(ngModel)]="dob"
-          name="dob"
-          class="glass-input pl-12 appearance-none cursor-pointer"
-        />
-      </div>
-    </div>
-
-    <!-- Gender Selection -->
-    <div>
-      <label class="block text-white/80 text-sm font-medium mb-3">
-        Gender
-      </label>
-      <div class="grid grid-cols-3 gap-4">
-        <label class="cursor-pointer">
-          <input
-            type="radio"
-            [(ngModel)]="gender"
-            name="gender"
-            value="MALE"
-            class="hidden peer"
-          />
-          <div class="p-4 rounded-xl backdrop-blur-md bg-white/5 border-2 border-white/10 transition-all duration-300 peer-checked:border-glass-blue peer-checked:bg-white/10">
-            <div class="flex flex-col items-center gap-2">
-              <i class="fas fa-mars text-glass-blue text-2xl"></i>
-              <div class="text-white font-semibold text-sm">Male</div>
-            </div>
-          </div>
-        </label>
-
-        <label class="cursor-pointer">
-          <input
-            type="radio"
-            [(ngModel)]="gender"
-            name="gender"
-            value="FEMALE"
-            class="hidden peer"
-          />
-          <div class="p-4 rounded-xl backdrop-blur-md bg-white/5 border-2 border-white/10 transition-all duration-300 peer-checked:border-glass-pink peer-checked:bg-white/10">
-            <div class="flex flex-col items-center gap-2">
-              <i class="fas fa-venus text-glass-pink text-2xl"></i>
-              <div class="text-white font-semibold text-sm">Female</div>
-            </div>
-          </div>
-        </label>
-
-        <label class="cursor-pointer">
-          <input
-            type="radio"
-            [(ngModel)]="gender"
-            name="gender"
-            value="OTHER"
-            class="hidden peer"
-          />
-          <div class="p-4 rounded-xl backdrop-blur-md bg-white/5 border-2 border-white/10 transition-all duration-300 peer-checked:border-glass-purple peer-checked:bg-white/10">
-            <div class="flex flex-col items-center gap-2">
-              <i class="fas fa-genderless text-glass-purple text-2xl"></i>
-              <div class="text-white font-semibold text-sm">Other</div>
-            </div>
-          </div>
-        </label>
-      </div>
-    </div>
-
-    <!-- Submit Button -->
-    <div class="flex gap-3 pt-4">
-      <button
-        type="submit"
-        [disabled]="isSaving || !settingsForm.valid"
-        class="glass-button justify-center"
-        [class.opacity-50]="isSaving || !settingsForm.valid"
-        [class.cursor-not-allowed]="isSaving || !settingsForm.valid"
-      >
-        <i *ngIf="!isSaving" class="fas fa-save mr-2"></i>
-        <i *ngIf="isSaving" class="fas fa-spinner fa-spin mr-2"></i>
-        {{ isSaving ? 'Saving...' : 'Save Changes' }}
-      </button>
-      <button
-        type="button"
-        (click)="resetForm()"
-        [disabled]="isSaving"
-        class="glass-button-secondary justify-center"
-        [class.opacity-50]="isSaving"
-        [class.cursor-not-allowed]="isSaving"
-      >
-        <i class="fas fa-undo mr-2"></i>
-        Reset
-      </button>
-    </div>
-  </form>
+    <section class="glass-card p-6 animate-slide-up">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center"><i class="fas fa-key mr-3 text-glass-orange"></i>Password update</h2>
+      <form (ngSubmit)="saveSettings()" class="space-y-4">
+        <p class="text-white/60 text-sm">Change only the password while keeping your verified profile details unchanged.</p>
+        <div class="relative">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="glass-input pr-12" placeholder="New password" />
+          <button type="button" (click)="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white" aria-label="Toggle password visibility">
+            <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        <button type="submit" [disabled]="isSaving || !password" class="glass-button-secondary w-full justify-center" [class.opacity-50]="isSaving || !password">
+          <i class="fas fa-shield-alt mr-2"></i>Update password
+        </button>
+      </form>
+    </section>
+  </aside>
 </div>
