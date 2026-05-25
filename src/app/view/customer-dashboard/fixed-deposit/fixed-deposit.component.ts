@@ -150,7 +150,7 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
     return duration.replace(/_/g, ' ').toLowerCase();
   }
 
-  checkForm() {
+  async checkForm() {
     // Form validation
     if (!this.selectedSavingAccount || !this.selectedPackage || !this.fdAmount) {
       Swal.fire({
@@ -235,6 +235,28 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
           return;
       }
 
+      const reference = 'FD-' + Date.now().toString().slice(-8);
+      const confirmation = await Swal.fire({
+        icon: 'question',
+        title: 'Review fixed deposit placement',
+        html: `
+          <div style="text-align:left;line-height:1.8">
+            <strong>Reference:</strong> ${reference}<br>
+            <strong>Saving account:</strong> ${this.savingAccountId}<br>
+            <strong>Amount:</strong> Rs. ${amount.toLocaleString()}<br>
+            <strong>Term:</strong> ${this.duration}<br>
+            <strong>Rate:</strong> ${this.rpa} per annum
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Place fixed deposit',
+        cancelButtonText: 'Review again'
+      });
+
+      if (!confirmation.isConfirmed) {
+        return;
+      }
+
       this.isCreatingFD = true;
       this.errorMessage = '';
 
@@ -248,9 +270,10 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
           this.isCreatingFD = false;
 
           Swal.fire({
-            title: 'Success',
-            text: data?.message || 'Fixed deposit created successfully!',
+            title: 'Fixed deposit placed',
+            html: `Reference <strong>${reference}</strong><br>Rs. ${amount.toLocaleString()} placed for ${this.duration}.`,
             icon: 'success',
+            confirmButtonText: 'Done'
           });
 
           // Reset form

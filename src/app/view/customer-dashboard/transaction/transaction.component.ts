@@ -152,7 +152,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     }
   }
 
-  proceedTransaction() {
+  async proceedTransaction() {
     // Form validation
     if (!this.account_id || !this.to_account || !this.transfer_amount) {
       Swal.fire({
@@ -195,6 +195,28 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const reference = 'TRX-' + Date.now().toString().slice(-8);
+    const confirmation = await Swal.fire({
+      icon: 'question',
+      title: 'Review transfer details',
+      html: `
+        <div style="text-align:left;line-height:1.8">
+          <strong>Reference:</strong> ${reference}<br>
+          <strong>From account:</strong> ${this.account_id}<br>
+          <strong>To account:</strong> ${this.to_account}<br>
+          <strong>Amount:</strong> Rs. ${amount.toLocaleString()}<br>
+          <strong>Remarks:</strong> ${this.sender_remarks || 'Not provided'}
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Confirm transfer',
+      cancelButtonText: 'Review again'
+    });
+
+    if (!confirmation.isConfirmed) {
+      return;
+    }
+
     this.isProcessingTransaction = true;
     this.errorMessage = '';
 
@@ -207,6 +229,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (data) => {
         try {
+          const destinationAccount = this.to_account;
           // Update balance
           this.balance = String(Number(this.balance) - Number(this.transfer_amount));
 
@@ -217,7 +240,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
           this.to_account = '';
 
           this.isProcessingTransaction = false;
-          this.showToast(data);
+          Swal.fire({
+            title: 'Transfer completed',
+            html: `Reference <strong>${reference}</strong><br>Rs. ${amount.toLocaleString()} sent to ${destinationAccount}.`,
+            icon: 'success',
+            confirmButtonText: 'Done'
+          });
 
           // Reload transactions
           if (this.account_id) {

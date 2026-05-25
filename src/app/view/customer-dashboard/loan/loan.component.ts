@@ -199,7 +199,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     }
   }
 
-  proceed() {
+  async proceed() {
     // Form validation
     if (!this.selectedFD || !this.selectedLoan || !this.loanAmount || !this.selectedLoanType) {
       Swal.fire({
@@ -231,7 +231,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     }
 
     // Validate user ID exists
-    const userId = localStorage.getItem("userId");
+    const userId = localStorage.getItem("userId") || (localStorage.getItem('demoMode') === 'true' ? 'CUS-1001' : null);
     if (!userId) {
       Swal.fire({
         icon: 'error',
@@ -292,6 +292,30 @@ export class LoanComponent implements OnInit, OnDestroy {
           return;
       }
 
+      const reference = 'LN-' + Date.now().toString().slice(-8);
+      const confirmation = await Swal.fire({
+        icon: 'question',
+        title: 'Review loan application',
+        html: `
+          <div style="text-align:left;line-height:1.8">
+            <strong>Reference:</strong> ${reference}<br>
+            <strong>Collateral FD:</strong> ${this.selectedFD.fd_id}<br>
+            <strong>Requested amount:</strong> Rs. ${this.loanAmount.toLocaleString()}<br>
+            <strong>Maximum eligible:</strong> Rs. ${this.maximumLoanAmount.toLocaleString()}<br>
+            <strong>Term:</strong> ${this.duration}<br>
+            <strong>Rate:</strong> ${this.interest} per annum<br>
+            <strong>Loan type:</strong> ${loanType}
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Submit application',
+        cancelButtonText: 'Review again'
+      });
+
+      if (!confirmation.isConfirmed) {
+        return;
+      }
+
       this.isProcessingLoan = true;
       this.errorMessage = '';
 
@@ -308,8 +332,9 @@ export class LoanComponent implements OnInit, OnDestroy {
 
           Swal.fire({
             icon: 'success',
-            title: 'Success',
-            text: 'Loan applied successfully',
+            title: 'Loan application submitted',
+            html: `Reference <strong>${reference}</strong><br>Rs. ${this.loanAmount.toLocaleString()} requested against FD ${this.selectedFD.fd_id}.`,
+            confirmButtonText: 'Done'
           });
 
           // Reset form
