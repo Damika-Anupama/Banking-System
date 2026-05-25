@@ -211,11 +211,13 @@
       <thead>
         <tr>
           <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
-            <i class="fas fa-hashtag mr-2"></i>ID
+            <i class="fas fa-hashtag mr-2"></i>Reference
           </th>
           <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Date</th>
           <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Description</th>
           <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
+          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Status</th>
+          <th class="text-right px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Receipt</th>
         </tr>
       </thead>
       <tbody>
@@ -225,7 +227,7 @@
           (click)="showTransactionDetails(transaction)"
           title="View transaction details"
         >
-          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="px-6 py-4 text-white/90 font-mono">{{ transactionReference(transaction, i) }}</td>
           <td class="px-6 py-4 text-white/90">
             <i class="far fa-calendar mr-2 text-glass-cyan"></i>
             {{ transaction.date | date: 'yyyy-MM-dd' }}
@@ -256,6 +258,8 @@
               </span>
             </div>
           </td>
+          <td class="px-6 py-4"><span class="glass-badge bg-white/10">Posted</span></td>
+          <td class="px-6 py-4 text-right"><button type="button" class="glass-button-secondary text-xs" (click)="downloadReceipt(transaction, i); $event.stopPropagation()"><i class="fas fa-download mr-1"></i>Receipt</button></td>
         </tr>
       </tbody>
     </table>

@@ -331,6 +331,21 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  transactionReference(transaction: any, index: number = 0): string {
+    const rawDate = transaction?.date ? new Date(transaction.date).getTime().toString().slice(-6) : '000000';
+    return `TXN-${rawDate}-${String(index + 1).padStart(2, '0')}`;
+  }
+
+  downloadReceipt(transaction: any, index: number): void {
+    const reference = this.transactionReference(transaction, index);
+    Swal.fire({
+      icon: 'info',
+      title: 'Receipt ready',
+      html: `Receipt <strong>${reference}</strong><br>Status: Posted<br>Amount: Rs. ${Number(transaction?.amount || 0).toLocaleString()}`,
+      confirmButtonText: 'Close'
+    });
+  }
+
   showTransactionDetails(transaction: any): void {
     if (!transaction) {
       return;
@@ -338,9 +353,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     Swal.fire({
       customClass: { popup: 'demo-detail-modal' },
-      title: transaction.type || 'Transaction detail',
+      title: this.transactionReference(transaction),
       html: `
         <div class="demo-detail-grid">
+          <div class="demo-detail-row"><span>Type</span><strong>${transaction.type || 'Transaction'}</strong></div>
           <div class="demo-detail-row"><span>Date</span><strong>${transaction.date ? new Date(transaction.date).toLocaleDateString() : 'N/A'}</strong></div>
           <div class="demo-detail-row"><span>Amount</span><strong>Rs. ${Number(transaction.amount || 0).toLocaleString()}</strong></div>
           <div class="demo-detail-row"><span>Direction</span><strong>${transaction.status === 'up' ? 'Incoming' : 'Outgoing'}</strong></div>
