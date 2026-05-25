@@ -37,10 +37,14 @@
   object-fit: contain;
 }
 
-.logo-dark {
-  display: none;
+.logo-dark,
+.logo-dark-static {
   background: rgba(15, 23, 42, 0.92);
   border-color: rgba(34, 211, 238, 0.24);
+}
+
+.logo-dark {
+  display: none;
 }
 
 .dark .logo-light {
@@ -49,6 +53,15 @@
 
 .dark .logo-dark {
   display: block;
+}
+
+.auth-error-text {
+  @apply mt-2 text-sm font-medium text-rose-200;
+}
+
+.auth-input-error {
+  border-color: rgba(251, 113, 133, 0.75) !important;
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.16) !important;
 }
 
 .auth-title {

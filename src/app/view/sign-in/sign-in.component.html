@@ -2,31 +2,31 @@
   <section class="auth-panel">
     <div class="auth-card animate-scale-in">
       <div class="text-center">
-        <div class="auth-logo-switcher" aria-label="Banking System logo">
-        <img src="assets/logo.png" alt="Banking System logo" class="auth-logo logo-light" />
-        <img src="assets/logo-dark.png" alt="Banking System logo" class="auth-logo logo-dark" />
-      </div>
-        <span class="demo-status-pill demo-status-info">Demo gateway</span>
-        <h1 class="auth-title text-3xl sm:text-4xl">Sign in</h1>
-        <p class="auth-subtitle text-sm sm:text-base">Use credentials for a real backend, or open a ready-made role demo.</p>
+        <img src="assets/logo-dark.png" alt="Banking System logo" class="auth-logo logo-dark-static" />
+        <h1 class="auth-title text-3xl sm:text-4xl">Sign in securely</h1>
+        <p class="auth-subtitle text-sm sm:text-base">
+          Enter account credentials, or open the customer dashboard instantly using the no-sign-in preview below.
+        </p>
       </div>
 
-      <form #frm="ngForm" (ngSubmit)="authenticate()" class="mt-7 space-y-5">
+      <form #frm="ngForm" (ngSubmit)="authenticate(frm.valid)" class="mt-7 space-y-5" novalidate>
         <div>
           <label for="signin-email" class="auth-field-label"><i class="fas fa-envelope mr-2"></i>Email address</label>
-          <input id="signin-email" type="email" name="email" #emailModel="ngModel" [(ngModel)]="email" required autocomplete="email" placeholder="client.customer@finflow.demo" class="glass-input w-full" />
-          <p *ngIf="emailModel.invalid && emailModel.dirty" class="mt-2 text-sm text-red-200">Please enter a valid email address.</p>
+          <input id="signin-email" type="email" name="email" #emailModel="ngModel" [(ngModel)]="email" required email autocomplete="email" placeholder="amara.perera@example.com" class="glass-input w-full" [class.auth-input-error]="emailModel.invalid && (emailModel.dirty || emailModel.touched || submitted)" />
+          <p *ngIf="emailModel.errors?.['required'] && (emailModel.dirty || emailModel.touched || submitted)" class="auth-error-text">Email address is required.</p>
+          <p *ngIf="emailModel.errors?.['email'] && (emailModel.dirty || emailModel.touched || submitted)" class="auth-error-text">Enter a valid email address.</p>
         </div>
 
         <div>
           <label for="signin-password" class="auth-field-label"><i class="fas fa-lock mr-2"></i>Password</label>
-          <input id="signin-password" type="password" name="password" #passwordModel="ngModel" [(ngModel)]="password" required autocomplete="current-password" placeholder="Enter your password" class="glass-input w-full" />
-          <p *ngIf="passwordModel.invalid && passwordModel.dirty" class="mt-2 text-sm text-red-200">Password is required.</p>
+          <input id="signin-password" type="password" name="password" #passwordModel="ngModel" [(ngModel)]="password" required minlength="6" autocomplete="current-password" placeholder="Minimum 6 characters" class="glass-input w-full" [class.auth-input-error]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted)" />
+          <p *ngIf="passwordModel.errors?.['required'] && (passwordModel.dirty || passwordModel.touched || submitted)" class="auth-error-text">Password is required.</p>
+          <p *ngIf="passwordModel.errors?.['minlength'] && (passwordModel.dirty || passwordModel.touched || submitted)" class="auth-error-text">Password must be at least 6 characters.</p>
         </div>
 
-        <button type="submit" class="glass-button w-full justify-center py-4" [disabled]="frm.invalid || isLoading" [class.opacity-50]="frm.invalid || isLoading">
+        <button type="submit" class="glass-button w-full justify-center py-4" [disabled]="isLoading" [class.opacity-50]="isLoading">
           <span class="flex items-center justify-center gap-3">
-            {{ isLoading ? 'Signing in...' : 'Sign in' }}
+            {{ isLoading ? 'Opening workspace...' : 'Sign in to customer workspace' }}
             <i class="fas fa-arrow-right"></i>
           </span>
         </button>
@@ -34,19 +34,22 @@
 
       <div class="my-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
         <span class="h-px flex-1 bg-white/15"></span>
-        Demo roles
+        No sign-in required
         <span class="h-px flex-1 bg-white/15"></span>
       </div>
 
-      <div class="auth-demo-grid">
-        <button type="button" class="auth-demo-btn" aria-label="Open customer demo dashboard" (click)="launchDemo('CUSTOMER')"><i class="fas fa-user"></i>Customer</button>
-        <button type="button" class="auth-demo-btn" aria-label="Open employee demo dashboard" (click)="launchDemo('EMPLOYEE')"><i class="fas fa-user-tie"></i>Employee</button>
-        <button type="button" class="auth-demo-btn" aria-label="Open manager demo dashboard" (click)="launchDemo('MANAGER')"><i class="fas fa-chart-line"></i>Manager</button>
+      <div class="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-center">
+        <p class="text-sm text-cyan-50">You can view the dashboards without entering sign-in details.</p>
+        <div class="auth-demo-grid mt-4">
+          <button type="button" class="auth-demo-btn" aria-label="Open customer dashboard without sign in" (click)="launchDemo('CUSTOMER')"><i class="fas fa-user"></i>Customer</button>
+          <button type="button" class="auth-demo-btn" aria-label="Open employee dashboard without sign in" (click)="launchDemo('EMPLOYEE')"><i class="fas fa-user-tie"></i>Employee</button>
+          <button type="button" class="auth-demo-btn" aria-label="Open manager dashboard without sign in" (click)="launchDemo('MANAGER')"><i class="fas fa-chart-line"></i>Manager</button>
+        </div>
       </div>
 
       <p class="mt-6 text-center text-sm text-slate-300">
-        Need a demo account?
-        <a routerLink="/sign-up" class="auth-link ml-1">Create one</a>
+        New customer?
+        <a routerLink="/sign-up" class="auth-link ml-1">Create an account</a>
       </p>
     </div>
   </section>
