@@ -12,6 +12,18 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overscroll-behavior: none;
+}
+
+html {
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 // CSS Variables for theming
@@ -58,7 +70,9 @@ html, body {
 body {
   font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   overflow-x: hidden;
+  overscroll-behavior: none;
   background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   color: var(--text-primary) !important;
   transition: background 0.3s ease, color 0.3s ease;
@@ -140,6 +154,68 @@ body {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     @apply backdrop-blur-md rounded-2xl overflow-hidden;
+  }
+
+  .demo-table-shell {
+    border-color: var(--glass-border) !important;
+    background: rgba(15, 23, 42, 0.28);
+    @apply rounded-3xl border shadow-xl backdrop-blur-xl;
+  }
+
+  html:not(.dark) .demo-table-shell {
+    border-color: rgba(37, 99, 235, 0.16) !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+  }
+
+  .demo-table-shell table {
+    border-spacing: 0 0.35rem;
+  }
+
+  .demo-table-shell thead th {
+    color: var(--text-secondary) !important;
+    @apply px-4 md:px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em];
+  }
+
+  html:not(.dark) .demo-table-shell thead th {
+    color: #1e3a8a !important;
+  }
+
+  .demo-table-shell tbody tr {
+    background: rgba(255, 255, 255, 0.045);
+    @apply transition-all duration-200;
+  }
+
+  html:not(.dark) .demo-table-shell tbody tr {
+    background: rgba(248, 250, 252, 0.86) !important;
+  }
+
+  .demo-table-shell tbody tr:hover {
+    background: var(--table-row-hover) !important;
+    box-shadow: inset 3px 0 0 rgba(103, 232, 249, 0.7), 0 10px 24px rgba(15, 23, 42, 0.12);
+  }
+
+  html:not(.dark) .demo-table-shell tbody tr:hover {
+    background: rgba(224, 242, 254, 0.82) !important;
+  }
+
+  .demo-table-shell td {
+    color: var(--text-primary) !important;
+    @apply px-4 md:px-5 py-3 text-sm align-middle;
+  }
+
+  .demo-table-shell td:first-child {
+    @apply rounded-l-xl;
+  }
+
+  .demo-table-shell td:last-child {
+    @apply rounded-r-xl;
+  }
+
+  .demo-table-shell .text-white\/60,
+  .demo-table-shell .text-white\/50,
+  .demo-table-shell .text-white\/40 {
+    color: var(--text-secondary) !important;
   }
 
   .neon-text {
