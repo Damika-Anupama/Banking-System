@@ -118,6 +118,18 @@ body {
 
   .glass-button {
     @apply bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-95;
+
+    &:focus-visible {
+      outline: 2px solid rgba(34, 211, 238, 0.9);
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      opacity: 0.78;
+      cursor: not-allowed;
+      transform: none;
+      filter: saturate(0.85);
+    }
   }
 
   .glass-button-secondary {
@@ -126,8 +138,17 @@ body {
     color: var(--text-primary);
     @apply backdrop-blur-sm font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       background: var(--glass-hover);
+      outline: 2px solid rgba(34, 211, 238, 0.68);
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+      transform: none;
     }
   }
 
@@ -148,6 +169,11 @@ body {
   .glass-badge {
     @apply inline-flex items-center gap-1 bg-gradient-to-r from-glass-purple/80 to-glass-blue/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm;
     white-space: nowrap;
+  }
+
+  html:not(.dark) .glass-badge {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.28);
   }
 
   .glass-table {
@@ -262,6 +288,9 @@ body {
   html:not(.dark) .dashboard-section-subtitle,
   html:not(.dark) .glass-card .text-slate-300,
   html:not(.dark) .glass-card .text-slate-400,
+  html:not(.dark) .glass-card .text-white\/60,
+  html:not(.dark) .glass-card .text-white\/50,
+  html:not(.dark) .glass-card .text-white\/40,
   html:not(.dark) .demo-section-card .text-slate-300,
   html:not(.dark) .demo-section-card .text-slate-400 {
     color: #475569 !important;
@@ -378,7 +407,21 @@ main, .glass-card, .stat-card {
 // Placeholder text color
 ::placeholder {
   color: var(--text-secondary) !important;
-  opacity: 0.6 !important;
+  opacity: 0.72 !important;
+}
+
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(71, 85, 105, 0.32) !important;
+}
+
+html:not(.dark) input:focus,
+html:not(.dark) textarea:focus,
+html:not(.dark) select:focus {
+  border-color: rgba(37, 99, 235, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
 }
 
 // Icon color support (FontAwesome)
