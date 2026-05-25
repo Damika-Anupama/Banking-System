@@ -171,6 +171,30 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
     return date;
   }
 
+  fdMaturityDate(fdItem: any): Date {
+    const date = new Date(fdItem.fd_opening_date || new Date());
+    const months = String(fdItem.duration || '').includes('SIX') || String(fdItem.duration || '').includes('6') ? 6 : String(fdItem.duration || '').includes('THREE') || String(fdItem.duration || '').includes('3') ? 36 : 12;
+    date.setMonth(date.getMonth() + months);
+    return date;
+  }
+
+  fdMaturityAmount(fdItem: any): number {
+    return Number(fdItem.amount || 0) + ((Number(fdItem.amount || 0) * Number(fdItem.rate_per_annum || 0)) / 100);
+  }
+
+  fdStatus(fdItem: any): string {
+    return fdItem.status || 'Active';
+  }
+
+  viewFDCertificate(fdItem: any): void {
+    Swal.fire({
+      icon: 'info',
+      title: `FD certificate ${fdItem.fd_id}`,
+      html: `Maturity: <strong>${this.fdMaturityDate(fdItem).toLocaleDateString()}</strong><br>Maturity value: <strong>Rs. ${this.fdMaturityAmount(fdItem).toLocaleString()}</strong><br>Renewal instruction: Credit principal and interest`,
+      confirmButtonText: 'Close'
+    });
+  }
+
   async checkForm() {
     // Form validation
     if (!this.selectedSavingAccount || !this.selectedPackage || !this.fdAmount) {

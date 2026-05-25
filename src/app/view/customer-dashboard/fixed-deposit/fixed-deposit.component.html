@@ -154,6 +154,10 @@
             <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Interest Rate</th>
             <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Opened Date</th>
             <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Maturity Date</th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Maturity Amount</th>
+            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Status</th>
+            <th class="text-right px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -192,6 +196,10 @@
                 Rs. {{ fd.amount | number }}
               </span>
             </td>
+            <td class="px-6 py-4 text-white/90">{{ fdMaturityDate(fd) | date: 'yyyy-MM-dd' }}</td>
+            <td class="px-6 py-4 font-semibold text-emerald-100">Rs. {{ fdMaturityAmount(fd) | number }}</td>
+            <td class="px-6 py-4"><span class="glass-badge bg-white/10">{{ fdStatus(fd) }}</span></td>
+            <td class="px-6 py-4 text-right"><button type="button" class="glass-button-secondary text-xs" (click)="viewFDCertificate(fd)"><i class="fas fa-file-download mr-1"></i>Certificate</button></td>
           </tr>
         </tbody>
       </table>
