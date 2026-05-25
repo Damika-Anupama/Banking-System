@@ -53,63 +53,68 @@
       <p class="text-white/60 text-sm">Send money to another account</p>
     </div>
 
-    <form class="space-y-5">
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Transfer Amount <span class="text-red-400">*</span>
-        </label>
-        <div class="relative">
-          <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50">Rs.</span>
-          <input
-            type="number"
-            class="glass-input pl-14"
-            placeholder="Enter amount"
-            [(ngModel)]="transfer_amount"
-            name="transfer_amount"
-          />
+    <form class="space-y-6">
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-money-bill-wave mr-2"></i>Transfer Amount <span class="text-red-300">*</span>
+          </label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50">Rs.</span>
+            <input
+              type="number"
+              class="glass-input pl-14"
+              placeholder="Enter amount"
+              [(ngModel)]="transfer_amount"
+              name="transfer_amount"
+              min="1"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-user mr-2"></i>To Account Number <span class="text-red-300">*</span>
+          </label>
+          <div class="relative">
+            <i class="fas fa-hashtag absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+            <input
+              type="text"
+              class="glass-input pl-12"
+              placeholder="Enter account number"
+              [(ngModel)]="to_account"
+              name="to_account"
+            />
+          </div>
         </div>
       </div>
 
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          To Account Number <span class="text-red-400">*</span>
-        </label>
-        <div class="relative">
-          <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
-          <input
-            type="text"
-            class="glass-input pl-12"
-            placeholder="Enter account number"
-            [(ngModel)]="to_account"
-            name="to_account"
-          />
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-comment mr-2"></i>Sender Remarks <span class="text-red-300">*</span>
+          </label>
+          <textarea
+            class="glass-input min-h-[110px] resize-none"
+            rows="3"
+            placeholder="Enter your remarks"
+            [(ngModel)]="sender_remarks"
+            name="sender_remarks"
+          ></textarea>
         </div>
-      </div>
 
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Sender Remarks <span class="text-red-400">*</span>
-        </label>
-        <textarea
-          class="glass-input resize-none"
-          rows="2"
-          placeholder="Enter your remarks"
-          [(ngModel)]="sender_remarks"
-          name="sender_remarks"
-        ></textarea>
-      </div>
-
-      <div>
-        <label class="block text-white/80 text-sm font-medium mb-2">
-          Beneficiary Remarks <span class="text-red-400">*</span>
-        </label>
-        <textarea
-          class="glass-input resize-none"
-          rows="2"
-          placeholder="Enter beneficiary remarks"
-          [(ngModel)]="beneficiary_remarks"
-          name="beneficiary_remarks"
-        ></textarea>
+        <div>
+          <label class="auth-field-label">
+            <i class="fas fa-message mr-2"></i>Beneficiary Remarks <span class="text-red-300">*</span>
+          </label>
+          <textarea
+            class="glass-input min-h-[110px] resize-none"
+            rows="3"
+            placeholder="Enter beneficiary remarks"
+            [(ngModel)]="beneficiary_remarks"
+            name="beneficiary_remarks"
+          ></textarea>
+        </div>
       </div>
 
       <button
