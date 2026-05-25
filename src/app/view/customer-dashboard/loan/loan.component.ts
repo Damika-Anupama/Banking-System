@@ -27,6 +27,7 @@ export class LoanComponent implements OnInit, OnDestroy {
   duration: any;
   interest: any;
   selectedLoanType: string = '';
+  acceptedLienConsent = false;
 
   isLoadingFDs = false;
   isLoadingLoans = false;
@@ -118,6 +119,21 @@ export class LoanComponent implements OnInit, OnDestroy {
   convertDuration(duration: any) {
     if (!duration) return '';
     return duration.replace(/_/g, ' ').toLowerCase();
+  }
+
+  get ltvPercent(): number {
+    return this.selectedFD?.amount ? Math.round((this.maximumLoanAmount / Number(this.selectedFD.amount)) * 100) : 0;
+  }
+
+  get estimatedMonthlyPayment(): number {
+    const months = Math.max(1, Math.ceil(this.durationInDaysValue() / 30));
+    const principal = Number(this.loanAmount || 0);
+    const annualRate = Number(String(this.interest || '0').replace('%', '')) / 100;
+    return Math.round((principal + principal * annualRate * (this.durationInDaysValue() / 365)) / months);
+  }
+
+  durationInDaysValue(): number {
+    return this.duration === '6 months' ? 180 : this.duration === '1 year' ? 360 : this.duration === '3 years' ? 1080 : 0;
   }
 
   onFDSelected() {
@@ -226,6 +242,15 @@ export class LoanComponent implements OnInit, OnDestroy {
         icon: 'error',
         title: 'Amount Exceeds Limit',
         text: `Loan amount should be less than or equal to ${this.maximumLoanAmount.toFixed(2)}`
+      });
+      return;
+    }
+
+    if (!this.acceptedLienConsent) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Collateral Consent Required',
+        text: 'Please consent to placing a lien on the selected fixed deposit before submitting.'
       });
       return;
     }

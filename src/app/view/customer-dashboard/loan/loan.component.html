@@ -62,7 +62,7 @@
           </label>
           <p class="text-white/50 text-xs mb-2" *ngIf="maximumLoanAmount">
             <i class="fas fa-info-circle mr-1"></i>
-            Maximum amount: Rs. {{ maximumLoanAmount | number }}
+            Maximum eligible: Rs. {{ maximumLoanAmount | number }} • LTV {{ ltvPercent }}%
           </p>
           <div class="relative">
             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
@@ -147,13 +147,25 @@
         </div>
       </div>
 
+      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
+        <p class="font-semibold text-white">Repayment estimate</p>
+        <p>Interest formula: simple annual interest on principal</p>
+        <p>Estimated monthly payment: <strong class="text-emerald-100">Rs. {{ estimatedMonthlyPayment | number }}</strong></p>
+        <p>Processing fee: 0.5% shown at approval stage</p>
+      </div>
+
+      <label class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
+        <input type="checkbox" class="mt-1" [(ngModel)]="acceptedLienConsent" name="acceptedLienConsent" />
+        <span>I consent to placing a lien on the selected fixed deposit until this loan is settled.</span>
+      </label>
+
       <button
         type="button"
         class="glass-button w-full justify-center md:w-auto"
         (click)="proceed()"
-        [disabled]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType"
-        [class.opacity-50]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType"
-        [class.cursor-not-allowed]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType"
+        [disabled]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType || !acceptedLienConsent"
+        [class.opacity-50]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType || !acceptedLienConsent"
+        [class.cursor-not-allowed]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType || !acceptedLienConsent"
       >
         <i class="fas fa-check-circle mr-2"></i>
         Submit Loan Application
