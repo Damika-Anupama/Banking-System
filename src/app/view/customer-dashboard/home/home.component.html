@@ -109,19 +109,22 @@
 
   <article class="demo-section-card">
     <h2 class="demo-section-title">Money movement snapshot</h2>
-    <p class="demo-section-helper">Simple visual context for customer balances.</p>
+    <p class="demo-section-helper">
+      Current month activity for the selected account
+      <span *ngIf="moneyMovementUpdatedAt">• Updated {{ moneyMovementUpdatedAt | date: 'MMM d, h:mm a' }}</span>
+    </p>
     <div class="mt-5 space-y-4">
       <div class="dashboard-progress-card rounded-2xl bg-white/[0.06] p-4">
-        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Income</span><strong class="text-emerald-100">Rs. 249K</strong></div>
-        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-emerald-300" style="width: 82%"></div></div>
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Money in</span><strong class="text-emerald-100">Rs. {{ monthlyIncome | number }}</strong></div>
+        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-emerald-300" [style.width.%]="incomeWidth"></div></div>
       </div>
       <div class="dashboard-progress-card rounded-2xl bg-white/[0.06] p-4">
-        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Payments</span><strong class="text-rose-100">Rs. 70K</strong></div>
-        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-rose-300" style="width: 34%"></div></div>
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Money out</span><strong class="text-rose-100">Rs. {{ monthlyPayments | number }}</strong></div>
+        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-rose-300" [style.width.%]="paymentWidth"></div></div>
       </div>
       <div class="dashboard-progress-card rounded-2xl bg-white/[0.06] p-4">
-        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Savings rate</span><strong class="text-cyan-100">72%</strong></div>
-        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-cyan-300" style="width: 72%"></div></div>
+        <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Net savings rate</span><strong class="text-cyan-100">{{ savingsRate }}%</strong></div>
+        <div class="mt-3 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-cyan-300" [style.width.%]="savingsRate"></div></div>
       </div>
     </div>
   </article>

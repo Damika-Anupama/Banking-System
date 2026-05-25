@@ -5,6 +5,7 @@ import { FilterPipe } from 'src/app/pipes/filter.pipe';
 import { UserService } from 'src/app/service/customer/user.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
 Chart.register(...registerables);
 
 @Component({
@@ -66,6 +67,43 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   get maskedAccountNumber(): string {
     return this.maskAccountId(this.accountNumber);
+  }
+
+  get selectedAccountTransactions(): any[] {
+    return DEMO_TRANSACTIONS[this.accountNumber] || [];
+  }
+
+  get monthlyIncome(): number {
+    return this.selectedAccountTransactions
+      .filter(transaction => transaction.status === 'up')
+      .reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0);
+  }
+
+  get monthlyPayments(): number {
+    return this.selectedAccountTransactions
+      .filter(transaction => transaction.status === 'down')
+      .reduce((sum, transaction) => sum + Number(transaction.amount || 0), 0);
+  }
+
+  get savingsRate(): number {
+    const income = this.monthlyIncome;
+    return income > 0 ? Math.max(0, Math.round(((income - this.monthlyPayments) / income) * 100)) : 0;
+  }
+
+  get moneyMovementUpdatedAt(): Date | null {
+    const latest = this.selectedAccountTransactions
+      .map(transaction => new Date(transaction.date).getTime())
+      .filter(timestamp => Number.isFinite(timestamp))
+      .sort((a, b) => b - a)[0];
+    return latest ? new Date(latest) : null;
+  }
+
+  get incomeWidth(): number {
+    return this.progressWidth(this.monthlyIncome);
+  }
+
+  get paymentWidth(): number {
+    return this.progressWidth(this.monthlyPayments);
   }
 
   constructor(private router: Router, private userService: UserService) {}
@@ -257,6 +295,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   trackByAccountId(_index: number, account: any): string {
     return String(account?.account_id || _index);
+  }
+
+  progressWidth(value: number): number {
+    const baseline = Math.max(this.monthlyIncome, this.monthlyPayments, 1);
+    return Math.max(8, Math.min(100, Math.round((value / baseline) * 100)));
   }
 
   updateSmallBox(account: any) {
