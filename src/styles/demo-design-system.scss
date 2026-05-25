@@ -257,7 +257,7 @@ html:not(.dark) .demo-tone-violet .demo-kpi-icon { background: rgba(139, 92, 246
 
 .demo-table-shell table,
 .glass-card table {
-  min-width: 760px;
+  min-width: 720px;
 }
 
 .demo-table-shell thead th,
@@ -376,13 +376,40 @@ html:not(.dark) .demo-tone-violet .demo-kpi-icon { background: rgba(139, 92, 246
 }
 
 @media (max-width: 640px) {
-  .demo-title {
-    font-size: 1.85rem;
-    line-height: 2.2rem;
+  .demo-title,
+  h1.text-4xl {
+    font-size: 1.85rem !important;
+    line-height: 2.2rem !important;
+  }
+
+  .demo-page-header,
+  .demo-section-card,
+  .demo-kpi-card,
+  .glass-card {
+    padding: 1rem !important;
   }
 
   .demo-kpi-grid {
     grid-template-columns: 1fr;
+  }
+
+  .demo-table-shell {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .demo-table-shell table,
+  .glass-card table {
+    min-width: 600px;
+  }
+
+  .demo-table-shell thead th,
+  .demo-table-shell tbody td {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    white-space: nowrap;
   }
 
   .glass-button,
