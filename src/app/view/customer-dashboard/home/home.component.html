@@ -149,4 +149,21 @@
     </div>
   </article>
 </section>
+
+<section class="grid grid-cols-1 gap-5 mb-8">
+  <article class="demo-section-card">
+    <h2 class="demo-section-title">Spending by category</h2>
+    <p class="demo-section-helper">Outgoing activity for {{ maskedAccountNumber }}, grouped by transaction type.</p>
+    <div class="mt-5">
+      <div *ngIf="spendingByCategory.length > 0" class="relative mx-auto h-72 max-w-md">
+        <canvas id="spendingChart"></canvas>
+      </div>
+      <div *ngIf="spendingByCategory.length === 0" class="demo-state-card">
+        <i class="fas fa-chart-pie"></i>
+        <h3>No outgoing activity</h3>
+        <p>This account has no outgoing transactions to break down yet.</p>
+      </div>
+    </div>
+  </article>
+</section>
 </div>

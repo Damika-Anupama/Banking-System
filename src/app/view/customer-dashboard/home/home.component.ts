@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { FilterPipe } from 'src/app/pipes/filter.pipe';
@@ -8,6 +8,8 @@ import Swal from 'sweetalert2';
 import { DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
 Chart.register(...registerables);
 
+const SPENDING_COLORS = ['#22d3ee', '#3b82f6', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#fb7185', '#94a3b8'];
+
 @Component({
   selector: 'app-home',
   standalone: false,
@@ -15,7 +17,7 @@ Chart.register(...registerables);
   styleUrls: ['./home.component.scss']
 })
 
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   username = '';
   userType = '';
   accounts: any[] | null = null;
@@ -106,11 +108,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.progressWidth(this.monthlyPayments);
   }
 
+  /** Outgoing transactions grouped by type, for the spending breakdown chart. */
+  get spendingByCategory(): { label: string; value: number }[] {
+    const totals = new Map<string, number>();
+    for (const txn of this.selectedAccountTransactions) {
+      if (txn.status !== 'down') continue;
+      const label = String(txn.type || 'Other');
+      totals.set(label, (totals.get(label) || 0) + Number(txn.amount || 0));
+    }
+    return Array.from(totals.entries())
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => b.value - a.value);
+  }
+
   constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit() {
     this.loadDashboardData();
-    this.initializeChart();
+  }
+
+  ngAfterViewInit(): void {
+    this.renderSpendingChart();
   }
 
   loadDashboardData() {
@@ -187,6 +205,8 @@ export class HomeComponent implements OnInit, OnDestroy {
           }
 
           this.isLoading = false;
+          // Render the spending breakdown once the initial account is loaded.
+          setTimeout(() => this.renderSpendingChart());
         } catch (error) {
           console.error('Error processing dashboard data:', error);
           this.errorMessage = 'Failed to process user data';
@@ -214,60 +234,50 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  initializeChart() {
+  /** Renders (or re-renders) the spending-by-category doughnut from real transaction data. */
+  renderSpendingChart(): void {
     try {
-      const canvas = document.getElementById('lineChart') as HTMLCanvasElement;
-      if (!canvas) {
-        console.warn('Chart canvas not found');
+      const canvas = document.getElementById('spendingChart') as HTMLCanvasElement | null;
+      if (!canvas) return;
+
+      const breakdown = this.spendingByCategory;
+      this.chartInstance?.destroy();
+
+      if (breakdown.length === 0) {
+        this.chartInstance = null;
         return;
       }
 
       this.chartInstance = new Chart(canvas, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
-          labels: [
-            'August',
-            'September',
-            'October',
-            'November',
-            'December',
-            'January',
-          ],
-          datasets: [
-            {
-              label: 'Monthly Expenses',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)',
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-              ],
-              borderWidth: 1,
-            },
-          ],
+          labels: breakdown.map(item => item.label),
+          datasets: [{
+            data: breakdown.map(item => item.value),
+            backgroundColor: breakdown.map((_, i) => SPENDING_COLORS[i % SPENDING_COLORS.length]),
+            borderColor: 'rgba(15, 23, 42, 0.6)',
+            borderWidth: 2,
+          }],
         },
         options: {
-          scales: {
-            y: {
-              beginAtZero: true,
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '62%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#cbd5e1', boxWidth: 12, padding: 12, font: { size: 11 } },
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.label}: Rs. ${Number(ctx.parsed).toLocaleString()}`,
+              },
             },
           },
         },
       });
     } catch (error) {
-      console.error('Error initializing chart:', error);
-      // Don't show error to user as chart is not critical
+      console.error('Error rendering spending chart:', error);
     }
   }
 
@@ -318,6 +328,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Update the account number value with null check
     this.accountNumber = account.account_id || 'N/A';
     this.selectedAccount = account;
+
+    // Refresh the spending breakdown for the newly selected account.
+    setTimeout(() => this.renderSpendingChart());
   }
 
   ngOnDestroy(): void {
