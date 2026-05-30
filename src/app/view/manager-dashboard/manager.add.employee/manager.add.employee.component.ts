@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AddEmployeeService } from 'src/app/service/manager/add.employee.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -24,11 +25,12 @@ export class ManagerAddEmployeeComponent implements OnInit, OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private addEmployee: AddEmployeeService) {}
+  constructor(private addEmployee: AddEmployeeService, private router: Router) {}
 
   ngOnInit(): void {
     // Load and validate branch_id
-    this.branch_id = localStorage.getItem('branchId');
+    const isDemo = localStorage.getItem('demoMode') === 'true';
+    this.branch_id = localStorage.getItem('branchId') || (isDemo ? 'BR-001' : null);
     if (!this.branch_id) {
       Swal.fire({
         title: 'Error',
@@ -121,13 +123,17 @@ export class ManagerAddEmployeeComponent implements OnInit, OnDestroy {
             return;
           }
 
+          const isDemo = localStorage.getItem('demoMode') === 'true';
           Swal.fire({
             title: 'Success',
             text: res.message || 'Employee added successfully',
             icon: 'success',
           }).then(() => {
-            // Reset form after successful registration
             this.resetForm();
+            // In demo mode, return to home so the updated employee count is visible.
+            if (isDemo) {
+              this.router.navigate(['/manager-dashboard/manager-home']);
+            }
           });
         },
         error: (err) => {

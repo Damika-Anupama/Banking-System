@@ -164,6 +164,22 @@ const titleCaseGender = (gender: string): string => {
   return g === 'MALE' ? 'Male' : g === 'FEMALE' ? 'Female' : 'Other';
 };
 
+export const createDemoEmployee = (payload: {
+  username: string; fullname: string; gender: string; dob: string;
+  address: string; email: string; contact_no: string; branch_id?: string | null;
+}) => ({
+  employee_id: 'EMP-' + Math.floor(2100 + Math.random() * 7900),
+  username: payload.username,
+  fullname: payload.fullname,
+  gender: titleCaseGender(payload.gender),
+  dob: payload.dob,
+  address: payload.address,
+  email: payload.email,
+  contact_no: payload.contact_no,
+  branch_id: payload.branch_id || 'BR-001',
+  status: 'Active'
+});
+
 export const createDemoCustomer = (payload: {
   username: string; fullname: string; gender: string; dob: string;
   address: string; email: string; contact_no: string;

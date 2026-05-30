@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { demoStore } from 'src/app/shared/demo-store';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,7 @@ export class ManagerHomeService {
           branch_name: 'Colombo Main Branch',
           manager_id: 'MAN-502',
           num_accounts: 1284,
-          num_employees: 24
+          num_employees: demoStore.employeeCount
         }]
       });
     }

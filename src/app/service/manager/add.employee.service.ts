@@ -1,8 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry, timeout } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, delay, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { createDemoEmployee } from 'src/app/shared/demo-banking-fixtures';
+import { demoStore } from 'src/app/shared/demo-store';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +31,15 @@ export class AddEmployeeService {
     }
     if (!employee.password || employee.password.length < 6) {
       return throwError(() => new Error('Password must be at least 6 characters'));
+    }
+
+    if (localStorage.getItem('demoMode') === 'true') {
+      const created = createDemoEmployee(employee);
+      demoStore.addEmployee(created);
+      return of({
+        message: `Employee ${created.fullname} added successfully`,
+        data: created
+      }).pipe(delay(500));
     }
 
     return this.http.post<any>(environment.baseUrl + `/api/v1/employee`, employee)
