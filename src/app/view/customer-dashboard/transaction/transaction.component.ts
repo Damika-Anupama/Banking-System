@@ -577,6 +577,51 @@ export class TransactionComponent implements OnInit, OnDestroy {
     });
   }
 
+  downloadStatement(): void {
+    const rows = this.filteredTransactions;
+    if (!rows.length) {
+      Swal.fire({ icon: 'info', title: 'Nothing to export', text: 'There are no transactions matching the current filters.' });
+      return;
+    }
+
+    const escape = (value: any): string => {
+      const text = String(value ?? '');
+      return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    };
+
+    const header = ['Reference', 'Date', 'Type', 'Direction', 'Amount (Rs.)', 'Status', 'Purpose', 'Beneficiary note'];
+    const lines = rows.map((txn, i) => [
+      this.transactionReference(txn, i),
+      txn.date ? new Date(txn.date).toISOString() : '',
+      txn.type || '',
+      this.transactionDirection(txn),
+      Number(txn.amount || 0),
+      this.transactionAuditState(txn),
+      txn.sender_remarks || '',
+      txn.beneficiary_remarks || ''
+    ].map(escape).join(','));
+
+    const csv = [header.join(','), ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `statement-${String(this.account_id || 'account')}-${stamp}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Statement downloaded',
+      html: `${rows.length} transaction${rows.length === 1 ? '' : 's'} exported as CSV.`,
+      timer: 1800,
+      showConfirmButton: false
+    });
+  }
+
   showTransactionDetails(transaction: any, index: number = 0): void {
     if (!transaction) {
       return;
