@@ -1,0 +1,11 @@
+# Root-level build artifacts leftover from previous repo structure
+node_modules/
+dist/
+.angular/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
