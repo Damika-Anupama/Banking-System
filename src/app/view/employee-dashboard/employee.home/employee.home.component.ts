@@ -11,9 +11,20 @@ import Swal from 'sweetalert2';
 })
 export class EmployeeHomeComponent implements OnInit, OnDestroy {
   customers: any[] | null = null;
+  searchTerm = '';
   isLoading = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
+
+  get filteredCustomers(): any[] {
+    const list = this.customers || [];
+    const q = this.searchTerm.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter(c =>
+      [c.fullname, c.username, c.user_id, c.email, c.status, String(c.account_count)]
+        .some(v => v && String(v).toLowerCase().includes(q))
+    );
+  }
 
   constructor(private home: EmployeeHomeService) { }
 

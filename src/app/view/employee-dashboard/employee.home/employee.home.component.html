@@ -18,7 +18,10 @@
   <article class="demo-section-card xl:col-span-2">
     <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <div><h2 class="demo-section-title">Customer service queue</h2><p class="demo-section-helper">Prioritized sample work for a branch employee.</p></div>
-      <input class="demo-input max-w-sm" placeholder="Search customers, status, or account count" />
+      <div class="relative">
+        <input class="demo-input pl-9 max-w-sm" placeholder="Search name, ID, status…" [(ngModel)]="searchTerm" name="customerSearch" />
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+      </div>
     </div>
     <div class="mt-5 grid gap-3 md:grid-cols-2">
       <div class="demo-action-card"><i class="fas fa-id-card text-emerald-200"></i><span><strong class="block text-white">KYC verified</strong><span class="text-sm text-slate-300">3 customers ready for services</span></span><span class="ml-auto demo-status-pill demo-status-success">3</span></div>
@@ -72,7 +75,7 @@
       </thead>
       <tbody>
         <tr
-          *ngFor="let customer of customers; let i = index"
+          *ngFor="let customer of filteredCustomers; let i = index"
           class="cursor-pointer transition-all duration-300 hover:bg-white/5"
           (click)="showCustomerDetails(customer)"
           title="View customer details"
@@ -130,11 +133,11 @@
     </table>
 
     <!-- Empty State -->
-    <div *ngIf="!customers || customers.length === 0" class="text-center py-12">
+    <div *ngIf="filteredCustomers.length === 0" class="text-center py-12">
       <div class="text-6xl text-white/20 mb-4">
         <i class="fas fa-users"></i>
       </div>
-      <p class="text-white/60">No customers found</p>
+      <p class="text-white/60">{{ (customers && customers.length) ? 'No customers match your search.' : 'No customers found' }}</p>
     </div>
   </div>
 </div>
