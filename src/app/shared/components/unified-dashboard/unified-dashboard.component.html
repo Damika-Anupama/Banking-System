@@ -34,7 +34,11 @@
 
     <!-- Footer Links -->
     <div class="p-4 border-t border-white/10">
-      <div class="mb-4 grid grid-cols-3 gap-2">
+      <div class="mb-4 grid grid-cols-4 gap-2">
+        <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
+          <i class="fas fa-bell"></i>
+          <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">{{ unreadCount }}</span>
+        </button>
         <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
         <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
         <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
@@ -129,7 +133,11 @@
 
     <!-- Footer Links -->
     <div class="p-4 border-t border-white/10">
-      <div class="mb-4 grid grid-cols-3 gap-2">
+      <div class="mb-4 grid grid-cols-4 gap-2">
+        <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
+          <i class="fas fa-bell"></i>
+          <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">{{ unreadCount }}</span>
+        </button>
         <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
         <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
         <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
@@ -180,7 +188,11 @@
 
     <!-- Footer -->
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
-      <div class="mb-4 grid grid-cols-3 gap-2">
+      <div class="mb-4 grid grid-cols-4 gap-2">
+        <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
+          <i class="fas fa-bell"></i>
+          <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">{{ unreadCount }}</span>
+        </button>
         <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
         <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
         <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
