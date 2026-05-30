@@ -9,7 +9,7 @@
  * State is seeded from the fixtures, persisted to localStorage for the session,
  * and reset on each demo login so every walkthrough starts clean.
  */
-import { DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES, DEMO_STANDING_ORDERS } from './demo-banking-fixtures';
+import { DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES, DEMO_STANDING_ORDERS, DEMO_CARDS } from './demo-banking-fixtures';
 
 const STORAGE_KEY = 'bank-demo-store';
 const BASE_EMPLOYEE_COUNT = 24;
@@ -20,6 +20,7 @@ interface DemoStoreState {
   employees: any[];
   beneficiaries: any[];
   standingOrders: any[];
+  cards: any[];
 }
 
 function clone<T>(value: T): T {
@@ -33,6 +34,7 @@ function seed(): DemoStoreState {
     employees: [],
     beneficiaries: clone(DEMO_BENEFICIARIES),
     standingOrders: clone(DEMO_STANDING_ORDERS),
+    cards: clone(DEMO_CARDS),
   };
 }
 
@@ -147,6 +149,18 @@ export const demoStore = {
     const order = load().standingOrders.find((o) => String(o.id) === String(id));
     if (order) {
       order.status = order.status === 'Active' ? 'Paused' : 'Active';
+      persist();
+    }
+  },
+
+  // ----- Cards (customer card management) -----
+  getCards(): any[] {
+    return load().cards;
+  },
+  toggleCardFreeze(id: string | number): void {
+    const card = load().cards.find((c) => String(c.id) === String(id));
+    if (card) {
+      card.status = card.status === 'Active' ? 'Frozen' : 'Active';
       persist();
     }
   },

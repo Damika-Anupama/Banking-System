@@ -145,6 +145,26 @@ export const createDemoLoan = (payload: { amount: number; duration_days: string 
   status: 'Submitted'
 });
 
+export interface DemoCard {
+  id: string;
+  type: 'Debit' | 'Credit';
+  network: 'Visa' | 'Mastercard';
+  number_last4: string;
+  holder: string;
+  expiry: string;
+  linked_account: string;
+  balance?: number;
+  credit_limit?: number;
+  credit_used?: number;
+  status: 'Active' | 'Frozen';
+}
+
+export const DEMO_CARDS: DemoCard[] = [
+  { id: 'CARD-4821', type: 'Debit', network: 'Visa', number_last4: '4821', holder: 'Amara Perera', expiry: '08/28', linked_account: 'ACC-492810', balance: 1245800, status: 'Active' },
+  { id: 'CARD-7390', type: 'Credit', network: 'Mastercard', number_last4: '7390', holder: 'Amara Perera', expiry: '03/27', linked_account: 'ACC-492811', credit_limit: 500000, credit_used: 142500, status: 'Active' },
+  { id: 'CARD-1156', type: 'Debit', network: 'Visa', number_last4: '1156', holder: 'Amara Perera', expiry: '11/26', linked_account: 'ACC-492812', balance: 2000000, status: 'Frozen' }
+];
+
 export interface DemoStandingOrder {
   id: string;
   payee: string;
