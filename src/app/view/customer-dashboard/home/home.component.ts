@@ -121,6 +121,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.monthlyIncome - this.monthlyPayments;
   }
 
+  /** Five most recent transactions for the selected account. */
+  get recentTransactions(): any[] {
+    return [...this.selectedAccountTransactions]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+  }
+
   get incomeWidth(): number {
     return this.progressWidth(this.monthlyIncome);
   }
