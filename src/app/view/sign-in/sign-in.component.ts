@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { demoStore } from 'src/app/shared/demo-store';
 
 @Component({
   selector: 'app-sign-in',
@@ -162,6 +163,8 @@ export class SignInComponent implements OnDestroy {
     localStorage.setItem('token', this.createDemoToken(type));
     localStorage.setItem('email', email);
     localStorage.setItem('userType', type);
+    // Start each demo walkthrough from fresh seed data.
+    demoStore.reset();
   }
 
   private createDemoToken(type: string): string {
