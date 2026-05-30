@@ -137,7 +137,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     return /^ACC-?\d{6,}$/.test(value) ? 'Format verified' : 'Needs valid account number';
   }
 
-  get transferReviewItems(): Array<{ label: string; value: string }> {
+  get transferReviewItems(): { label: string; value: string }[] {
     return [
       { label: 'Source', value: this.maskAccountId(this.account_id) },
       { label: 'Beneficiary', value: this.beneficiary_name || 'Not named' },
