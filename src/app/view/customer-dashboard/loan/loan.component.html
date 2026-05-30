@@ -1,24 +1,29 @@
 <!-- Page Header -->
-<div class="mb-8 animate-fade-in">
-  <h1 class="text-4xl font-bold mb-2">Loans</h1>
-  <p class="text-white/70">Apply for loans and manage your existing loans</p>
-</div>
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-hand-holding-dollar"></i> Lending services</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Loans</h1>
+      <p class="demo-subtitle">Apply for FD-backed loans and track your active borrowing position.</p>
+    </div>
+    <a routerLink="/dashboard/fixed-deposit" class="glass-button w-fit"><i class="fas fa-vault mr-2"></i>Manage fixed deposits</a>
+  </div>
+</section>
+
+<!-- KPI summary bar -->
+<section class="demo-kpi-grid mb-8" *ngIf="loans && loans.length">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Active loans</p><h2 class="mt-2 text-3xl font-black text-white">{{ activeLoanCount }}</h2><p class="mt-1 text-xs text-blue-100">Current applications</p></div><div class="demo-kpi-icon"><i class="fas fa-file-invoice-dollar"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total borrowed</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalBorrowed | number }}</h2><p class="mt-1 text-xs text-emerald-100">Principal across loans</p></div><div class="demo-kpi-icon"><i class="fas fa-sack-dollar"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Outstanding</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalOutstanding | number }}</h2><p class="mt-1 text-xs text-amber-100">Principal + interest</p></div><div class="demo-kpi-icon"><i class="fas fa-scale-balanced"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next due</p><h2 class="mt-2 text-2xl font-black text-white">{{ nearestDueDate ? (nearestDueDate | date: 'MMM d') : '—' }}</h2><p class="mt-1 text-xs text-rose-100">Earliest installment</p></div><div class="demo-kpi-icon"><i class="far fa-calendar-check"></i></div></div></article>
+</section>
 
 <!-- Alert for no fixed deposits -->
-<div *ngIf="!fds || fds.length === 0" class="animate-slide-up">
-  <div class="glass-card p-6 border-l-4 border-red-500/50">
-    <div class="flex items-start gap-4">
-      <div class="flex-shrink-0">
-        <i class="fas fa-exclamation-circle text-red-400 text-3xl"></i>
-      </div>
-      <div class="flex-1">
-        <h3 class="text-xl font-bold text-white mb-2">No Fixed Deposit Found</h3>
-        <p class="text-white/70">
-          You can't apply for an online loan because you don't have any fixed deposit. If you want to apply for a loan, you need to have a fixed deposit.
-        </p>
-      </div>
-    </div>
-  </div>
+<div *ngIf="!fds || fds.length === 0" class="demo-state-card mb-8 animate-slide-up">
+  <i class="fas fa-circle-exclamation"></i>
+  <h3>No fixed deposit found</h3>
+  <p>You can't apply for an online loan without a fixed deposit. Open a fixed deposit first to use it as collateral.</p>
+  <a routerLink="/dashboard/fixed-deposit" class="glass-button-secondary mt-4 w-fit mx-auto"><i class="fas fa-vault mr-2"></i>Open a fixed deposit</a>
 </div>
 
 <div *ngIf="isLoadingFDs || isLoadingLoans" class="demo-state-card mb-6">
@@ -201,20 +206,13 @@
     <table class="w-full">
       <thead>
         <tr>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
-            <i class="fas fa-hashtag mr-2"></i>#
-          </th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Loan ID</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Starting Date</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Duration</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Interest</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Type</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Status</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Outstanding</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Next Due</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Remaining</th>
-          <th class="text-right px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Actions</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Type</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Outstanding</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Next Due</th>
+          <th class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -222,35 +220,17 @@
           *ngFor="let loan of loans; let i = index"
           class="transition-all duration-300 hover:bg-white/5"
         >
-          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-3">
             <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
               <i class="fas fa-fingerprint mr-1"></i>
               {{ loan.loan_basic_detail_id }}
             </span>
           </td>
-          <td class="px-6 py-4">
-            <span class="font-semibold text-lg">
-              Rs. {{ loan.amount | number }}
-            </span>
+          <td class="px-5 py-3">
+            <span class="font-semibold">Rs. {{ loan.amount | number }}</span>
+            <small class="block text-xs text-white/50">{{ loan.interest }}% · {{ remainingTenure(loan) }}</small>
           </td>
-          <td class="px-6 py-4 text-white/90">
-            <i class="far fa-calendar mr-2 text-glass-cyan"></i>
-            {{ loan.starting_date | date: 'yyyy-MM-dd' }}
-          </td>
-          <td class="px-6 py-4">
-            <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
-              <i class="far fa-clock mr-1"></i>
-              {{ loan.duration_days }} days
-            </span>
-          </td>
-          <td class="px-6 py-4">
-            <span class="text-glass-orange font-semibold">
-              <i class="fas fa-percentage mr-1"></i>
-              {{ loan.interest }}%
-            </span>
-          </td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-3">
             <span
               class="glass-badge"
               [ngClass]="{
@@ -268,11 +248,10 @@
               {{ loan.loan_type }}
             </span>
           </td>
-          <td class="px-6 py-4"><span class="glass-badge bg-white/10">{{ loanStatus(loan) }}</span></td>
-          <td class="px-6 py-4 font-semibold text-emerald-100">Rs. {{ loanOutstanding(loan) | number }}</td>
-          <td class="px-6 py-4 text-white/90">{{ loanNextDueDate(loan) | date: 'yyyy-MM-dd' }}</td>
-          <td class="px-6 py-4 text-white/90">{{ remainingTenure(loan) }}</td>
-          <td class="px-6 py-4 text-right">
+          <td class="px-5 py-3"><span class="glass-badge bg-white/10">{{ loanStatus(loan) }}</span></td>
+          <td class="px-5 py-3 font-semibold text-emerald-100">Rs. {{ loanOutstanding(loan) | number }}</td>
+          <td class="px-5 py-3 text-white/90">{{ loanNextDueDate(loan) | date: 'MMM d, y' }}</td>
+          <td class="px-5 py-3 text-right">
             <div class="flex flex-wrap justify-end gap-2">
               <button type="button" class="glass-button-secondary text-xs" (click)="viewLoanSchedule(loan)">Schedule</button>
               <button type="button" class="glass-button-secondary text-xs" (click)="downloadLoanAgreement(loan)">Agreement</button>

@@ -121,6 +121,27 @@ export class LoanComponent implements OnInit, OnDestroy {
     return duration.replace(/_/g, ' ').toLowerCase();
   }
 
+  get activeLoanCount(): number {
+    return Array.isArray(this.loans) ? this.loans.length : 0;
+  }
+
+  get totalBorrowed(): number {
+    if (!Array.isArray(this.loans)) return 0;
+    return this.loans.reduce((sum: number, loan: any) => sum + Number(loan?.amount || 0), 0);
+  }
+
+  get totalOutstanding(): number {
+    if (!Array.isArray(this.loans)) return 0;
+    return this.loans.reduce((sum: number, loan: any) => sum + this.loanOutstanding(loan), 0);
+  }
+
+  get nearestDueDate(): Date | null {
+    if (!Array.isArray(this.loans) || this.loans.length === 0) return null;
+    return this.loans
+      .map((loan: any) => this.loanNextDueDate(loan))
+      .sort((a: Date, b: Date) => a.getTime() - b.getTime())[0];
+  }
+
   get ltvPercent(): number {
     return this.selectedFD?.amount ? Math.round((this.maximumLoanAmount / Number(this.selectedFD.amount)) * 100) : 0;
   }
