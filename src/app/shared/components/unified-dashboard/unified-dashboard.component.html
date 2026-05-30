@@ -34,6 +34,14 @@
 
     <!-- Footer Links -->
     <div class="p-4 border-t border-white/10">
+      <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-sm font-semibold text-white">{{ sessionUser.name }}</span>
+          <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }} · Demo</span>
+        </span>
+        <i class="fas fa-ellipsis-vertical text-white/40"></i>
+      </button>
       <div class="mb-4 grid grid-cols-4 gap-2">
         <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
           <i class="fas fa-bell"></i>
@@ -133,6 +141,14 @@
 
     <!-- Footer Links -->
     <div class="p-4 border-t border-white/10">
+      <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-sm font-semibold text-white">{{ sessionUser.name }}</span>
+          <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }} · Demo</span>
+        </span>
+        <i class="fas fa-ellipsis-vertical text-white/40"></i>
+      </button>
       <div class="mb-4 grid grid-cols-4 gap-2">
         <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
           <i class="fas fa-bell"></i>
@@ -188,6 +204,14 @@
 
     <!-- Footer -->
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+      <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-sm font-semibold text-white">{{ sessionUser.name }}</span>
+          <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }} · Demo</span>
+        </span>
+        <i class="fas fa-ellipsis-vertical text-white/40"></i>
+      </button>
       <div class="mb-4 grid grid-cols-4 gap-2">
         <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
           <i class="fas fa-bell"></i>

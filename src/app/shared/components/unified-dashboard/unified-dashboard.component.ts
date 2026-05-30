@@ -117,4 +117,52 @@ export class UnifiedDashboardComponent implements OnInit {
 
     return this.config.dashboardType === 'employee' ? './employee-settings' : './manager-settings';
   }
+
+  private getAbsoluteSettingsRoute(): string {
+    switch (this.config?.dashboardType) {
+      case 'employee': return '/employee-dashboard/employee-settings';
+      case 'manager': return '/manager-dashboard/manager-settings';
+      default: return '/dashboard/settings';
+    }
+  }
+
+  get sessionUser(): { name: string; roleLabel: string; email: string; initials: string } {
+    const role = this.config?.dashboardType || 'customer';
+    const names: Record<string, string> = {
+      customer: 'Amara Perera',
+      employee: 'Branch Employee',
+      manager: 'Branch Manager',
+    };
+    const name = names[role] || 'User';
+    const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
+    const email = localStorage.getItem('email') || '';
+    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    return { name, roleLabel, email, initials };
+  }
+
+  openProfileMenu(): void {
+    const u = this.sessionUser;
+    Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
+      title: u.name,
+      html: `
+        <div class="demo-detail-grid">
+          <div class="demo-detail-row"><span>Role</span><strong>${u.roleLabel}</strong></div>
+          <div class="demo-detail-row"><span>Email</span><strong>${u.email || '—'}</strong></div>
+          <div class="demo-detail-row"><span>Session</span><strong>Demo mode</strong></div>
+        </div>
+      `,
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: 'Open settings',
+      denyButtonText: 'Sign out',
+      cancelButtonText: 'Close'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate([this.getAbsoluteSettingsRoute()]);
+      } else if (result.isDenied) {
+        this.exit();
+      }
+    });
+  }
 }
