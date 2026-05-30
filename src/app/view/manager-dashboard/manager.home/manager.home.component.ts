@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ManagerHomeService } from 'src/app/service/manager/manager.home.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { demoStore } from 'src/app/shared/demo-store';
 
 @Component({
   selector: 'app-manager.home',
@@ -82,6 +83,31 @@ export class ManagerHomeComponent implements OnInit, OnDestroy {
     if (heightPct >= 75) return 'bg-emerald-400/80';
     if (heightPct >= 45) return 'bg-blue-400/80';
     return 'bg-cyan-400/70';
+  }
+
+  // ----- Branch-health signals derived from real demo data -----
+  get pendingLoanCount(): number {
+    return demoStore.getLoanApplications().length;
+  }
+
+  get overdueCount(): number {
+    return Array.isArray(this.loans) ? this.loans.length : 0;
+  }
+
+  /** Composite health: starts at 100, deducts for overdue installments and a loan backlog. */
+  get branchHealthScore(): number {
+    const score = 100 - this.overdueCount * 3 - this.pendingLoanCount * 2;
+    return Math.max(60, Math.min(100, score));
+  }
+
+  /** Pending approvals against an assumed daily decision capacity of 10. */
+  get approvalWorkloadPct(): number {
+    return Math.min(100, Math.round((this.pendingLoanCount / 10) * 100));
+  }
+
+  /** Overdue installments against an assumed watch threshold of 10. */
+  get overdueExposurePct(): number {
+    return Math.min(100, Math.round((this.overdueCount / 10) * 100));
   }
 
   constructor(private managerService: ManagerHomeService) {}

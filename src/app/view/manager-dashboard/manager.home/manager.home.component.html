@@ -9,10 +9,10 @@
   </div>
 </section>
 <section class="demo-kpi-grid mb-8">
-  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Branch health</p><h2 class="mt-2 text-3xl font-black text-white">94%</h2><p class="mt-1 text-xs text-emerald-100">Stable operations</p></div><div class="demo-kpi-icon"><i class="fas fa-heart-pulse"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Accounts</p><h2 class="mt-2 text-3xl font-black text-white">1,284</h2><p class="mt-1 text-xs text-blue-100">Active customer base</p></div><div class="demo-kpi-icon"><i class="fas fa-building-columns"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Loan queue</p><h2 class="mt-2 text-3xl font-black text-white">3</h2><p class="mt-1 text-xs text-amber-100">Pending decisions</p></div><div class="demo-kpi-icon"><i class="fas fa-file-signature"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Overdue risk</p><h2 class="mt-2 text-3xl font-black text-white">3</h2><p class="mt-1 text-xs text-rose-100">Installments to review</p></div><div class="demo-kpi-icon"><i class="fas fa-shield-halved"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Branch health</p><h2 class="mt-2 text-3xl font-black text-white">{{ branchHealthScore }}%</h2><p class="mt-1 text-xs text-emerald-100">Composite operations score</p></div><div class="demo-kpi-icon"><i class="fas fa-heart-pulse"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Accounts</p><h2 class="mt-2 text-3xl font-black text-white">{{ num_accounts | number }}</h2><p class="mt-1 text-xs text-blue-100">Active customer base</p></div><div class="demo-kpi-icon"><i class="fas fa-building-columns"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Loan queue</p><h2 class="mt-2 text-3xl font-black text-white">{{ pendingLoanCount }}</h2><p class="mt-1 text-xs text-amber-100">Pending decisions</p></div><div class="demo-kpi-icon"><i class="fas fa-file-signature"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Overdue risk</p><h2 class="mt-2 text-3xl font-black text-white">{{ overdueCount }}</h2><p class="mt-1 text-xs text-rose-100">Installments to review</p></div><div class="demo-kpi-icon"><i class="fas fa-shield-halved"></i></div></div></article>
 </section>
 <section class="grid grid-cols-1 gap-5 xl:grid-cols-3 mb-8">
   <article class="demo-section-card xl:col-span-2">
@@ -35,11 +35,11 @@
   </article>
   <article class="demo-section-card">
     <h2 class="demo-section-title">Branch health</h2>
-    <p class="demo-section-helper">Operational signals for viewers.</p>
+    <p class="demo-section-helper">Signals derived from live branch activity.</p>
     <div class="mt-5 space-y-4">
-      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Liquidity coverage</span><strong>96%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-emerald-400" style="width:96%"></div></div></div>
-      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Approval SLA</span><strong>88%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-cyan-400" style="width:88%"></div></div></div>
-      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Risk exposure</span><strong>22%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-amber-400" style="width:22%"></div></div></div>
+      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Composite health</span><strong>{{ branchHealthScore }}%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-emerald-400" [style.width.%]="branchHealthScore"></div></div></div>
+      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Approval workload</span><strong>{{ approvalWorkloadPct }}%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-cyan-400" [style.width.%]="approvalWorkloadPct"></div></div></div>
+      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Overdue exposure</span><strong>{{ overdueExposurePct }}%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-amber-400" [style.width.%]="overdueExposurePct"></div></div></div>
     </div>
   </article>
 </section>
