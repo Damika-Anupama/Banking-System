@@ -26,6 +26,48 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
     );
   }
 
+  private byStatus(status: string): any[] {
+    return (this.customers || []).filter(c => (c.status || '').toLowerCase() === status.toLowerCase());
+  }
+
+  byStatusCount(status: string): number {
+    return this.byStatus(status).length;
+  }
+
+  get customerCount(): number {
+    return (this.customers || []).length;
+  }
+
+  get readyCount(): number {
+    // Everyone except those still onboarding is ready for banking services.
+    return (this.customers || []).filter(c => (c.status || '').toLowerCase() !== 'new onboarding').length;
+  }
+
+  get needsAttentionCount(): number {
+    return (this.customers || []).filter(c => {
+      const s = (c.status || '').toLowerCase();
+      return s === 'loan review' || s === 'new onboarding';
+    }).length;
+  }
+
+  get loanReviewCustomer(): any | null {
+    return this.byStatus('Loan review')[0] || null;
+  }
+
+  get onboardingCustomer(): any | null {
+    return this.byStatus('New onboarding')[0] || null;
+  }
+
+  get priorityCustomer(): any | null {
+    const flagged = this.byStatus('Priority customer')[0];
+    if (flagged) return flagged;
+    return [...(this.customers || [])].sort((a, b) => (b.account_count || 0) - (a.account_count || 0))[0] || null;
+  }
+
+  firstName(customer: any | null): string {
+    return customer?.fullname ? String(customer.fullname).split(' ')[0] : '—';
+  }
+
   constructor(private home: EmployeeHomeService) { }
 
   ngOnInit(): void {

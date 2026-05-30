@@ -9,9 +9,9 @@
   </div>
 </section>
 <section class="demo-kpi-grid mb-8">
-  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Customers</p><h2 class="mt-2 text-3xl font-black text-white">4</h2><p class="mt-1 text-xs text-blue-100">Demo branch records</p></div><div class="demo-kpi-icon"><i class="fas fa-users"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">KYC verified</p><h2 class="mt-2 text-3xl font-black text-white">3</h2><p class="mt-1 text-xs text-emerald-100">Ready for banking services</p></div><div class="demo-kpi-icon"><i class="fas fa-id-card"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Needs attention</p><h2 class="mt-2 text-3xl font-black text-white">2</h2><p class="mt-1 text-xs text-amber-100">Loan review + onboarding</p></div><div class="demo-kpi-icon"><i class="fas fa-triangle-exclamation"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Customers</p><h2 class="mt-2 text-3xl font-black text-white">{{ customerCount }}</h2><p class="mt-1 text-xs text-blue-100">Demo branch records</p></div><div class="demo-kpi-icon"><i class="fas fa-users"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Ready for service</p><h2 class="mt-2 text-3xl font-black text-white">{{ readyCount }}</h2><p class="mt-1 text-xs text-emerald-100">Onboarding complete</p></div><div class="demo-kpi-icon"><i class="fas fa-id-card"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Needs attention</p><h2 class="mt-2 text-3xl font-black text-white">{{ needsAttentionCount }}</h2><p class="mt-1 text-xs text-amber-100">Loan review + onboarding</p></div><div class="demo-kpi-icon"><i class="fas fa-triangle-exclamation"></i></div></div></article>
   <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next action</p><h2 class="mt-2 text-xl font-black text-white">Review queue</h2><p class="mt-1 text-xs text-cyan-100">Click a customer row</p></div><div class="demo-kpi-icon"><i class="fas fa-list-check"></i></div></div></article>
 </section>
 <section class="grid grid-cols-1 gap-5 xl:grid-cols-3 mb-8">
@@ -24,10 +24,10 @@
       </div>
     </div>
     <div class="mt-5 grid gap-3 md:grid-cols-2">
-      <div class="demo-action-card"><i class="fas fa-id-card text-emerald-200"></i><span><strong class="block text-white">KYC verified</strong><span class="text-sm text-slate-300">3 customers ready for services</span></span><span class="ml-auto demo-status-pill demo-status-success">3</span></div>
-      <div class="demo-action-card"><i class="fas fa-file-invoice-dollar text-amber-200"></i><span><strong class="block text-white">Loan review</strong><span class="text-sm text-slate-300">Follow up with Nuwan Silva</span></span><span class="ml-auto demo-status-pill demo-status-warning">1</span></div>
-      <div class="demo-action-card"><i class="fas fa-user-clock text-cyan-200"></i><span><strong class="block text-white">New onboarding</strong><span class="text-sm text-slate-300">Ishan profile pending account setup</span></span><span class="ml-auto demo-status-pill demo-status-info">1</span></div>
-      <div class="demo-action-card"><i class="fas fa-star text-violet-200"></i><span><strong class="block text-white">Priority customer</strong><span class="text-sm text-slate-300">Sofia has 4 linked accounts</span></span><span class="ml-auto demo-status-pill demo-status-info">VIP</span></div>
+      <div class="demo-action-card"><i class="fas fa-id-card text-emerald-200"></i><span><strong class="block text-white">Ready for service</strong><span class="text-sm text-slate-300">{{ readyCount }} customers onboarding complete</span></span><span class="ml-auto demo-status-pill demo-status-success">{{ readyCount }}</span></div>
+      <div class="demo-action-card"><i class="fas fa-file-invoice-dollar text-amber-200"></i><span><strong class="block text-white">Loan review</strong><span class="text-sm text-slate-300">Follow up with {{ firstName(loanReviewCustomer) }}</span></span><span class="ml-auto demo-status-pill demo-status-warning">{{ byStatusCount('Loan review') }}</span></div>
+      <div class="demo-action-card"><i class="fas fa-user-clock text-cyan-200"></i><span><strong class="block text-white">New onboarding</strong><span class="text-sm text-slate-300">{{ firstName(onboardingCustomer) }} profile pending account setup</span></span><span class="ml-auto demo-status-pill demo-status-info">{{ byStatusCount('New onboarding') }}</span></div>
+      <div class="demo-action-card"><i class="fas fa-star text-violet-200"></i><span><strong class="block text-white">Priority customer</strong><span class="text-sm text-slate-300">{{ firstName(priorityCustomer) }} has {{ priorityCustomer?.account_count || 0 }} linked accounts</span></span><span class="ml-auto demo-status-pill demo-status-info">VIP</span></div>
     </div>
   </article>
   <article class="demo-section-card">
