@@ -10,11 +10,11 @@
 </section>
 
 <!-- KPI summary bar -->
-<section class="demo-kpi-grid mb-8" *ngIf="loans && loans.length">
+<section class="demo-kpi-grid mb-8" *ngIf="(loans && loans.length) || decidedCount">
   <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Pending decisions</p><h2 class="mt-2 text-3xl font-black text-white">{{ pendingCount }}</h2><p class="mt-1 text-xs text-amber-100">Awaiting review</p></div><div class="demo-kpi-icon"><i class="fas fa-file-signature"></i></div></div></article>
   <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total requested</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalRequestedAmount | number }}</h2><p class="mt-1 text-xs text-blue-100">Across applications</p></div><div class="demo-kpi-icon"><i class="fas fa-sack-dollar"></i></div></div></article>
   <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Average interest</p><h2 class="mt-2 text-3xl font-black text-white">{{ averageInterest }}%</h2><p class="mt-1 text-xs text-cyan-100">Requested rate</p></div><div class="demo-kpi-icon"><i class="fas fa-percentage"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Approval SLA</p><h2 class="mt-2 text-3xl font-black text-white">88%</h2><p class="mt-1 text-xs text-emerald-100">Within target time</p></div><div class="demo-kpi-icon"><i class="fas fa-gauge-high"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Decided this session</p><h2 class="mt-2 text-3xl font-black text-white">{{ decidedCount }}</h2><p class="mt-1 text-xs text-emerald-100">{{ approvedCount }} approved · {{ rejectedCount }} rejected</p></div><div class="demo-kpi-icon"><i class="fas fa-gauge-high"></i></div></div></article>
 </section>
 
 <!-- Loans Table -->

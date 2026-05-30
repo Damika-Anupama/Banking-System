@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { LoanApprovalService } from 'src/app/service/manager/loan.approval.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { demoStore } from 'src/app/shared/demo-store';
 
 @Component({
   selector: 'app-manager.loan.approval',
@@ -12,11 +13,24 @@ import Swal from 'sweetalert2';
 export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
   loans: any[] | null = null;
   searchTerm = '';
+  approvedCount = 0;
+  rejectedCount = 0;
   isLoading = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
   constructor(private loanService: LoanApprovalService) { }
+
+  get decidedCount(): number {
+    return this.approvedCount + this.rejectedCount;
+  }
+
+  /** Remove a decided loan from the local list (store already updated). */
+  private removeFromList(loanId: any): void {
+    this.loans = (this.loans || []).filter(
+      (l) => String(l.loan_basic_detail_id) !== String(loanId)
+    );
+  }
 
   get filteredLoans(): any[] {
     const list = this.loans || [];
@@ -171,46 +185,14 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
   }
 
   private processApproval(loanId: any): void {
-    // TODO: Implement loan approval with API call
-    // Example implementation:
-    /*
-    this.isLoading = true;
-    const sub = this.loanService.approveLoan(loanId).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        if (!response) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No response received from server'
-          });
-          return;
-        }
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Loan approved successfully'
-        }).then(() => {
-          this.loadUnapprovedLoans(); // Refresh the list
-        });
-      },
-      error: (err) => {
-        console.error('Error approving loan:', err);
-        this.isLoading = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: err?.error?.message || 'Failed to approve loan'
-        });
-      }
-    });
-    this.subscriptions.push(sub);
-    */
-
+    demoStore.removeLoanApplication(loanId);
+    this.removeFromList(loanId);
+    this.approvedCount++;
     Swal.fire({
-      icon: 'warning',
-      title: 'Not Implemented',
-      text: 'Loan approval functionality needs to be implemented'
+      icon: 'success',
+      title: 'Loan approved',
+      html: `Loan <strong>${loanId}</strong> has been approved and removed from the queue.`,
+      confirmButtonText: 'Done'
     });
   }
 
@@ -253,46 +235,14 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
   }
 
   private processRejection(loanId: any, reason: string): void {
-    // TODO: Implement loan rejection with API call
-    // Example implementation:
-    /*
-    this.isLoading = true;
-    const sub = this.loanService.rejectLoan(loanId, reason).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        if (!response) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No response received from server'
-          });
-          return;
-        }
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Loan rejected successfully'
-        }).then(() => {
-          this.loadUnapprovedLoans(); // Refresh the list
-        });
-      },
-      error: (err) => {
-        console.error('Error rejecting loan:', err);
-        this.isLoading = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: err?.error?.message || 'Failed to reject loan'
-        });
-      }
-    });
-    this.subscriptions.push(sub);
-    */
-
+    demoStore.removeLoanApplication(loanId);
+    this.removeFromList(loanId);
+    this.rejectedCount++;
     Swal.fire({
-      icon: 'warning',
-      title: 'Not Implemented',
-      text: 'Loan rejection functionality needs to be implemented'
+      icon: 'success',
+      title: 'Loan rejected',
+      html: `Loan <strong>${loanId}</strong> has been rejected.<br><span class="text-sm">Reason: ${reason}</span>`,
+      confirmButtonText: 'Done'
     });
   }
 
