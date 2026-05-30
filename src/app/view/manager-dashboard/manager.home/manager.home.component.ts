@@ -18,9 +18,20 @@ export class ManagerHomeComponent implements OnInit, OnDestroy {
   transactions: any = null;
   withdrwals: any = null;
   loans: any = null;
+  transactionSearch = '';
   isLoading = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
+
+  get filteredTransactions(): any[] {
+    const list = this.transactions || [];
+    const q = this.transactionSearch.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((t: any) =>
+      [t.transfer_id, t.from_account, t.to_account, String(t.amount)]
+        .some(v => v && String(v).toLowerCase().includes(q))
+    );
+  }
 
   constructor(private managerService: ManagerHomeService) {}
 

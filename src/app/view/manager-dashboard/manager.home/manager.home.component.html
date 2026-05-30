@@ -40,193 +40,139 @@
     </div>
   </article>
 </section>
-<!-- Page Header -->
-<div class="mb-8 animate-fade-in">
-  <h1 class="text-4xl font-bold text-white mb-2">Manager Dashboard</h1>
-  <p class="text-white/70">Overview of branch operations and statistics</p>
-</div>
+<!-- Branch context -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-400"><i class="fas fa-id-badge mr-2 text-glass-pink"></i>Manager ID</p>
+      <strong class="mt-1 block text-xl text-white">{{ manager_id || '—' }}</strong>
+    </div>
+    <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-400"><i class="fas fa-building mr-2 text-glass-cyan"></i>Branch</p>
+      <strong class="mt-1 block text-xl text-white">{{ branch_name || '—' }}</strong>
+    </div>
+    <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-400"><i class="fas fa-users mr-2 text-glass-emerald"></i>Employees</p>
+      <strong class="mt-1 block text-xl text-white">{{ num_employees }}</strong>
+    </div>
+  </div>
+</section>
 
-<!-- Stat Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
-  <!-- Manager ID Card -->
-  <div class="stat-card bg-gradient-to-br from-glass-pink/30 to-glass-orange/30">
-    <div class="flex items-center justify-between">
-      <div>
-        <p class="text-white/70 text-sm mb-2">Your Manager ID</p>
-        <h3 class="text-3xl font-bold text-white">00000{{ manager_id }}</h3>
-      </div>
-      <div class="text-6xl text-white/20">
-        <i class="fas fa-id-badge"></i>
-      </div>
+<!-- Branch Transactions -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-5">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-exchange-alt mr-2 text-glass-cyan"></i>Branch transactions</h2>
+      <p class="demo-section-helper">Recent money movement across branch accounts.</p>
+    </div>
+    <div class="relative">
+      <input class="demo-input pl-9 w-full md:w-64" placeholder="Search ID, account, amount…" [(ngModel)]="transactionSearch" name="managerTxSearch" />
+      <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
     </div>
   </div>
 
-  <!-- Branch Card -->
-  <div class="stat-card bg-gradient-to-br from-glass-cyan/30 to-glass-blue/30" style="animation-delay: 0.1s;">
-    <div class="flex items-center justify-between">
-      <div>
-        <p class="text-white/70 text-sm mb-2">Your Branch</p>
-        <h3 class="text-2xl font-bold text-white">{{ branch_name }}</h3>
-      </div>
-      <div class="text-6xl text-white/20">
-        <i class="fas fa-building"></i>
-      </div>
-    </div>
-  </div>
-
-  <!-- Employees Card -->
-  <div class="stat-card bg-gradient-to-br from-glass-emerald/30 to-glass-cyan/30" style="animation-delay: 0.2s;">
-    <div class="flex items-center justify-between">
-      <div>
-        <p class="text-white/70 text-sm mb-2">Employees</p>
-        <h3 class="text-3xl font-bold text-white">{{ num_employees }}</h3>
-      </div>
-      <div class="text-6xl text-white/20">
-        <i class="fas fa-users"></i>
-      </div>
-    </div>
-  </div>
-
-  <!-- Total Accounts Card -->
-  <div class="stat-card bg-gradient-to-br from-glass-purple/30 to-glass-pink/30" style="animation-delay: 0.3s;">
-    <div class="flex items-center justify-between">
-      <div>
-        <p class="text-white/70 text-sm mb-2">Total Accounts</p>
-        <h3 class="text-3xl font-bold text-white">{{ num_accounts }}</h3>
-      </div>
-      <div class="text-6xl text-white/20">
-        <i class="fas fa-wallet"></i>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Transactions Table -->
-<div class="glass-card p-6 mb-8 animate-slide-up" style="animation-delay: 0.4s;">
-  <div class="mb-6">
-    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
-      <i class="fas fa-exchange-alt mr-3 text-glass-cyan"></i>
-      Branch Transactions
-    </h2>
-    <p class="text-white/60 text-sm">All transactions for your branch</p>
-  </div>
-
-  <div class="overflow-x-auto">
+  <div class="demo-table-shell overflow-x-auto">
     <table class="w-full">
       <thead>
         <tr>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">#</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Transaction ID</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">From</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">To</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Time</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Direction</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Transaction ID</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">From</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">To</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Time</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Direction</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let transaction of transactions; let i = index" class="transition-all duration-300 hover:bg-white/5">
-          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
-          <td class="px-6 py-4">
-            <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
-              {{ transaction.transfer_id }}
-            </span>
+        <tr *ngFor="let transaction of filteredTransactions; let i = index" class="transition-all duration-300 hover:bg-white/5">
+          <td class="px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="px-5 py-3">
+            <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">{{ transaction.transfer_id }}</span>
           </td>
-          <td class="px-6 py-4 text-white font-semibold">Rs. {{ transaction.amount | number }}</td>
-          <td class="px-6 py-4 text-white/90 font-mono">{{ transaction.from_account }}</td>
-          <td class="px-6 py-4 text-white/90 font-mono">{{ transaction.to_account }}</td>
-          <td class="px-6 py-4 text-white/90"><i class="far fa-calendar mr-2"></i>{{ transaction.transferd_time | date: 'yyyy-MM-dd' }}</td>
-          <td class="px-6 py-4">
-            <span *ngIf="transaction.direction == 'up'" class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
-              <i class="fas fa-arrow-down mr-1"></i>In
-            </span>
-            <span *ngIf="transaction.direction == 'down'" class="glass-badge bg-gradient-to-r from-glass-orange/80 to-glass-pink/80">
-              <i class="fas fa-arrow-up mr-1"></i>Out
-            </span>
-            <span *ngIf="transaction.direction == 'no-change'" class="glass-badge bg-gradient-to-r from-glass-blue/80 to-glass-purple/80">
-              <i class="fas fa-minus mr-1"></i>No Change
-            </span>
+          <td class="px-5 py-3 text-white font-semibold">Rs. {{ transaction.amount | number }}</td>
+          <td class="px-5 py-3 text-white/90 font-mono">{{ transaction.from_account }}</td>
+          <td class="px-5 py-3 text-white/90 font-mono">{{ transaction.to_account }}</td>
+          <td class="px-5 py-3 text-white/90"><i class="far fa-calendar mr-2"></i>{{ transaction.transferd_time | date: 'yyyy-MM-dd' }}</td>
+          <td class="px-5 py-3">
+            <span *ngIf="transaction.direction == 'up'" class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80"><i class="fas fa-arrow-down mr-1"></i>In</span>
+            <span *ngIf="transaction.direction == 'down'" class="glass-badge bg-gradient-to-r from-glass-orange/80 to-glass-pink/80"><i class="fas fa-arrow-up mr-1"></i>Out</span>
+            <span *ngIf="transaction.direction == 'no-change'" class="glass-badge bg-gradient-to-r from-glass-blue/80 to-glass-purple/80"><i class="fas fa-minus mr-1"></i>No Change</span>
           </td>
         </tr>
       </tbody>
     </table>
+    <div *ngIf="filteredTransactions.length === 0" class="text-center py-10">
+      <div class="text-5xl text-white/20 mb-3"><i class="fas fa-exchange-alt"></i></div>
+      <p class="text-white/60">{{ (transactions && transactions.length) ? 'No transactions match your search.' : 'No transactions found.' }}</p>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- Withdrawals Table -->
-<div class="glass-card p-6 mb-8 animate-slide-up" style="animation-delay: 0.5s;">
-  <div class="mb-6">
-    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
-      <i class="fas fa-money-bill-wave mr-3 text-glass-emerald"></i>
-      Branch Withdrawals
-    </h2>
-    <p class="text-white/60 text-sm">All withdrawal transactions</p>
+<!-- Branch Withdrawals -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <div class="mb-5">
+    <h2 class="demo-section-title"><i class="fas fa-money-bill-wave mr-2 text-glass-emerald"></i>Branch withdrawals</h2>
+    <p class="demo-section-helper">Cash withdrawal activity for the branch.</p>
   </div>
 
-  <div class="overflow-x-auto">
+  <div class="demo-table-shell overflow-x-auto">
     <table class="w-full">
       <thead>
         <tr>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">#</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Withdrawal ID</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Account ID</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Withdrawal Time</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Withdrawal ID</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Account ID</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Withdrawal Time</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let withdrawal of withdrwals; let i = index" class="transition-all duration-300 hover:bg-white/5">
-          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
-          <td class="px-6 py-4">
-            <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
-              {{ withdrawal.withdrawal_id }}
-            </span>
+          <td class="px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="px-5 py-3">
+            <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">{{ withdrawal.withdrawal_id }}</span>
           </td>
-          <td class="px-6 py-4 text-white font-semibold">Rs. {{ withdrawal.amount | number }}</td>
-          <td class="px-6 py-4 text-white/90 font-mono">{{ withdrawal.account_id }}</td>
-          <td class="px-6 py-4 text-white/90"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'yyyy-MM-dd' }}</td>
+          <td class="px-5 py-3 text-white font-semibold">Rs. {{ withdrawal.amount | number }}</td>
+          <td class="px-5 py-3 text-white/90 font-mono">{{ withdrawal.account_id }}</td>
+          <td class="px-5 py-3 text-white/90"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'yyyy-MM-dd' }}</td>
         </tr>
       </tbody>
     </table>
   </div>
-</div>
+</section>
 
-<!-- Late Loans Table -->
-<div class="glass-card p-6 animate-slide-up" style="animation-delay: 0.6s;">
-  <div class="mb-6">
-    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
-      <i class="fas fa-exclamation-triangle mr-3 text-glass-orange"></i>
-      Late Loan Installments
-    </h2>
-    <p class="text-white/60 text-sm">Overdue loan payments requiring attention</p>
+<!-- Late Loan Installments -->
+<section class="demo-section-card animate-slide-up">
+  <div class="mb-5">
+    <h2 class="demo-section-title"><i class="fas fa-exclamation-triangle mr-2 text-glass-orange"></i>Late loan installments</h2>
+    <p class="demo-section-helper">Overdue loan payments requiring attention.</p>
   </div>
 
-  <div class="overflow-x-auto">
+  <div class="demo-table-shell overflow-x-auto">
     <table class="w-full">
       <thead>
         <tr>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">#</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Installment ID</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Installment #</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Due Date</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Loan ID</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Installment ID</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Installment #</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Due Date</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let loan of loans; let i = index" class="transition-all duration-300 hover:bg-white/5">
-          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
-          <td class="px-6 py-4">
-            <span class="glass-badge bg-gradient-to-r from-glass-pink/80 to-glass-orange/80">
-              {{ loan.installment_id }}
-            </span>
+          <td class="px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="px-5 py-3">
+            <span class="glass-badge bg-gradient-to-r from-glass-pink/80 to-glass-orange/80">{{ loan.installment_id }}</span>
           </td>
-          <td class="px-6 py-4 text-white/90">{{ loan.installment_number }}</td>
-          <td class="px-6 py-4 text-white/90"><i class="far fa-calendar mr-2 text-red-400"></i>{{ loan.due_date | date: 'yyyy-MM-dd' }}</td>
-          <td class="px-6 py-4 text-white font-semibold">Rs. {{ loan.amount | number }}</td>
-          <td class="px-6 py-4 text-white/90 font-mono">{{ loan.loan_basic_detail_id }}</td>
+          <td class="px-5 py-3 text-white/90">{{ loan.installment_number }}</td>
+          <td class="px-5 py-3 text-white/90"><i class="far fa-calendar mr-2 text-red-400"></i>{{ loan.due_date | date: 'yyyy-MM-dd' }}</td>
+          <td class="px-5 py-3 text-white font-semibold">Rs. {{ loan.amount | number }}</td>
+          <td class="px-5 py-3 text-white/90 font-mono">{{ loan.loan_basic_detail_id }}</td>
         </tr>
       </tbody>
     </table>
   </div>
-</div>
+</section>
