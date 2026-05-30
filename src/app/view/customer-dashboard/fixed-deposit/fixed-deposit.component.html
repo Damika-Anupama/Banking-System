@@ -1,24 +1,28 @@
 <!-- Page Header -->
-<div class="mb-8 animate-fade-in">
-  <h1 class="text-4xl font-bold mb-2">Fixed Deposits</h1>
-  <p class="text-white/70">Manage your fixed deposit accounts and investments</p>
-</div>
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-vault"></i> Investments</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Fixed Deposits</h1>
+      <p class="demo-subtitle">Place new fixed deposits and track your maturing investments.</p>
+    </div>
+    <a routerLink="/dashboard/loan" class="glass-button w-fit"><i class="fas fa-hand-holding-dollar mr-2"></i>FD-backed loans</a>
+  </div>
+</section>
+
+<!-- KPI summary bar -->
+<section class="demo-kpi-grid mb-8" *ngIf="fds && fds.length">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Active deposits</p><h2 class="mt-2 text-3xl font-black text-white">{{ fdCount }}</h2><p class="mt-1 text-xs text-blue-100">Open fixed deposits</p></div><div class="demo-kpi-icon"><i class="fas fa-vault"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total invested</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalInvested | number }}</h2><p class="mt-1 text-xs text-emerald-100">Principal placed</p></div><div class="demo-kpi-icon"><i class="fas fa-sack-dollar"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Value at maturity</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalAtMaturity | number }}</h2><p class="mt-1 text-xs text-cyan-100">Principal + interest</p></div><div class="demo-kpi-icon"><i class="fas fa-chart-line"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next maturity</p><h2 class="mt-2 text-2xl font-black text-white">{{ nearestMaturityDate ? (nearestMaturityDate | date: 'MMM d') : '—' }}</h2><p class="mt-1 text-xs text-amber-100">Earliest maturing FD</p></div><div class="demo-kpi-icon"><i class="far fa-calendar-check"></i></div></div></article>
+</section>
 
 <!-- Alert for no saving accounts -->
-<div *ngIf="!savingAccounts || savingAccounts.length === 0" class="animate-slide-up">
-  <div class="glass-card p-6 border-l-4 border-red-500/50">
-    <div class="flex items-start gap-4">
-      <div class="flex-shrink-0">
-        <i class="fas fa-exclamation-circle text-red-400 text-3xl"></i>
-      </div>
-      <div class="flex-1">
-        <h3 class="text-xl font-bold text-white mb-2">No Saving Account Found</h3>
-        <p class="text-white/70">
-          You don't have any saving account. Please create a saving account to be able to create a fixed deposit.
-        </p>
-      </div>
-    </div>
-  </div>
+<div *ngIf="!savingAccounts || savingAccounts.length === 0" class="demo-state-card mb-8 animate-slide-up">
+  <i class="fas fa-circle-exclamation"></i>
+  <h3>No saving account found</h3>
+  <p>You need a saving account before placing a fixed deposit. Contact your branch to open one.</p>
 </div>
 
 <div *ngIf="isLoadingSavingAccounts || isLoadingFDs" class="demo-state-card mb-6">
@@ -157,19 +161,13 @@
       <table class="w-full">
         <thead>
           <tr>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
-              <i class="fas fa-hashtag mr-2"></i>#
-            </th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">FD ID</th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Saving Account</th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Duration</th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Interest Rate</th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Opened Date</th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Maturity Date</th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Maturity Amount</th>
-            <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Status</th>
-            <th class="text-right px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Actions</th>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">FD ID</th>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Duration</th>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Maturity Date</th>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Maturity Amount</th>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+            <th class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -177,41 +175,26 @@
             *ngFor="let fd of fds; let i = index"
             class="transition-all duration-300 hover:bg-white/5"
           >
-            <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
-            <td class="px-6 py-4">
+            <td class="px-5 py-3">
               <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
                 <i class="fas fa-fingerprint mr-1"></i>
                 {{ fd.fd_id }}
               </span>
             </td>
-            <td class="px-6 py-4 text-white/90 font-mono">
-              {{ fd.saving_account_id }}
+            <td class="px-5 py-3">
+              <span class="font-semibold">Rs. {{ fd.amount | number }}</span>
+              <small class="block text-xs text-white/50">{{ fd.rate_per_annum }}% p.a. · opened {{ fd.fd_opening_date | date: 'MMM d, y' }}</small>
             </td>
-            <td class="px-6 py-4">
+            <td class="px-5 py-3">
               <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
                 <i class="far fa-clock mr-1"></i>
                 {{ convertDuration(fd.duration) }}
               </span>
             </td>
-            <td class="px-6 py-4">
-              <span class="text-glass-cyan font-semibold">
-                <i class="fas fa-percentage mr-1"></i>
-                {{ fd.rate_per_annum }}%
-              </span>
-            </td>
-            <td class="px-6 py-4 text-white/90">
-              <i class="far fa-calendar mr-2 text-glass-pink"></i>
-              {{ fd.fd_opening_date | date: 'yyyy-MM-dd' }}
-            </td>
-            <td class="px-6 py-4">
-              <span class="font-semibold text-lg">
-                Rs. {{ fd.amount | number }}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-white/90">{{ fdMaturityDate(fd) | date: 'yyyy-MM-dd' }}</td>
-            <td class="px-6 py-4 font-semibold text-emerald-100">Rs. {{ fdMaturityAmount(fd) | number }}</td>
-            <td class="px-6 py-4"><span class="glass-badge bg-white/10">{{ fdStatus(fd) }}</span></td>
-            <td class="px-6 py-4 text-right"><button type="button" class="glass-button-secondary text-xs" (click)="viewFDCertificate(fd)"><i class="fas fa-file-download mr-1"></i>Certificate</button></td>
+            <td class="px-5 py-3 text-white/90">{{ fdMaturityDate(fd) | date: 'MMM d, y' }}</td>
+            <td class="px-5 py-3 font-semibold text-emerald-100">Rs. {{ fdMaturityAmount(fd) | number }}</td>
+            <td class="px-5 py-3"><span class="glass-badge bg-white/10">{{ fdStatus(fd) }}</span></td>
+            <td class="px-5 py-3 text-right"><button type="button" class="glass-button-secondary text-xs" (click)="viewFDCertificate(fd)"><i class="fas fa-file-download mr-1"></i>Certificate</button></td>
           </tr>
         </tbody>
       </table>

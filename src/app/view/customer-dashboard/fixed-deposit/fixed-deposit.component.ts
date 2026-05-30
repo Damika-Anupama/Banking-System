@@ -151,6 +151,27 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
     return duration.replace(/_/g, ' ').toLowerCase();
   }
 
+  get fdCount(): number {
+    return Array.isArray(this.fds) ? this.fds.length : 0;
+  }
+
+  get totalInvested(): number {
+    if (!Array.isArray(this.fds)) return 0;
+    return this.fds.reduce((sum: number, item: any) => sum + Number(item?.amount || 0), 0);
+  }
+
+  get totalAtMaturity(): number {
+    if (!Array.isArray(this.fds)) return 0;
+    return this.fds.reduce((sum: number, item: any) => sum + this.fdMaturityAmount(item), 0);
+  }
+
+  get nearestMaturityDate(): Date | null {
+    if (!Array.isArray(this.fds) || this.fds.length === 0) return null;
+    return this.fds
+      .map((item: any) => this.fdMaturityDate(item))
+      .sort((a: Date, b: Date) => a.getTime() - b.getTime())[0];
+  }
+
   get selectedAccountBalance(): number {
     return Number(this.selectedSavingAccount?.amount || 0);
   }
