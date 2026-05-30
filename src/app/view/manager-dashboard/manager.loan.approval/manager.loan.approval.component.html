@@ -1,68 +1,65 @@
 <!-- Page Header -->
-<div class="mb-8 animate-fade-in">
-  <h1 class="text-4xl font-bold text-white mb-2">Loan Approvals</h1>
-  <p class="text-white/70">Review and approve pending loan applications</p>
-</div>
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-stamp"></i> Loan decisions</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Loan Approvals</h1>
+      <p class="demo-subtitle">Review pending applications and approve or reject with a recorded reason.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KPI summary bar -->
+<section class="demo-kpi-grid mb-8" *ngIf="loans && loans.length">
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Pending decisions</p><h2 class="mt-2 text-3xl font-black text-white">{{ pendingCount }}</h2><p class="mt-1 text-xs text-amber-100">Awaiting review</p></div><div class="demo-kpi-icon"><i class="fas fa-file-signature"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total requested</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalRequestedAmount | number }}</h2><p class="mt-1 text-xs text-blue-100">Across applications</p></div><div class="demo-kpi-icon"><i class="fas fa-sack-dollar"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Average interest</p><h2 class="mt-2 text-3xl font-black text-white">{{ averageInterest }}%</h2><p class="mt-1 text-xs text-cyan-100">Requested rate</p></div><div class="demo-kpi-icon"><i class="fas fa-percentage"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Approval SLA</p><h2 class="mt-2 text-3xl font-black text-white">88%</h2><p class="mt-1 text-xs text-emerald-100">Within target time</p></div><div class="demo-kpi-icon"><i class="fas fa-gauge-high"></i></div></div></article>
+</section>
 
 <!-- Loans Table -->
-<div class="glass-card p-6 animate-slide-up">
-  <div class="mb-6">
-    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
-      <i class="fas fa-handshake mr-3 text-glass-emerald"></i>
-      Pending Loan Applications
-    </h2>
-    <p class="text-white/60 text-sm">Loans awaiting your approval</p>
+<section class="demo-section-card animate-slide-up">
+  <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-5">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-handshake mr-2 text-glass-emerald"></i>Pending loan applications</h2>
+      <p class="demo-section-helper">Click a row for full detail, or act directly from the table.</p>
+    </div>
+    <div class="relative">
+      <input class="demo-input pl-9 w-full md:w-64" placeholder="Search loan, customer, type…" [(ngModel)]="searchTerm" name="loanApprovalSearch" />
+      <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+    </div>
   </div>
 
-  <div class="overflow-x-auto">
+  <div class="demo-table-shell overflow-x-auto">
     <table class="w-full">
       <thead>
         <tr>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
-            <i class="fas fa-hashtag mr-2"></i>#
-          </th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Loan ID</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Amount</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Customer ID</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Duration</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Interest</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Type</th>
-          <th class="text-center px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Action</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Customer</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Type</th>
+          <th class="text-center px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          *ngFor="let loan of loans; let i = index"
+          *ngFor="let loan of filteredLoans; let i = index"
           class="cursor-pointer transition-all duration-300 hover:bg-white/5"
           (click)="showLoanDetails(loan)"
           title="View loan details"
         >
-          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-3">
             <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
               <i class="fas fa-fingerprint mr-1"></i>
               {{ loan.loan_basic_detail_id }}
             </span>
           </td>
-          <td class="px-6 py-4">
-            <span class="text-white font-semibold text-lg">
-              Rs. {{ loan.amount | number }}
-            </span>
+          <td class="px-5 py-3 text-white/90 font-mono">{{ loan.customer_id }}</td>
+          <td class="px-5 py-3">
+            <span class="text-white font-semibold">Rs. {{ loan.amount | number }}</span>
+            <small class="block text-xs text-white/50">{{ loan.interest }}% · {{ loan.duration_days }} days</small>
           </td>
-          <td class="px-6 py-4 text-white/90 font-mono">{{ loan.customer_id }}</td>
-          <td class="px-6 py-4">
-            <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
-              <i class="far fa-clock mr-1"></i>
-              {{ loan.duration_days }} days
-            </span>
-          </td>
-          <td class="px-6 py-4">
-            <span class="text-glass-orange font-semibold">
-              <i class="fas fa-percentage mr-1"></i>
-              {{ loan.interest }}%
-            </span>
-          </td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-3">
             <span
               class="glass-badge"
               [ngClass]="{
@@ -80,17 +77,17 @@
               {{ loan.loan_type }}
             </span>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-3">
             <div class="flex items-center justify-center gap-2">
               <button
-                class="glass-button-sm bg-gradient-to-r from-glass-emerald/30 to-glass-cyan/30 hover:from-glass-emerald/50 hover:to-glass-cyan/50"
+                class="glass-button-secondary text-xs"
                 (click)="$event.stopPropagation(); approve(loan.loan_basic_detail_id)"
               >
                 <i class="fas fa-check mr-1"></i>
                 Approve
               </button>
               <button
-                class="glass-button-sm bg-gradient-to-r from-glass-pink/30 to-glass-orange/30 hover:from-glass-pink/50 hover:to-glass-orange/50"
+                class="glass-button-secondary text-xs"
                 (click)="$event.stopPropagation(); reject(loan.loan_basic_detail_id)"
               >
                 <i class="fas fa-times mr-1"></i>
@@ -103,12 +100,12 @@
     </table>
 
     <!-- Empty State -->
-    <div *ngIf="!loans || loans.length === 0" class="text-center py-12">
+    <div *ngIf="filteredLoans.length === 0" class="text-center py-12">
       <div class="text-6xl text-white/20 mb-4">
         <i class="fas fa-clipboard-check"></i>
       </div>
-      <p class="text-white/60">No pending loan applications</p>
-      <p class="text-white/40 text-sm mt-2">All loans have been processed</p>
+      <p class="text-white/60">{{ (loans && loans.length) ? 'No applications match your search.' : 'No pending loan applications' }}</p>
+      <p class="text-white/40 text-sm mt-2" *ngIf="!(loans && loans.length)">All loans have been processed</p>
     </div>
   </div>
-</div>
+</section>

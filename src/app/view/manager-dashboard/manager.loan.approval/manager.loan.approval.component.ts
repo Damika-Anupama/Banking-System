@@ -11,11 +11,37 @@ import Swal from 'sweetalert2';
 })
 export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
   loans: any[] | null = null;
+  searchTerm = '';
   isLoading = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
   constructor(private loanService: LoanApprovalService) { }
+
+  get filteredLoans(): any[] {
+    const list = this.loans || [];
+    const q = this.searchTerm.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((l: any) =>
+      [l.loan_basic_detail_id, l.customer_id, l.loan_type, String(l.amount)]
+        .some(v => v && String(v).toLowerCase().includes(q))
+    );
+  }
+
+  get pendingCount(): number {
+    return Array.isArray(this.loans) ? this.loans.length : 0;
+  }
+
+  get totalRequestedAmount(): number {
+    if (!Array.isArray(this.loans)) return 0;
+    return this.loans.reduce((sum: number, l: any) => sum + Number(l?.amount || 0), 0);
+  }
+
+  get averageInterest(): number {
+    if (!Array.isArray(this.loans) || this.loans.length === 0) return 0;
+    const total = this.loans.reduce((sum: number, l: any) => sum + Number(l?.interest || 0), 0);
+    return Math.round((total / this.loans.length) * 10) / 10;
+  }
 
   ngOnInit(): void {
     this.loadUnapprovedLoans();
