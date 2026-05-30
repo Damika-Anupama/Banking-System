@@ -16,7 +16,7 @@ export class ManagerHomeComponent implements OnInit, OnDestroy {
   num_accounts: any = 0;
   num_employees: any = 0;
   transactions: any = null;
-  withdrwals: any = null;
+  withdrawals: any = null;
   loans: any = null;
   transactionSearch = '';
   isLoading = false;
@@ -164,15 +164,15 @@ export class ManagerHomeComponent implements OnInit, OnDestroy {
         // Null/undefined check
         if (!withdrawals) {
           console.warn('No withdrawals data received');
-          this.withdrwals = null;
+          this.withdrawals = null;
           return;
         }
 
-        this.withdrwals = withdrawals;
+        this.withdrawals = withdrawals;
       },
       error: (err) => {
         console.error('Error loading withdrawals:', err);
-        this.withdrwals = null;
+        this.withdrawals = null;
         // Don't show error to user as this is secondary data
       }
     });

@@ -60,7 +60,7 @@ describe('ManagerHomeComponent', () => {
       expect(component.num_accounts).toBe(0);
       expect(component.num_employees).toBe(0);
       expect(component.transactions).toBeNull();
-      expect(component.withdrwals).toBeNull();
+      expect(component.withdrawals).toBeNull();
       expect(component.loans).toBeNull();
       expect(component.isLoading).toBe(false);
       expect(component.errorMessage).toBe('');
@@ -442,7 +442,7 @@ describe('ManagerHomeComponent', () => {
 
       component.loadWithdrawals();
 
-      expect(component.withdrwals).toBe(50);
+      expect(component.withdrawals).toBe(50);
       expect(mockManagerHomeService.getTotalWithdrawals).toHaveBeenCalledWith('branch456');
     });
 
@@ -452,7 +452,7 @@ describe('ManagerHomeComponent', () => {
 
       component.loadWithdrawals();
 
-      expect(component.withdrwals).toBeNull();
+      expect(component.withdrawals).toBeNull();
       expect(console.warn).toHaveBeenCalledWith('No withdrawals data received');
     });
 
@@ -462,7 +462,7 @@ describe('ManagerHomeComponent', () => {
 
       component.loadWithdrawals();
 
-      expect(component.withdrwals).toBeNull();
+      expect(component.withdrawals).toBeNull();
     });
 
     it('should not call service when branch_id is null', () => {
@@ -489,7 +489,7 @@ describe('ManagerHomeComponent', () => {
 
       component.loadWithdrawals();
 
-      expect(component.withdrwals).toBeNull();
+      expect(component.withdrawals).toBeNull();
       expect(console.error).toHaveBeenCalledWith('Error loading withdrawals:', errorResponse);
     });
 
@@ -509,7 +509,7 @@ describe('ManagerHomeComponent', () => {
 
       component.loadWithdrawals();
 
-      expect(component.withdrwals).toEqual(withdrawalData);
+      expect(component.withdrawals).toEqual(withdrawalData);
     });
   });
 

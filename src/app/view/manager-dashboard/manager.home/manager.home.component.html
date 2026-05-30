@@ -128,7 +128,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let withdrawal of withdrwals; let i = index" class="transition-all duration-300 hover:bg-white/5">
+        <tr *ngFor="let withdrawal of withdrawals; let i = index" class="transition-all duration-300 hover:bg-white/5">
           <td class="px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
           <td class="px-5 py-3">
             <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">{{ withdrawal.withdrawal_id }}</span>
