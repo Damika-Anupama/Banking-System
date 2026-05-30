@@ -33,6 +33,57 @@ export class ManagerHomeComponent implements OnInit, OnDestroy {
     );
   }
 
+  /** Daily transaction volume for the 7 days ending at the latest transaction. */
+  get volumeTrend(): { label: string; amount: number; heightPct: number }[] {
+    const txns = Array.isArray(this.transactions) ? this.transactions : [];
+    const times = txns
+      .map((t: any) => new Date(t.transferd_time).getTime())
+      .filter((n: number) => Number.isFinite(n));
+    if (times.length === 0) return [];
+
+    const dayMs = 86400000;
+    const end = new Date(Math.max(...times));
+    end.setHours(0, 0, 0, 0);
+
+    const sums: number[] = [];
+    const days: Date[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const day = new Date(end.getTime() - i * dayMs);
+      days.push(day);
+      sums.push(
+        txns.reduce((total: number, t: any) => {
+          const td = new Date(t.transferd_time);
+          td.setHours(0, 0, 0, 0);
+          return td.getTime() === day.getTime() ? total + Number(t.amount || 0) : total;
+        }, 0)
+      );
+    }
+
+    const max = Math.max(...sums, 1);
+    return days.map((day, i) => ({
+      label: day.toLocaleDateString('en-US', { weekday: 'short' }),
+      amount: sums[i],
+      heightPct: sums[i] === 0 ? 4 : Math.max(8, Math.round((sums[i] / max) * 100)),
+    }));
+  }
+
+  /** Percentage change between the first and second half of the trend window. */
+  get volumeTrendPct(): number {
+    const t = this.volumeTrend;
+    if (t.length < 2) return 0;
+    const mid = Math.floor(t.length / 2);
+    const firstHalf = t.slice(0, mid).reduce((s, b) => s + b.amount, 0);
+    const secondHalf = t.slice(mid).reduce((s, b) => s + b.amount, 0);
+    if (firstHalf === 0) return secondHalf > 0 ? 100 : 0;
+    return Math.round(((secondHalf - firstHalf) / firstHalf) * 1000) / 10;
+  }
+
+  trendBarColor(heightPct: number): string {
+    if (heightPct >= 75) return 'bg-emerald-400/80';
+    if (heightPct >= 45) return 'bg-blue-400/80';
+    return 'bg-cyan-400/70';
+  }
+
   constructor(private managerService: ManagerHomeService) {}
 
   ngOnInit(): void {
