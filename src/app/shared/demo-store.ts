@@ -9,7 +9,7 @@
  * State is seeded from the fixtures, persisted to localStorage for the session,
  * and reset on each demo login so every walkthrough starts clean.
  */
-import { DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS } from './demo-banking-fixtures';
+import { DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES } from './demo-banking-fixtures';
 
 const STORAGE_KEY = 'bank-demo-store';
 const BASE_EMPLOYEE_COUNT = 24;
@@ -18,6 +18,7 @@ interface DemoStoreState {
   customers: any[];
   loanApplications: any[];
   employees: any[];
+  beneficiaries: any[];
 }
 
 function clone<T>(value: T): T {
@@ -29,6 +30,7 @@ function seed(): DemoStoreState {
     customers: clone(DEMO_CUSTOMERS),
     loanApplications: clone(DEMO_LOAN_APPLICATIONS),
     employees: [],
+    beneficiaries: clone(DEMO_BENEFICIARIES),
   };
 }
 
@@ -105,6 +107,25 @@ export const demoStore = {
   },
   get employeeCount(): number {
     return BASE_EMPLOYEE_COUNT + load().employees.length;
+  },
+
+  // ----- Beneficiaries (customer saved payees) -----
+  getBeneficiaries(): any[] {
+    return load().beneficiaries;
+  },
+  addBeneficiary(beneficiary: any): void {
+    load().beneficiaries.unshift(beneficiary);
+    persist();
+  },
+  removeBeneficiary(id: string | number): void {
+    const s = load();
+    s.beneficiaries = s.beneficiaries.filter((b) => String(b.id) !== String(id));
+    persist();
+  },
+  hasBeneficiary(accountId: string): boolean {
+    return load().beneficiaries.some(
+      (b) => String(b.account_id).toUpperCase() === String(accountId).toUpperCase()
+    );
   },
 
   /** Reset to fresh seed data — call on each demo login. */

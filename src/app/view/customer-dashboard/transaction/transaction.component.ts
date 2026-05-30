@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { TransactionService } from 'src/app/service/customer/transaction.service';
 import { Subscription } from 'rxjs';
+import { demoStore } from 'src/app/shared/demo-store';
+import { createDemoBeneficiary } from 'src/app/shared/demo-banking-fixtures';
 
 @Component({
   selector: 'app-transaction',
@@ -26,6 +28,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   beneficiary_remarks = '';
   to_account = '';
   beneficiary_name = '';
+  beneficiaries: any[] = [];
   payment_category = 'Supplier / invoice';
   transfer_priority: 'Standard' | 'Instant' = 'Standard';
   schedule_date = new Date().toISOString().slice(0, 10);
@@ -172,6 +175,52 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadAccountDetails();
+    this.beneficiaries = demoStore.getBeneficiaries();
+  }
+
+  selectBeneficiary(beneficiary: any): void {
+    if (!beneficiary) return;
+    this.to_account = beneficiary.account_id;
+    this.beneficiary_name = beneficiary.name;
+  }
+
+  get canSaveBeneficiary(): boolean {
+    const acc = this.to_account.trim();
+    return acc.length > 0 && !demoStore.hasBeneficiary(acc);
+  }
+
+  async saveBeneficiary(): Promise<void> {
+    const account = this.to_account.trim().toUpperCase();
+    if (!account) {
+      Swal.fire({ icon: 'info', title: 'No account entered', text: 'Enter a beneficiary account number first.' });
+      return;
+    }
+    if (demoStore.hasBeneficiary(account)) {
+      Swal.fire({ icon: 'info', title: 'Already saved', text: 'This account is already in your beneficiaries.' });
+      return;
+    }
+    const result = await Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
+      title: 'Save beneficiary',
+      input: 'text',
+      inputLabel: `Name for ${account}`,
+      inputValue: this.beneficiary_name || '',
+      inputPlaceholder: 'e.g. Sunil Construction',
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      inputValidator: (value) => (!value || !value.trim() ? 'Please enter a name' : null)
+    });
+    if (!result.isConfirmed || !result.value) return;
+
+    demoStore.addBeneficiary(createDemoBeneficiary({ name: result.value.trim(), account_id: account }));
+    this.beneficiaries = demoStore.getBeneficiaries();
+    Swal.fire({ icon: 'success', title: 'Beneficiary saved', timer: 1500, showConfirmButton: false });
+  }
+
+  removeBeneficiary(beneficiary: any, event: Event): void {
+    event.stopPropagation();
+    demoStore.removeBeneficiary(beneficiary.id);
+    this.beneficiaries = demoStore.getBeneficiaries();
   }
 
   loadAccountDetails() {

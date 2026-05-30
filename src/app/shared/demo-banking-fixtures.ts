@@ -145,6 +145,26 @@ export const createDemoLoan = (payload: { amount: number; duration_days: string 
   status: 'Submitted'
 });
 
+export interface DemoBeneficiary {
+  id: string;
+  name: string;
+  account_id: string;
+  nickname?: string;
+}
+
+export const DEMO_BENEFICIARIES: DemoBeneficiary[] = [
+  { id: 'BEN-1001', name: 'Sunil Construction', account_id: 'ACC-772901', nickname: 'Contractor' },
+  { id: 'BEN-1002', name: 'Greenfield Supplies', account_id: 'ACC-560010', nickname: 'Supplier' },
+  { id: 'BEN-1003', name: 'Amara Perera (Savings)', account_id: 'ACC-492811', nickname: 'My current a/c' }
+];
+
+export const createDemoBeneficiary = (payload: { name: string; account_id: string; nickname?: string }): DemoBeneficiary => ({
+  id: 'BEN-' + Math.floor(2000 + Math.random() * 7999),
+  name: payload.name,
+  account_id: payload.account_id.toUpperCase(),
+  nickname: payload.nickname
+});
+
 export const createDemoLoanApplication = (payload: {
   customer_id: string; amount: number; duration_days: string | number;
   interest: string | number; loan_type: string; purpose?: string;
