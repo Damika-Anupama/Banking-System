@@ -2,11 +2,13 @@
    Use these primitives before adding page-specific one-off classes. */
 
 .auth-shell {
-  @apply min-h-screen overflow-x-hidden bg-slate-950 px-4 py-8 text-white sm:px-6 lg:px-8;
+  @apply min-h-screen overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8;
+  color: #f8fafc;
   background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.28), transparent 32%),
-    radial-gradient(circle at 80% 10%, rgba(6, 182, 212, 0.18), transparent 28%),
-    linear-gradient(135deg, #07111f 0%, #0f172a 52%, #102554 100%);
+    radial-gradient(ellipse at 18% 12%, rgba(37, 99, 235, 0.42) 0%, transparent 38%),
+    radial-gradient(ellipse at 85% 8%, rgba(6, 182, 212, 0.26) 0%, transparent 32%),
+    radial-gradient(ellipse at 50% 92%, rgba(67, 56, 202, 0.20) 0%, transparent 44%),
+    linear-gradient(155deg, #040c1c 0%, #07132a 48%, #0b1c3f 100%);
 }
 
 .auth-panel {
@@ -15,7 +17,14 @@
 
 .auth-brand-card,
 .auth-card {
-  @apply w-full rounded-[2rem] border border-white/15 bg-white/[0.09] p-6 shadow-2xl shadow-blue-950/30 backdrop-blur-xl sm:p-8;
+  @apply w-full rounded-[2rem] p-6 backdrop-blur-xl sm:p-8;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 32px 64px rgba(2, 6, 23, 0.6),
+    0 0 80px rgba(37, 99, 235, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .auth-brand-card {
@@ -65,11 +74,14 @@
 }
 
 .auth-title {
-  @apply mt-5 text-3xl font-black tracking-tight text-white sm:text-5xl;
+  @apply mt-5 text-3xl font-black tracking-tight sm:text-5xl;
+  color: #f8fafc !important;
+  text-shadow: 0 2px 24px rgba(37, 99, 235, 0.18);
 }
 
 .auth-subtitle {
-  @apply mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg;
+  @apply mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg;
+  color: rgba(186, 200, 220, 0.90) !important;
 }
 
 .auth-actions {
@@ -103,15 +115,38 @@
 }
 
 .welcome-value-card {
-  @apply flex min-h-28 flex-col items-center justify-center gap-3 rounded-3xl border border-white/10 bg-white/[0.07] px-4 py-5 text-sm font-bold text-slate-100 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-cyan-200/30 hover:bg-white/[0.11];
+  @apply flex min-h-28 flex-col items-center justify-center gap-3 rounded-3xl px-4 py-5 text-sm font-bold shadow-lg transition duration-300 hover:-translate-y-1;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 8px 32px rgba(2, 6, 23, 0.35), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  &:hover {
+    background: rgba(255, 255, 255, 0.10) !important;
+    border-color: rgba(103, 232, 249, 0.30) !important;
+  }
 }
 
 .welcome-value-card i {
-  @apply text-2xl text-cyan-200;
+  @apply text-2xl;
+  color: #5eead4 !important;
 }
 
 .auth-field-label {
-  @apply mb-2 block text-sm font-semibold text-slate-200;
+  @apply mb-2 block text-sm font-semibold;
+  color: rgba(186, 200, 220, 0.95) !important;
+}
+
+/* Dark glass inputs for auth pages (override light-mode --input-bg variable) */
+.auth-shell .glass-input {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #f8fafc !important;
+  &::placeholder { color: rgba(148, 163, 184, 0.55) !important; }
+  &:focus {
+    border-color: rgba(103, 232, 249, 0.55) !important;
+    box-shadow: 0 0 0 3px rgba(103, 232, 249, 0.12) !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+  }
 }
 
 .auth-demo-grid {
@@ -119,11 +154,21 @@
 }
 
 .auth-demo-btn {
-  @apply flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:border-cyan-200/40 hover:bg-cyan-300/10 focus-visible:outline-cyan-300;
+  @apply flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition hover:-translate-y-0.5 focus-visible:outline-cyan-300;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(103, 232, 249, 0.28) !important;
+  color: #e2f8ff !important;
+  &:hover {
+    background: rgba(6, 182, 212, 0.18) !important;
+    border-color: rgba(103, 232, 249, 0.55) !important;
+    color: #fff !important;
+  }
 }
 
 .auth-link {
-  @apply font-semibold text-cyan-200 transition hover:text-white;
+  @apply font-semibold transition;
+  color: #67e8f9 !important;
+  &:hover { color: #ffffff !important; }
 }
 
 .demo-page-header {
@@ -246,10 +291,15 @@ html:not(.dark) .demo-tone-violet .demo-kpi-icon { background: rgba(139, 92, 246
   @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold;
 }
 
-.demo-status-success { @apply border-emerald-300/20 bg-emerald-300/10 text-emerald-100; }
-.demo-status-warning { @apply border-amber-300/20 bg-amber-300/10 text-amber-100; }
-.demo-status-info { @apply border-cyan-300/20 bg-cyan-300/10 text-cyan-100; }
-.demo-status-danger { @apply border-rose-300/20 bg-rose-300/10 text-rose-100; }
+.demo-status-success { @apply border-emerald-300/30 bg-emerald-300/15 text-emerald-200; }
+.demo-status-warning { @apply border-amber-300/30 bg-amber-300/15 text-amber-200; }
+.demo-status-info {
+  border: 1px solid rgba(103, 232, 249, 0.40);
+  background: rgba(6, 182, 212, 0.15);
+  color: #a5f3fc;
+  letter-spacing: 0.04em;
+}
+.demo-status-danger { @apply border-rose-300/30 bg-rose-300/15 text-rose-200; }
 
 .demo-table-shell {
   @apply overflow-hidden rounded-3xl border border-white/10 bg-slate-950/30 shadow-xl backdrop-blur-xl;
