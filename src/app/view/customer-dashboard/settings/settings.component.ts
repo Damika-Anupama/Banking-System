@@ -31,7 +31,19 @@ export class SettingsComponent implements OnInit, OnDestroy {
   showPassword = false;
   isEditingProfile = false;
   lastSavedAt = '';
+  twoStepEnabled = localStorage.getItem('demo-2fa') !== 'false';
+  loginAlertsEnabled = localStorage.getItem('demo-login-alerts') !== 'false';
   private subscriptions: Subscription[] = [];
+
+  toggleTwoStep(): void {
+    this.twoStepEnabled = !this.twoStepEnabled;
+    localStorage.setItem('demo-2fa', String(this.twoStepEnabled));
+  }
+
+  toggleLoginAlerts(): void {
+    this.loginAlertsEnabled = !this.loginAlertsEnabled;
+    localStorage.setItem('demo-login-alerts', String(this.loginAlertsEnabled));
+  }
 
   constructor(private userService: UserService) {}
 

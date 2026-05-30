@@ -105,8 +105,14 @@
       <h2 class="text-xl font-bold text-white mb-4 flex items-center"><i class="fas fa-lock mr-3 text-glass-cyan"></i>Security center</h2>
       <div class="space-y-3 text-sm">
         <div class="settings-security-row"><span>Password</span><strong>Protected</strong></div>
-        <div class="settings-security-row"><span>Two-step verification</span><strong>Demo enabled</strong></div>
-        <div class="settings-security-row"><span>Login alerts</span><strong>Active</strong></div>
+        <div class="settings-security-row">
+          <span>Two-step verification</span>
+          <button type="button" role="switch" [attr.aria-checked]="twoStepEnabled" aria-label="Toggle two-step verification" class="settings-toggle" [class.is-on]="twoStepEnabled" (click)="toggleTwoStep()"></button>
+        </div>
+        <div class="settings-security-row">
+          <span>Login alerts</span>
+          <button type="button" role="switch" [attr.aria-checked]="loginAlertsEnabled" aria-label="Toggle login alerts" class="settings-toggle" [class.is-on]="loginAlertsEnabled" (click)="toggleLoginAlerts()"></button>
+        </div>
         <div class="settings-security-row"><span>Last profile sync</span><strong>{{ lastSavedAt || 'Not synced yet' }}</strong></div>
       </div>
     </section>
