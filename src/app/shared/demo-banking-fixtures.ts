@@ -66,7 +66,17 @@ export const DEMO_CUSTOMERS: DemoCustomer[] = [
   { user_id: 'CUS-1001', username: 'amara.perera', fullname: 'Amara Perera', gender: 'Female', dob: '1991-04-18', address: 'No. 24, Marine Drive, Colombo 03', email: 'amara@banking.demo', contact_no: '+94 77 123 4567', account_count: 3, status: 'KYC verified' },
   { user_id: 'CUS-1002', username: 'nuwan.silva', fullname: 'Nuwan Silva', gender: 'Male', dob: '1988-09-02', address: 'Lake Road, Kandy', email: 'nuwan@banking.demo', contact_no: '+94 71 555 0199', account_count: 2, status: 'Loan review' },
   { user_id: 'CUS-1003', username: 'sofia.fernando', fullname: 'Sofia Fernando', gender: 'Female', dob: '1995-12-11', address: 'Galle Fort, Galle', email: 'sofia@banking.demo', contact_no: '+94 76 222 8899', account_count: 4, status: 'Priority customer' },
-  { user_id: 'CUS-1004', username: 'ishan.jay', fullname: 'Ishan Jayawardena', gender: 'Male', dob: '1984-06-25', address: 'Negombo Road, Wattala', email: 'ishan@banking.demo', contact_no: '+94 70 445 7812', account_count: 1, status: 'New onboarding' }
+  { user_id: 'CUS-1004', username: 'ishan.jay', fullname: 'Ishan Jayawardena', gender: 'Male', dob: '1984-06-25', address: 'Negombo Road, Wattala', email: 'ishan@banking.demo', contact_no: '+94 70 445 7812', account_count: 1, status: 'New onboarding' },
+  { user_id: 'CUS-1005', username: 'dilani.rajapaksa', fullname: 'Dilani Rajapaksa', gender: 'Female', dob: '1990-02-14', address: 'Temple Road, Maharagama', email: 'dilani@banking.demo', contact_no: '+94 77 901 2233', account_count: 2, status: 'KYC verified' },
+  { user_id: 'CUS-1006', username: 'kasun.mendis', fullname: 'Kasun Mendis', gender: 'Male', dob: '1986-11-30', address: 'Beach Road, Mount Lavinia', email: 'kasun@banking.demo', contact_no: '+94 71 334 5566', account_count: 3, status: 'KYC verified' },
+  { user_id: 'CUS-1007', username: 'tharushi.silva', fullname: 'Tharushi Silva', gender: 'Female', dob: '1998-07-08', address: 'Hill Street, Nuwara Eliya', email: 'tharushi@banking.demo', contact_no: '+94 76 778 9900', account_count: 1, status: 'New onboarding' },
+  { user_id: 'CUS-1008', username: 'roshan.peiris', fullname: 'Roshan Peiris', gender: 'Male', dob: '1982-03-19', address: 'Main Street, Kurunegala', email: 'roshan@banking.demo', contact_no: '+94 70 112 4455', account_count: 5, status: 'Priority customer' },
+  { user_id: 'CUS-1009', username: 'menaka.gunawardena', fullname: 'Menaka Gunawardena', gender: 'Female', dob: '1993-09-27', address: 'Station Road, Panadura', email: 'menaka@banking.demo', contact_no: '+94 77 556 1122', account_count: 2, status: 'KYC verified' },
+  { user_id: 'CUS-1010', username: 'pradeep.bandara', fullname: 'Pradeep Bandara', gender: 'Male', dob: '1979-12-05', address: 'Kandy Road, Matale', email: 'pradeep@banking.demo', contact_no: '+94 71 889 3344', account_count: 1, status: 'Loan review' },
+  { user_id: 'CUS-1011', username: 'hashini.wijesinghe', fullname: 'Hashini Wijesinghe', gender: 'Female', dob: '1996-05-22', address: 'Lake View, Battaramulla', email: 'hashini@banking.demo', contact_no: '+94 76 443 7788', account_count: 3, status: 'KYC verified' },
+  { user_id: 'CUS-1012', username: 'sanjaya.fernando', fullname: 'Sanjaya Fernando', gender: 'Male', dob: '1991-08-16', address: 'Sea Street, Chilaw', email: 'sanjaya@banking.demo', contact_no: '+94 70 667 2211', account_count: 2, status: 'New onboarding' },
+  { user_id: 'CUS-1013', username: 'amaya.kumari', fullname: 'Amaya Kumari', gender: 'Female', dob: '2000-01-09', address: 'Park Lane, Rajagiriya', email: 'amaya@banking.demo', contact_no: '+94 77 224 6688', account_count: 1, status: 'KYC verified' },
+  { user_id: 'CUS-1014', username: 'chamath.alwis', fullname: 'Chamath Alwis', gender: 'Male', dob: '1987-10-12', address: 'Galle Road, Dehiwala', email: 'chamath@banking.demo', contact_no: '+94 71 990 5544', account_count: 4, status: 'Priority customer' }
 ];
 
 export const DEMO_TRANSACTIONS: Record<string, any[]> = {
@@ -82,7 +92,13 @@ export const DEMO_TRANSACTIONS: Record<string, any[]> = {
     { date: '2026-05-16T09:10:00', type: 'Refund Credit', sender_remarks: 'Card refund - travel booking', beneficiary_remarks: 'Merchant refund', amount: 27500, status: 'up', audit_status: 'Posted', channel: 'Card' },
     { date: '2026-05-15T13:26:00', type: 'Insurance Premium', sender_remarks: 'Life insurance monthly premium', beneficiary_remarks: 'Policy premium', amount: 14500, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-14T18:05:00', type: 'Fund Transfer', sender_remarks: 'Family support transfer', beneficiary_remarks: 'Monthly support', amount: 35000, status: 'down', audit_status: 'Posted', channel: 'Mobile app' },
-    { date: '2026-05-13T11:45:00', type: 'Dividend Credit', sender_remarks: 'Portfolio dividend payout', beneficiary_remarks: 'Quarterly dividend', amount: 16200, status: 'up', audit_status: 'Posted', channel: 'Clearing' }
+    { date: '2026-05-13T11:45:00', type: 'Dividend Credit', sender_remarks: 'Portfolio dividend payout', beneficiary_remarks: 'Quarterly dividend', amount: 16200, status: 'up', audit_status: 'Posted', channel: 'Clearing' },
+    { date: '2026-05-12T08:30:00', type: 'Salary Advance', sender_remarks: 'Mid-month advance', beneficiary_remarks: 'Advance credit', amount: 40000, status: 'up', audit_status: 'Posted', channel: 'Payroll' },
+    { date: '2026-05-11T13:15:00', type: 'Mobile Reload', sender_remarks: 'Prepaid top-up', beneficiary_remarks: 'Dialog reload', amount: 2000, status: 'down', audit_status: 'Posted', channel: 'Mobile app' },
+    { date: '2026-05-10T16:40:00', type: 'Loan Installment', sender_remarks: 'Personal loan repayment', beneficiary_remarks: 'LN-49201 installment', amount: 22500, status: 'down', audit_status: 'Posted', channel: 'Standing order' },
+    { date: '2026-05-09T10:05:00', type: 'Cheque Deposit', sender_remarks: 'Client cheque cleared', beneficiary_remarks: 'Cheque 884201', amount: 128000, status: 'up', audit_status: 'Posted', channel: 'Branch' },
+    { date: '2026-05-08T19:20:00', type: 'Online Purchase', sender_remarks: 'E-commerce order', beneficiary_remarks: 'Daraz order', amount: 13750, status: 'down', audit_status: 'Posted', channel: 'Card' },
+    { date: '2026-05-07T09:50:00', type: 'Interest Credit', sender_remarks: 'Savings interest', beneficiary_remarks: 'Interest posting', amount: 7600, status: 'up', audit_status: 'Posted', channel: 'Core banking' }
   ],
   'ACC-492811': [
     { date: '2026-05-24T08:15:00', type: 'Client Transfer', sender_remarks: 'Invoice BS-1024 paid', beneficiary_remarks: 'Consulting invoice', amount: 64000, status: 'up', audit_status: 'Posted', channel: 'Online banking' },
@@ -132,7 +148,11 @@ export const createDemoFixedDeposit = (payload: { saving_account_id: number | st
 
 export const DEMO_CUSTOMER_LOANS = [
   { loan_basic_detail_id: 'LN-49201', amount: 210000, starting_date: '2026-05-12', duration_days: 180, interest: 13, loan_type: 'Personal' },
-  { loan_basic_detail_id: 'LN-49202', amount: 480000, starting_date: '2026-03-20', duration_days: 365, interest: 14, loan_type: 'Business' }
+  { loan_basic_detail_id: 'LN-49202', amount: 480000, starting_date: '2026-03-20', duration_days: 365, interest: 14, loan_type: 'Business' },
+  { loan_basic_detail_id: 'LN-49188', amount: 150000, starting_date: '2026-02-05', duration_days: 180, interest: 13, loan_type: 'Personal' },
+  { loan_basic_detail_id: 'LN-49170', amount: 920000, starting_date: '2025-12-18', duration_days: 1080, interest: 15, loan_type: 'Business' },
+  { loan_basic_detail_id: 'LN-49152', amount: 65000, starting_date: '2026-04-28', duration_days: 180, interest: 13, loan_type: 'Personal' },
+  { loan_basic_detail_id: 'LN-49133', amount: 340000, starting_date: '2026-01-15', duration_days: 365, interest: 14, loan_type: 'Business' }
 ];
 
 export const createDemoLoan = (payload: { amount: number; duration_days: string | number; interest: string | number; loan_type: string }) => ({

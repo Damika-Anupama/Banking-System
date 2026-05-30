@@ -12,6 +12,8 @@ import Swal from 'sweetalert2';
 export class EmployeeHomeComponent implements OnInit, OnDestroy {
   customers: any[] | null = null;
   searchTerm = '';
+  customerPage = 1;
+  readonly customerPageSize = 6;
   isLoading = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
@@ -24,6 +26,32 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
       [c.fullname, c.username, c.user_id, c.email, c.status, String(c.account_count)]
         .some(v => v && String(v).toLowerCase().includes(q))
     );
+  }
+
+  get totalCustomerPages(): number {
+    return Math.max(1, Math.ceil(this.filteredCustomers.length / this.customerPageSize));
+  }
+
+  get pagedCustomers(): any[] {
+    const page = Math.min(this.customerPage, this.totalCustomerPages);
+    const start = (page - 1) * this.customerPageSize;
+    return this.filteredCustomers.slice(start, start + this.customerPageSize);
+  }
+
+  get customerRangeStart(): number {
+    return this.filteredCustomers.length === 0 ? 0 : (Math.min(this.customerPage, this.totalCustomerPages) - 1) * this.customerPageSize + 1;
+  }
+
+  get customerRangeEnd(): number {
+    return Math.min(this.customerRangeStart + this.customerPageSize - 1, this.filteredCustomers.length);
+  }
+
+  onCustomerSearchChange(): void {
+    this.customerPage = 1;
+  }
+
+  setCustomerPage(page: number): void {
+    this.customerPage = Math.max(1, Math.min(page, this.totalCustomerPages));
   }
 
   private byStatus(status: string): any[] {

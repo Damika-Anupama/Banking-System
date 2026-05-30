@@ -46,7 +46,49 @@ export class TransactionComponent implements OnInit, OnDestroy {
   transactionPageSize = 6;
   readonly transactionPageSizes = [6, 10, 15];
   readonly paymentCategories = ['Supplier / invoice', 'Rent / lease', 'Family support', 'Utilities', 'Tax / government', 'Other'];
+  transferStep = 1;
+  readonly transferSteps = [
+    { num: 1, label: 'Beneficiary', icon: 'fa-user-check' },
+    { num: 2, label: 'Amount', icon: 'fa-money-bill-wave' },
+    { num: 3, label: 'Review', icon: 'fa-shield-check' },
+  ];
   private subscriptions: Subscription[] = [];
+
+  get step1Valid(): boolean {
+    const from = (this.account_id || '').toUpperCase();
+    const to = this.to_account.trim().toUpperCase();
+    return Boolean(from && to && from !== to);
+  }
+
+  get step2Valid(): boolean {
+    return Boolean(
+      this.transfer_amount && Number(this.transfer_amount) > 0 &&
+      this.sender_remarks.trim() && this.beneficiary_remarks.trim()
+    );
+  }
+
+  nextTransferStep(): void {
+    if (this.transferStep === 1 && !this.step1Valid) {
+      Swal.fire({ icon: 'info', title: 'Add beneficiary details', text: 'Choose a source account and a valid (different) beneficiary account.' });
+      return;
+    }
+    if (this.transferStep === 2 && !this.step2Valid) {
+      Swal.fire({ icon: 'info', title: 'Complete the amount step', text: 'Enter an amount, payment purpose, and beneficiary note.' });
+      return;
+    }
+    this.transferStep = Math.min(3, this.transferStep + 1);
+  }
+
+  prevTransferStep(): void {
+    this.transferStep = Math.max(1, this.transferStep - 1);
+  }
+
+  goToTransferStep(step: number): void {
+    if (step <= this.transferStep) { this.transferStep = step; return; }
+    if (this.transferStep === 1 && !this.step1Valid) return;
+    if (this.transferStep === 2 && !this.step2Valid) return;
+    this.transferStep = step;
+  }
 
   get selectedSavingLabel(): string {
     return this.formatSavingType(this.selectedAccount?.saving_type || this.saving_type);
@@ -474,6 +516,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
           this.transfer_priority = 'Standard';
           this.schedule_date = new Date().toISOString().slice(0, 10);
           this.transactionPage = 1;
+          this.transferStep = 1;
 
           this.isProcessingTransaction = false;
           Swal.fire({

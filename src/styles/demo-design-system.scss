@@ -32,6 +32,65 @@
   gap: 1rem;
 }
 
+/* Native date inputs: match the browser widget colours to the active theme
+   so webkit stops rendering light field segments on dark glass inputs. */
+input[type="date"] {
+  color-scheme: light;
+}
+
+html.dark input[type="date"],
+.auth-shell input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+/* Sidebar profile card + identity — theme-aware so the name and dividers stay visible in light mode. */
+.profile-name { color: #ffffff; }
+
+html:not(.dark) .profile-name { color: #0f172a; }
+
+html:not(.dark) .profile-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(37, 99, 235, 0.18);
+}
+
+html:not(.dark) .profile-card .text-white\/50 { color: #64748b; }
+html:not(.dark) .profile-card .text-white\/40 { color: #94a3b8; }
+
+/* Faint white dividers inside the sidebar need a darker tint to show in light mode. */
+html:not(.dark) .glass-sidebar .border-white\/10 {
+  border-color: rgba(37, 99, 235, 0.14);
+}
+
+/* Compact icon action buttons (loan table) — theme-aware. */
+.loan-action-btn {
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm transition;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+.loan-action-btn:hover { background: rgba(255, 255, 255, 0.14); }
+.loan-action-btn--primary {
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #ffffff;
+  border-color: transparent;
+}
+.loan-action-btn--primary:hover { filter: brightness(1.08); background: linear-gradient(135deg, #2563eb, #06b6d4); }
+
+html:not(.dark) .loan-action-btn { border-color: rgba(15, 23, 42, 0.14); background: rgba(15, 23, 42, 0.04); color: #334155; }
+html:not(.dark) .loan-action-btn:hover { background: rgba(15, 23, 42, 0.09); }
+html:not(.dark) .loan-action-btn--primary { color: #ffffff; }
+
+/* Card tiles keep light text on their coloured gradient regardless of app theme. */
+html:not(.dark) .card-tile,
+html:not(.dark) .card-tile * {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
 .settings-toggle {
   position: relative;
   height: 1.5rem;
@@ -367,7 +426,12 @@ html:not(.dark) .demo-tone-violet .demo-kpi-icon { background: rgba(139, 92, 246
 }
 
 .demo-action-card {
-  @apply flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-left transition hover:border-cyan-200/30 hover:bg-white/[0.10];
+  @apply flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-left no-underline transition hover:border-cyan-200/30 hover:bg-white/[0.10];
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: none;
+  }
 }
 
 .demo-status-pill {
@@ -383,6 +447,12 @@ html:not(.dark) .demo-tone-violet .demo-kpi-icon { background: rgba(139, 92, 246
   letter-spacing: 0.04em;
 }
 .demo-status-danger { @apply border-rose-300/30 bg-rose-300/15 text-rose-200; }
+
+/* Light-mode status pills — stronger tints + darker text so they read clearly. */
+html:not(.dark) .demo-status-success { border-color: rgba(5, 150, 105, 0.35); background: rgba(16, 185, 129, 0.16); color: #047857; }
+html:not(.dark) .demo-status-warning { border-color: rgba(217, 119, 6, 0.35); background: rgba(245, 158, 11, 0.18); color: #b45309; }
+html:not(.dark) .demo-status-info { border-color: rgba(8, 145, 178, 0.35); background: rgba(6, 182, 212, 0.16); color: #0e7490; }
+html:not(.dark) .demo-status-danger { border-color: rgba(225, 29, 72, 0.35); background: rgba(244, 63, 94, 0.16); color: #be123c; }
 
 .demo-table-shell {
   @apply overflow-hidden rounded-3xl border border-white/10 bg-slate-950/30 shadow-xl backdrop-blur-xl;
@@ -486,15 +556,60 @@ html:not(.dark) .demo-state-card p { color: #475569; }
   color: #cbd5e1 !important;
 }
 
-.swal2-confirm {
-  border-radius: 999px !important;
-  background: linear-gradient(135deg, #2563eb, #06b6d4) !important;
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.25) !important;
+/* Action buttons — consistent pill shape, weight, and spacing across all modals. */
+.swal2-actions {
+  gap: 0.6rem !important;
 }
 
+.swal2-confirm,
+.swal2-deny,
 .swal2-cancel {
   border-radius: 999px !important;
+  font-weight: 600 !important;
+  padding: 0.6rem 1.5rem !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transition: filter 160ms ease, background 160ms ease !important;
 }
+
+.swal2-confirm {
+  background: linear-gradient(135deg, #2563eb, #06b6d4) !important;
+  color: #ffffff !important;
+}
+.swal2-confirm:hover { filter: brightness(1.08); }
+
+.swal2-deny {
+  background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
+  color: #ffffff !important;
+}
+.swal2-deny:hover { filter: brightness(1.08); }
+
+.swal2-cancel {
+  background: rgba(148, 163, 184, 0.16) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(148, 163, 184, 0.32) !important;
+}
+.swal2-cancel:hover { background: rgba(148, 163, 184, 0.26) !important; }
+
+/* ----- Light-mode modal ----- */
+html:not(.dark) .swal2-popup,
+html:not(.dark) .swal2-popup.demo-detail-modal {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(37, 99, 235, 0.14) !important;
+  color: #0f172a !important;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18) !important;
+}
+html:not(.dark) .swal2-title { color: #0f172a !important; }
+html:not(.dark) .swal2-html-container { color: #475569 !important; }
+html:not(.dark) .demo-detail-row { border-color: rgba(15, 23, 42, 0.10) !important; }
+html:not(.dark) .demo-detail-row span { color: #64748b !important; }
+html:not(.dark) .demo-detail-row strong { color: #0f172a !important; }
+html:not(.dark) .swal2-cancel {
+  background: rgba(15, 23, 42, 0.06) !important;
+  color: #334155 !important;
+  border-color: rgba(15, 23, 42, 0.16) !important;
+}
+html:not(.dark) .swal2-cancel:hover { background: rgba(15, 23, 42, 0.12) !important; }
 
 .demo-detail-grid {
   display: grid;

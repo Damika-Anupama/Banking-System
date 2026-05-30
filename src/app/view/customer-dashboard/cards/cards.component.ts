@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { demoStore } from 'src/app/shared/demo-store';
 
@@ -10,6 +10,8 @@ import { demoStore } from 'src/app/shared/demo-store';
 })
 export class CardsComponent implements OnInit {
   cards: any[] = [];
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.cards = demoStore.getCards();
@@ -52,7 +54,8 @@ export class CardsComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed) {
         demoStore.toggleCardFreeze(card.id);
-        this.cards = demoStore.getCards();
+        this.cards = [...demoStore.getCards()];
+        this.cdr.detectChanges();
         Swal.fire({
           icon: 'success',
           title: freezing ? 'Card frozen' : 'Card unfrozen',

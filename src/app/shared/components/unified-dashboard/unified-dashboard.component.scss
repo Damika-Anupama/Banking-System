@@ -24,12 +24,14 @@
 .nav-item {
   color: var(--text-secondary);
   background: transparent;
+  text-decoration: none;
   @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300;
 
   &:hover,
   &:focus-visible {
     color: var(--text-primary);
     background: var(--glass-bg);
+    text-decoration: none;
     outline: 2px solid rgba(34, 211, 238, 0.75);
     outline-offset: 3px;
   }

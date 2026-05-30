@@ -121,8 +121,34 @@ export class LoanComponent implements OnInit, OnDestroy {
     return duration.replace(/_/g, ' ').toLowerCase();
   }
 
+  loanPage = 1;
+  readonly loanPageSize = 4;
+
   get activeLoanCount(): number {
     return Array.isArray(this.loans) ? this.loans.length : 0;
+  }
+
+  get totalLoanPages(): number {
+    return Math.max(1, Math.ceil(this.activeLoanCount / this.loanPageSize));
+  }
+
+  get pagedLoans(): any[] {
+    if (!Array.isArray(this.loans)) return [];
+    const page = Math.min(this.loanPage, this.totalLoanPages);
+    const start = (page - 1) * this.loanPageSize;
+    return this.loans.slice(start, start + this.loanPageSize);
+  }
+
+  get loanRangeStart(): number {
+    return this.activeLoanCount === 0 ? 0 : (Math.min(this.loanPage, this.totalLoanPages) - 1) * this.loanPageSize + 1;
+  }
+
+  get loanRangeEnd(): number {
+    return Math.min(this.loanRangeStart + this.loanPageSize - 1, this.activeLoanCount);
+  }
+
+  setLoanPage(page: number): void {
+    this.loanPage = Math.max(1, Math.min(page, this.totalLoanPages));
   }
 
   get totalBorrowed(): number {

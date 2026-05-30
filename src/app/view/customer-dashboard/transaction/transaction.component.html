@@ -58,24 +58,34 @@
     </article>
   </section>
 
-  <section class="grid grid-cols-1 gap-5 mb-8 xl:grid-cols-5">
-    <article class="demo-section-card xl:col-span-3">
+  <section class="grid grid-cols-1 gap-5 mb-8 xl:grid-cols-3">
+    <article class="demo-section-card xl:col-span-2">
       <div class="mb-5">
         <h2 class="demo-section-title"><i class="fas fa-paper-plane text-glass-cyan"></i> New transfer instruction</h2>
         <p class="demo-section-helper">Capture the payment purpose, beneficiary note, and source account before final authorization.</p>
       </div>
 
-      <form class="transaction-transfer-form space-y-5">
-        <div class="transaction-form-section">
-          <div class="transaction-form-section-header">
-            <span>1</span>
-            <div>
-              <h3>Source and beneficiary</h3>
-              <p>Select the debit account and capture verified beneficiary details.</p>
-            </div>
-          </div>
+      <!-- Horizontal stepper -->
+      <div class="transfer-stepper" role="tablist">
+        <ng-container *ngFor="let step of transferSteps; let last = last">
+          <button type="button" class="transfer-step"
+                  [class.is-active]="transferStep === step.num"
+                  [class.is-done]="transferStep > step.num"
+                  (click)="goToTransferStep(step.num)">
+            <span class="transfer-step-badge">
+              <i *ngIf="transferStep > step.num" class="fas fa-check"></i>
+              <span *ngIf="transferStep <= step.num">{{ step.num }}</span>
+            </span>
+            <span class="transfer-step-label">{{ step.label }}</span>
+          </button>
+          <span *ngIf="!last" class="transfer-step-divider" [class.is-done]="transferStep > step.num"></span>
+        </ng-container>
+      </div>
 
-          <div *ngIf="beneficiaries.length" class="mb-4">
+      <form class="transaction-transfer-form mt-6 space-y-5">
+        <!-- Step 1: Source & beneficiary -->
+        <div *ngIf="transferStep === 1" class="space-y-4 animate-fade-in">
+          <div *ngIf="beneficiaries.length">
             <p class="auth-field-label mb-2"><i class="fas fa-address-book mr-2"></i>Saved beneficiaries</p>
             <div class="flex flex-wrap gap-2">
               <span *ngFor="let b of beneficiaries"
@@ -90,7 +100,7 @@
           </div>
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div>
+            <div class="min-w-0">
               <label class="auth-field-label"><i class="fas fa-university mr-2"></i>From account</label>
               <select class="glass-input w-full" [(ngModel)]="account_id" name="source_account" (ngModelChange)="updateSmallBox((accounts || []).find(account => account.account_id === $event))">
                 <option *ngFor="let account of accounts; trackBy: trackByAccountId" [value]="account.account_id">
@@ -100,16 +110,16 @@
               <p class="mt-2 text-xs text-white/50">Same linked account set as the customer home page.</p>
             </div>
 
-            <div>
+            <div class="min-w-0">
               <label class="auth-field-label"><i class="fas fa-user mr-2"></i>Beneficiary name</label>
               <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva / ABC Suppliers" [(ngModel)]="beneficiary_name" name="beneficiary_name" />
               <p class="mt-2 text-xs text-white/50">Displayed in the final review and receipt.</p>
             </div>
 
-            <div>
+            <div class="min-w-0">
               <label class="auth-field-label"><i class="fas fa-user-check mr-2"></i>Beneficiary account <span class="text-red-300">*</span></label>
               <div class="flex gap-2">
-                <div class="relative flex-1">
+                <div class="relative flex-1 min-w-0">
                   <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
                   <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492811" [(ngModel)]="to_account" name="to_account" />
                 </div>
@@ -120,7 +130,7 @@
               <p class="mt-2 text-xs" [ngClass]="beneficiaryRiskLabel === 'Format verified' ? 'text-emerald-200' : 'text-amber-200'">{{ beneficiaryRiskLabel }}</p>
             </div>
 
-            <div>
+            <div class="min-w-0">
               <label class="auth-field-label"><i class="fas fa-tags mr-2"></i>Payment category</label>
               <select class="glass-input w-full" [(ngModel)]="payment_category" name="payment_category">
                 <option *ngFor="let category of paymentCategories" [value]="category">{{ category }}</option>
@@ -130,31 +140,25 @@
           </div>
         </div>
 
-        <div class="transaction-form-section">
-          <div class="transaction-form-section-header">
-            <span>2</span>
-            <div>
-              <h3>Amount and execution</h3>
-              <p>Validate affordability, daily limit, schedule, and priority before authorization.</p>
-            </div>
-          </div>
+        <!-- Step 2: Amount & execution -->
+        <div *ngIf="transferStep === 2" class="space-y-4 animate-fade-in">
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <div>
+            <div class="min-w-0">
               <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
-                <input type="number" class="glass-input pl-14" placeholder="0.00" [(ngModel)]="transfer_amount" name="transfer_amount" min="1" />
+                <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" [(ngModel)]="transfer_amount" name="transfer_amount" min="1" />
               </div>
               <p class="mt-2 text-xs text-white/50">Available: Rs. {{ availableBalance | number }}</p>
             </div>
 
-            <div>
+            <div class="min-w-0">
               <label class="auth-field-label"><i class="far fa-calendar mr-2"></i>Execution date</label>
               <input type="date" class="glass-input w-full" [(ngModel)]="schedule_date" name="schedule_date" />
               <p class="mt-2 text-xs text-white/50">Use today for immediate posting.</p>
             </div>
 
-            <div>
+            <div class="min-w-0">
               <label class="auth-field-label"><i class="fas fa-bolt mr-2"></i>Priority</label>
               <select class="glass-input w-full" [(ngModel)]="transfer_priority" name="transfer_priority">
                 <option value="Standard">Standard</option>
@@ -163,34 +167,45 @@
               <p class="mt-2 text-xs text-white/50">Remaining limit: Rs. {{ remainingLimit | number }}</p>
             </div>
           </div>
-        </div>
 
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div>
-            <label class="auth-field-label"><i class="fas fa-clipboard-list mr-2"></i>Payment purpose <span class="text-red-300">*</span></label>
-            <textarea class="glass-input min-h-[110px] resize-none" rows="3" placeholder="e.g. Supplier invoice INV-1042 for May services" [(ngModel)]="sender_remarks" name="sender_remarks"></textarea>
-          </div>
-          <div>
-            <label class="auth-field-label"><i class="fas fa-message mr-2"></i>Beneficiary note <span class="text-red-300">*</span></label>
-            <textarea class="glass-input min-h-[110px] resize-none" rows="3" placeholder="Narration shown to beneficiary" [(ngModel)]="beneficiary_remarks" name="beneficiary_remarks"></textarea>
-          </div>
-        </div>
-
-        <div class="transaction-review-card transaction-review-panel">
-          <div>
-            <span>Review total</span>
-            <strong>Rs. {{ transferAmountNumber + transferFee | number }}</strong>
-            <p>Amount plus fees. Final reference is generated at authorization.</p>
-          </div>
-          <div class="transaction-review-list">
-            <div *ngFor="let item of transferReviewItems"><span>{{ item.label }}</span><strong>{{ item.value }}</strong></div>
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div class="min-w-0">
+              <label class="auth-field-label"><i class="fas fa-clipboard-list mr-2"></i>Payment purpose <span class="text-red-300">*</span></label>
+              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="e.g. Supplier invoice INV-1042 for May services" [(ngModel)]="sender_remarks" name="sender_remarks"></textarea>
+            </div>
+            <div class="min-w-0">
+              <label class="auth-field-label"><i class="fas fa-message mr-2"></i>Beneficiary note <span class="text-red-300">*</span></label>
+              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="Narration shown to beneficiary" [(ngModel)]="beneficiary_remarks" name="beneficiary_remarks"></textarea>
+            </div>
           </div>
         </div>
 
-        <button type="button" class="glass-button w-full justify-center" [disabled]="!transferReady" [class.opacity-50]="!transferReady" [class.cursor-not-allowed]="!transferReady" (click)="proceedTransaction()">
-          <i class="fas fa-shield-check mr-2"></i>
-          Review and authorize transfer
-        </button>
+        <!-- Step 3: Review -->
+        <div *ngIf="transferStep === 3" class="space-y-4 animate-fade-in">
+          <div class="transaction-review-card transaction-review-panel">
+            <div>
+              <span>Review total</span>
+              <strong>Rs. {{ transferAmountNumber + transferFee | number }}</strong>
+              <p>Amount plus fees. Final reference is generated at authorization.</p>
+            </div>
+            <div class="transaction-review-list">
+              <div *ngFor="let item of transferReviewItems"><span>{{ item.label }}</span><strong>{{ item.value }}</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stepper nav -->
+        <div class="flex items-center gap-3 pt-2">
+          <button type="button" class="glass-button-secondary" *ngIf="transferStep > 1" (click)="prevTransferStep()">
+            <i class="fas fa-chevron-left mr-2"></i>Back
+          </button>
+          <button type="button" class="glass-button ml-auto justify-center" *ngIf="transferStep < 3" (click)="nextTransferStep()">
+            Next<i class="fas fa-chevron-right ml-2"></i>
+          </button>
+          <button type="button" class="glass-button ml-auto justify-center" *ngIf="transferStep === 3" [disabled]="!transferReady" [class.opacity-50]="!transferReady" [class.cursor-not-allowed]="!transferReady" (click)="proceedTransaction()">
+            <i class="fas fa-shield-check mr-2"></i>Authorize transfer
+          </button>
+        </div>
       </form>
     </article>
 

@@ -5,7 +5,7 @@
       <h1 class="demo-title">Serve customers faster with visible branch priorities</h1>
       <p class="demo-subtitle">A focused employee dashboard for onboarding, customer support, withdrawals, and loan handoffs with demo-ready customer context.</p>
     </div>
-    <a routerLink="/employee-dashboard/customer-registration" class="glass-button w-fit"><i class="fas fa-user-plus mr-2"></i>Add customer</a>
+    <a routerLink="/employee-dashboard/employee-register-customer" class="glass-button w-fit"><i class="fas fa-user-plus mr-2"></i>Add customer</a>
   </div>
 </section>
 <section class="demo-kpi-grid mb-8">
@@ -19,7 +19,7 @@
     <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <div><h2 class="demo-section-title">Customer service queue</h2><p class="demo-section-helper">Prioritized sample work for a branch employee.</p></div>
       <div class="relative">
-        <input class="demo-input pl-9 max-w-sm" placeholder="Search name, ID, status…" [(ngModel)]="searchTerm" name="customerSearch" />
+        <input class="demo-input pl-9 max-w-sm" placeholder="Search name, ID, status…" [(ngModel)]="searchTerm" (ngModelChange)="onCustomerSearchChange()" name="customerSearch" />
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
       </div>
     </div>
@@ -33,18 +33,12 @@
   <article class="demo-section-card">
     <h2 class="demo-section-title">Employee quick actions</h2><p class="demo-section-helper">Useful operational shortcuts.</p>
     <div class="mt-5 space-y-3">
-      <a routerLink="/employee-dashboard/customer-registration" class="demo-action-card"><i class="fas fa-user-plus text-cyan-200"></i><span><strong class="block text-white">Register customer</strong><span class="text-sm text-slate-300">Start onboarding</span></span></a>
-      <a routerLink="/employee-dashboard/withdraw" class="demo-action-card"><i class="fas fa-money-bill-transfer text-emerald-200"></i><span><strong class="block text-white">Withdrawal</strong><span class="text-sm text-slate-300">Process cash request</span></span></a>
-      <a routerLink="/employee-dashboard/manual-loan" class="demo-action-card"><i class="fas fa-file-signature text-amber-200"></i><span><strong class="block text-white">Manual loan</strong><span class="text-sm text-slate-300">Create application</span></span></a>
+      <a routerLink="/employee-dashboard/employee-register-customer" class="demo-action-card"><i class="fas fa-user-plus text-cyan-200"></i><span><strong class="block text-white">Register customer</strong><span class="text-sm text-slate-300">Start onboarding</span></span></a>
+      <a routerLink="/employee-dashboard/employee-withdraw" class="demo-action-card"><i class="fas fa-money-bill-transfer text-emerald-200"></i><span><strong class="block text-white">Withdrawal</strong><span class="text-sm text-slate-300">Process cash request</span></span></a>
+      <a routerLink="/employee-dashboard/employee-create-loan" class="demo-action-card"><i class="fas fa-file-signature text-amber-200"></i><span><strong class="block text-white">Manual loan</strong><span class="text-sm text-slate-300">Create application</span></span></a>
     </div>
   </article>
 </section>
-<!-- Page Header -->
-<div class="mb-8 animate-fade-in">
-  <h1 class="text-4xl font-bold text-white mb-2">Customer Management</h1>
-  <p class="text-white/70">View and manage all customer details</p>
-</div>
-
 <!-- Customers Table -->
 <div class="glass-card p-6 animate-slide-up">
   <div class="mb-6">
@@ -56,43 +50,35 @@
   </div>
 
   <!-- Table -->
-  <div class="overflow-x-auto">
-    <table class="w-full">
+  <div>
+    <table class="w-full table-fixed">
       <thead>
         <tr>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">
-            <i class="fas fa-hashtag mr-2"></i>#
-          </th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">User ID</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Username</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Full Name</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Gender</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Date of Birth</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Address</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Email</th>
-          <th class="text-left px-6 py-4 text-white/80 font-semibold text-sm uppercase tracking-wider">Contact</th>
+          <th class="w-12 text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th class="text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Customer</th>
+          <th class="hidden md:table-cell text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Gender</th>
+          <th class="hidden lg:table-cell text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Date of birth</th>
+          <th class="text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Email</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          *ngFor="let customer of filteredCustomers; let i = index"
-          class="cursor-pointer transition-all duration-300 hover:bg-white/5"
+          *ngFor="let customer of pagedCustomers; let i = index"
+          class="cursor-pointer transition-all duration-300 hover:bg-white/5 border-t border-white/5"
           (click)="showCustomerDetails(customer)"
           title="View customer details"
         >
-          <td class="px-6 py-4 text-white/90 font-mono">{{ i + 1 }}</td>
-          <td class="px-6 py-4">
-            <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
-              <i class="fas fa-fingerprint mr-1"></i>
-              {{ customer.user_id }}
-            </span>
+          <td class="px-4 py-3 text-white/70 font-mono">{{ customerRangeStart + i }}</td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="glass-badge shrink-0 bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">{{ customer.user_id }}</span>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white">{{ customer.fullname }}</p>
+                <p class="truncate text-xs text-white/50">{{ '@' + customer.username }}</p>
+              </div>
+            </div>
           </td>
-          <td class="px-6 py-4 text-white/90">
-            <i class="fas fa-user mr-2 text-glass-cyan"></i>
-            {{ customer.username }}
-          </td>
-          <td class="px-6 py-4 text-white/90 font-medium">{{ customer.fullname }}</td>
-          <td class="px-6 py-4">
+          <td class="hidden md:table-cell px-4 py-3">
             <span
               class="glass-badge"
               [ngClass]="{
@@ -101,33 +87,12 @@
                 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80': customer.gender !== 'Male' && customer.gender !== 'Female'
               }"
             >
-              <i
-                [ngClass]="{
-                  'fas fa-mars': customer.gender === 'Male',
-                  'fas fa-venus': customer.gender === 'Female',
-                  'fas fa-genderless': customer.gender !== 'Male' && customer.gender !== 'Female'
-                }"
-                class="mr-1"
-              ></i>
+              <i [ngClass]="{ 'fas fa-mars': customer.gender === 'Male', 'fas fa-venus': customer.gender === 'Female', 'fas fa-genderless': customer.gender !== 'Male' && customer.gender !== 'Female' }" class="mr-1"></i>
               {{ customer.gender }}
             </span>
           </td>
-          <td class="px-6 py-4 text-white/90">
-            <i class="far fa-calendar mr-2 text-glass-pink"></i>
-            {{ customer.dob | date: 'yyyy-MM-dd' }}
-          </td>
-          <td class="px-6 py-4 text-white/70 text-sm max-w-xs truncate">
-            <i class="fas fa-map-marker-alt mr-2 text-glass-orange"></i>
-            {{ customer.address }}
-          </td>
-          <td class="px-6 py-4 text-white/70 text-sm">
-            <i class="fas fa-envelope mr-2 text-glass-purple"></i>
-            {{ customer.email }}
-          </td>
-          <td class="px-6 py-4 text-white/90 font-mono text-sm">
-            <i class="fas fa-phone mr-2 text-glass-emerald"></i>
-            {{ customer.contact_no }}
-          </td>
+          <td class="hidden lg:table-cell px-4 py-3 text-white/80">{{ customer.dob | date: 'MMM d, y' }}</td>
+          <td class="px-4 py-3 text-white/70 text-sm truncate">{{ customer.email }}</td>
         </tr>
       </tbody>
     </table>
@@ -138,6 +103,16 @@
         <i class="fas fa-users"></i>
       </div>
       <p class="text-white/60">{{ (customers && customers.length) ? 'No customers match your search.' : 'No customers found' }}</p>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="filteredCustomers.length > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+      <p class="text-xs text-white/60">Showing {{ customerRangeStart }}–{{ customerRangeEnd }} of {{ filteredCustomers.length }} customers</p>
+      <div class="flex items-center gap-2">
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="customerPage === 1" [class.opacity-40]="customerPage === 1" (click)="setCustomerPage(customerPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+        <span class="text-xs text-white/70">Page {{ customerPage }} of {{ totalCustomerPages }}</span>
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="customerPage === totalCustomerPages" [class.opacity-40]="customerPage === totalCustomerPages" (click)="setCustomerPage(customerPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+      </div>
     </div>
   </div>
 </div>

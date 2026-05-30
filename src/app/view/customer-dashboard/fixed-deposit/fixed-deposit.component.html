@@ -49,80 +49,75 @@
       <p class="text-white/60 text-sm">Create a new fixed deposit investment</p>
     </div>
 
-    <form class="space-y-6">
-      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <div>
+    <form class="space-y-5">
+      <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div class="min-w-0">
           <label class="auth-field-label">
-            <i class="fas fa-university mr-2"></i>Choose a Saving Account <span class="text-red-300">*</span>
+            <i class="fas fa-university mr-2"></i>Saving account <span class="text-red-300">*</span>
           </label>
           <div class="relative">
-            <i class="fas fa-university absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
             <select
-              class="glass-input pl-12 appearance-none cursor-pointer"
+              class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedSavingAccount"
               (change)="onAccountSelected()"
               name="selectedSavingAccount"
             >
               <option [ngValue]="null" disabled selected>Select a saving account</option>
               <option *ngFor="let account of savingAccounts" [ngValue]="account">
-                Account: {{ account.saving_account_id }} | Type: {{ account.account_type }} | Balance: Rs. {{ account.amount | number }}
+                {{ account.saving_account_id }} — Rs. {{ account.amount | number }}
               </option>
             </select>
-            <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
           </div>
         </div>
 
-        <div>
+        <div class="min-w-0">
           <label class="auth-field-label">
-            <i class="fas fa-box mr-2"></i>Select Fixed Deposit Package <span class="text-red-300">*</span>
+            <i class="fas fa-box mr-2"></i>FD package <span class="text-red-300">*</span>
           </label>
           <div class="relative">
-            <i class="fas fa-box absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
             <select
-              class="glass-input pl-12 appearance-none cursor-pointer"
+              class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedPackage"
               (ngModelChange)="onPackageSelected()"
               name="selectedPackage"
             >
               <option value="" disabled selected>Select a package</option>
               <option *ngFor="let package of packageArray" [value]="package.index">
-                Package {{ package.index }} | Duration: {{ package.period }} | Interest Rate: {{ package.interest }}%
+                {{ package.period }} · {{ package.interest }}
               </option>
             </select>
-            <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
           </div>
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2 xl:items-end">
-        <div>
+        <div class="min-w-0">
           <label class="auth-field-label">
-            <i class="fas fa-money-bill-wave mr-2"></i>Deposit Amount <span class="text-red-300">*</span>
+            <i class="fas fa-money-bill-wave mr-2"></i>Deposit amount <span class="text-red-300">*</span>
           </label>
-          <p class="text-white/50 text-xs mb-2">
-            <i class="fas fa-info-circle mr-1"></i>
-            Eligible balance: Rs. {{ selectedAccountBalance | number }}
-          </p>
           <div class="relative">
-            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50">Rs.</span>
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
             <input
               type="number"
-              class="glass-input pl-14"
-              placeholder="Enter deposit amount"
+              class="glass-input pl-14 w-full"
+              placeholder="0.00"
               [(ngModel)]="fdAmount"
               name="fdAmount"
               min="1"
             />
           </div>
+          <p class="text-white/50 text-xs mt-2">Eligible: Rs. {{ selectedAccountBalance | number }}</p>
         </div>
+      </div>
 
-        <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
-          <p class="font-semibold text-white">Selected plan</p>
-          <p class="mt-1">Duration: {{ duration || 'Choose a package' }}</p>
-          <p>Rate: {{ rpa || '—' }}</p>
-          <p>Maturity date: {{ maturityDate ? (maturityDate | date: 'yyyy-MM-dd') : 'Choose a package' }}</p>
-          <p>Estimated interest: Rs. {{ estimatedInterest | number }}</p>
-          <p class="font-semibold text-emerald-100">Maturity amount: Rs. {{ maturityAmount | number }}</p>
+      <!-- Selected plan summary (horizontal) -->
+      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+        <p class="auth-field-label mb-3">Selected plan</p>
+        <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+          <div><p class="text-xs text-slate-400">Duration</p><p class="font-semibold">{{ duration || '—' }}</p></div>
+          <div><p class="text-xs text-slate-400">Rate</p><p class="font-semibold">{{ rpa || '—' }}</p></div>
+          <div><p class="text-xs text-slate-400">Maturity date</p><p class="font-semibold">{{ maturityDate ? (maturityDate | date: 'MMM d, y') : '—' }}</p></div>
+          <div><p class="text-xs text-slate-400">Maturity amount</p><p class="font-semibold text-emerald-100">Rs. {{ maturityAmount | number }}</p></div>
         </div>
       </div>
 
@@ -157,44 +152,40 @@
     </div>
 
     <!-- Table -->
-    <div class="demo-table-shell overflow-x-auto">
-      <table class="w-full">
+    <div>
+      <table class="w-full table-fixed">
         <thead>
           <tr>
-            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">FD ID</th>
-            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
-            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Duration</th>
-            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Maturity Date</th>
-            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Maturity Amount</th>
-            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
-            <th class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
+            <th class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Deposit</th>
+            <th class="hidden md:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Duration</th>
+            <th class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Maturity</th>
+            <th class="hidden sm:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+            <th class="text-right px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr
             *ngFor="let fd of fds; let i = index"
-            class="transition-all duration-300 hover:bg-white/5"
+            class="transition-all duration-300 hover:bg-white/5 border-t border-white/5"
           >
-            <td class="px-5 py-3">
-              <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
-                <i class="fas fa-fingerprint mr-1"></i>
-                {{ fd.fd_id }}
-              </span>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-2">
+                <span class="glass-badge shrink-0 bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">{{ fd.fd_id }}</span>
+                <div class="min-w-0">
+                  <p class="truncate font-semibold">Rs. {{ fd.amount | number }}</p>
+                  <p class="truncate text-xs text-white/50">{{ fd.rate_per_annum }}% p.a.</p>
+                </div>
+              </div>
             </td>
-            <td class="px-5 py-3">
-              <span class="font-semibold">Rs. {{ fd.amount | number }}</span>
-              <small class="block text-xs text-white/50">{{ fd.rate_per_annum }}% p.a. · opened {{ fd.fd_opening_date | date: 'MMM d, y' }}</small>
+            <td class="hidden md:table-cell px-4 py-3">
+              <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80"><i class="far fa-clock mr-1"></i>{{ convertDuration(fd.duration) }}</span>
             </td>
-            <td class="px-5 py-3">
-              <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">
-                <i class="far fa-clock mr-1"></i>
-                {{ convertDuration(fd.duration) }}
-              </span>
+            <td class="px-4 py-3">
+              <p class="font-semibold text-emerald-100">Rs. {{ fdMaturityAmount(fd) | number }}</p>
+              <p class="text-xs text-white/50">{{ fdMaturityDate(fd) | date: 'MMM d, y' }}</p>
             </td>
-            <td class="px-5 py-3 text-white/90">{{ fdMaturityDate(fd) | date: 'MMM d, y' }}</td>
-            <td class="px-5 py-3 font-semibold text-emerald-100">Rs. {{ fdMaturityAmount(fd) | number }}</td>
-            <td class="px-5 py-3"><span class="glass-badge bg-white/10">{{ fdStatus(fd) }}</span></td>
-            <td class="px-5 py-3 text-right"><button type="button" class="glass-button-secondary text-xs" (click)="viewFDCertificate(fd)"><i class="fas fa-file-download mr-1"></i>Certificate</button></td>
+            <td class="hidden sm:table-cell px-4 py-3"><span class="glass-badge bg-white/10">{{ fdStatus(fd) }}</span></td>
+            <td class="px-4 py-3 text-right"><button type="button" class="glass-button-secondary text-xs" (click)="viewFDCertificate(fd)"><i class="fas fa-file-download mr-1"></i>Certificate</button></td>
           </tr>
         </tbody>
       </table>

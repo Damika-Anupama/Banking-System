@@ -162,7 +162,7 @@
     </div>
     <div class="mt-5 space-y-2">
       <a routerLink="/dashboard/transaction" *ngFor="let txn of recentTransactions"
-         class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-3 transition hover:border-cyan-300/30 hover:bg-white/[0.10]">
+         class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-3 no-underline transition hover:border-cyan-300/30 hover:bg-white/[0.10] hover:no-underline">
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
               [ngClass]="txn.status === 'up' ? 'bg-emerald-400/15 text-emerald-200' : 'bg-rose-400/15 text-rose-200'">
           <i class="fas" [ngClass]="txn.status === 'up' ? 'fa-arrow-down' : 'fa-arrow-up'"></i>

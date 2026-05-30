@@ -53,14 +53,14 @@ export class ManagerHomeService {
         result: [
           { transfer_id: 'TRX-90821', amount: 185000, from_account: 'ACC-492810', to_account: 'ACC-772901', transferd_time: '2026-05-24T09:40:00', direction: 'up' },
           { transfer_id: 'TRX-90818', amount: 64000,  from_account: 'ACC-118209', to_account: 'ACC-492811', transferd_time: '2026-05-24T08:15:00', direction: 'up' },
-          { transfer_id: 'TRX-90812', amount: 42000,  from_account: 'ACC-492812', to_account: 'ACC-560010', transferd_time: '2026-05-23T16:30:00', direction: 'down' },
-          { transfer_id: 'TRX-90796', amount: 12500,  from_account: 'ACC-300871', to_account: 'ACC-300871', transferd_time: '2026-05-23T12:05:00', direction: 'no-change' },
-          { transfer_id: 'TRX-90781', amount: 310000, from_account: 'ACC-660412', to_account: 'ACC-492812', transferd_time: '2026-05-23T09:00:00', direction: 'up' },
+          { transfer_id: 'TRX-90812', amount: 142000, from_account: 'ACC-492812', to_account: 'ACC-560010', transferd_time: '2026-05-23T16:30:00', direction: 'down' },
+          { transfer_id: 'TRX-90796', amount: 98500,  from_account: 'ACC-300871', to_account: 'ACC-300871', transferd_time: '2026-05-23T12:05:00', direction: 'no-change' },
+          { transfer_id: 'TRX-90781', amount: 210000, from_account: 'ACC-660412', to_account: 'ACC-492812', transferd_time: '2026-05-22T09:00:00', direction: 'up' },
           { transfer_id: 'TRX-90754', amount: 75000,  from_account: 'ACC-492810', to_account: 'ACC-492811', transferd_time: '2026-05-22T14:50:00', direction: 'down' },
-          { transfer_id: 'TRX-90741', amount: 93000,  from_account: 'ACC-229180', to_account: 'ACC-492811', transferd_time: '2026-05-22T10:20:00', direction: 'up' },
-          { transfer_id: 'TRX-90729', amount: 18500,  from_account: 'ACC-492811', to_account: 'ACC-880021', transferd_time: '2026-05-21T16:10:00', direction: 'down' },
-          { transfer_id: 'TRX-90712', amount: 56000,  from_account: 'ACC-492812', to_account: 'ACC-335500', transferd_time: '2026-05-21T11:35:00', direction: 'down' },
-          { transfer_id: 'TRX-90698', amount: 27500,  from_account: 'ACC-770814', to_account: 'ACC-492810', transferd_time: '2026-05-20T15:00:00', direction: 'up' }
+          { transfer_id: 'TRX-90741', amount: 123000, from_account: 'ACC-229180', to_account: 'ACC-492811', transferd_time: '2026-05-21T10:20:00', direction: 'up' },
+          { transfer_id: 'TRX-90729', amount: 88500,  from_account: 'ACC-492811', to_account: 'ACC-880021', transferd_time: '2026-05-20T16:10:00', direction: 'down' },
+          { transfer_id: 'TRX-90712', amount: 156000, from_account: 'ACC-492812', to_account: 'ACC-335500', transferd_time: '2026-05-19T11:35:00', direction: 'down' },
+          { transfer_id: 'TRX-90698', amount: 117500, from_account: 'ACC-770814', to_account: 'ACC-492810', transferd_time: '2026-05-18T15:00:00', direction: 'up' }
         ]
       });
     }

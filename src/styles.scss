@@ -119,12 +119,13 @@ body {
   }
 
   .glass-button {
-    @apply text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-95;
+    @apply text-white font-semibold px-6 py-3 rounded-xl no-underline transition-all duration-300 hover:-translate-y-0.5 active:scale-95;
     background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 40%, #0891b2 100%);
     box-shadow: 0 4px 24px rgba(37, 99, 235, 0.40), 0 1px 0 rgba(255,255,255,0.12) inset;
     &:hover {
       background: linear-gradient(135deg, #2563eb 0%, #3b82f6 40%, #06b6d4 100%);
       box-shadow: 0 8px 32px rgba(37, 99, 235, 0.50), 0 1px 0 rgba(255,255,255,0.15) inset;
+      text-decoration: none;
     }
 
     &:focus-visible {
@@ -144,13 +145,14 @@ body {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     color: var(--text-primary);
-    @apply backdrop-blur-sm font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95;
+    @apply backdrop-blur-sm font-semibold px-6 py-3 rounded-xl no-underline transition-all duration-300 hover:scale-105 active:scale-95;
 
     &:hover,
     &:focus-visible {
       background: var(--glass-hover);
       outline: 2px solid rgba(34, 211, 238, 0.68);
       outline-offset: 3px;
+      text-decoration: none;
     }
 
     &:disabled {
@@ -296,11 +298,18 @@ body {
   html:not(.dark) .dashboard-section-subtitle,
   html:not(.dark) .glass-card .text-slate-300,
   html:not(.dark) .glass-card .text-slate-400,
+  html:not(.dark) .glass-card .text-white\/80,
+  html:not(.dark) .glass-card .text-white\/70,
   html:not(.dark) .glass-card .text-white\/60,
   html:not(.dark) .glass-card .text-white\/50,
   html:not(.dark) .glass-card .text-white\/40,
   html:not(.dark) .demo-section-card .text-slate-300,
-  html:not(.dark) .demo-section-card .text-slate-400 {
+  html:not(.dark) .demo-section-card .text-slate-400,
+  html:not(.dark) .demo-section-card .text-white\/90,
+  html:not(.dark) .demo-section-card .text-white\/80,
+  html:not(.dark) .demo-section-card .text-white\/70,
+  html:not(.dark) .demo-section-card .text-white\/60,
+  html:not(.dark) .demo-section-card .text-white\/50 {
     color: #475569 !important;
   }
 
@@ -308,6 +317,24 @@ body {
   html:not(.dark) .glass-navbar {
     color: #0f172a !important;
     box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+  }
+
+  /* Inner translucent-white panels (inset boxes, tiles, consent rows) inside demo
+     cards need a light-mode tint + border so they remain visible. */
+  html:not(.dark) .demo-section-card [class*="bg-white/[0.06]"],
+  html:not(.dark) .demo-section-card [class*="bg-white/[0.07]"] {
+    background-color: rgba(15, 23, 42, 0.035) !important;
+  }
+  html:not(.dark) .demo-section-card [class*="bg-white/[0.12]"] {
+    background-color: rgba(37, 99, 235, 0.10) !important;
+  }
+  html:not(.dark) .demo-section-card [class*="border-white/10"] {
+    border-color: rgba(15, 23, 42, 0.12) !important;
+  }
+  html:not(.dark) .demo-section-card [class*="bg-slate-950/40"],
+  html:not(.dark) .demo-section-card [class*="bg-slate-950/35"],
+  html:not(.dark) .demo-section-card [class*="bg-slate-950/30"] {
+    background-color: rgba(15, 23, 42, 0.04) !important;
   }
 
   .dashboard-section-title {

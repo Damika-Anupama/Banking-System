@@ -50,79 +50,73 @@
       <p class="text-white/60 text-sm">Fill out the form to request a loan</p>
     </div>
 
-    <form class="space-y-6">
-      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <div>
+    <form class="space-y-5">
+      <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div class="min-w-0">
           <label class="auth-field-label">
-            <i class="fas fa-piggy-bank mr-2"></i>Choose a Fixed Deposit <span class="text-red-300">*</span>
+            <i class="fas fa-piggy-bank mr-2"></i>Fixed deposit <span class="text-red-300">*</span>
           </label>
           <div class="relative">
-            <i class="fas fa-piggy-bank absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/50"></i>
             <select
-              class="glass-input pl-12 appearance-none cursor-pointer"
+              class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedFD"
               (change)="onFDSelected()"
               name="selectedFD"
             >
               <option [ngValue]="null" disabled selected>Select a fixed deposit</option>
               <option *ngFor="let account of fds" [ngValue]="account">
-                FD ID: {{ account.fd_id }} | Duration: {{ convertDuration(account.duration) }} | Amount: Rs. {{ account.amount | number }}
+                FD {{ account.fd_id }} — Rs. {{ account.amount | number }}
               </option>
             </select>
             <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
           </div>
         </div>
 
-        <div>
+        <div class="min-w-0">
           <label class="auth-field-label">
-            <i class="fas fa-money-bill-wave mr-2"></i>Loan Amount <span class="text-red-300">*</span>
+            <i class="fas fa-money-bill-wave mr-2"></i>Loan amount <span class="text-red-300">*</span>
           </label>
-          <p class="text-white/50 text-xs mb-2" *ngIf="maximumLoanAmount">
-            <i class="fas fa-info-circle mr-1"></i>
-            Maximum eligible: Rs. {{ maximumLoanAmount | number }} • LTV {{ ltvPercent }}%
-          </p>
           <div class="relative">
             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
             <input
               type="number"
-              class="glass-input pl-14"
-              placeholder="Enter loan amount"
+              class="glass-input pl-14 w-full"
+              placeholder="0.00"
               [(ngModel)]="loanAmount"
               name="loanAmount"
               min="1"
               (ngModelChange)="checkLoanAmount()"
             />
           </div>
+          <p class="text-white/50 text-xs mt-2" *ngIf="maximumLoanAmount">Max: Rs. {{ maximumLoanAmount | number }} · LTV {{ ltvPercent }}%</p>
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <div>
+        <div class="min-w-0">
           <label class="auth-field-label">
-            <i class="fas fa-calendar-alt mr-2"></i>Select Loan Payment Plan <span class="text-red-300">*</span>
+            <i class="fas fa-calendar-alt mr-2"></i>Payment plan <span class="text-red-300">*</span>
           </label>
           <div class="relative">
-            <i class="fas fa-calendar-alt absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/50"></i>
             <select
-              class="glass-input pl-12 appearance-none cursor-pointer"
+              class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedLoan"
               (ngModelChange)="onLoanSelected()"
               name="selectedPackage"
             >
-              <option value="" disabled selected>Select a payment plan</option>
+              <option value="" disabled selected>Select a plan</option>
               <option *ngFor="let package of packageArray" [value]="package.index">
-                Package {{ package.index }} | Duration: {{ package.period }} | Interest Rate: {{ package.interest }}%
+                {{ package.period }} · {{ package.interest }}
               </option>
             </select>
             <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
           </div>
         </div>
+      </div>
 
-        <div>
-          <label class="auth-field-label">
-            <i class="fas fa-tags mr-2"></i>Select Loan Type <span class="text-red-300">*</span>
-          </label>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label class="auth-field-label">
+          <i class="fas fa-tags mr-2"></i>Select Loan Type <span class="text-red-300">*</span>
+        </label>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label class="cursor-pointer">
               <input
                 type="radio"
@@ -135,8 +129,8 @@
                 <div class="flex items-center gap-3">
                   <i class="fas fa-user text-glass-purple text-2xl"></i>
                   <div>
-                    <div class="text-white font-semibold">Personal</div>
-                    <div class="text-white/60 text-xs">For personal use</div>
+                    <p class="font-semibold">Personal</p>
+                    <p class="text-slate-300 text-xs">For personal use</p>
                   </div>
                 </div>
               </div>
@@ -154,21 +148,22 @@
                 <div class="flex items-center gap-3">
                   <i class="fas fa-briefcase text-glass-cyan text-2xl"></i>
                   <div>
-                    <div class="text-white font-semibold">Business</div>
-                    <div class="text-white/60 text-xs">For business purposes</div>
+                    <p class="font-semibold">Business</p>
+                    <p class="text-slate-300 text-xs">For business purposes</p>
                   </div>
                 </div>
               </div>
             </label>
           </div>
         </div>
-      </div>
 
-      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
-        <p class="font-semibold text-white">Repayment estimate</p>
-        <p>Interest formula: simple annual interest on principal</p>
-        <p>Estimated monthly payment: <strong class="text-emerald-100">Rs. {{ estimatedMonthlyPayment | number }}</strong></p>
-        <p>Processing fee: 0.5% shown at approval stage</p>
+      <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+        <p class="auth-field-label mb-3">Repayment estimate</p>
+        <div class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+          <div><p class="text-xs text-slate-400">Est. monthly payment</p><p class="font-semibold text-emerald-100">Rs. {{ estimatedMonthlyPayment | number }}</p></div>
+          <div><p class="text-xs text-slate-400">Interest method</p><p class="font-semibold">Simple annual</p></div>
+          <div><p class="text-xs text-slate-400">Processing fee</p><p class="font-semibold">0.5% at approval</p></div>
+        </div>
       </div>
 
       <label class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
@@ -202,60 +197,39 @@
   </div>
 
   <!-- Table -->
-  <div class="demo-table-shell overflow-x-auto">
-    <table class="w-full">
+  <div>
+    <table class="w-full table-fixed">
       <thead>
         <tr>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Type</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Outstanding</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Next Due</th>
-          <th class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
+          <th class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan</th>
+          <th class="hidden md:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+          <th class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Outstanding</th>
+          <th class="hidden lg:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Next due</th>
+          <th class="text-right px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          *ngFor="let loan of loans; let i = index"
-          class="transition-all duration-300 hover:bg-white/5"
+          *ngFor="let loan of pagedLoans; let i = index"
+          class="transition-all duration-300 hover:bg-white/5 border-t border-white/5"
         >
-          <td class="px-5 py-3">
-            <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
-              <i class="fas fa-fingerprint mr-1"></i>
-              {{ loan.loan_basic_detail_id }}
-            </span>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-2">
+              <i class="fas" [ngClass]="loan.loan_type === 'Business' ? 'fa-briefcase text-glass-cyan' : 'fa-user text-glass-purple'"></i>
+              <div class="min-w-0">
+                <p class="truncate font-semibold">Rs. {{ loan.amount | number }}</p>
+                <p class="truncate text-xs text-white/50">{{ loan.loan_basic_detail_id }} · {{ loan.loan_type }} · {{ loan.interest }}%</p>
+              </div>
+            </div>
           </td>
-          <td class="px-5 py-3">
-            <span class="font-semibold">Rs. {{ loan.amount | number }}</span>
-            <small class="block text-xs text-white/50">{{ loan.interest }}% · {{ remainingTenure(loan) }}</small>
-          </td>
-          <td class="px-5 py-3">
-            <span
-              class="glass-badge"
-              [ngClass]="{
-                'bg-gradient-to-r from-glass-purple/80 to-glass-pink/80': loan.loan_type === 'Personal',
-                'bg-gradient-to-r from-glass-cyan/80 to-glass-blue/80': loan.loan_type === 'Business'
-              }"
-            >
-              <i
-                [ngClass]="{
-                  'fas fa-user': loan.loan_type === 'Personal',
-                  'fas fa-briefcase': loan.loan_type === 'Business'
-                }"
-                class="mr-1"
-              ></i>
-              {{ loan.loan_type }}
-            </span>
-          </td>
-          <td class="px-5 py-3"><span class="glass-badge bg-white/10">{{ loanStatus(loan) }}</span></td>
-          <td class="px-5 py-3 font-semibold text-emerald-100">Rs. {{ loanOutstanding(loan) | number }}</td>
-          <td class="px-5 py-3 text-white/90">{{ loanNextDueDate(loan) | date: 'MMM d, y' }}</td>
-          <td class="px-5 py-3 text-right">
-            <div class="flex flex-wrap justify-end gap-2">
-              <button type="button" class="glass-button-secondary text-xs" (click)="viewLoanSchedule(loan)">Schedule</button>
-              <button type="button" class="glass-button-secondary text-xs" (click)="downloadLoanAgreement(loan)">Agreement</button>
-              <button type="button" class="glass-button-secondary text-xs" (click)="startRepayment(loan)">Repay</button>
+          <td class="hidden md:table-cell px-4 py-3"><span class="glass-badge bg-white/10">{{ loanStatus(loan) }}</span></td>
+          <td class="px-4 py-3 font-semibold text-emerald-100">Rs. {{ loanOutstanding(loan) | number }}</td>
+          <td class="hidden lg:table-cell px-4 py-3 text-white/90">{{ loanNextDueDate(loan) | date: 'MMM d, y' }}</td>
+          <td class="px-4 py-3">
+            <div class="flex items-center justify-end gap-1.5">
+              <button type="button" class="loan-action-btn" title="Repayment schedule" (click)="viewLoanSchedule(loan)"><i class="fas fa-calendar-days"></i></button>
+              <button type="button" class="loan-action-btn" title="Download agreement" (click)="downloadLoanAgreement(loan)"><i class="fas fa-file-arrow-down"></i></button>
+              <button type="button" class="loan-action-btn loan-action-btn--primary" title="Make a repayment" (click)="startRepayment(loan)"><i class="fas fa-hand-holding-dollar"></i></button>
             </div>
           </td>
         </tr>
@@ -269,6 +243,16 @@
       </div>
       <p class="text-white/60">No loans found</p>
       <p class="text-white/40 text-sm mt-2">Apply for your first loan to get started</p>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="activeLoanCount > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+      <p class="text-xs text-white/60">Showing {{ loanRangeStart }}–{{ loanRangeEnd }} of {{ activeLoanCount }} loans</p>
+      <div class="flex items-center gap-2">
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="loanPage === 1" [class.opacity-40]="loanPage === 1" (click)="setLoanPage(loanPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+        <span class="text-xs text-white/70">Page {{ loanPage }} of {{ totalLoanPages }}</span>
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="loanPage === totalLoanPages" [class.opacity-40]="loanPage === totalLoanPages" (click)="setLoanPage(loanPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+      </div>
     </div>
   </div>
 </div>

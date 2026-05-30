@@ -20,7 +20,7 @@
 <section class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
   <article *ngFor="let card of cards" class="demo-section-card animate-slide-up">
     <!-- Visual card -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br p-5 text-white shadow-lg" [ngClass]="cardGradient(card)">
+    <div class="card-tile relative overflow-hidden rounded-2xl bg-gradient-to-br p-5 text-white shadow-lg" [ngClass]="cardGradient(card)">
       <div class="flex items-start justify-between">
         <span class="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">{{ card.type }}</span>
         <span class="text-lg font-black italic">{{ card.network }}</span>

@@ -37,7 +37,7 @@
       <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
         <span class="min-w-0 flex-1">
-          <span class="block truncate text-sm font-semibold text-white">{{ sessionUser.name }}</span>
+          <span class="block truncate text-sm font-semibold profile-name">{{ sessionUser.name }}</span>
           <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }} · Demo</span>
         </span>
         <i class="fas fa-ellipsis-vertical text-white/40"></i>
@@ -144,7 +144,7 @@
       <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
         <span class="min-w-0 flex-1">
-          <span class="block truncate text-sm font-semibold text-white">{{ sessionUser.name }}</span>
+          <span class="block truncate text-sm font-semibold profile-name">{{ sessionUser.name }}</span>
           <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }} · Demo</span>
         </span>
         <i class="fas fa-ellipsis-vertical text-white/40"></i>
@@ -167,7 +167,7 @@
 </div>
 
 <!-- Employee/Manager Dashboard Layout -->
-<div *ngIf="!isCustomerDashboard()" class="min-h-screen">
+<div *ngIf="!isCustomerDashboard()" class="min-h-screen lg:h-screen lg:overflow-hidden">
   <!-- Mobile Sidebar Overlay -->
   <div
     *ngIf="isSidebarOpen"
@@ -207,7 +207,7 @@
       <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
         <span class="min-w-0 flex-1">
-          <span class="block truncate text-sm font-semibold text-white">{{ sessionUser.name }}</span>
+          <span class="block truncate text-sm font-semibold profile-name">{{ sessionUser.name }}</span>
           <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }} · Demo</span>
         </span>
         <i class="fas fa-ellipsis-vertical text-white/40"></i>
@@ -230,7 +230,7 @@
   </aside>
 
   <!-- Main Content -->
-  <div class="lg:ml-72 min-w-0">
+  <div class="lg:ml-72 min-w-0 lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
     <!-- Top Navbar -->
     <nav class="glass-navbar sticky top-0 z-30 lg:hidden">
       <div class="flex items-center justify-between">
@@ -246,7 +246,7 @@
     </nav>
 
     <!-- Page Content -->
-    <main class="p-6 min-h-screen">
+    <main class="p-6 flex-1 min-h-0 lg:overflow-y-auto overscroll-contain">
       <router-outlet></router-outlet>
     </main>
   </div>

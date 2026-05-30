@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -19,6 +19,7 @@ export class UnifiedDashboardComponent implements OnInit {
   currentYear = new Date().getFullYear();
   notifications: any[] = [];
   unreadCount = 0;
+  notificationsRead = false;
 
   private notificationsByRole: Record<string, any[]> = {
     customer: [
@@ -39,7 +40,8 @@ export class UnifiedDashboardComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -58,24 +60,49 @@ export class UnifiedDashboardComponent implements OnInit {
     const toneColor: Record<string, string> = {
       emerald: '#34d399', amber: '#fbbf24', cyan: '#22d3ee', rose: '#fb7185', blue: '#60a5fa',
     };
+    const read = this.notificationsRead;
+    const isLight = !document.documentElement.classList.contains('dark');
+
+    // Theme-aware colours so the modal reads correctly in both light and dark mode.
+    const titleColor = isLight ? '#0f172a' : '#f8fafc';
+    const detailColor = isLight ? '#475569' : '#cbd5e1';
+    const metaColor = isLight ? '#64748b' : '#94a3b8';
+    const dividerColor = isLight ? 'rgba(15,23,42,0.10)' : 'rgba(148,163,184,0.14)';
+
+    const caughtUpBanner = read
+      ? `<div style="display:flex;align-items:center;gap:0.5rem;justify-content:center;margin-bottom:0.75rem;padding:0.5rem 0.75rem;border-radius:0.75rem;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:${isLight ? '#047857' : '#a7f3d0'};font-size:0.8rem;font-weight:600">
+           <i class="fas fa-circle-check"></i> You're all caught up — no new notifications
+         </div>`
+      : '';
+
     const items = this.notifications.length
       ? this.notifications.map(n => `
-          <div style="display:flex;gap:0.75rem;align-items:flex-start;padding:0.65rem 0;border-bottom:1px solid rgba(148,163,184,0.14);text-align:left">
-            <i class="fas ${n.icon}" style="color:${toneColor[n.tone] || '#94a3b8'};margin-top:0.2rem"></i>
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;padding:0.65rem 0;border-bottom:1px solid ${dividerColor};text-align:left;opacity:${read ? '0.65' : '1'}">
+            <i class="fas ${n.icon}" style="color:${toneColor[n.tone] || metaColor};margin-top:0.2rem"></i>
             <div style="flex:1">
-              <div style="color:#f8fafc;font-weight:600;font-size:0.9rem">${n.title}</div>
-              <div style="color:#cbd5e1;font-size:0.8rem">${n.detail}</div>
+              <div style="color:${titleColor};font-weight:600;font-size:0.9rem">${n.title}</div>
+              <div style="color:${detailColor};font-size:0.8rem">${n.detail}</div>
             </div>
-            <span style="color:#94a3b8;font-size:0.7rem;white-space:nowrap">${n.time}</span>
+            <span style="color:${metaColor};font-size:0.7rem;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:0.2rem">
+              ${n.time}${read ? '<span style="color:#10b981"><i class="fas fa-check"></i> Read</span>' : ''}
+            </span>
           </div>`).join('')
-      : '<p style="color:#cbd5e1">You have no notifications.</p>';
+      : `<p style="color:${detailColor}">You have no notifications.</p>`;
 
     Swal.fire({
       customClass: { popup: 'demo-detail-modal' },
       title: 'Notifications',
-      html: `<div>${items}</div>`,
-      confirmButtonText: 'Mark all as read'
-    }).then(() => { this.unreadCount = 0; });
+      html: `${caughtUpBanner}<div>${items}</div>`,
+      showCancelButton: !read && this.notifications.length > 0,
+      confirmButtonText: read || this.notifications.length === 0 ? 'Close' : 'Mark all as read',
+      cancelButtonText: 'Close'
+    }).then((result) => {
+      if (!read && this.notifications.length > 0 && result.isConfirmed) {
+        this.unreadCount = 0;
+        this.notificationsRead = true;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   toggleSidebar() {

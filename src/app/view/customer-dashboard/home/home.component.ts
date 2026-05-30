@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { FilterPipe } from 'src/app/pipes/filter.pipe';
 import { UserService } from 'src/app/service/customer/user.service';
+import { ThemeService } from 'src/app/service/theme.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
@@ -149,10 +150,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       .sort((a, b) => b.value - a.value);
   }
 
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(private router: Router, private userService: UserService, private themeService: ThemeService) {}
 
   ngOnInit() {
     this.loadDashboardData();
+    // Re-render the chart when the theme changes so legend/segment colours stay readable.
+    this.subscriptions.push(
+      this.themeService.isDarkMode$.subscribe(() => setTimeout(() => this.renderSpendingChart()))
+    );
   }
 
   ngAfterViewInit(): void {
@@ -276,6 +281,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
+      const isLight = !document.documentElement.classList.contains('dark');
+      const legendColor = isLight ? '#475569' : '#cbd5e1';
+      const segmentBorder = isLight ? 'rgba(255, 255, 255, 0.9)' : 'rgba(15, 23, 42, 0.6)';
+
       this.chartInstance = new Chart(canvas, {
         type: 'doughnut',
         data: {
@@ -283,7 +292,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           datasets: [{
             data: breakdown.map(item => item.value),
             backgroundColor: breakdown.map((_, i) => SPENDING_COLORS[i % SPENDING_COLORS.length]),
-            borderColor: 'rgba(15, 23, 42, 0.6)',
+            borderColor: segmentBorder,
             borderWidth: 2,
           }],
         },
@@ -294,7 +303,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           plugins: {
             legend: {
               position: 'bottom',
-              labels: { color: '#cbd5e1', boxWidth: 12, padding: 12, font: { size: 11 } },
+              labels: { color: legendColor, boxWidth: 12, padding: 12, font: { size: 11 } },
             },
             tooltip: {
               callbacks: {
