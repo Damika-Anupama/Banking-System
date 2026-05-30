@@ -145,6 +145,20 @@ export const createDemoLoan = (payload: { amount: number; duration_days: string 
   status: 'Submitted'
 });
 
+export const createDemoLoanApplication = (payload: {
+  customer_id: string; amount: number; duration_days: string | number;
+  interest: string | number; loan_type: string; purpose?: string;
+}): DemoLoanApplication => ({
+  loan_basic_detail_id: 'LN-' + Math.floor(50300 + Math.random() * 699),
+  amount: Number(payload.amount),
+  customer_id: payload.customer_id,
+  duration_days: Number(payload.duration_days),
+  interest: Number(payload.interest),
+  loan_type: payload.loan_type,
+  status: 'Pending review',
+  purpose: payload.purpose || 'Branch-assisted application'
+});
+
 const titleCaseGender = (gender: string): string => {
   const g = (gender || '').toUpperCase();
   return g === 'MALE' ? 'Male' : g === 'FEMALE' ? 'Female' : 'Other';

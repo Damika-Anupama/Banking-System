@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { DEMO_LOAN_APPLICATIONS } from 'src/app/shared/demo-banking-fixtures';
+import { demoStore } from 'src/app/shared/demo-store';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class LoanApprovalService {
   getUnapprovedLoans(): Observable<any> {
     if (localStorage.getItem('demoMode') === 'true') {
       return of({
-        data: DEMO_LOAN_APPLICATIONS
+        data: demoStore.getLoanApplications()
       });
     }
 
