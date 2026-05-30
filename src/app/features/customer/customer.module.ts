@@ -15,6 +15,7 @@ import { TransactionComponent } from '../../view/customer-dashboard/transaction/
 import { FixedDepositComponent } from '../../view/customer-dashboard/fixed-deposit/fixed-deposit.component';
 import { LoanComponent } from '../../view/customer-dashboard/loan/loan.component';
 import { SettingsComponent } from '../../view/customer-dashboard/settings/settings.component';
+import { PaymentsComponent } from '../../view/customer-dashboard/payments/payments.component';
 
 // Services
 import { UserService } from '../../service/customer/user.service';
@@ -40,7 +41,8 @@ import { LoanService } from '../../service/customer/loan.service';
     TransactionComponent,
     FixedDepositComponent,
     LoanComponent,
-    SettingsComponent
+    SettingsComponent,
+    PaymentsComponent
   ],
   imports: [
     CommonModule,

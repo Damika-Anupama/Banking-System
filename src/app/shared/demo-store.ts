@@ -9,7 +9,7 @@
  * State is seeded from the fixtures, persisted to localStorage for the session,
  * and reset on each demo login so every walkthrough starts clean.
  */
-import { DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES } from './demo-banking-fixtures';
+import { DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES, DEMO_STANDING_ORDERS } from './demo-banking-fixtures';
 
 const STORAGE_KEY = 'bank-demo-store';
 const BASE_EMPLOYEE_COUNT = 24;
@@ -19,6 +19,7 @@ interface DemoStoreState {
   loanApplications: any[];
   employees: any[];
   beneficiaries: any[];
+  standingOrders: any[];
 }
 
 function clone<T>(value: T): T {
@@ -31,6 +32,7 @@ function seed(): DemoStoreState {
     loanApplications: clone(DEMO_LOAN_APPLICATIONS),
     employees: [],
     beneficiaries: clone(DEMO_BENEFICIARIES),
+    standingOrders: clone(DEMO_STANDING_ORDERS),
   };
 }
 
@@ -126,6 +128,27 @@ export const demoStore = {
     return load().beneficiaries.some(
       (b) => String(b.account_id).toUpperCase() === String(accountId).toUpperCase()
     );
+  },
+
+  // ----- Standing orders / bill payments -----
+  getStandingOrders(): any[] {
+    return load().standingOrders;
+  },
+  addStandingOrder(order: any): void {
+    load().standingOrders.unshift(order);
+    persist();
+  },
+  removeStandingOrder(id: string | number): void {
+    const s = load();
+    s.standingOrders = s.standingOrders.filter((o) => String(o.id) !== String(id));
+    persist();
+  },
+  toggleStandingOrder(id: string | number): void {
+    const order = load().standingOrders.find((o) => String(o.id) === String(id));
+    if (order) {
+      order.status = order.status === 'Active' ? 'Paused' : 'Active';
+      persist();
+    }
   },
 
   /** Reset to fresh seed data — call on each demo login. */

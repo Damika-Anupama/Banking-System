@@ -7,6 +7,7 @@ import { TransactionComponent } from '../../view/customer-dashboard/transaction/
 import { FixedDepositComponent } from '../../view/customer-dashboard/fixed-deposit/fixed-deposit.component';
 import { LoanComponent } from '../../view/customer-dashboard/loan/loan.component';
 import { SettingsComponent } from '../../view/customer-dashboard/settings/settings.component';
+import { PaymentsComponent } from '../../view/customer-dashboard/payments/payments.component';
 import { UnifiedDashboardComponent } from '../../shared/components/unified-dashboard/unified-dashboard.component';
 
 // Configuration
@@ -19,6 +20,7 @@ const customerDashboardConfig: DashboardConfig = {
   navigationItems: [
     { label: 'Home', route: './home', icon: 'fa-home', title: 'Home' },
     { label: 'Transaction', route: './transaction', icon: 'fa-exchange-alt', title: 'Transaction' },
+    { label: 'Payments', route: './payments', icon: 'fa-file-invoice-dollar', title: 'Payments' },
     { label: 'Fixed Deposit', route: './fixed-deposit', icon: 'fa-piggy-bank', title: 'Fixed Deposit' },
     { label: 'Loan', route: './loan', icon: 'fa-hand-holding-usd', title: 'Loan' }
   ]
@@ -44,6 +46,11 @@ const routes: Routes = [
         path: 'transaction',
         component: TransactionComponent,
         title: 'Transaction'
+      },
+      {
+        path: 'payments',
+        component: PaymentsComponent,
+        title: 'Payments'
       },
       {
         path: 'fixed-deposit',

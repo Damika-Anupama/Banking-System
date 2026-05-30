@@ -145,6 +145,38 @@ export const createDemoLoan = (payload: { amount: number; duration_days: string 
   status: 'Submitted'
 });
 
+export interface DemoStandingOrder {
+  id: string;
+  payee: string;
+  account_id: string;
+  category: string;
+  amount: number;
+  frequency: 'Monthly' | 'Weekly' | 'Quarterly';
+  next_date: string;
+  status: 'Active' | 'Paused';
+}
+
+export const DEMO_STANDING_ORDERS: DemoStandingOrder[] = [
+  { id: 'SO-3001', payee: 'Ceylon Electricity Board', account_id: 'ACC-880021', category: 'Utilities', amount: 18500, frequency: 'Monthly', next_date: '2026-06-05', status: 'Active' },
+  { id: 'SO-3002', payee: 'Apartment Lease', account_id: 'ACC-770814', category: 'Rent / lease', amount: 95000, frequency: 'Monthly', next_date: '2026-06-01', status: 'Active' },
+  { id: 'SO-3003', payee: 'Life Insurance Premium', account_id: 'ACC-560010', category: 'Insurance', amount: 14500, frequency: 'Monthly', next_date: '2026-06-15', status: 'Active' },
+  { id: 'SO-3004', payee: 'Cloud Subscription', account_id: 'ACC-335500', category: 'Subscription', amount: 4800, frequency: 'Monthly', next_date: '2026-06-20', status: 'Paused' }
+];
+
+export const createDemoStandingOrder = (payload: {
+  payee: string; account_id: string; category: string; amount: number;
+  frequency: 'Monthly' | 'Weekly' | 'Quarterly'; next_date: string;
+}): DemoStandingOrder => ({
+  id: 'SO-' + Math.floor(3100 + Math.random() * 6899),
+  payee: payload.payee,
+  account_id: payload.account_id.toUpperCase(),
+  category: payload.category,
+  amount: Number(payload.amount),
+  frequency: payload.frequency,
+  next_date: payload.next_date,
+  status: 'Active'
+});
+
 export interface DemoBeneficiary {
   id: string;
   name: string;
