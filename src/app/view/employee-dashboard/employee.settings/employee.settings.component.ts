@@ -29,12 +29,33 @@ export class EmployeeSettingsComponent implements OnInit, OnDestroy {
   isSaving = false;
   errorMessage = '';
   showPassword = false;
+  isEditingProfile = false;
+  lastSavedAt = '';
   private subscriptions: Subscription[] = [];
 
   constructor(private userService: UserService) {}
 
+  get maskedEmail(): string {
+    const [name, domain] = (this.email || '').split('@');
+    if (!name || !domain) return this.email || 'Not provided';
+    return `${name.slice(0, 2)}•••@${domain}`;
+  }
+
+  get maskedContactNo(): string {
+    return this.contactNo ? `${this.contactNo.slice(0, 3)}••••${this.contactNo.slice(-2)}` : 'Not provided';
+  }
+
+  enableProfileEdit(): void {
+    this.isEditingProfile = true;
+  }
+
+  cancelProfileEdit(): void {
+    this.resetForm();
+    this.isEditingProfile = false;
+  }
+
   ngOnInit(): void {
-    this.userId = localStorage.getItem('userId') || '';
+    this.userId = localStorage.getItem('userId') || (localStorage.getItem('demoMode') === 'true' ? 'EMP-2001' : '');
     this.email = localStorage.getItem('email') || '';
 
     if (!this.userId) {
@@ -95,6 +116,7 @@ export class EmployeeSettingsComponent implements OnInit, OnDestroy {
         };
 
         this.isLoading = false;
+        this.lastSavedAt = new Date().toLocaleString();
       },
       error: (err) => {
         console.error('Error loading user data:', err);
@@ -177,6 +199,8 @@ export class EmployeeSettingsComponent implements OnInit, OnDestroy {
     const sub = this.userService.updateUser(this.userId, userData).subscribe({
       next: (response) => {
         this.isSaving = false;
+        this.isEditingProfile = false;
+        this.lastSavedAt = new Date().toLocaleString();
 
         Swal.fire({
           icon: 'success',
