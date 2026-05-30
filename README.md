@@ -1,108 +1,54 @@
 # Banking System
 
-Client-ready Angular demo for a banking operations platform covering transactions, accounts, customer service, branch management, and loan approvals.
+Frontend-only Angular demo for a banking operations platform covering transactions, accounts, customer service, branch management, and loan approvals.
+
+**Live demo:** [banking-system-nine-sooty.vercel.app](https://banking-system-nine-sooty.vercel.app/)
+
+## Demo
 
 ![Banking System demo overview](docs/demo-overview.svg)
 
-## Live demo
+No credentials required — use the role buttons on the sign-in page to explore all three dashboards instantly.
 
-Deployed from the `main` branch on Vercel. Use the role demo buttons on the sign-in page to explore the app without backend credentials.
+## Branches
 
-Live URL:
+| Branch | Description |
+|---|---|
+| `frontend-demo` _(this branch)_ | Frontend-only Angular demo — deployed on Vercel, no backend required |
+| `main` | Full-stack source — Node.js/Express backend + Angular frontend |
 
-```text
-https://banking-system-nine-sooty.vercel.app/
-```
+## Role dashboards
 
-## Demo highlights
+| Role | What you can explore |
+|---|---|
+| **Customer** | Account balances, account switching, fund transfers, transaction history |
+| **Employee** | Customer directory, customer registration, withdrawals, manual loan processing |
+| **Manager** | Branch KPI summary, transactions overview, overdue installments, employee list, loan approvals |
 
-- Frontend-only client demo that works without the backend.
-- Role-based walkthroughs for Customer, Employee, and Manager users.
-- Customer flow: account balances, account switching, transfers, and recent transaction activity.
-- Employee flow: customer directory, registration/support screens, withdrawals, and manual loan flow.
-- Manager flow: branch KPI summary, recent transactions, withdrawals, overdue installments, employees, and pending loan approvals.
-- Interactive row drill-downs for transactions, customers, and loan applications.
-- Responsive glassmorphism UI built with Angular, Tailwind CSS, Bootstrap, and AdminLTE.
+Click any row in a transaction, customer, or loan table to open a detail modal.
 
-## Demo login guide
-
-1. Open the deployed site or run it locally.
-2. Click `Open role demo` on the landing page.
-3. Use the simplified welcome page to open the demo gateway.
-4. Choose one of the role buttons on the sign-in page:
-   - Customer
-   - Employee
-   - Manager
-4. Click rows in transaction, customer, or loan approval tables to open detail modals.
-
-No real banking data is used. All demo data is mock/sample data for presentation.
-
-## Run locally
+## Local Development
 
 ```bash
 npm install
 npm start
 ```
 
-Open:
+Open `http://localhost:4200`. No backend needed — all data is seeded mock data.
+
+## Deploy on Vercel
+
+Set **Production Branch** to `frontend-demo`.
 
 ```text
-http://localhost:4200
+Framework:         Angular
+Build Command:     npm run vercel-build
+Output Directory:  dist/banking-system
+Root Directory:    (leave blank — project root)
 ```
 
-## Quality checks
-
-```bash
-npm run build
-npm run build:prod
-npm run lint
-npm test -- --watch=false --browsers=ChromeHeadless --progress=false
-```
-
-For deployment walkthrough verification, use:
-
-```text
-docs/smoke-test-checklist.md
-```
-
-## Production deployment
-
-Deploy the `main` branch from the repository root.
-
-Recommended Vercel settings:
-
-```text
-Framework Preset: Angular
-Build Command: npm run vercel-build
-Output Directory: dist/banking-system
-Install Command: npm install
-Root Directory: ./
-```
-
-The repository also includes `vercel.json` with the output directory and SPA rewrite configured.
-
-## Branch strategy
-
-- `main` — deployable frontend-only demo at repository root.
-- `fullstack-source` — preserved original fullstack layout with `frontend/` and `backend/` for engineering review.
+`vercel.json` at the root already configures the SPA rewrite.
 
 ## Tech stack
 
-- Angular
-- TypeScript
-- Tailwind CSS
-- Bootstrap / AdminLTE legacy UI support
-- SweetAlert2 modal interactions
-- Vercel deployment
-
-## Notes for clients
-
-This demo focuses on frontend UX and workflow presentation. Backend integration can be connected from the preserved `fullstack-source` branch by deploying the backend API and updating the Angular environment base URL.
-
-## Portfolio material
-
-Use this case-study document when sharing the project with clients or recruiters:
-
-```text
-docs/client-case-study.md
-```
+Angular · TypeScript · Tailwind CSS · Bootstrap · SweetAlert2
