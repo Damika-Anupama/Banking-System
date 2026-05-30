@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
-import {catchError, retry, timeout} from 'rxjs/operators';
+import {Observable, of, throwError} from 'rxjs';
+import {catchError, delay, retry, timeout} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { createDemoCustomer } from 'src/app/shared/demo-banking-fixtures';
+import { demoStore } from 'src/app/shared/demo-store';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +32,15 @@ export class RegisterCustomerService {
     }
     if (!body.password || body.password.length < 6) {
       return throwError(() => new Error('Password must be at least 6 characters'));
+    }
+
+    if (localStorage.getItem('demoMode') === 'true') {
+      const customer = createDemoCustomer(body);
+      demoStore.addCustomer(customer);
+      return of({
+        message: `Customer ${customer.fullname} registered successfully`,
+        data: customer
+      }).pipe(delay(500));
     }
 
     const headers = new HttpHeaders({

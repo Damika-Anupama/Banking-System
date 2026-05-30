@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { RegisterCustomerService } from 'src/app/service/employee/register.customer.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -23,7 +24,7 @@ export class EmployeeRegisterCustomerComponent implements OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private registerCustomer: RegisterCustomerService) { }
+  constructor(private registerCustomer: RegisterCustomerService, private router: Router) { }
 
   submit(): void {
     // Form validation
@@ -96,13 +97,17 @@ export class EmployeeRegisterCustomerComponent implements OnDestroy {
             return;
           }
 
+          const isDemo = localStorage.getItem('demoMode') === 'true';
           Swal.fire({
             title: 'Success',
             text: res.message || 'Customer registered successfully',
             icon: 'success',
           }).then(() => {
-            // Reset form after successful registration
             this.resetForm();
+            // In demo mode, jump to the customer directory so the new record is visible.
+            if (isDemo) {
+              this.router.navigate(['/employee-dashboard/employee-home']);
+            }
           });
         },
         error: (err) => {

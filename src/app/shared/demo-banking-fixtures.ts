@@ -144,3 +144,24 @@ export const createDemoLoan = (payload: { amount: number; duration_days: string 
   loan_type: payload.loan_type === 'BUSINESS' ? 'Business' : 'Personal',
   status: 'Submitted'
 });
+
+const titleCaseGender = (gender: string): string => {
+  const g = (gender || '').toUpperCase();
+  return g === 'MALE' ? 'Male' : g === 'FEMALE' ? 'Female' : 'Other';
+};
+
+export const createDemoCustomer = (payload: {
+  username: string; fullname: string; gender: string; dob: string;
+  address: string; email: string; contact_no: string;
+}): DemoCustomer => ({
+  user_id: 'CUS-' + Math.floor(1100 + Math.random() * 8900),
+  username: payload.username,
+  fullname: payload.fullname,
+  gender: titleCaseGender(payload.gender),
+  dob: payload.dob,
+  address: payload.address,
+  email: payload.email,
+  contact_no: payload.contact_no,
+  account_count: 0,
+  status: 'New onboarding'
+});
