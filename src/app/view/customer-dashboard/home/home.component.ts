@@ -100,6 +100,27 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return latest ? new Date(latest) : null;
   }
 
+  get movementTxnCount(): number {
+    return this.selectedAccountTransactions.length;
+  }
+
+  /** Actual date span covered by the selected account's sample transactions. */
+  get movementPeriodLabel(): string {
+    const times = this.selectedAccountTransactions
+      .map(transaction => new Date(transaction.date).getTime())
+      .filter(timestamp => Number.isFinite(timestamp))
+      .sort((a, b) => a - b);
+    if (times.length === 0) return 'No recent activity';
+    const fmt = (ms: number) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const from = fmt(times[0]);
+    const to = fmt(times[times.length - 1]);
+    return from === to ? from : `${from} – ${to}`;
+  }
+
+  get netMovement(): number {
+    return this.monthlyIncome - this.monthlyPayments;
+  }
+
   get incomeWidth(): number {
     return this.progressWidth(this.monthlyIncome);
   }
