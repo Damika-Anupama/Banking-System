@@ -136,22 +136,50 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const customer = demoStore.getCustomers().find(
+      (c) => String(c.user_id) === String(loan.customer_id)
+    );
+    const amount = Number(loan.amount || 0);
+    const totalRepayable = Math.round(
+      amount * (1 + (Number(loan.interest || 0) / 100) * (Number(loan.duration_days || 0) / 365))
+    );
+
+    const customerRows = customer
+      ? `
+          <div class="demo-detail-row"><span>Applicant</span><strong>${customer.fullname}</strong></div>
+          <div class="demo-detail-row"><span>Contact</span><strong>${customer.contact_no || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>KYC status</span><strong>${customer.status || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Linked accounts</span><strong>${customer.account_count ?? 'N/A'}</strong></div>`
+      : `<div class="demo-detail-row"><span>Applicant</span><strong>${loan.customer_id || 'N/A'}</strong></div>`;
+
     Swal.fire({
       customClass: { popup: 'demo-detail-modal' },
       title: loan.loan_basic_detail_id || 'Loan application',
       html: `
         <div class="demo-detail-grid">
-          <div class="demo-detail-row"><span>Customer</span><strong>${loan.customer_id || 'N/A'}</strong></div>
-          <div class="demo-detail-row"><span>Amount</span><strong>Rs. ${Number(loan.amount || 0).toLocaleString()}</strong></div>
-          <div class="demo-detail-row"><span>Duration</span><strong>${loan.duration_days || 'N/A'} days</strong></div>
-          <div class="demo-detail-row"><span>Interest</span><strong>${loan.interest || 'N/A'}%</strong></div>
+          ${customerRows}
+          <div class="demo-detail-row"><span>Customer ID</span><strong>${loan.customer_id || 'N/A'}</strong></div>
+          <div class="demo-detail-row"><span>Amount</span><strong>Rs. ${amount.toLocaleString()}</strong></div>
+          <div class="demo-detail-row"><span>Term</span><strong>${loan.duration_days || 'N/A'} days</strong></div>
+          <div class="demo-detail-row"><span>Interest</span><strong>${loan.interest || 'N/A'}% p.a.</strong></div>
           <div class="demo-detail-row"><span>Type</span><strong>${loan.loan_type || 'N/A'}</strong></div>
           <div class="demo-detail-row"><span>Purpose</span><strong>${loan.purpose || 'Not specified'}</strong></div>
+          <div class="demo-detail-row"><span>Total repayable</span><strong>Rs. ${totalRepayable.toLocaleString()}</strong></div>
           <div class="demo-detail-row"><span>Status</span><strong>${loan.status || 'Pending'}</strong></div>
         </div>
       `,
       icon: 'question',
-      confirmButtonText: 'Close'
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: 'Approve',
+      denyButtonText: 'Reject',
+      cancelButtonText: 'Close'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.approve(loan.loan_basic_detail_id);
+      } else if (result.isDenied) {
+        this.reject(loan.loan_basic_detail_id);
+      }
     });
   }
 
