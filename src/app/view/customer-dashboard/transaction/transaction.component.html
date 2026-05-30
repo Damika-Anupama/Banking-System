@@ -65,53 +65,105 @@
         <p class="demo-section-helper">Capture the payment purpose, beneficiary note, and source account before final authorization.</p>
       </div>
 
-      <form class="space-y-5">
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div>
-            <label class="auth-field-label"><i class="fas fa-university mr-2"></i>From account</label>
-            <select class="glass-input w-full" [(ngModel)]="account_id" name="source_account" (ngModelChange)="updateSmallBox((accounts || []).find(account => account.account_id === $event))">
-              <option *ngFor="let account of accounts; trackBy: trackByAccountId" [value]="account.account_id">
-                {{ maskAccountId(account.account_id) }} — {{ formatSavingType(account.saving_type) }} — Rs. {{ amountOf(account) | number }}
-              </option>
-            </select>
-            <p class="mt-2 text-xs text-white/50">Same linked account set as the customer home page.</p>
-          </div>
-
-          <div>
-            <label class="auth-field-label"><i class="fas fa-user-check mr-2"></i>Beneficiary account <span class="text-red-300">*</span></label>
-            <div class="relative">
-              <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
-              <input type="text" class="glass-input pl-12 uppercase" placeholder="ACC-492811" [(ngModel)]="to_account" name="to_account" />
+      <form class="transaction-transfer-form space-y-5">
+        <div class="transaction-form-section">
+          <div class="transaction-form-section-header">
+            <span>1</span>
+            <div>
+              <h3>Source and beneficiary</h3>
+              <p>Select the debit account and capture verified beneficiary details.</p>
             </div>
-            <p class="mt-2 text-xs text-white/50">Same-account transfers are blocked automatically.</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div>
+              <label class="auth-field-label"><i class="fas fa-university mr-2"></i>From account</label>
+              <select class="glass-input w-full" [(ngModel)]="account_id" name="source_account" (ngModelChange)="updateSmallBox((accounts || []).find(account => account.account_id === $event))">
+                <option *ngFor="let account of accounts; trackBy: trackByAccountId" [value]="account.account_id">
+                  {{ maskAccountId(account.account_id) }} — {{ formatSavingType(account.saving_type) }} — Rs. {{ amountOf(account) | number }}
+                </option>
+              </select>
+              <p class="mt-2 text-xs text-white/50">Same linked account set as the customer home page.</p>
+            </div>
+
+            <div>
+              <label class="auth-field-label"><i class="fas fa-user mr-2"></i>Beneficiary name</label>
+              <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva / ABC Suppliers" [(ngModel)]="beneficiary_name" name="beneficiary_name" />
+              <p class="mt-2 text-xs text-white/50">Displayed in the final review and receipt.</p>
+            </div>
+
+            <div>
+              <label class="auth-field-label"><i class="fas fa-user-check mr-2"></i>Beneficiary account <span class="text-red-300">*</span></label>
+              <div class="relative">
+                <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
+                <input type="text" class="glass-input pl-12 uppercase" placeholder="ACC-492811" [(ngModel)]="to_account" name="to_account" />
+              </div>
+              <p class="mt-2 text-xs" [ngClass]="beneficiaryRiskLabel === 'Format verified' ? 'text-emerald-200' : 'text-amber-200'">{{ beneficiaryRiskLabel }}</p>
+            </div>
+
+            <div>
+              <label class="auth-field-label"><i class="fas fa-tags mr-2"></i>Payment category</label>
+              <select class="glass-input w-full" [(ngModel)]="payment_category" name="payment_category">
+                <option *ngFor="let category of paymentCategories" [value]="category">{{ category }}</option>
+              </select>
+              <p class="mt-2 text-xs text-white/50">Useful for reconciliation and statement filtering.</p>
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div>
-            <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
-            <div class="relative">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
-              <input type="number" class="glass-input pl-14" placeholder="0.00" [(ngModel)]="transfer_amount" name="transfer_amount" min="1" />
+        <div class="transaction-form-section">
+          <div class="transaction-form-section-header">
+            <span>2</span>
+            <div>
+              <h3>Amount and execution</h3>
+              <p>Validate affordability, daily limit, schedule, and priority before authorization.</p>
             </div>
-            <p class="mt-2 text-xs text-white/50">Available: Rs. {{ availableBalance | number }} • Remaining limit: Rs. {{ remainingLimit | number }}</p>
           </div>
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div>
+              <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
+                <input type="number" class="glass-input pl-14" placeholder="0.00" [(ngModel)]="transfer_amount" name="transfer_amount" min="1" />
+              </div>
+              <p class="mt-2 text-xs text-white/50">Available: Rs. {{ availableBalance | number }}</p>
+            </div>
 
-          <div class="transaction-review-card">
-            <span>Review total</span>
-            <strong>Rs. {{ transferAmountNumber + transferFee | number }}</strong>
-            <p>Amount plus fees. Final reference is generated at authorization.</p>
+            <div>
+              <label class="auth-field-label"><i class="far fa-calendar mr-2"></i>Execution date</label>
+              <input type="date" class="glass-input w-full" [(ngModel)]="schedule_date" name="schedule_date" />
+              <p class="mt-2 text-xs text-white/50">Use today for immediate posting.</p>
+            </div>
+
+            <div>
+              <label class="auth-field-label"><i class="fas fa-bolt mr-2"></i>Priority</label>
+              <select class="glass-input w-full" [(ngModel)]="transfer_priority" name="transfer_priority">
+                <option value="Standard">Standard</option>
+                <option value="Instant">Instant</option>
+              </select>
+              <p class="mt-2 text-xs text-white/50">Remaining limit: Rs. {{ remainingLimit | number }}</p>
+            </div>
           </div>
         </div>
 
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <div>
             <label class="auth-field-label"><i class="fas fa-clipboard-list mr-2"></i>Payment purpose <span class="text-red-300">*</span></label>
-            <textarea class="glass-input min-h-[110px] resize-none" rows="3" placeholder="e.g. Supplier invoice, rent, family support" [(ngModel)]="sender_remarks" name="sender_remarks"></textarea>
+            <textarea class="glass-input min-h-[110px] resize-none" rows="3" placeholder="e.g. Supplier invoice INV-1042 for May services" [(ngModel)]="sender_remarks" name="sender_remarks"></textarea>
           </div>
           <div>
             <label class="auth-field-label"><i class="fas fa-message mr-2"></i>Beneficiary note <span class="text-red-300">*</span></label>
             <textarea class="glass-input min-h-[110px] resize-none" rows="3" placeholder="Narration shown to beneficiary" [(ngModel)]="beneficiary_remarks" name="beneficiary_remarks"></textarea>
+          </div>
+        </div>
+
+        <div class="transaction-review-card transaction-review-panel">
+          <div>
+            <span>Review total</span>
+            <strong>Rs. {{ transferAmountNumber + transferFee | number }}</strong>
+            <p>Amount plus fees. Final reference is generated at authorization.</p>
+          </div>
+          <div class="transaction-review-list">
+            <div *ngFor="let item of transferReviewItems"><span>{{ item.label }}</span><strong>{{ item.value }}</strong></div>
           </div>
         </div>
 
@@ -149,15 +201,15 @@
       </div>
       <div class="transaction-history-tools">
         <div class="relative">
-          <input type="text" name="transaction_search" placeholder="Search reference, purpose, type..." class="glass-input pl-10" [(ngModel)]="transactionSearchTerm" />
+          <input type="text" name="transaction_search" placeholder="Search reference, purpose, type..." class="glass-input pl-10" [(ngModel)]="transactionSearchTerm" (ngModelChange)="onTransactionFilterChange()" />
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
         </div>
-        <select class="glass-input" [(ngModel)]="transactionDirectionFilter" name="transaction_direction_filter">
+        <select class="glass-input" [(ngModel)]="transactionDirectionFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_direction_filter">
           <option value="all">All directions</option>
           <option value="in">Incoming only</option>
           <option value="out">Outgoing only</option>
         </select>
-        <select class="glass-input" [(ngModel)]="transactionStatusFilter" name="transaction_status_filter">
+        <select class="glass-input" [(ngModel)]="transactionStatusFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_status_filter">
           <option value="all">All statuses</option>
           <option value="posted">Posted</option>
           <option value="review">Review</option>
@@ -166,7 +218,7 @@
     </div>
 
     <div class="mt-5 grid gap-3 md:grid-cols-3">
-      <div class="transaction-summary-chip"><span>Rows shown</span><strong>{{ filteredTransactions.length }}</strong></div>
+      <div class="transaction-summary-chip"><span>Rows shown</span><strong>{{ paginationStart }}-{{ paginationEnd }} / {{ filteredTransactions.length }}</strong></div>
       <div class="transaction-summary-chip"><span>Incoming</span><strong>Rs. {{ totalIncoming | number }}</strong></div>
       <div class="transaction-summary-chip"><span>Outgoing</span><strong>Rs. {{ totalOutgoing | number }}</strong></div>
     </div>
@@ -191,12 +243,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of filteredTransactions; index as i; trackBy: trackByTransaction" (click)="showTransactionDetails(transaction, i)" title="View transaction details">
-            <td class="font-mono">{{ transactionReference(transaction, i) }}</td>
+          <tr *ngFor="let transaction of paginatedTransactions; index as i; trackBy: trackByTransaction" (click)="showTransactionDetails(transaction, ((transactionPage - 1) * transactionPageSize) + i)" title="View transaction details">
+            <td class="font-mono">{{ transactionReference(transaction, ((transactionPage - 1) * transactionPageSize) + i) }}</td>
             <td><span class="transaction-date"><i class="far fa-calendar"></i>{{ transaction.date | date: 'MMM d, y' }}</span><small>{{ transaction.date | date: 'h:mm a' }}</small></td>
             <td>
               <strong>{{ transaction.type }}</strong>
-              <small>{{ transaction.sender_remarks || 'No narration captured' }}</small>
+              <small>{{ transaction.sender_remarks || 'No narration captured' }}</small><small class="transaction-channel">{{ transaction.channel || 'Online banking' }}</small>
             </td>
             <td>
               <span class="glass-badge" [ngClass]="transactionDirection(transaction) === 'Incoming' ? 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80' : 'bg-gradient-to-r from-glass-pink/80 to-glass-orange/80'">
@@ -207,7 +259,7 @@
             <td class="text-right font-bold">Rs. {{ transaction.amount | number }}</td>
             <td><span class="demo-status-pill demo-status-success">{{ transactionAuditState(transaction) }}</span></td>
             <td class="text-right">
-              <button type="button" class="glass-button-secondary transaction-action-btn" (click)="downloadReceipt(transaction, i); $event.stopPropagation()"><i class="fas fa-receipt"></i>Receipt</button>
+              <button type="button" class="glass-button-secondary transaction-action-btn" (click)="downloadReceipt(transaction, ((transactionPage - 1) * transactionPageSize) + i); $event.stopPropagation()"><i class="fas fa-receipt"></i>Receipt</button>
             </td>
           </tr>
         </tbody>
@@ -216,6 +268,20 @@
       <div *ngIf="filteredTransactions.length === 0" class="text-center py-12">
         <div class="text-6xl text-white/20 mb-4"><i class="fas fa-receipt"></i></div>
         <p class="text-white/60">No transactions match the selected filters.</p>
+      </div>
+
+      <div *ngIf="filteredTransactions.length > 0" class="transaction-pagination">
+        <div class="transaction-page-size">
+          <span>Rows per page</span>
+          <select class="glass-input" [(ngModel)]="transactionPageSize" (ngModelChange)="onPageSizeChange()" name="transaction_page_size">
+            <option *ngFor="let size of transactionPageSizes" [ngValue]="size">{{ size }}</option>
+          </select>
+        </div>
+        <div class="transaction-page-controls">
+          <button type="button" class="glass-button-secondary" [disabled]="transactionPage === 1" (click)="setTransactionPage(transactionPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+          <span>Page {{ transactionPage }} of {{ totalTransactionPages }}</span>
+          <button type="button" class="glass-button-secondary" [disabled]="transactionPage === totalTransactionPages" (click)="setTransactionPage(transactionPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+        </div>
       </div>
     </div>
   </section>

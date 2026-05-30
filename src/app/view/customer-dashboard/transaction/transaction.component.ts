@@ -25,6 +25,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
   sender_remarks = '';
   beneficiary_remarks = '';
   to_account = '';
+  beneficiary_name = '';
+  payment_category = 'Supplier / invoice';
+  transfer_priority: 'Standard' | 'Instant' = 'Standard';
+  schedule_date = new Date().toISOString().slice(0, 10);
 
   isLoading = false;
   isLoadingTransactions = false;
@@ -35,6 +39,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
   transactionSearchTerm = '';
   transactionDirectionFilter: 'all' | 'in' | 'out' = 'all';
   transactionStatusFilter: 'all' | 'posted' | 'review' = 'all';
+  transactionPage = 1;
+  transactionPageSize = 6;
+  readonly transactionPageSizes = [6, 10, 15];
+  readonly paymentCategories = ['Supplier / invoice', 'Rent / lease', 'Family support', 'Utilities', 'Tax / government', 'Other'];
   private subscriptions: Subscription[] = [];
 
   get selectedSavingLabel(): string {
@@ -83,6 +91,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       const searchable = [
         this.transactionReference(transaction, index),
         transaction?.type,
+        transaction?.channel,
         transaction?.sender_remarks,
         transaction?.beneficiary_remarks,
         transaction?.amount,
@@ -93,6 +102,46 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
       return matchesDirection && matchesStatus && (!query || searchable.includes(query));
     });
+  }
+
+
+  get totalTransactionPages(): number {
+    return Math.max(1, Math.ceil(this.filteredTransactions.length / this.transactionPageSize));
+  }
+
+  get paginatedTransactions(): any[] {
+    const page = Math.min(this.transactionPage, this.totalTransactionPages);
+    const start = (page - 1) * this.transactionPageSize;
+    return this.filteredTransactions.slice(start, start + this.transactionPageSize);
+  }
+
+  get paginationStart(): number {
+    return this.filteredTransactions.length === 0 ? 0 : ((Math.min(this.transactionPage, this.totalTransactionPages) - 1) * this.transactionPageSize) + 1;
+  }
+
+  get paginationEnd(): number {
+    return Math.min(this.paginationStart + this.transactionPageSize - 1, this.filteredTransactions.length);
+  }
+
+  get beneficiaryRiskLabel(): string {
+    const value = this.to_account.trim().toUpperCase();
+    if (!value) {
+      return 'Awaiting beneficiary';
+    }
+    if (value === this.account_id) {
+      return 'Same account blocked';
+    }
+    return /^ACC-?\d{6,}$/.test(value) ? 'Format verified' : 'Needs valid account number';
+  }
+
+  get transferReviewItems(): Array<{ label: string; value: string }> {
+    return [
+      { label: 'Source', value: this.maskAccountId(this.account_id) },
+      { label: 'Beneficiary', value: this.beneficiary_name || 'Not named' },
+      { label: 'Category', value: this.payment_category },
+      { label: 'Priority', value: this.transfer_priority },
+      { label: 'Schedule', value: this.schedule_date || 'Today' }
+    ];
   }
 
   get totalIncoming(): number {
@@ -311,7 +360,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
         <div style="text-align:left;line-height:1.8">
           <strong>Reference:</strong> ${reference}<br>
           <strong>From account:</strong> ${this.account_id} (${this.selectedSavingLabel})<br>
+          <strong>Beneficiary:</strong> ${this.beneficiary_name || 'Not provided'}<br>
           <strong>To account:</strong> ${normalizedToAccount}<br>
+          <strong>Category:</strong> ${this.payment_category}<br>
+          <strong>Priority:</strong> ${this.transfer_priority}<br>
+          <strong>Schedule:</strong> ${this.schedule_date || 'Today'}<br>
           <strong>Amount:</strong> Rs. ${amount.toLocaleString()}<br>
           <strong>Fee:</strong> Rs. ${this.transferFee.toLocaleString()}<br>
           <strong>Purpose:</strong> ${this.sender_remarks || 'Not provided'}
@@ -348,9 +401,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
           this.transactions = [
             {
               date: new Date().toISOString(),
-              type: 'Customer Transfer',
+              type: this.payment_category,
               sender_remarks: this.sender_remarks,
               beneficiary_remarks: this.beneficiary_remarks,
+              beneficiary_name: this.beneficiary_name,
+              channel: this.transfer_priority === 'Instant' ? 'Instant transfer' : 'Online banking',
+              to_account: destinationAccount,
               amount,
               status: 'down',
               audit_status: 'Posted',
@@ -364,6 +420,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
           this.sender_remarks = '';
           this.beneficiary_remarks = '';
           this.to_account = '';
+          this.beneficiary_name = '';
+          this.payment_category = 'Supplier / invoice';
+          this.transfer_priority = 'Standard';
+          this.schedule_date = new Date().toISOString().slice(0, 10);
+          this.transactionPage = 1;
 
           this.isProcessingTransaction = false;
           Swal.fire({
@@ -531,6 +592,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
           <div class="demo-detail-row"><span>Amount</span><strong>Rs. ${Number(transaction.amount || 0).toLocaleString()}</strong></div>
           <div class="demo-detail-row"><span>Direction</span><strong>${this.transactionDirection(transaction)}</strong></div>
           <div class="demo-detail-row"><span>Counterparty</span><strong>${this.transactionCounterparty(transaction)}</strong></div>
+          <div class="demo-detail-row"><span>Channel</span><strong>${transaction.channel || 'Online banking'}</strong></div>
           <div class="demo-detail-row"><span>Purpose</span><strong>${transaction.sender_remarks || 'No purpose captured'}</strong></div>
           <div class="demo-detail-row"><span>Beneficiary note</span><strong>${transaction.beneficiary_remarks || 'No beneficiary note'}</strong></div>
           <div class="demo-detail-row"><span>Audit state</span><strong>${this.transactionAuditState(transaction)}</strong></div>
@@ -539,6 +601,18 @@ export class TransactionComponent implements OnInit, OnDestroy {
       icon: transaction.status === 'up' ? 'success' : 'info',
       confirmButtonText: 'Close'
     });
+  }
+
+  setTransactionPage(page: number): void {
+    this.transactionPage = Math.max(1, Math.min(page, this.totalTransactionPages));
+  }
+
+  onTransactionFilterChange(): void {
+    this.transactionPage = 1;
+  }
+
+  onPageSizeChange(): void {
+    this.transactionPage = 1;
   }
 
   ngOnDestroy(): void {
