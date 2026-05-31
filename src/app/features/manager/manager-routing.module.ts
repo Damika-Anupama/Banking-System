@@ -7,6 +7,8 @@ import { ManagerAddEmployeeComponent } from '../../view/manager-dashboard/manage
 import { ManagerLoanApprovalComponent } from '../../view/manager-dashboard/manager.loan.approval/manager.loan.approval.component';
 import { ManagerEmployeesComponent } from '../../view/manager-dashboard/manager.employees/manager.employees.component';
 import { ManagerReportsComponent } from '../../view/manager-dashboard/manager.reports/manager.reports.component';
+import { ManagerAuditLogComponent } from '../../view/manager-dashboard/manager.audit-log/manager.audit-log.component';
+import { ManagerProductsComponent } from '../../view/manager-dashboard/manager.products/manager.products.component';
 import { ManagerSettingsComponent } from '../../view/manager-dashboard/manager.settings/manager.settings.component';
 import { UnifiedDashboardComponent } from '../../shared/components/unified-dashboard/unified-dashboard.component';
 
@@ -22,6 +24,8 @@ const managerDashboardConfig: DashboardConfig = {
     { label: 'Loan Approvals', route: './manager-loan-approval', icon: 'fa-handshake', title: 'Loan Approvals' },
     { label: 'Employees', route: './manager-employees', icon: 'fa-users-gear', title: 'Employees' },
     { label: 'Reports', route: './manager-reports', icon: 'fa-chart-pie', title: 'Reports' },
+    { label: 'Products', route: './manager-products', icon: 'fa-sliders', title: 'Products' },
+    { label: 'Audit Log', route: './manager-audit-log', icon: 'fa-clipboard-list', title: 'Audit Log' },
     { label: 'Add Employee', route: './manager-add-employee', icon: 'fa-user-plus', title: 'Add Employee' }
   ]
 };
@@ -61,6 +65,16 @@ const routes: Routes = [
         path: 'manager-reports',
         component: ManagerReportsComponent,
         title: 'Branch Reports'
+      },
+      {
+        path: 'manager-products',
+        component: ManagerProductsComponent,
+        title: 'Product Configuration'
+      },
+      {
+        path: 'manager-audit-log',
+        component: ManagerAuditLogComponent,
+        title: 'Audit Log'
       },
       {
         path: 'manager-settings',

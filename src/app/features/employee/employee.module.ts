@@ -16,6 +16,8 @@ import { EmployeeRegisterCustomerComponent } from '../../view/employee-dashboard
 import { EmployeeWithdrawalComponent } from '../../view/employee-dashboard/employee.withdrawal/employee.withdrawal.component';
 import { EmployeeDepositComponent } from '../../view/employee-dashboard/employee.deposit/employee.deposit.component';
 import { EmployeeCustomer360Component } from '../../view/employee-dashboard/employee.customer360/employee.customer360.component';
+import { EmployeeServiceRequestsComponent } from '../../view/employee-dashboard/employee.service-requests/employee.service-requests.component';
+import { EmployeeOpenAccountComponent } from '../../view/employee-dashboard/employee.open-account/employee.open-account.component';
 import { EmployeeSettingsComponent } from '../../view/employee-dashboard/employee.settings/employee.settings.component';
 
 // Services
@@ -44,6 +46,8 @@ import { WithdrawalService } from '../../service/employee/withdrawal.service';
     EmployeeWithdrawalComponent,
     EmployeeDepositComponent,
     EmployeeCustomer360Component,
+    EmployeeServiceRequestsComponent,
+    EmployeeOpenAccountComponent,
     EmployeeSettingsComponent
   ],
   imports: [

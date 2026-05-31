@@ -72,7 +72,7 @@ export class ManagerEmployeesComponent {
 
   roleTone(role: string): string {
     switch (role) {
-      case 'Loan Officer': return 'bg-gradient-to-r from-glass-amber/80 to-glass-orange/80';
+      case 'Loan Officer': return 'bg-gradient-to-r from-amber-400/80 to-orange-500/80';
       case 'Customer Service Officer': return 'bg-gradient-to-r from-glass-cyan/80 to-glass-blue/80';
       case 'Operations Officer': return 'bg-gradient-to-r from-glass-purple/80 to-glass-pink/80';
       default: return 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80';

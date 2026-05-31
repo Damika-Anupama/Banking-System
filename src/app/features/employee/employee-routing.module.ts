@@ -8,6 +8,8 @@ import { EmployeeRegisterCustomerComponent } from '../../view/employee-dashboard
 import { EmployeeWithdrawalComponent } from '../../view/employee-dashboard/employee.withdrawal/employee.withdrawal.component';
 import { EmployeeDepositComponent } from '../../view/employee-dashboard/employee.deposit/employee.deposit.component';
 import { EmployeeCustomer360Component } from '../../view/employee-dashboard/employee.customer360/employee.customer360.component';
+import { EmployeeServiceRequestsComponent } from '../../view/employee-dashboard/employee.service-requests/employee.service-requests.component';
+import { EmployeeOpenAccountComponent } from '../../view/employee-dashboard/employee.open-account/employee.open-account.component';
 import { EmployeeSettingsComponent } from '../../view/employee-dashboard/employee.settings/employee.settings.component';
 import { UnifiedDashboardComponent } from '../../shared/components/unified-dashboard/unified-dashboard.component';
 
@@ -23,8 +25,10 @@ const employeeDashboardConfig: DashboardConfig = {
     { label: 'Customer 360', route: './employee-customer-360', icon: 'fa-user-magnifying-glass', title: 'Customer 360' },
     { label: 'Deposit', route: './employee-deposit', icon: 'fa-money-bill-trend-up', title: 'Deposit' },
     { label: 'Withdrawal', route: './employee-withdraw', icon: 'fa-money-bill-wave', title: 'Withdrawal' },
+    { label: 'Open Account', route: './employee-open-account', icon: 'fa-folder-plus', title: 'Open Account' },
     { label: 'Manual Loan', route: './employee-create-loan', icon: 'fa-hand-holding-usd', title: 'Manual Loan' },
-    { label: 'Register Customer', route: './employee-register-customer', icon: 'fa-user-plus', title: 'Register Customer' }
+    { label: 'Register Customer', route: './employee-register-customer', icon: 'fa-user-plus', title: 'Register Customer' },
+    { label: 'Service Requests', route: './employee-service-requests', icon: 'fa-headset', title: 'Service Requests' }
   ]
 };
 
@@ -68,6 +72,16 @@ const routes: Routes = [
         path: 'employee-customer-360',
         component: EmployeeCustomer360Component,
         title: 'Customer 360'
+      },
+      {
+        path: 'employee-open-account',
+        component: EmployeeOpenAccountComponent,
+        title: 'Open Account'
+      },
+      {
+        path: 'employee-service-requests',
+        component: EmployeeServiceRequestsComponent,
+        title: 'Service Requests'
       },
       {
         path: 'employee-settings',

@@ -15,6 +15,8 @@ import { ManagerAddEmployeeComponent } from '../../view/manager-dashboard/manage
 import { ManagerLoanApprovalComponent } from '../../view/manager-dashboard/manager.loan.approval/manager.loan.approval.component';
 import { ManagerEmployeesComponent } from '../../view/manager-dashboard/manager.employees/manager.employees.component';
 import { ManagerReportsComponent } from '../../view/manager-dashboard/manager.reports/manager.reports.component';
+import { ManagerAuditLogComponent } from '../../view/manager-dashboard/manager.audit-log/manager.audit-log.component';
+import { ManagerProductsComponent } from '../../view/manager-dashboard/manager.products/manager.products.component';
 import { ManagerSettingsComponent } from '../../view/manager-dashboard/manager.settings/manager.settings.component';
 
 // Services
@@ -40,6 +42,8 @@ import { ManagerHomeService } from '../../service/manager/manager.home.service';
     ManagerLoanApprovalComponent,
     ManagerEmployeesComponent,
     ManagerReportsComponent,
+    ManagerAuditLogComponent,
+    ManagerProductsComponent,
     ManagerSettingsComponent
   ],
   imports: [
