@@ -76,14 +76,14 @@
       <p class="demo-section-helper">Latest cash withdrawals processed at this branch.</p>
     </div>
 
-    <div class="demo-table-shell overflow-x-auto">
-      <table class="w-full">
+    <div class="demo-table-shell is-fluid overflow-x-auto">
+      <table class="w-full table-fixed">
         <thead>
           <tr>
             <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Withdrawal ID</th>
-            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Account</th>
+            <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Account</th>
             <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
-            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Time</th>
+            <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Time</th>
             <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
           </tr>
         </thead>
@@ -92,9 +92,9 @@
             <td class="px-5 py-3">
               <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">{{ withdrawal.withdrawal_id }}</span>
             </td>
-            <td class="px-5 py-3 text-white/90 font-mono">{{ withdrawal.account_id }}</td>
-            <td class="px-5 py-3 text-white font-semibold">Rs. {{ withdrawal.amount | number }}</td>
-            <td class="px-5 py-3 text-white/90"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'MMM d, h:mm a' }}</td>
+            <td class="hidden md:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ withdrawal.account_id }}</td>
+            <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ withdrawal.amount | number }}</td>
+            <td class="hidden lg:table-cell px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'MMM d, h:mm a' }}</td>
             <td class="px-5 py-3"><span class="demo-status-pill demo-status-success">{{ withdrawal.status }}</span></td>
           </tr>
         </tbody>

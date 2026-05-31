@@ -351,6 +351,36 @@ body {
     color: #047857 !important;
   }
 
+  /* Full-white text on heading/paragraph/strong elements inside cards & page headers
+     goes invisible on white. Attribute selectors are used (instead of `.text-white`)
+     so Tailwind does not apply dark-variant processing to these rules. Scoped to text
+     elements only — never spans/badges. */
+  html:not(.dark) .demo-section-card p[class~="text-white"],
+  html:not(.dark) .demo-section-card strong[class~="text-white"],
+  html:not(.dark) .demo-section-card h1[class~="text-white"],
+  html:not(.dark) .demo-section-card h2[class~="text-white"],
+  html:not(.dark) .demo-section-card h3[class~="text-white"],
+  html:not(.dark) .demo-section-card h4[class~="text-white"],
+  html:not(.dark) .demo-page-header p[class~="text-white"],
+  html:not(.dark) .demo-page-header strong[class~="text-white"],
+  html:not(.dark) .demo-page-header h1[class~="text-white"],
+  html:not(.dark) .demo-page-header h2[class~="text-white"] {
+    color: #0f172a !important;
+  }
+
+  /* Inset translucent panels living directly in a page header (e.g. KPI meta chips). */
+  html:not(.dark) .demo-page-header [class*="bg-white/[0.06]"],
+  html:not(.dark) .demo-page-header [class*="bg-white/[0.07]"] {
+    background-color: rgba(15, 23, 42, 0.035) !important;
+  }
+  html:not(.dark) .demo-page-header [class*="border-white/10"] {
+    border-color: rgba(15, 23, 42, 0.12) !important;
+  }
+  html:not(.dark) .demo-page-header .text-white\/70,
+  html:not(.dark) .demo-page-header .text-white\/60 {
+    color: #475569 !important;
+  }
+
   html:not(.dark) .glass-sidebar,
   html:not(.dark) .glass-navbar {
     color: #0f172a !important;

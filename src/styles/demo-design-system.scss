@@ -85,6 +85,29 @@ html:not(.dark) .loan-action-btn { border-color: rgba(15, 23, 42, 0.14); backgro
 html:not(.dark) .loan-action-btn:hover { background: rgba(15, 23, 42, 0.09); }
 html:not(.dark) .loan-action-btn--primary { color: #ffffff; }
 
+/* Approve / reject decision buttons (loan approvals, requests) */
+.decision-btn {
+  @apply inline-flex items-center justify-center gap-1 rounded-xl px-4 py-2 text-xs font-semibold transition active:scale-95;
+  border: 1px solid transparent;
+}
+.decision-btn--approve {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #6ee7b7;
+}
+.decision-btn--approve:hover { background: rgba(16, 185, 129, 0.28); color: #d1fae5; }
+.decision-btn--reject {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #fda4af;
+}
+.decision-btn--reject:hover { background: rgba(244, 63, 94, 0.26); color: #ffe4e6; }
+
+html:not(.dark) .decision-btn--approve { background: rgba(16, 185, 129, 0.12); border-color: rgba(5, 150, 105, 0.35); color: #047857; }
+html:not(.dark) .decision-btn--approve:hover { background: rgba(16, 185, 129, 0.2); color: #065f46; }
+html:not(.dark) .decision-btn--reject { background: rgba(244, 63, 94, 0.1); border-color: rgba(190, 18, 60, 0.32); color: #be123c; }
+html:not(.dark) .decision-btn--reject:hover { background: rgba(244, 63, 94, 0.18); color: #9f1239; }
+
 /* Card tiles keep light text on their coloured gradient regardless of app theme. */
 html:not(.dark) .card-tile,
 html:not(.dark) .card-tile * {
@@ -461,6 +484,13 @@ html:not(.dark) .demo-status-danger { border-color: rgba(225, 29, 72, 0.35); bac
 .demo-table-shell table,
 .glass-card table {
   min-width: 720px;
+}
+
+/* Fluid variant: table flexes to its container (no forced horizontal scroll).
+   Pair with `table-fixed w-full` + responsive `hidden md:table-cell` columns. */
+.demo-table-shell.is-fluid table {
+  min-width: 0;
+  width: 100%;
 }
 
 .demo-table-shell thead th,

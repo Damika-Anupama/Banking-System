@@ -25,19 +25,19 @@
       <p class="demo-section-helper">Click a row for full detail, or act directly from the table.</p>
     </div>
     <div class="relative">
-      <input class="demo-input pl-9 w-full md:w-64" placeholder="Search loan, customer, type…" [(ngModel)]="searchTerm" name="loanApprovalSearch" />
+      <input class="glass-input pl-9 w-full md:w-64" placeholder="Search loan, customer, type…" [(ngModel)]="searchTerm" name="loanApprovalSearch" />
       <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
     </div>
   </div>
 
-  <div class="demo-table-shell overflow-x-auto">
-    <table class="w-full">
+  <div class="demo-table-shell is-fluid overflow-x-auto">
+    <table class="w-full table-fixed">
       <thead>
         <tr>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Customer</th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Customer</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Type</th>
+          <th class="hidden sm:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Type</th>
           <th class="text-center px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Action</th>
         </tr>
       </thead>
@@ -54,12 +54,12 @@
               {{ loan.loan_basic_detail_id }}
             </span>
           </td>
-          <td class="px-5 py-3 text-white/90 font-mono">{{ loan.customer_id }}</td>
+          <td class="hidden md:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ loan.customer_id }}</td>
           <td class="px-5 py-3">
             <span class="text-white font-semibold">Rs. {{ loan.amount | number }}</span>
             <small class="block text-xs text-white/50">{{ loan.interest }}% · {{ loan.duration_days }} days</small>
           </td>
-          <td class="px-5 py-3">
+          <td class="hidden sm:table-cell px-5 py-3">
             <span
               class="glass-badge"
               [ngClass]="{
@@ -80,17 +80,17 @@
           <td class="px-5 py-3">
             <div class="flex items-center justify-center gap-2">
               <button
-                class="glass-button-secondary text-xs"
+                class="decision-btn decision-btn--approve"
                 (click)="$event.stopPropagation(); approve(loan.loan_basic_detail_id)"
               >
-                <i class="fas fa-check mr-1"></i>
+                <i class="fas fa-check"></i>
                 Approve
               </button>
               <button
-                class="glass-button-secondary text-xs"
+                class="decision-btn decision-btn--reject"
                 (click)="$event.stopPropagation(); reject(loan.loan_basic_detail_id)"
               >
-                <i class="fas fa-times mr-1"></i>
+                <i class="fas fa-times"></i>
                 Reject
               </button>
             </div>

@@ -5,7 +5,7 @@
       <h1 class="demo-title">Branch performance, risk, and loan decisions</h1>
       <p class="demo-subtitle">A professional manager view for reviewing branch health, recent money movement, withdrawals, employee capacity, and pending loan approvals.</p>
     </div>
-    <a routerLink="/manager-dashboard/loan-approval" class="glass-button w-fit"><i class="fas fa-stamp mr-2"></i>Review loans</a>
+    <a routerLink="/manager-dashboard/manager-loan-approval" class="glass-button w-fit"><i class="fas fa-stamp mr-2"></i>Review loans</a>
   </div>
 </section>
 <section class="demo-kpi-grid mb-8">
@@ -71,34 +71,34 @@
       <p class="demo-section-helper">Recent money movement across branch accounts.</p>
     </div>
     <div class="relative">
-      <input class="demo-input pl-9 w-full md:w-64" placeholder="Search ID, account, amount…" [(ngModel)]="transactionSearch" name="managerTxSearch" />
+      <input class="glass-input pl-9 w-full md:w-64" placeholder="Search ID, account, amount…" [(ngModel)]="transactionSearch" name="managerTxSearch" />
       <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
     </div>
   </div>
 
-  <div class="demo-table-shell overflow-x-auto">
-    <table class="w-full">
+  <div class="demo-table-shell is-fluid overflow-x-auto">
+    <table class="w-full table-fixed">
       <thead>
         <tr>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th class="hidden sm:table-cell w-10 text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Transaction ID</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">From</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">To</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Time</th>
+          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">From</th>
+          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">To</th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Time</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Direction</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let transaction of filteredTransactions; let i = index" class="transition-all duration-300 hover:bg-white/5">
-          <td class="px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="hidden sm:table-cell px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
           <td class="px-5 py-3">
             <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">{{ transaction.transfer_id }}</span>
           </td>
-          <td class="px-5 py-3 text-white font-semibold">Rs. {{ transaction.amount | number }}</td>
-          <td class="px-5 py-3 text-white/90 font-mono">{{ transaction.from_account }}</td>
-          <td class="px-5 py-3 text-white/90 font-mono">{{ transaction.to_account }}</td>
-          <td class="px-5 py-3 text-white/90"><i class="far fa-calendar mr-2"></i>{{ transaction.transferd_time | date: 'yyyy-MM-dd' }}</td>
+          <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ transaction.amount | number }}</td>
+          <td class="hidden lg:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ transaction.from_account }}</td>
+          <td class="hidden lg:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ transaction.to_account }}</td>
+          <td class="hidden md:table-cell px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ transaction.transferd_time | date: 'yyyy-MM-dd' }}</td>
           <td class="px-5 py-3">
             <span *ngIf="transaction.direction == 'up'" class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80"><i class="fas fa-arrow-down mr-1"></i>In</span>
             <span *ngIf="transaction.direction == 'down'" class="glass-badge bg-gradient-to-r from-glass-orange/80 to-glass-pink/80"><i class="fas fa-arrow-up mr-1"></i>Out</span>
@@ -121,26 +121,26 @@
     <p class="demo-section-helper">Cash withdrawal activity for the branch.</p>
   </div>
 
-  <div class="demo-table-shell overflow-x-auto">
-    <table class="w-full">
+  <div class="demo-table-shell is-fluid overflow-x-auto">
+    <table class="w-full table-fixed">
       <thead>
         <tr>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th class="hidden sm:table-cell w-10 text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Withdrawal ID</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Account ID</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Withdrawal Time</th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Account ID</th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Withdrawal Time</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let withdrawal of withdrawals; let i = index" class="transition-all duration-300 hover:bg-white/5">
-          <td class="px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="hidden sm:table-cell px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
           <td class="px-5 py-3">
             <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">{{ withdrawal.withdrawal_id }}</span>
           </td>
-          <td class="px-5 py-3 text-white font-semibold">Rs. {{ withdrawal.amount | number }}</td>
-          <td class="px-5 py-3 text-white/90 font-mono">{{ withdrawal.account_id }}</td>
-          <td class="px-5 py-3 text-white/90"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'yyyy-MM-dd' }}</td>
+          <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ withdrawal.amount | number }}</td>
+          <td class="hidden md:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ withdrawal.account_id }}</td>
+          <td class="hidden md:table-cell px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'yyyy-MM-dd' }}</td>
         </tr>
       </tbody>
     </table>
@@ -154,28 +154,28 @@
     <p class="demo-section-helper">Overdue loan payments requiring attention.</p>
   </div>
 
-  <div class="demo-table-shell overflow-x-auto">
-    <table class="w-full">
+  <div class="demo-table-shell is-fluid overflow-x-auto">
+    <table class="w-full table-fixed">
       <thead>
         <tr>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th class="hidden sm:table-cell w-10 text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">#</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Installment ID</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Installment #</th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Installment #</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Due Date</th>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
+          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let loan of loans; let i = index" class="transition-all duration-300 hover:bg-white/5">
-          <td class="px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
+          <td class="hidden sm:table-cell px-5 py-3 text-white/90 font-mono">{{ i + 1 }}</td>
           <td class="px-5 py-3">
             <span class="glass-badge bg-gradient-to-r from-glass-pink/80 to-glass-orange/80">{{ loan.installment_id }}</span>
           </td>
-          <td class="px-5 py-3 text-white/90">{{ loan.installment_number }}</td>
-          <td class="px-5 py-3 text-white/90"><i class="far fa-calendar mr-2 text-red-400"></i>{{ loan.due_date | date: 'yyyy-MM-dd' }}</td>
-          <td class="px-5 py-3 text-white font-semibold">Rs. {{ loan.amount | number }}</td>
-          <td class="px-5 py-3 text-white/90 font-mono">{{ loan.loan_basic_detail_id }}</td>
+          <td class="hidden md:table-cell px-5 py-3 text-white/90">{{ loan.installment_number }}</td>
+          <td class="px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2 text-red-400"></i>{{ loan.due_date | date: 'yyyy-MM-dd' }}</td>
+          <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ loan.amount | number }}</td>
+          <td class="hidden lg:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ loan.loan_basic_detail_id }}</td>
         </tr>
       </tbody>
     </table>

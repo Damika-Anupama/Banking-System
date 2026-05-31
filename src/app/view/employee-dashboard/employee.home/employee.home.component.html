@@ -12,14 +12,14 @@
   <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Customers</p><h2 class="mt-2 text-3xl font-black text-white">{{ customerCount }}</h2><p class="mt-1 text-xs text-blue-100">Demo branch records</p></div><div class="demo-kpi-icon"><i class="fas fa-users"></i></div></div></article>
   <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Ready for service</p><h2 class="mt-2 text-3xl font-black text-white">{{ readyCount }}</h2><p class="mt-1 text-xs text-emerald-100">Onboarding complete</p></div><div class="demo-kpi-icon"><i class="fas fa-id-card"></i></div></div></article>
   <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Needs attention</p><h2 class="mt-2 text-3xl font-black text-white">{{ needsAttentionCount }}</h2><p class="mt-1 text-xs text-amber-100">Loan review + onboarding</p></div><div class="demo-kpi-icon"><i class="fas fa-triangle-exclamation"></i></div></div></article>
-  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next action</p><h2 class="mt-2 text-xl font-black text-white">Review queue</h2><p class="mt-1 text-xs text-cyan-100">Click a customer row</p></div><div class="demo-kpi-icon"><i class="fas fa-list-check"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next action</p><h2 class="mt-2 text-xl font-black text-white">{{ firstName(loanReviewCustomer) || firstName(onboardingCustomer) || 'All clear' }}</h2><p class="mt-1 text-xs text-cyan-100">{{ (loanReviewCustomer || onboardingCustomer) ? 'Top of the review queue' : 'No pending actions' }}</p></div><div class="demo-kpi-icon"><i class="fas fa-list-check"></i></div></div></article>
 </section>
 <section class="grid grid-cols-1 gap-5 xl:grid-cols-3 mb-8">
   <article class="demo-section-card xl:col-span-2">
     <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <div><h2 class="demo-section-title">Customer service queue</h2><p class="demo-section-helper">Prioritized sample work for a branch employee.</p></div>
       <div class="relative">
-        <input class="demo-input pl-9 max-w-sm" placeholder="Search name, ID, status…" [(ngModel)]="searchTerm" (ngModelChange)="onCustomerSearchChange()" name="customerSearch" />
+        <input class="glass-input pl-9 max-w-sm" placeholder="Search name, ID, status…" [(ngModel)]="searchTerm" (ngModelChange)="onCustomerSearchChange()" name="customerSearch" />
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
       </div>
     </div>
@@ -40,13 +40,10 @@
   </article>
 </section>
 <!-- Customers Table -->
-<div class="glass-card p-6 animate-slide-up">
+<section class="demo-section-card animate-slide-up">
   <div class="mb-6">
-    <h2 class="text-2xl font-bold text-white mb-1 flex items-center">
-      <i class="fas fa-users mr-3 text-glass-cyan"></i>
-      All Customers
-    </h2>
-    <p class="text-white/60 text-sm">Complete customer information</p>
+    <h2 class="demo-section-title"><i class="fas fa-users mr-2 text-glass-cyan"></i>All customers</h2>
+    <p class="demo-section-helper">Complete branch customer directory.</p>
   </div>
 
   <!-- Table -->
@@ -115,4 +112,4 @@
       </div>
     </div>
   </div>
-</div>
+</section>
