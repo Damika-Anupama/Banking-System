@@ -122,7 +122,7 @@ export class LoanComponent implements OnInit, OnDestroy {
   }
 
   loanPage = 1;
-  readonly loanPageSize = 4;
+  readonly loanPageSize = 2;
 
   get activeLoanCount(): number {
     return Array.isArray(this.loans) ? this.loans.length : 0;

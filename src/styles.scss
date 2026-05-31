@@ -118,6 +118,39 @@ body {
     }
   }
 
+  /* Custom-styled <select> dropdowns built on glass-input */
+  select.glass-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2394a3b8' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.1rem 1.1rem;
+
+    &:hover {
+      border-color: rgba(34, 211, 238, 0.45);
+    }
+
+    &:focus {
+      border-color: rgba(34, 211, 238, 0.65);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2322d3ee' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    }
+
+    /* Native option list — themed for both light & dark */
+    option {
+      background-color: #0f172a;
+      color: #e2e8f0;
+    }
+  }
+
+  html:not(.dark) select.glass-input option {
+    background-color: #ffffff;
+    color: #1e293b;
+  }
+
   .glass-button {
     @apply text-white font-semibold px-6 py-3 rounded-xl no-underline transition-all duration-300 hover:-translate-y-0.5 active:scale-95;
     background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 40%, #0891b2 100%);
@@ -311,6 +344,11 @@ body {
   html:not(.dark) .demo-section-card .text-white\/60,
   html:not(.dark) .demo-section-card .text-white\/50 {
     color: #475569 !important;
+  }
+
+  /* Light emerald accents (outstanding, maturity amount) need a darker green to read on white. */
+  html:not(.dark) .demo-section-card .text-emerald-100 {
+    color: #047857 !important;
   }
 
   html:not(.dark) .glass-sidebar,

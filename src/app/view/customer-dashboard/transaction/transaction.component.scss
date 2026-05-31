@@ -401,11 +401,17 @@
 :host-context(html:not(.dark)) .transaction-workspace .transaction-review-card,
 :host-context(html:not(.dark)) .transaction-workspace .transaction-form-section,
 :host-context(html:not(.dark)) .transaction-workspace .transaction-summary-chip,
-:host-context(html:not(.dark)) .transaction-workspace .transaction-account-card,
 :host-context(html:not(.dark)) .transaction-workspace .demo-table-shell {
   border-color: rgba(37, 99, 235, 0.16) !important;
   background: rgba(255, 255, 255, 0.94) !important;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Linked source account rows are list items, not elevated cards — flat in light mode */
+:host-context(html:not(.dark)) .transaction-workspace .transaction-account-card {
+  border-color: rgba(37, 99, 235, 0.16) !important;
+  background: rgba(248, 250, 252, 0.9) !important;
+  box-shadow: none !important;
 }
 
 :host-context(html:not(.dark)) .transaction-workspace .demo-title,

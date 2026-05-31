@@ -108,7 +108,15 @@ export const DEMO_TRANSACTIONS: Record<string, any[]> = {
     { date: '2026-05-18T15:15:00', type: 'Tax Payment', sender_remarks: 'Quarterly PAYE settlement', beneficiary_remarks: 'Tax reference Q2', amount: 38000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-17T09:20:00', type: 'Client Transfer', sender_remarks: 'Invoice BS-1018 paid', beneficiary_remarks: 'Project milestone', amount: 93000, status: 'up', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-16T14:50:00', type: 'Payroll Disbursement', sender_remarks: 'Part-time contractor payment', beneficiary_remarks: 'May contractor payout', amount: 56000, status: 'down', audit_status: 'Posted', channel: 'Bulk payment' },
-    { date: '2026-05-15T16:44:00', type: 'Bank Charge', sender_remarks: 'Account service fee', beneficiary_remarks: 'Monthly service fee', amount: 1250, status: 'down', audit_status: 'Posted', channel: 'Core banking' }
+    { date: '2026-05-15T16:44:00', type: 'Bank Charge', sender_remarks: 'Account service fee', beneficiary_remarks: 'Monthly service fee', amount: 1250, status: 'down', audit_status: 'Posted', channel: 'Core banking' },
+    { date: '2026-05-14T11:30:00', type: 'Client Transfer', sender_remarks: 'Invoice BS-1015 paid', beneficiary_remarks: 'Retainer fee', amount: 72000, status: 'up', audit_status: 'Posted', channel: 'Online banking' },
+    { date: '2026-05-13T14:05:00', type: 'Vendor Payment', sender_remarks: 'Marketing agency retainer', beneficiary_remarks: 'Campaign settlement', amount: 48000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
+    { date: '2026-05-12T09:48:00', type: 'Card Settlement', sender_remarks: 'Fuel and travel expenses', beneficiary_remarks: 'Corporate card', amount: 16400, status: 'down', audit_status: 'Posted', channel: 'Card' },
+    { date: '2026-05-11T17:22:00', type: 'Client Transfer', sender_remarks: 'Invoice BS-1011 paid', beneficiary_remarks: 'Maintenance contract', amount: 88000, status: 'up', audit_status: 'Posted', channel: 'Online banking' },
+    { date: '2026-05-10T10:15:00', type: 'Utility Payment', sender_remarks: 'Office electricity bill', beneficiary_remarks: 'CEB commercial', amount: 24500, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
+    { date: '2026-05-09T13:40:00', type: 'Loan Disbursement', sender_remarks: 'Working capital facility drawdown', beneficiary_remarks: 'LN-50208 tranche', amount: 250000, status: 'up', audit_status: 'Posted', channel: 'Core banking' },
+    { date: '2026-05-08T16:18:00', type: 'Vendor Payment', sender_remarks: 'Stationery and supplies', beneficiary_remarks: 'Office supplies', amount: 9800, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
+    { date: '2026-05-07T08:35:00', type: 'Client Transfer', sender_remarks: 'Invoice BS-1007 paid', beneficiary_remarks: 'Advisory fee', amount: 54000, status: 'up', audit_status: 'Posted', channel: 'Online banking' }
   ],
   'ACC-492812': [
     { date: '2026-05-20T10:00:00', type: 'Fixed Deposit Interest', sender_remarks: 'Quarterly interest posting', beneficiary_remarks: 'FD interest', amount: 31500, status: 'up', audit_status: 'Posted', channel: 'Core banking' },
@@ -116,7 +124,15 @@ export const DEMO_TRANSACTIONS: Record<string, any[]> = {
     { date: '2026-05-16T10:30:00', type: 'Corporate Deposit', sender_remarks: 'Branch cash deposit', beneficiary_remarks: 'Daily collection', amount: 240000, status: 'up', audit_status: 'Posted', channel: 'Branch' },
     { date: '2026-05-14T12:05:00', type: 'Supplier Payment', sender_remarks: 'Inventory purchase order', beneficiary_remarks: 'PO-8891 settlement', amount: 185000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-12T09:35:00', type: 'Standing Order', sender_remarks: 'Warehouse lease payment', beneficiary_remarks: 'Monthly lease', amount: 125000, status: 'down', audit_status: 'Posted', channel: 'Standing order' },
-    { date: '2026-05-10T15:45:00', type: 'Client Settlement', sender_remarks: 'Distributor settlement received', beneficiary_remarks: 'May distributor settlement', amount: 310000, status: 'up', audit_status: 'Posted', channel: 'Clearing' }
+    { date: '2026-05-10T15:45:00', type: 'Client Settlement', sender_remarks: 'Distributor settlement received', beneficiary_remarks: 'May distributor settlement', amount: 310000, status: 'up', audit_status: 'Posted', channel: 'Clearing' },
+    { date: '2026-05-09T11:20:00', type: 'Payroll Disbursement', sender_remarks: 'Staff salary run', beneficiary_remarks: 'May payroll batch', amount: 420000, status: 'down', audit_status: 'Posted', channel: 'Bulk payment' },
+    { date: '2026-05-08T14:55:00', type: 'Corporate Deposit', sender_remarks: 'Branch cash deposit', beneficiary_remarks: 'Daily collection', amount: 175000, status: 'up', audit_status: 'Posted', channel: 'Branch' },
+    { date: '2026-05-07T10:10:00', type: 'Tax Payment', sender_remarks: 'VAT remittance Q2', beneficiary_remarks: 'Tax reference VAT-Q2', amount: 96000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
+    { date: '2026-05-06T16:30:00', type: 'Client Settlement', sender_remarks: 'Wholesale order received', beneficiary_remarks: 'Order WS-2210', amount: 268000, status: 'up', audit_status: 'Posted', channel: 'Clearing' },
+    { date: '2026-05-05T09:25:00', type: 'Supplier Payment', sender_remarks: 'Raw material procurement', beneficiary_remarks: 'PO-8875 settlement', amount: 142000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
+    { date: '2026-05-04T13:50:00', type: 'Utility Payment', sender_remarks: 'Warehouse utilities', beneficiary_remarks: 'CEB and NWSDB commercial', amount: 38500, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
+    { date: '2026-05-03T11:05:00', type: 'Interest Credit', sender_remarks: 'Monthly savings interest', beneficiary_remarks: 'Interest posting', amount: 12800, status: 'up', audit_status: 'Posted', channel: 'Core banking' },
+    { date: '2026-05-02T15:15:00', type: 'Insurance Premium', sender_remarks: 'Commercial property insurance', beneficiary_remarks: 'Policy premium', amount: 45000, status: 'down', audit_status: 'Posted', channel: 'Online banking' }
   ]
 };
 
