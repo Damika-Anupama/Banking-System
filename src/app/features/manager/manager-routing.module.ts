@@ -9,6 +9,7 @@ import { ManagerEmployeesComponent } from '../../view/manager-dashboard/manager.
 import { ManagerReportsComponent } from '../../view/manager-dashboard/manager.reports/manager.reports.component';
 import { ManagerAuditLogComponent } from '../../view/manager-dashboard/manager.audit-log/manager.audit-log.component';
 import { ManagerProductsComponent } from '../../view/manager-dashboard/manager.products/manager.products.component';
+import { ManagerAnnouncementsComponent } from '../../view/manager-dashboard/manager.announcements/manager.announcements.component';
 import { ManagerSettingsComponent } from '../../view/manager-dashboard/manager.settings/manager.settings.component';
 import { UnifiedDashboardComponent } from '../../shared/components/unified-dashboard/unified-dashboard.component';
 
@@ -25,6 +26,7 @@ const managerDashboardConfig: DashboardConfig = {
     { label: 'Employees', route: './manager-employees', icon: 'fa-users-gear', title: 'Employees' },
     { label: 'Reports', route: './manager-reports', icon: 'fa-chart-pie', title: 'Reports' },
     { label: 'Products', route: './manager-products', icon: 'fa-sliders', title: 'Products' },
+    { label: 'Announcements', route: './manager-announcements', icon: 'fa-bullhorn', title: 'Announcements' },
     { label: 'Audit Log', route: './manager-audit-log', icon: 'fa-clipboard-list', title: 'Audit Log' },
     { label: 'Add Employee', route: './manager-add-employee', icon: 'fa-user-plus', title: 'Add Employee' }
   ]
@@ -75,6 +77,11 @@ const routes: Routes = [
         path: 'manager-audit-log',
         component: ManagerAuditLogComponent,
         title: 'Audit Log'
+      },
+      {
+        path: 'manager-announcements',
+        component: ManagerAnnouncementsComponent,
+        title: 'Announcements'
       },
       {
         path: 'manager-settings',

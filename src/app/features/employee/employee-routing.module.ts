@@ -10,6 +10,8 @@ import { EmployeeDepositComponent } from '../../view/employee-dashboard/employee
 import { EmployeeCustomer360Component } from '../../view/employee-dashboard/employee.customer360/employee.customer360.component';
 import { EmployeeServiceRequestsComponent } from '../../view/employee-dashboard/employee.service-requests/employee.service-requests.component';
 import { EmployeeOpenAccountComponent } from '../../view/employee-dashboard/employee.open-account/employee.open-account.component';
+import { EmployeePerformanceComponent } from '../../view/employee-dashboard/employee.performance/employee.performance.component';
+import { EmployeeChequeClearingComponent } from '../../view/employee-dashboard/employee.cheque-clearing/employee.cheque-clearing.component';
 import { EmployeeSettingsComponent } from '../../view/employee-dashboard/employee.settings/employee.settings.component';
 import { UnifiedDashboardComponent } from '../../shared/components/unified-dashboard/unified-dashboard.component';
 
@@ -26,9 +28,11 @@ const employeeDashboardConfig: DashboardConfig = {
     { label: 'Deposit', route: './employee-deposit', icon: 'fa-money-bill-trend-up', title: 'Deposit' },
     { label: 'Withdrawal', route: './employee-withdraw', icon: 'fa-money-bill-wave', title: 'Withdrawal' },
     { label: 'Open Account', route: './employee-open-account', icon: 'fa-folder-plus', title: 'Open Account' },
+    { label: 'Cheque Clearing', route: './employee-cheque-clearing', icon: 'fa-money-check-dollar', title: 'Cheque Clearing' },
     { label: 'Manual Loan', route: './employee-create-loan', icon: 'fa-hand-holding-usd', title: 'Manual Loan' },
     { label: 'Register Customer', route: './employee-register-customer', icon: 'fa-user-plus', title: 'Register Customer' },
-    { label: 'Service Requests', route: './employee-service-requests', icon: 'fa-headset', title: 'Service Requests' }
+    { label: 'Service Requests', route: './employee-service-requests', icon: 'fa-headset', title: 'Service Requests' },
+    { label: 'My Performance', route: './employee-performance', icon: 'fa-gauge-high', title: 'My Performance' }
   ]
 };
 
@@ -82,6 +86,16 @@ const routes: Routes = [
         path: 'employee-service-requests',
         component: EmployeeServiceRequestsComponent,
         title: 'Service Requests'
+      },
+      {
+        path: 'employee-cheque-clearing',
+        component: EmployeeChequeClearingComponent,
+        title: 'Cheque Clearing'
+      },
+      {
+        path: 'employee-performance',
+        component: EmployeePerformanceComponent,
+        title: 'My Performance'
       },
       {
         path: 'employee-settings',

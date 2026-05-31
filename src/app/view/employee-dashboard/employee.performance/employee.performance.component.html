@@ -1,0 +1,88 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-gauge-high"></i> My day</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">My performance</h1>
+      <p class="demo-subtitle">Your activity, targets, and service quality for {{ today | date: 'EEEE, MMM d' }}.</p>
+    </div>
+    <span class="demo-status-pill demo-status-success"><i class="fas fa-star mr-1"></i> {{ customerRating }} / 5.0 customer rating</span>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Transactions today</p><h2 class="mt-2 text-3xl font-black text-white">{{ transactionsToday }}</h2><p class="mt-1 text-xs text-blue-100">Processed at counter</p></div><div class="demo-kpi-icon"><i class="fas fa-receipt"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Deposits handled</p><h2 class="mt-2 text-3xl font-black text-white">{{ depositsHandled }}</h2><p class="mt-1 text-xs text-emerald-100">Cash & cheque</p></div><div class="demo-kpi-icon"><i class="fas fa-money-bill-trend-up"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Withdrawals handled</p><h2 class="mt-2 text-3xl font-black text-white">{{ withdrawalsHandled }}</h2><p class="mt-1 text-xs text-rose-100">Cash disbursed</p></div><div class="demo-kpi-icon"><i class="fas fa-money-bill-wave"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Avg. handle time</p><h2 class="mt-2 text-3xl font-black text-white">{{ avgHandleMinutes }}m</h2><p class="mt-1 text-xs text-cyan-100">Per customer</p></div><div class="demo-kpi-icon"><i class="fas fa-stopwatch"></i></div></div></article>
+</section>
+
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+  <!-- Targets -->
+  <section class="demo-section-card animate-slide-up xl:col-span-2">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <h2 class="demo-section-title"><i class="fas fa-bullseye mr-2 text-glass-cyan"></i>Daily targets</h2>
+        <p class="demo-section-helper">Progress toward today's goals.</p>
+      </div>
+      <span class="demo-status-pill demo-status-info">{{ overallProgress }}% overall</span>
+    </div>
+    <div class="mt-5 space-y-4">
+      <div *ngFor="let target of targets">
+        <div class="mb-1 flex items-center justify-between text-sm">
+          <span class="font-medium">{{ target.label }}</span>
+          <span class="text-white/60">{{ target.done }} / {{ target.goal }}</span>
+        </div>
+        <div class="h-2.5 rounded-full bg-white/10">
+          <div class="h-2.5 rounded-full transition-all" [ngClass]="target.tone" [style.width.%]="pct(target)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service quality -->
+  <section class="demo-section-card animate-slide-up">
+    <h2 class="demo-section-title"><i class="fas fa-medal mr-2 text-glass-orange"></i>Service quality</h2>
+    <p class="demo-section-helper">How customers rate your service.</p>
+    <div class="mt-5 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] p-6">
+      <p class="text-5xl font-black text-emerald-100">{{ customerRating }}</p>
+      <div class="mt-2 text-amber-300">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-stroke"></i>
+      </div>
+      <p class="mt-2 text-xs text-white/50">Based on this week's feedback</p>
+    </div>
+    <div class="mt-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.06] p-3 text-sm">
+      <span class="text-white/70"><i class="fas fa-circle-check mr-2 text-emerald-300"></i>Tickets resolved</span>
+      <strong>{{ ticketsResolved }}</strong>
+    </div>
+  </section>
+</div>
+
+<!-- Weekly throughput + activity breakdown -->
+<div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+  <section class="demo-section-card animate-slide-up">
+    <h2 class="demo-section-title"><i class="fas fa-chart-column mr-2 text-glass-purple"></i>Weekly throughput</h2>
+    <p class="demo-section-helper">Transactions processed per day.</p>
+    <div class="mt-6 flex h-44 items-stretch gap-3 rounded-2xl bg-slate-950/40 p-4">
+      <div *ngFor="let day of weeklyTrend" class="flex h-full flex-1 flex-col items-center justify-end gap-2" [title]="day.value + ' transactions'">
+        <div class="flex w-full flex-1 items-end">
+          <div class="w-full rounded-t-lg bg-gradient-to-t from-cyan-500 to-blue-400 transition-all" [style.height.%]="trendHeight(day.value)"></div>
+        </div>
+        <span class="text-xs text-slate-400">{{ day.label }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-section-card animate-slide-up">
+    <h2 class="demo-section-title"><i class="fas fa-list-check mr-2 text-glass-emerald"></i>Activity breakdown</h2>
+    <p class="demo-section-helper">What you handled today.</p>
+    <div class="mt-4 space-y-3">
+      <div *ngFor="let row of activity" class="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3">
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white"><i class="fas" [ngClass]="row.icon"></i></span>
+        <span class="flex-1 text-sm font-medium">{{ row.label }}</span>
+        <strong class="text-lg">{{ row.count }}</strong>
+      </div>
+    </div>
+  </section>
+</div>
