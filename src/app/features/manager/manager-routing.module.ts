@@ -5,6 +5,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { ManagerHomeComponent } from '../../view/manager-dashboard/manager.home/manager.home.component';
 import { ManagerAddEmployeeComponent } from '../../view/manager-dashboard/manager.add.employee/manager.add.employee.component';
 import { ManagerLoanApprovalComponent } from '../../view/manager-dashboard/manager.loan.approval/manager.loan.approval.component';
+import { ManagerEmployeesComponent } from '../../view/manager-dashboard/manager.employees/manager.employees.component';
+import { ManagerReportsComponent } from '../../view/manager-dashboard/manager.reports/manager.reports.component';
 import { ManagerSettingsComponent } from '../../view/manager-dashboard/manager.settings/manager.settings.component';
 import { UnifiedDashboardComponent } from '../../shared/components/unified-dashboard/unified-dashboard.component';
 
@@ -17,8 +19,10 @@ const managerDashboardConfig: DashboardConfig = {
   logoRoute: '/manager-dashboard',
   navigationItems: [
     { label: 'Home', route: './manager-home', icon: 'fa-home', title: 'Home' },
-    { label: 'Add Employee', route: './manager-add-employee', icon: 'fa-user-plus', title: 'Add Employee' },
-    { label: 'Loan Approvals', route: './manager-loan-approval', icon: 'fa-handshake', title: 'Loan Approvals' }
+    { label: 'Loan Approvals', route: './manager-loan-approval', icon: 'fa-handshake', title: 'Loan Approvals' },
+    { label: 'Employees', route: './manager-employees', icon: 'fa-users-gear', title: 'Employees' },
+    { label: 'Reports', route: './manager-reports', icon: 'fa-chart-pie', title: 'Reports' },
+    { label: 'Add Employee', route: './manager-add-employee', icon: 'fa-user-plus', title: 'Add Employee' }
   ]
 };
 
@@ -47,6 +51,16 @@ const routes: Routes = [
         path: 'manager-loan-approval',
         component: ManagerLoanApprovalComponent,
         title: 'Loan Approval'
+      },
+      {
+        path: 'manager-employees',
+        component: ManagerEmployeesComponent,
+        title: 'Employee Management'
+      },
+      {
+        path: 'manager-reports',
+        component: ManagerReportsComponent,
+        title: 'Branch Reports'
       },
       {
         path: 'manager-settings',

@@ -1,0 +1,78 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-chart-pie"></i> Branch analytics</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Branch reports</h1>
+      <p class="demo-subtitle">Cash flow, loan portfolio, and product performance for Colombo Main Branch.</p>
+    </div>
+    <span class="demo-status-pill demo-status-info"><i class="far fa-calendar mr-1"></i> Last 7 days</span>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total deposits</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalDeposits | number }}</h2><p class="mt-1 text-xs text-emerald-100">Cash in this period</p></div><div class="demo-kpi-icon"><i class="fas fa-arrow-down"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total withdrawals</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalWithdrawals | number }}</h2><p class="mt-1 text-xs text-rose-100">Cash out this period</p></div><div class="demo-kpi-icon"><i class="fas fa-arrow-up"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Net inflow</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ netInflow | number }}</h2><p class="mt-1 text-xs text-blue-100">Deposits less withdrawals</p></div><div class="demo-kpi-icon"><i class="fas fa-scale-balanced"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Loan book</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ loanBookTotal | number }}</h2><p class="mt-1 text-xs text-amber-100">Outstanding portfolio</p></div><div class="demo-kpi-icon"><i class="fas fa-sack-dollar"></i></div></div></article>
+</section>
+
+<!-- Cash flow chart -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-chart-column mr-2 text-glass-cyan"></i>Deposits vs withdrawals</h2>
+      <p class="demo-section-helper">Daily cash movement over the last 7 days.</p>
+    </div>
+    <div class="flex items-center gap-4 text-xs">
+      <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-sm bg-emerald-400"></span>Deposits</span>
+      <span class="inline-flex items-center gap-2"><span class="h-3 w-3 rounded-sm bg-rose-400"></span>Withdrawals</span>
+    </div>
+  </div>
+  <div class="mt-6 flex h-56 items-stretch gap-3 rounded-2xl bg-slate-950/40 p-4">
+    <div *ngFor="let day of cashFlow" class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+      <div class="flex w-full flex-1 items-end justify-center gap-1">
+        <div class="w-1/2 rounded-t-lg bg-emerald-400/90 transition-all" [style.height.%]="barHeight(day.deposits)" [title]="'Deposits: Rs. ' + (day.deposits | number)"></div>
+        <div class="w-1/2 rounded-t-lg bg-rose-400/90 transition-all" [style.height.%]="barHeight(day.withdrawals)" [title]="'Withdrawals: Rs. ' + (day.withdrawals | number)"></div>
+      </div>
+      <span class="text-xs text-slate-400">{{ day.label }}</span>
+    </div>
+  </div>
+</section>
+
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+  <!-- Loan portfolio -->
+  <section class="demo-section-card animate-slide-up">
+    <h2 class="demo-section-title"><i class="fas fa-hand-holding-dollar mr-2 text-glass-amber"></i>Loan portfolio</h2>
+    <p class="demo-section-helper">Outstanding balance by loan product.</p>
+    <div class="mt-5 space-y-4">
+      <div *ngFor="let seg of loanPortfolio">
+        <div class="mb-1 flex items-center justify-between text-sm">
+          <span class="font-medium">{{ seg.label }}</span>
+          <span class="text-white/60">Rs. {{ seg.value | number }} · {{ segmentPct(seg, loanPortfolio) }}%</span>
+        </div>
+        <div class="h-2.5 rounded-full bg-white/10">
+          <div class="h-2.5 rounded-full" [ngClass]="seg.tone" [style.width.%]="segmentPct(seg, loanPortfolio)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product mix -->
+  <section class="demo-section-card animate-slide-up">
+    <h2 class="demo-section-title"><i class="fas fa-layer-group mr-2 text-glass-purple"></i>Customer product mix</h2>
+    <p class="demo-section-helper">Active product holders across the branch.</p>
+    <div class="mt-5 space-y-4">
+      <div *ngFor="let seg of productMix">
+        <div class="mb-1 flex items-center justify-between text-sm">
+          <span class="font-medium">{{ seg.label }}</span>
+          <span class="text-white/60">{{ seg.value | number }} holders · {{ segmentPct(seg, productMix) }}%</span>
+        </div>
+        <div class="h-2.5 rounded-full bg-white/10">
+          <div class="h-2.5 rounded-full" [ngClass]="seg.tone" [style.width.%]="segmentPct(seg, productMix)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

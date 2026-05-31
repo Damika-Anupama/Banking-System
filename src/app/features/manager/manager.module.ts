@@ -13,6 +13,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { ManagerHomeComponent } from '../../view/manager-dashboard/manager.home/manager.home.component';
 import { ManagerAddEmployeeComponent } from '../../view/manager-dashboard/manager.add.employee/manager.add.employee.component';
 import { ManagerLoanApprovalComponent } from '../../view/manager-dashboard/manager.loan.approval/manager.loan.approval.component';
+import { ManagerEmployeesComponent } from '../../view/manager-dashboard/manager.employees/manager.employees.component';
+import { ManagerReportsComponent } from '../../view/manager-dashboard/manager.reports/manager.reports.component';
 import { ManagerSettingsComponent } from '../../view/manager-dashboard/manager.settings/manager.settings.component';
 
 // Services
@@ -36,6 +38,8 @@ import { ManagerHomeService } from '../../service/manager/manager.home.service';
     ManagerHomeComponent,
     ManagerAddEmployeeComponent,
     ManagerLoanApprovalComponent,
+    ManagerEmployeesComponent,
+    ManagerReportsComponent,
     ManagerSettingsComponent
   ],
   imports: [

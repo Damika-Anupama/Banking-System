@@ -14,6 +14,8 @@ import { EmployeeHomeComponent } from '../../view/employee-dashboard/employee.ho
 import { EmployeeCreateLoanComponent } from '../../view/employee-dashboard/employee.create.loan/employee.create.loan.component';
 import { EmployeeRegisterCustomerComponent } from '../../view/employee-dashboard/employee.register.customer/employee.register.customer.component';
 import { EmployeeWithdrawalComponent } from '../../view/employee-dashboard/employee.withdrawal/employee.withdrawal.component';
+import { EmployeeDepositComponent } from '../../view/employee-dashboard/employee.deposit/employee.deposit.component';
+import { EmployeeCustomer360Component } from '../../view/employee-dashboard/employee.customer360/employee.customer360.component';
 import { EmployeeSettingsComponent } from '../../view/employee-dashboard/employee.settings/employee.settings.component';
 
 // Services
@@ -40,6 +42,8 @@ import { WithdrawalService } from '../../service/employee/withdrawal.service';
     EmployeeCreateLoanComponent,
     EmployeeRegisterCustomerComponent,
     EmployeeWithdrawalComponent,
+    EmployeeDepositComponent,
+    EmployeeCustomer360Component,
     EmployeeSettingsComponent
   ],
   imports: [

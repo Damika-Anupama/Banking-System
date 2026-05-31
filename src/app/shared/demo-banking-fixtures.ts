@@ -303,3 +303,28 @@ export const createDemoCustomer = (payload: {
   account_count: 0,
   status: 'New onboarding'
 });
+
+// ----- Branch employee roster (manager employee management) -----
+export interface DemoEmployee {
+  employee_id: string;
+  username: string;
+  fullname: string;
+  role: string;
+  email: string;
+  contact_no: string;
+  branch_id: string;
+  joined_date: string;
+  transactions_handled: number;
+  status: 'Active' | 'Inactive';
+}
+
+export const DEMO_EMPLOYEES: DemoEmployee[] = [
+  { employee_id: 'EMP-2001', username: 'kavindu.rajapaksha', fullname: 'Kavindu Rajapaksha', role: 'Teller', email: 'kavindu@banking.demo', contact_no: '+94 77 451 9023', branch_id: 'BR-001', joined_date: '2022-03-14', transactions_handled: 1840, status: 'Active' },
+  { employee_id: 'EMP-2002', username: 'nadeesha.silva', fullname: 'Nadeesha Silva', role: 'Customer Service Officer', email: 'nadeesha@banking.demo', contact_no: '+94 71 220 7781', branch_id: 'BR-001', joined_date: '2021-08-02', transactions_handled: 2310, status: 'Active' },
+  { employee_id: 'EMP-2003', username: 'tharindu.fernando', fullname: 'Tharindu Fernando', role: 'Loan Officer', email: 'tharindu@banking.demo', contact_no: '+94 76 884 3320', branch_id: 'BR-001', joined_date: '2020-11-19', transactions_handled: 1495, status: 'Active' },
+  { employee_id: 'EMP-2004', username: 'ishara.gunasekara', fullname: 'Ishara Gunasekara', role: 'Teller', email: 'ishara@banking.demo', contact_no: '+94 70 113 6654', branch_id: 'BR-001', joined_date: '2023-01-30', transactions_handled: 980, status: 'Active' },
+  { employee_id: 'EMP-2005', username: 'dilshan.perera', fullname: 'Dilshan Perera', role: 'Operations Officer', email: 'dilshan@banking.demo', contact_no: '+94 77 905 2218', branch_id: 'BR-001', joined_date: '2019-06-11', transactions_handled: 3120, status: 'Active' },
+  { employee_id: 'EMP-2006', username: 'rashmi.jayasuriya', fullname: 'Rashmi Jayasuriya', role: 'Customer Service Officer', email: 'rashmi@banking.demo', contact_no: '+94 71 776 4490', branch_id: 'BR-001', joined_date: '2022-09-25', transactions_handled: 1670, status: 'Active' },
+  { employee_id: 'EMP-2007', username: 'sahan.weerasinghe', fullname: 'Sahan Weerasinghe', role: 'Loan Officer', email: 'sahan@banking.demo', contact_no: '+94 76 332 1108', branch_id: 'BR-001', joined_date: '2018-02-07', transactions_handled: 2890, status: 'Inactive' },
+  { employee_id: 'EMP-2008', username: 'piumi.dissanayake', fullname: 'Piumi Dissanayake', role: 'Teller', email: 'piumi@banking.demo', contact_no: '+94 70 558 9931', branch_id: 'BR-001', joined_date: '2023-07-18', transactions_handled: 640, status: 'Active' }
+];
