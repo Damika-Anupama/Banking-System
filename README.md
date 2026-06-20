@@ -36,6 +36,23 @@ npm start
 
 Open `http://localhost:4200`. No backend needed — all data is seeded mock data.
 
+## Testing
+
+End-to-end tests use **Playwright**, driving a real Chromium browser against
+the demo build. Because the demo authenticates client-side (a demo store seeds
+the session in `localStorage`), the suite covers the sign-in screen and all
+three role dashboards (customer, employee, manager) with no backend — and runs
+green against the Vercel preview too.
+
+```bash
+npm install
+npx playwright install chromium
+npm run build:prod      # produces dist/banking-system
+npm run test:e2e        # serves the build with SPA fallback and runs the suite
+# Run against a deployed preview instead:
+E2E_BASE_URL=https://banking-system-nine-sooty.vercel.app npm run test:e2e
+```
+
 ## Deploy on Vercel
 
 Set **Production Branch** to `frontend-demo`.
