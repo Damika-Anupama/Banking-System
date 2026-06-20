@@ -49,3 +49,9 @@ cdk-versions.txt
 deps.txt
 forms.txt
 .vercel
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

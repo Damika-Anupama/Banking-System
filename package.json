@@ -10,6 +10,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "smoke:live": "node scripts/smoke-live-demo.mjs"
   },
   "private": true,
@@ -61,6 +63,7 @@
     "@angular/cli": "~21.2.6",
     "@angular/compiler-cli": "^21.2.7",
     "@eslint/js": "^9.39.4",
+    "@playwright/test": "^1.61.0",
     "@types/jasmine": "~4.3.6",
     "angular-eslint": "21.4.0",
     "autoprefixer": "^10.5.0",
