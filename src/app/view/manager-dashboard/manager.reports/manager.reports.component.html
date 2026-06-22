@@ -42,36 +42,36 @@
 </section>
 
 <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-  <!-- Loan portfolio -->
+  <!-- Loan portfolio — doughnut chart -->
   <section class="demo-section-card animate-slide-up">
     <h2 class="demo-section-title"><i class="fas fa-hand-holding-dollar mr-2 text-glass-orange"></i>Loan portfolio</h2>
-    <p class="demo-section-helper">Outstanding balance by loan product.</p>
-    <div class="mt-5 space-y-4">
-      <div *ngFor="let seg of loanPortfolio">
-        <div class="mb-1 flex items-center justify-between text-sm">
-          <span class="font-medium">{{ seg.label }}</span>
-          <span class="text-white/60">Rs. {{ seg.value | number }} · {{ segmentPct(seg, loanPortfolio) }}%</span>
-        </div>
-        <div class="h-2.5 rounded-full bg-white/10">
-          <div class="h-2.5 rounded-full" [ngClass]="seg.tone" [style.width.%]="segmentPct(seg, loanPortfolio)"></div>
-        </div>
+    <p class="demo-section-helper">Outstanding balance by loan product · Rs. {{ loanBookTotal | number }} total.</p>
+    <div class="relative mx-auto mt-4 h-72 max-w-sm">
+      <canvas id="loanPortfolioChart"></canvas>
+    </div>
+    <!-- Legend totals -->
+    <div class="mt-4 grid grid-cols-2 gap-2">
+      <div *ngFor="let seg of loanPortfolio" class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-3 py-2 text-xs">
+        <span class="h-2.5 w-2.5 rounded-full shrink-0" [style.background]="seg.color"></span>
+        <span class="text-white/70 flex-1">{{ seg.label }}</span>
+        <strong class="text-white/90">{{ segmentPct(seg, loanPortfolio) }}%</strong>
       </div>
     </div>
   </section>
 
-  <!-- Product mix -->
+  <!-- Product mix — doughnut chart -->
   <section class="demo-section-card animate-slide-up">
     <h2 class="demo-section-title"><i class="fas fa-layer-group mr-2 text-glass-purple"></i>Customer product mix</h2>
     <p class="demo-section-helper">Active product holders across the branch.</p>
-    <div class="mt-5 space-y-4">
-      <div *ngFor="let seg of productMix">
-        <div class="mb-1 flex items-center justify-between text-sm">
-          <span class="font-medium">{{ seg.label }}</span>
-          <span class="text-white/60">{{ seg.value | number }} holders · {{ segmentPct(seg, productMix) }}%</span>
-        </div>
-        <div class="h-2.5 rounded-full bg-white/10">
-          <div class="h-2.5 rounded-full" [ngClass]="seg.tone" [style.width.%]="segmentPct(seg, productMix)"></div>
-        </div>
+    <div class="relative mx-auto mt-4 h-72 max-w-sm">
+      <canvas id="productMixChart"></canvas>
+    </div>
+    <!-- Legend totals -->
+    <div class="mt-4 grid grid-cols-2 gap-2">
+      <div *ngFor="let seg of productMix" class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-3 py-2 text-xs">
+        <span class="h-2.5 w-2.5 rounded-full shrink-0" [style.background]="seg.color"></span>
+        <span class="text-white/70 flex-1">{{ seg.label }}</span>
+        <strong class="text-white/90">{{ seg.value | number }}</strong>
       </div>
     </div>
   </section>
