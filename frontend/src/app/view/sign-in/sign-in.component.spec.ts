@@ -5,7 +5,7 @@
  * Target coverage: 90%+
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -185,7 +185,7 @@ describe('SignInComponent', () => {
   });
 
   describe('Successful Authentication', () => {
-    it('should navigate to customer dashboard for CUSTOMER type', () => {
+    it('should navigate to customer dashboard for CUSTOMER type', fakeAsync(() => {
       component.email = 'customer@example.com';
       component.password = 'password123';
 
@@ -195,14 +195,15 @@ describe('SignInComponent', () => {
       }));
 
       component.authenticate();
+      tick();
 
       expect(localStorage.getItem('token')).toBe('customer-token');
       expect(localStorage.getItem('email')).toBe('customer@example.com');
       expect(router.navigate).toHaveBeenCalledWith(['/dashboard/home']);
       expect(component.isLoading).toBe(false);
-    });
+    }));
 
-    it('should navigate to employee dashboard for EMPLOYEE type', () => {
+    it('should navigate to employee dashboard for EMPLOYEE type', fakeAsync(() => {
       component.email = 'employee@example.com';
       component.password = 'password123';
 
@@ -212,12 +213,13 @@ describe('SignInComponent', () => {
       }));
 
       component.authenticate();
+      tick();
 
       expect(localStorage.getItem('token')).toBe('employee-token');
       expect(router.navigate).toHaveBeenCalledWith(['/employee-dashboard/employee-home']);
-    });
+    }));
 
-    it('should navigate to manager dashboard for MANAGER type', () => {
+    it('should navigate to manager dashboard for MANAGER type', fakeAsync(() => {
       component.email = 'manager@example.com';
       component.password = 'password123';
 
@@ -227,10 +229,11 @@ describe('SignInComponent', () => {
       }));
 
       component.authenticate();
+      tick();
 
       expect(localStorage.getItem('token')).toBe('manager-token');
       expect(router.navigate).toHaveBeenCalledWith(['/manager-dashboard/manager-home']);
-    });
+    }));
 
     it('should set isLoading to true during authentication', () => {
       component.email = 'test@example.com';
@@ -336,7 +339,7 @@ describe('SignInComponent', () => {
       expect(router.navigate).not.toHaveBeenCalled();
     });
 
-    it('should handle invalid user type', () => {
+    it('should handle invalid user type', fakeAsync(() => {
       component.email = 'test@example.com';
       component.password = 'password123';
 
@@ -346,6 +349,7 @@ describe('SignInComponent', () => {
       }));
 
       component.authenticate();
+      tick();
 
       expect(component.errorMessage).toBe('Invalid user type');
       expect(Swal.fire).toHaveBeenCalledWith(
@@ -356,7 +360,7 @@ describe('SignInComponent', () => {
         })
       );
       expect(router.navigate).not.toHaveBeenCalled();
-    });
+    }));
 
     it('should handle server error with message', () => {
       component.email = 'test@example.com';

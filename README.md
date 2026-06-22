@@ -1,5 +1,7 @@
 # Banking System
 
+[![CI](https://github.com/Damika-Anupama/Banking-System/actions/workflows/ci.yml/badge.svg)](https://github.com/Damika-Anupama/Banking-System/actions/workflows/ci.yml)
+
 Full-stack banking operations platform with role-based dashboards for customers, employees, and managers.
 
 **Live demo:** [banking-system-nine-sooty.vercel.app](https://banking-system-nine-sooty.vercel.app/)
