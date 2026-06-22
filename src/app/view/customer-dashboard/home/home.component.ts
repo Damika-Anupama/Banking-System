@@ -31,6 +31,25 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   private chartInstance: Chart | null = null;
 
+  fdCalcPrincipal = 100000;
+  fdCalcMonths = 12;
+
+  get fdCalcRate(): number {
+    if (this.fdCalcMonths <= 3) return 6.5;
+    if (this.fdCalcMonths <= 6) return 7.75;
+    if (this.fdCalcMonths <= 12) return 9.5;
+    return 10.25;
+  }
+
+  get fdCalcInterest(): number {
+    const p = Math.max(0, Number(this.fdCalcPrincipal) || 0);
+    return Math.round(p * this.fdCalcRate * this.fdCalcMonths / 12 / 100);
+  }
+
+  get fdCalcMaturity(): number {
+    return Math.max(0, Number(this.fdCalcPrincipal) || 0) + this.fdCalcInterest;
+  }
+
   get accountCount(): number {
     return this.accounts?.length || 0;
   }

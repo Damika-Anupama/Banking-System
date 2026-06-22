@@ -1,49 +1,32 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-  <!-- Glassmorphism Card -->
-  <div class="max-w-2xl w-full glassmorphism-card rounded-3xl p-8 md:p-12 text-center shadow-2xl">
-    <!-- 404 Illustration -->
-    <div class="mb-8">
-      <div class="inline-flex items-center justify-center w-32 h-32 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg mb-6">
-        <i class="fas fa-exclamation-triangle text-white text-6xl"></i>
+<main class="auth-shell">
+  <section class="auth-panel">
+    <div class="auth-card animate-scale-in text-center">
+      <img src="assets/logo-dark.png" alt="Banking System logo" class="auth-logo logo-dark-static auth-entry-logo" />
+
+      <div class="my-6">
+        <p class="text-8xl font-black bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent leading-none">404</p>
+        <h1 class="auth-title text-2xl mt-3">Page not found</h1>
+        <p class="auth-subtitle text-sm mt-2">
+          The page you're looking for doesn't exist, was moved, or the link is incorrect.
+        </p>
       </div>
 
-      <h1 class="text-8xl md:text-9xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-4">
-        404
-      </h1>
+      <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-5 mb-6 text-left space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-wider text-white/50 mb-3">Quick links</p>
+        <a routerLink="/welcome" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white/80 transition hover:bg-white/10 hover:text-white">
+          <i class="fas fa-home w-4 text-cyan-300"></i> Return to welcome page
+        </a>
+        <a routerLink="/sign-in" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white/80 transition hover:bg-white/10 hover:text-white">
+          <i class="fas fa-right-to-bracket w-4 text-emerald-300"></i> Sign in to your account
+        </a>
+        <a routerLink="/dashboard/home" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white/80 transition hover:bg-white/10 hover:text-white">
+          <i class="fas fa-gauge w-4 text-violet-300"></i> Customer dashboard
+        </a>
+      </div>
 
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-        Oops! Page Not Found
-      </h2>
-
-      <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
-        We couldn't find the page you were looking for. The page might have been moved, deleted, or the URL might be incorrect.
-      </p>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-      <a
-        routerLink="/welcome"
-        class="glassmorphism-button px-8 py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-      >
-        <i class="fas fa-home mr-2"></i>
-        Go to Homepage
-      </a>
-
-      <button
-        onclick="history.back()"
-        class="glassmorphism-button px-8 py-3 rounded-xl font-semibold border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-gray-800/50 transition-all duration-300 transform hover:scale-105"
-      >
-        <i class="fas fa-arrow-left mr-2"></i>
-        Go Back
+      <button type="button" class="glass-button w-full justify-center" onclick="history.back()">
+        <i class="fas fa-arrow-left mr-2"></i> Go back
       </button>
     </div>
-
-    <!-- Help Text -->
-    <div class="mt-12 pt-8 border-t border-gray-300/50 dark:border-gray-700/50">
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        If you believe this is an error, please contact support or try again later.
-      </p>
-    </div>
-  </div>
-</div>
+  </section>
+</main>

@@ -229,5 +229,29 @@
       <p class="mt-1 text-xs text-slate-400">Per annum</p>
     </div>
   </div>
+
+  <!-- FD Return Calculator -->
+  <div class="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.05] p-5">
+    <p class="text-xs font-semibold uppercase tracking-wider text-cyan-200 mb-4"><i class="fas fa-calculator mr-2"></i>Fixed deposit return calculator</p>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 items-end">
+      <div>
+        <label class="text-xs text-slate-400 mb-1 block">Principal (Rs.)</label>
+        <input type="number" class="glass-input w-full text-sm" placeholder="100,000" [(ngModel)]="fdCalcPrincipal" name="fdCalcPrincipal" min="1000" />
+      </div>
+      <div>
+        <label class="text-xs text-slate-400 mb-1 block">Tenor</label>
+        <select class="glass-input w-full text-sm" [(ngModel)]="fdCalcMonths" name="fdCalcMonths">
+          <option [ngValue]="3">3 months · 6.50% p.a.</option>
+          <option [ngValue]="6">6 months · 7.75% p.a.</option>
+          <option [ngValue]="12">12 months · 9.50% p.a.</option>
+          <option [ngValue]="24">24 months · 10.25% p.a.</option>
+        </select>
+      </div>
+      <div class="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.08] p-4">
+        <p class="text-xs text-slate-400">You earn <strong class="text-emerald-200">Rs. {{ fdCalcInterest | number }}</strong> → matures at</p>
+        <p class="text-xl font-black text-emerald-100 mt-1">Rs. {{ fdCalcMaturity | number }}</p>
+      </div>
+    </div>
+  </div>
 </section>
 </div>
