@@ -64,13 +64,8 @@
   <section class="demo-section-card animate-slide-up">
     <h2 class="demo-section-title"><i class="fas fa-chart-column mr-2 text-glass-purple"></i>Weekly throughput</h2>
     <p class="demo-section-helper">Transactions processed per day.</p>
-    <div class="mt-6 flex h-44 items-stretch gap-3 rounded-2xl bg-slate-950/40 p-4">
-      <div *ngFor="let day of weeklyTrend" class="flex h-full flex-1 flex-col items-center justify-end gap-2" [title]="day.value + ' transactions'">
-        <div class="flex w-full flex-1 items-end">
-          <div class="w-full rounded-t-lg bg-gradient-to-t from-cyan-500 to-blue-400 transition-all" [style.height.%]="trendHeight(day.value)"></div>
-        </div>
-        <span class="text-xs text-slate-400">{{ day.label }}</span>
-      </div>
+    <div class="relative mt-4 h-44">
+      <canvas id="weeklyThroughputChart"></canvas>
     </div>
   </section>
 

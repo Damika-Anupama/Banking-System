@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 interface Target {
   label: string;
@@ -19,7 +21,8 @@ interface ActivityRow {
   templateUrl: './employee.performance.component.html',
   styleUrls: ['./employee.performance.component.scss']
 })
-export class EmployeePerformanceComponent {
+export class EmployeePerformanceComponent implements AfterViewInit, OnDestroy {
+  private weeklyChart: Chart | null = null;
   today = new Date();
 
   // Headline stats for the day.
@@ -71,5 +74,56 @@ export class EmployeePerformanceComponent {
     const done = this.targets.reduce((s, t) => s + t.done, 0);
     const goal = this.targets.reduce((s, t) => s + t.goal, 0);
     return goal ? Math.round((done / goal) * 100) : 0;
+  }
+
+  ngAfterViewInit(): void {
+    this.renderWeeklyChart();
+  }
+
+  ngOnDestroy(): void {
+    this.weeklyChart?.destroy();
+  }
+
+  private renderWeeklyChart(): void {
+    const canvas = document.getElementById('weeklyThroughputChart') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const isLight = !document.documentElement.classList.contains('dark');
+    const gridColor = isLight ? 'rgba(15,23,42,0.07)' : 'rgba(148,163,184,0.10)';
+    const tickColor = isLight ? '#475569' : '#94a3b8';
+
+    this.weeklyChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: this.weeklyTrend.map(d => d.label),
+        datasets: [{
+          data: this.weeklyTrend.map(d => d.value),
+          backgroundColor: this.weeklyTrend.map((_d, i) =>
+            i === this.weeklyTrend.length - 1 ? 'rgba(34,211,238,0.80)' : 'rgba(96,165,250,0.70)'
+          ),
+          borderColor: this.weeklyTrend.map((_d, i) =>
+            i === this.weeklyTrend.length - 1 ? '#22d3ee' : '#60a5fa'
+          ),
+          borderWidth: 1.5,
+          borderRadius: 8,
+          hoverBackgroundColor: 'rgba(34,211,238,0.90)',
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} transactions` } },
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 11 } } },
+          y: {
+            grid: { color: gridColor },
+            ticks: { color: tickColor, font: { size: 11 }, stepSize: 10 },
+            beginAtZero: true,
+          },
+        },
+      },
+    });
   }
 }

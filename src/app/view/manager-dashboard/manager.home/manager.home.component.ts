@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ManagerHomeService } from 'src/app/service/manager/manager.home.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { demoStore } from 'src/app/shared/demo-store';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-manager.home',
@@ -10,7 +12,7 @@ import { demoStore } from 'src/app/shared/demo-store';
   templateUrl: './manager.home.component.html',
   styleUrls: ['./manager.home.component.scss'],
 })
-export class ManagerHomeComponent implements OnInit, OnDestroy {
+export class ManagerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   branch_id: any = null;
   branch_name = '';
   manager_id: any = null;
@@ -23,6 +25,17 @@ export class ManagerHomeComponent implements OnInit, OnDestroy {
   isLoading = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
+  private volumeChart: Chart | null = null;
+
+  private readonly volumeSeed = [
+    { label: 'Mon', amount: 1240000 },
+    { label: 'Tue', amount: 1820000 },
+    { label: 'Wed', amount: 980000 },
+    { label: 'Thu', amount: 2150000 },
+    { label: 'Fri', amount: 1670000 },
+    { label: 'Sat', amount: 760000 },
+    { label: 'Sun', amount: 430000 },
+  ];
 
   get filteredTransactions(): any[] {
     const list = this.transactions || [];
@@ -298,7 +311,69 @@ export class ManagerHomeComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  ngAfterViewInit(): void {
+    this.renderVolumeChart();
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.volumeChart?.destroy();
+  }
+
+  renderVolumeChart(): void {
+    try {
+      const canvas = document.getElementById('volumeTrendChart') as HTMLCanvasElement | null;
+      if (!canvas) return;
+      this.volumeChart?.destroy();
+
+      const raw = this.volumeTrend;
+      const points = raw.length > 0 ? raw : this.volumeSeed.map(s => ({ label: s.label, amount: s.amount, heightPct: 0 }));
+      const labels = points.map(p => p.label);
+      const data = points.map(p => p.amount);
+      const isLight = !document.documentElement.classList.contains('dark');
+      const gridColor = isLight ? 'rgba(15,23,42,0.07)' : 'rgba(148,163,184,0.10)';
+      const tickColor = isLight ? '#475569' : '#94a3b8';
+
+      this.volumeChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            borderColor: '#22d3ee',
+            backgroundColor: 'rgba(34,211,238,0.12)',
+            borderWidth: 2.5,
+            pointBackgroundColor: '#22d3ee',
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            fill: true,
+            tension: 0.4,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` Rs. ${Number(ctx.parsed.y).toLocaleString()}`,
+              },
+            },
+          },
+          scales: {
+            x: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 11 } } },
+            y: {
+              grid: { color: gridColor },
+              ticks: {
+                color: tickColor,
+                font: { size: 11 },
+                callback: v => `Rs. ${Number(v).toLocaleString()}`,
+              },
+            },
+          },
+        },
+      });
+    } catch { /* canvas not in DOM yet */ }
   }
 }

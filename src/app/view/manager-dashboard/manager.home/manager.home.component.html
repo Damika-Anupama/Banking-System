@@ -23,16 +23,8 @@
         {{ volumeTrendPct >= 0 ? '+' : '' }}{{ volumeTrendPct }}%
       </span>
     </div>
-    <div class="mt-6 flex h-48 items-stretch gap-3 rounded-2xl bg-slate-950/40 p-4">
-      <div *ngFor="let bar of volumeTrend" class="flex h-full flex-1 flex-col items-center justify-end gap-2" [title]="'Rs. ' + (bar.amount | number)">
-        <div class="flex w-full flex-1 items-end">
-          <div class="w-full rounded-t-xl transition-all" [ngClass]="trendBarColor(bar.heightPct)" [style.height.%]="bar.heightPct"></div>
-        </div>
-        <span class="text-xs text-slate-400">{{ bar.label }}</span>
-      </div>
-      <div *ngIf="volumeTrend.length === 0" class="flex h-full w-full items-center justify-center text-sm text-slate-400">
-        No transaction data available.
-      </div>
+    <div class="relative mt-4 h-52">
+      <canvas id="volumeTrendChart"></canvas>
     </div>
   </article>
   <article class="demo-section-card">
