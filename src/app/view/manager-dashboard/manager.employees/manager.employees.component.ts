@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import Swal from 'sweetalert2';
 import { DEMO_EMPLOYEES } from 'src/app/shared/demo-banking-fixtures';
 import { demoStore } from 'src/app/shared/demo-store';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 interface RosterEmployee {
   employee_id: string;
@@ -21,10 +23,11 @@ interface RosterEmployee {
   templateUrl: './manager.employees.component.html',
   styleUrls: ['./manager.employees.component.scss']
 })
-export class ManagerEmployeesComponent {
+export class ManagerEmployeesComponent implements AfterViewInit, OnDestroy {
   searchTerm = '';
   roleFilter = 'all';
   employees: RosterEmployee[] = [];
+  private performanceChart: Chart | null = null;
 
   readonly roles = ['Teller', 'Customer Service Officer', 'Loan Officer', 'Operations Officer'];
 
@@ -77,6 +80,73 @@ export class ManagerEmployeesComponent {
       case 'Operations Officer': return 'bg-gradient-to-r from-glass-purple/80 to-glass-pink/80';
       default: return 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80';
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.renderPerformanceChart();
+  }
+
+  ngOnDestroy(): void {
+    this.performanceChart?.destroy();
+  }
+
+  private roleColor(role: string): string {
+    switch (role) {
+      case 'Loan Officer': return 'rgba(251,191,36,0.80)';
+      case 'Customer Service Officer': return 'rgba(34,211,238,0.80)';
+      case 'Operations Officer': return 'rgba(167,139,250,0.80)';
+      default: return 'rgba(52,211,153,0.80)';
+    }
+  }
+
+  private renderPerformanceChart(): void {
+    const canvas = document.getElementById('employeePerformanceChart') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const sorted = [...this.employees]
+      .filter(e => e.status === 'Active')
+      .sort((a, b) => b.transactions_handled - a.transactions_handled)
+      .slice(0, 8);
+
+    const isLight = !document.documentElement.classList.contains('dark');
+    const gridColor = isLight ? 'rgba(15,23,42,0.07)' : 'rgba(148,163,184,0.10)';
+    const tickColor = isLight ? '#475569' : '#94a3b8';
+
+    this.performanceChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: sorted.map(e => e.fullname.split(' ')[0]),
+        datasets: [{
+          data: sorted.map(e => e.transactions_handled),
+          backgroundColor: sorted.map(e => this.roleColor(e.role)),
+          borderColor: sorted.map(e => this.roleColor(e.role).replace('0.80', '1')),
+          borderWidth: 1.5,
+          borderRadius: 8,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const emp = sorted[ctx.dataIndex];
+                return ` ${Number(ctx.parsed.x).toLocaleString()} txns · ${emp.role}`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { color: gridColor },
+            ticks: { color: tickColor, font: { size: 11 }, callback: v => Number(v).toLocaleString() },
+          },
+          y: { grid: { display: false }, ticks: { color: tickColor, font: { size: 11 } } },
+        },
+      },
+    });
   }
 
   toggleStatus(employee: RosterEmployee): void {
