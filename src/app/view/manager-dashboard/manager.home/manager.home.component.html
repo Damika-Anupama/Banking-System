@@ -181,3 +181,38 @@
     </table>
   </div>
 </section>
+
+<!-- Loan Pipeline Summary -->
+<section class="demo-section-card mt-8 animate-slide-up">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-sitemap mr-2 text-glass-violet"></i>Loan pipeline summary</h2>
+      <p class="demo-section-helper">Application breakdown across all statuses in the current queue.</p>
+    </div>
+    <a routerLink="/manager-dashboard/manager-loan-approval" class="glass-button-secondary text-xs w-fit shrink-0">
+      <i class="fas fa-stamp mr-1"></i>Review queue
+    </a>
+  </div>
+  <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+    <div class="rounded-2xl border border-amber-400/20 bg-amber-400/[0.06] p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider">Pending</p>
+      <strong class="mt-2 block text-3xl font-black text-amber-100">{{ pendingLoanCount }}</strong>
+      <p class="mt-1 text-xs text-amber-300/70">Awaiting decision</p>
+    </div>
+    <div class="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.06] p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider">Approved</p>
+      <strong class="mt-2 block text-3xl font-black text-emerald-100">{{ approvedLoanCount }}</strong>
+      <p class="mt-1 text-xs text-emerald-300/70">Cleared for disbursement</p>
+    </div>
+    <div class="rounded-2xl border border-rose-400/20 bg-rose-400/[0.06] p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider">Rejected</p>
+      <strong class="mt-2 block text-3xl font-black text-rose-100">{{ rejectedLoanCount }}</strong>
+      <p class="mt-1 text-xs text-rose-300/70">Declined applications</p>
+    </div>
+    <div class="rounded-2xl border border-blue-400/20 bg-blue-400/[0.06] p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider">Approval Rate</p>
+      <strong class="mt-2 block text-3xl font-black text-blue-100">{{ loanApprovalRate }}%</strong>
+      <p class="mt-1 text-xs text-blue-300/70">Of decided applications</p>
+    </div>
+  </div>
+</section>

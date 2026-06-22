@@ -110,6 +110,20 @@ export class ManagerHomeComponent implements OnInit, OnDestroy {
     return Math.min(100, Math.round((this.overdueCount / 10) * 100));
   }
 
+  get approvedLoanCount(): number {
+    return demoStore.getLoanApplications().filter((l: any) => l.status === 'Approved').length;
+  }
+
+  get rejectedLoanCount(): number {
+    return demoStore.getLoanApplications().filter((l: any) => l.status === 'Rejected').length;
+  }
+
+  get loanApprovalRate(): number {
+    const decided = this.approvedLoanCount + this.rejectedLoanCount;
+    if (decided === 0) return 0;
+    return Math.round((this.approvedLoanCount / decided) * 100);
+  }
+
   constructor(private managerService: ManagerHomeService) {}
 
   ngOnInit(): void {

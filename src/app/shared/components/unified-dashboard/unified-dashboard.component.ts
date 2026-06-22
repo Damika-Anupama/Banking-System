@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -11,7 +11,7 @@ import { DashboardConfig, NavigationItem } from '../../models/navigation-config.
   templateUrl: './unified-dashboard.component.html',
   styleUrls: ['./unified-dashboard.component.scss']
 })
-export class UnifiedDashboardComponent implements OnInit {
+export class UnifiedDashboardComponent implements OnInit, OnDestroy {
   isSidebarOpen = false;
   isDarkMode$!: Observable<boolean>;
   config!: DashboardConfig;
@@ -20,6 +20,8 @@ export class UnifiedDashboardComponent implements OnInit {
   notifications: any[] = [];
   unreadCount = 0;
   notificationsRead = false;
+  clockDisplay = '';
+  private clockInterval: ReturnType<typeof setInterval> | null = null;
 
   private notificationsByRole: Record<string, any[]> = {
     customer: [
@@ -54,6 +56,25 @@ export class UnifiedDashboardComponent implements OnInit {
       this.notifications = this.notificationsByRole[this.config.dashboardType] || [];
       this.unreadCount = this.notifications.length;
     });
+
+    this.clockDisplay = this.formatClock();
+    this.clockInterval = setInterval(() => {
+      this.clockDisplay = this.formatClock();
+      this.cdr.markForCheck();
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.clockInterval) {
+      clearInterval(this.clockInterval);
+    }
+  }
+
+  private formatClock(): string {
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+    const date = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    return `${date} · ${time}`;
   }
 
   openNotifications(): void {
