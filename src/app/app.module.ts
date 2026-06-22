@@ -18,6 +18,10 @@ import { ServerErrorComponent } from './view/server-error/server-error.component
 // Preloader Component (used in app.component.html)
 import { PreloaderComponent } from './shared/preloader/preloader.component';
 
+// Global UI — available on every page
+import { CommonModule } from '@angular/common';
+import { CommandPaletteComponent } from './shared/components/command-palette/command-palette.component';
+
 /**
  * App Module (Root Module)
  *
@@ -43,12 +47,14 @@ import { PreloaderComponent } from './shared/preloader/preloader.component';
     AppComponent,
     // Global components used in app.component.html
     PreloaderComponent,
+    CommandPaletteComponent,
     // Global error pages
     NotFoundComponent,
     ServerErrorComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     HttpClientModule,
     CoreModule,        // Singleton services, guards, interceptors
     AppRoutingModule   // Routing with lazy-loaded modules

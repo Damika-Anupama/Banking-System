@@ -188,6 +188,10 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
     return { name, roleLabel, email, initials };
   }
 
+  openCommandPalette(): void {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+  }
+
   openProfileMenu(): void {
     const u = this.sessionUser;
     Swal.fire({
