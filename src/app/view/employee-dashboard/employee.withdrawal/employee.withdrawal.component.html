@@ -1,0 +1,109 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-money-bill-transfer"></i> Cash operations</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Withdrawal</h1>
+      <p class="demo-subtitle">Process customer cash withdrawal requests and review recent branch activity.</p>
+    </div>
+    <div class="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white/70">
+      <i class="fas fa-coins mr-2 text-glass-emerald"></i>
+      Total withdrawn (recent): <strong class="text-white">Rs. {{ totalWithdrawn | number }}</strong>
+    </div>
+  </div>
+</section>
+
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1.6fr]">
+  <!-- Withdrawal Form -->
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-money-bill-wave mr-2 text-glass-pink"></i>Process withdrawal</h2>
+      <p class="demo-section-helper">Enter the customer account and amount.</p>
+    </div>
+
+    <form class="space-y-5" (ngSubmit)="processWithdrawal()">
+      <div>
+        <label class="auth-field-label"><i class="fas fa-university mr-2"></i>Account number <span class="text-red-300">*</span></label>
+        <div class="relative">
+          <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
+          <input type="text" class="glass-input pl-12 uppercase" placeholder="ACC-492810" [(ngModel)]="accountNumber" name="accountNumber" list="branch-accounts" />
+          <datalist id="branch-accounts">
+            <option *ngFor="let a of accounts" [value]="a.account_id"></option>
+          </datalist>
+        </div>
+        <p *ngIf="accountNotFound" class="mt-2 text-xs text-amber-200"><i class="fas fa-triangle-exclamation mr-1"></i>No branch account matches that number.</p>
+      </div>
+
+      <!-- Account lookup result -->
+      <div *ngIf="matchedAccount" class="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-4">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-slate-300"><i class="fas fa-circle-check mr-2 text-emerald-300"></i>Account verified</span>
+          <span class="text-white/60">{{ formatSavingType(matchedAccount.saving_type) }} · {{ matchedAccount.branch_name }}</span>
+        </div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="text-slate-400 text-sm">Available balance</span>
+          <strong class="text-emerald-100 text-lg">Rs. {{ accountBalance | number }}</strong>
+        </div>
+      </div>
+
+      <div>
+        <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
+          <input type="number" class="glass-input pl-14" placeholder="0.00" min="1" [(ngModel)]="amount" name="amount" />
+        </div>
+        <p *ngIf="exceedsBalance" class="mt-2 text-xs text-rose-300"><i class="fas fa-circle-exclamation mr-1"></i>Amount exceeds the available balance.</p>
+      </div>
+
+      <button
+        type="submit"
+        class="glass-button w-full justify-center"
+        [disabled]="!isValid || isProcessing"
+        [class.opacity-50]="!isValid || isProcessing"
+        [class.cursor-not-allowed]="!isValid || isProcessing"
+      >
+        <i *ngIf="!isProcessing" class="fas fa-check-circle mr-2"></i>
+        <i *ngIf="isProcessing" class="fas fa-spinner fa-spin mr-2"></i>
+        {{ isProcessing ? 'Processing...' : 'Process withdrawal' }}
+      </button>
+    </form>
+  </section>
+
+  <!-- Withdrawal History -->
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-history mr-2 text-glass-cyan"></i>Recent withdrawals</h2>
+      <p class="demo-section-helper">Latest cash withdrawals processed at this branch.</p>
+    </div>
+
+    <div class="demo-table-shell is-fluid overflow-x-auto">
+      <table class="w-full table-fixed">
+        <thead>
+          <tr>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Withdrawal ID</th>
+            <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Account</th>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+            <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Time</th>
+            <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let withdrawal of withdrawals" class="transition-all duration-300 hover:bg-white/5">
+            <td class="px-5 py-3">
+              <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">{{ withdrawal.withdrawal_id }}</span>
+            </td>
+            <td class="hidden md:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ withdrawal.account_id }}</td>
+            <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ withdrawal.amount | number }}</td>
+            <td class="hidden lg:table-cell px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'MMM d, h:mm a' }}</td>
+            <td class="px-5 py-3"><span class="demo-status-pill demo-status-success">{{ withdrawal.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="withdrawals.length === 0" class="text-center py-10">
+        <div class="text-5xl text-white/20 mb-3"><i class="fas fa-money-bill-wave"></i></div>
+        <p class="text-white/60">No withdrawals processed yet.</p>
+      </div>
+    </div>
+  </section>
+</div>

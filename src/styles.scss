@@ -1,0 +1,762 @@
+@use './styles/demo-design-system.scss';
+
+// Tailwind CSS imports
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Import Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+// Base styles
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
+}
+
+html {
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+// CSS Variables for theming
+:root {
+  // Light theme (default)
+  --bg-gradient-start: #f8fafc;
+  --bg-gradient-mid: #e2e8f0;
+  --bg-gradient-end: #dbeafe;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(37, 99, 235, 0.16);
+  --glass-hover: rgba(239, 246, 255, 0.98);
+  --sidebar-bg: rgba(255, 255, 255, 0.94);
+  --navbar-bg: rgba(255, 255, 255, 0.94);
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --input-border: rgba(100, 116, 139, 0.3);
+  --scrollbar-track: rgba(0, 0, 0, 0.05);
+  --scrollbar-thumb: linear-gradient(135deg, rgba(139, 92, 246, 0.6), rgba(59, 130, 246, 0.6));
+  --table-header-bg: rgba(100, 116, 139, 0.1);
+  --table-row-hover: rgba(100, 116, 139, 0.05);
+}
+
+.dark {
+  // Dark theme
+  --bg-gradient-start: #1a1a2e;
+  --bg-gradient-mid: #16213e;
+  --bg-gradient-end: #0f1419;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-hover: rgba(255, 255, 255, 0.2);
+  --sidebar-bg: rgba(15, 20, 25, 0.4);
+  --navbar-bg: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.2);
+  --input-border: rgba(255, 255, 255, 0.3);
+  --scrollbar-track: rgba(255, 255, 255, 0.05);
+  --scrollbar-thumb: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(59, 130, 246, 0.8));
+  --table-header-bg: rgba(255, 255, 255, 0.1);
+  --table-row-hover: rgba(255, 255, 255, 0.05);
+}
+
+body {
+  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--text-primary) !important;
+  transition: background 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+
+  * {
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  & > * {
+    color: var(--text-primary);
+  }
+}
+
+// Glassmorphism utility classes
+@layer components {
+  .glass-card {
+    background: var(--glass-bg);
+    @apply backdrop-blur-md rounded-2xl shadow-glass;
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s ease;
+  }
+
+  .glass-card-hover {
+    @apply transition-all duration-300 hover:shadow-glass-lg hover:scale-[1.02];
+    &:hover {
+      background: var(--glass-hover);
+    }
+  }
+
+  .glass-input {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-primary);
+    @apply backdrop-blur-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-purple/50 transition-all;
+
+    &::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+  }
+
+  /* Custom-styled <select> dropdowns built on glass-input */
+  select.glass-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2394a3b8' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.1rem 1.1rem;
+
+    &:hover {
+      border-color: rgba(34, 211, 238, 0.45);
+    }
+
+    &:focus {
+      border-color: rgba(34, 211, 238, 0.65);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2322d3ee' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    }
+
+    /* Native option list — themed for both light & dark */
+    option {
+      background-color: #0f172a;
+      color: #e2e8f0;
+    }
+  }
+
+  html:not(.dark) select.glass-input option {
+    background-color: #ffffff;
+    color: #1e293b;
+  }
+
+  .glass-button {
+    @apply text-white font-semibold px-6 py-3 rounded-xl no-underline transition-all duration-300 hover:-translate-y-0.5 active:scale-95;
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 40%, #0891b2 100%);
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.40), 0 1px 0 rgba(255,255,255,0.12) inset;
+    &:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 40%, #06b6d4 100%);
+      box-shadow: 0 8px 32px rgba(37, 99, 235, 0.50), 0 1px 0 rgba(255,255,255,0.15) inset;
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(34, 211, 238, 0.9);
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      opacity: 0.78;
+      cursor: not-allowed;
+      transform: none;
+      filter: saturate(0.85);
+    }
+  }
+
+  .glass-button-secondary {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    @apply backdrop-blur-sm font-semibold px-6 py-3 rounded-xl no-underline transition-all duration-300 hover:scale-105 active:scale-95;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--glass-hover);
+      outline: 2px solid rgba(34, 211, 238, 0.68);
+      outline-offset: 3px;
+      text-decoration: none;
+    }
+
+    &:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .glass-sidebar {
+    background: var(--sidebar-bg);
+    @apply backdrop-blur-xl;
+    border-right: 1px solid var(--glass-border);
+    color: var(--text-primary);
+  }
+
+  .glass-navbar {
+    background: var(--navbar-bg);
+    @apply backdrop-blur-xl;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-primary);
+  }
+
+  .glass-badge {
+    @apply inline-flex items-center gap-1 bg-gradient-to-r from-glass-purple/80 to-glass-blue/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm;
+    white-space: nowrap;
+  }
+
+  html:not(.dark) .glass-badge {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.28);
+  }
+
+  .glass-table {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    @apply backdrop-blur-md rounded-2xl overflow-hidden;
+  }
+
+  .demo-table-shell {
+    border-color: var(--glass-border) !important;
+    background: rgba(15, 23, 42, 0.28);
+    @apply rounded-3xl border shadow-xl backdrop-blur-xl;
+  }
+
+  html:not(.dark) .demo-table-shell {
+    border-color: rgba(37, 99, 235, 0.16) !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+  }
+
+  .demo-table-shell table {
+    border-spacing: 0 0.35rem;
+  }
+
+  .demo-table-shell thead th {
+    color: var(--text-secondary) !important;
+    @apply px-4 md:px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em];
+  }
+
+  html:not(.dark) .demo-table-shell thead th {
+    color: #1e3a8a !important;
+  }
+
+  .demo-table-shell tbody tr {
+    background: rgba(255, 255, 255, 0.045);
+    @apply transition-all duration-200;
+  }
+
+  html:not(.dark) .demo-table-shell tbody tr {
+    background: rgba(248, 250, 252, 0.86) !important;
+  }
+
+  .demo-table-shell tbody tr:hover {
+    background: var(--table-row-hover) !important;
+    box-shadow: inset 3px 0 0 rgba(103, 232, 249, 0.7), 0 10px 24px rgba(15, 23, 42, 0.12);
+  }
+
+  html:not(.dark) .demo-table-shell tbody tr:hover {
+    background: rgba(224, 242, 254, 0.82) !important;
+  }
+
+  .demo-table-shell td {
+    color: var(--text-primary) !important;
+    @apply px-4 md:px-5 py-3 text-sm align-middle;
+  }
+
+  .demo-table-shell td:first-child {
+    @apply rounded-l-xl;
+  }
+
+  .demo-table-shell td:last-child {
+    @apply rounded-r-xl;
+  }
+
+  .demo-table-shell .text-white\/60,
+  .demo-table-shell .text-white\/50,
+  .demo-table-shell .text-white\/40 {
+    color: var(--text-secondary) !important;
+  }
+
+  .neon-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-glass-purple via-glass-pink to-glass-cyan;
+  }
+
+  .stat-card {
+    @apply glass-card p-5 md:p-6 transition-all duration-300 hover:shadow-glass-lg cursor-pointer;
+    min-height: 132px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.35);
+    }
+  }
+
+  html:not(.dark) .demo-page-header,
+  html:not(.dark) .demo-section-card,
+  html:not(.dark) .demo-kpi-card,
+  html:not(.dark) .glass-card,
+  html:not(.dark) .stat-card {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(37, 99, 235, 0.16) !important;
+    color: #0f172a !important;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+  }
+
+  html:not(.dark) .demo-title,
+  html:not(.dark) .demo-page-header h1,
+  html:not(.dark) .demo-section-card h1,
+  html:not(.dark) .demo-section-card h2,
+  html:not(.dark) .demo-section-card h3,
+  html:not(.dark) .demo-kpi-card p,
+  html:not(.dark) .glass-card h1,
+  html:not(.dark) .glass-card h2,
+  html:not(.dark) .glass-card h3,
+  html:not(.dark) .glass-card p,
+  html:not(.dark) .glass-card span {
+    color: #0f172a !important;
+  }
+
+  html:not(.dark) .demo-subtitle,
+  html:not(.dark) .dashboard-section-subtitle,
+  html:not(.dark) .glass-card .text-slate-300,
+  html:not(.dark) .glass-card .text-slate-400,
+  html:not(.dark) .glass-card .text-white\/80,
+  html:not(.dark) .glass-card .text-white\/70,
+  html:not(.dark) .glass-card .text-white\/60,
+  html:not(.dark) .glass-card .text-white\/50,
+  html:not(.dark) .glass-card .text-white\/40,
+  html:not(.dark) .demo-section-card .text-slate-300,
+  html:not(.dark) .demo-section-card .text-slate-400,
+  html:not(.dark) .demo-section-card .text-white\/90,
+  html:not(.dark) .demo-section-card .text-white\/80,
+  html:not(.dark) .demo-section-card .text-white\/70,
+  html:not(.dark) .demo-section-card .text-white\/60,
+  html:not(.dark) .demo-section-card .text-white\/50 {
+    color: #475569 !important;
+  }
+
+  /* Light emerald accents (outstanding, maturity amount) need a darker green to read on white. */
+  html:not(.dark) .demo-section-card .text-emerald-100 {
+    color: #047857 !important;
+  }
+
+  /* Full-white text on heading/paragraph/strong elements inside cards & page headers
+     goes invisible on white. Attribute selectors are used (instead of `.text-white`)
+     so Tailwind does not apply dark-variant processing to these rules. Scoped to text
+     elements only — never spans/badges. */
+  html:not(.dark) .demo-section-card p[class~="text-white"],
+  html:not(.dark) .demo-section-card strong[class~="text-white"],
+  html:not(.dark) .demo-section-card h1[class~="text-white"],
+  html:not(.dark) .demo-section-card h2[class~="text-white"],
+  html:not(.dark) .demo-section-card h3[class~="text-white"],
+  html:not(.dark) .demo-section-card h4[class~="text-white"],
+  html:not(.dark) .demo-page-header p[class~="text-white"],
+  html:not(.dark) .demo-page-header strong[class~="text-white"],
+  html:not(.dark) .demo-page-header h1[class~="text-white"],
+  html:not(.dark) .demo-page-header h2[class~="text-white"] {
+    color: #0f172a !important;
+  }
+
+  /* Inset translucent panels living directly in a page header (e.g. KPI meta chips). */
+  html:not(.dark) .demo-page-header [class*="bg-white/[0.06]"],
+  html:not(.dark) .demo-page-header [class*="bg-white/[0.07]"] {
+    background-color: rgba(15, 23, 42, 0.035) !important;
+  }
+  html:not(.dark) .demo-page-header [class*="border-white/10"] {
+    border-color: rgba(15, 23, 42, 0.12) !important;
+  }
+  html:not(.dark) .demo-page-header .text-white\/70,
+  html:not(.dark) .demo-page-header .text-white\/60 {
+    color: #475569 !important;
+  }
+
+  html:not(.dark) .glass-sidebar,
+  html:not(.dark) .glass-navbar {
+    color: #0f172a !important;
+    box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+  }
+
+  /* Inner translucent-white panels (inset boxes, tiles, consent rows) inside demo
+     cards need a light-mode tint + border so they remain visible. */
+  html:not(.dark) .demo-section-card [class*="bg-white/[0.06]"],
+  html:not(.dark) .demo-section-card [class*="bg-white/[0.07]"] {
+    background-color: rgba(15, 23, 42, 0.035) !important;
+  }
+  html:not(.dark) .demo-section-card [class*="bg-white/[0.12]"] {
+    background-color: rgba(37, 99, 235, 0.10) !important;
+  }
+  html:not(.dark) .demo-section-card [class*="border-white/10"] {
+    border-color: rgba(15, 23, 42, 0.12) !important;
+  }
+  html:not(.dark) .demo-section-card [class*="bg-slate-950/40"],
+  html:not(.dark) .demo-section-card [class*="bg-slate-950/35"],
+  html:not(.dark) .demo-section-card [class*="bg-slate-950/30"] {
+    background-color: rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .dashboard-section-title {
+    @apply text-2xl font-bold mb-1 flex items-center gap-3;
+  }
+
+  .dashboard-section-subtitle {
+    @apply text-sm;
+    color: var(--text-secondary) !important;
+    opacity: 0.78;
+  }
+
+  .dashboard-empty-state {
+    @apply text-center py-12 rounded-2xl border border-dashed;
+    border-color: var(--glass-border);
+    background: rgba(148, 163, 184, 0.08);
+  }
+
+  // Text color utilities for theme support
+  .text-theme-primary {
+    color: var(--text-primary) !important;
+  }
+
+  .text-theme-secondary {
+    color: var(--text-secondary) !important;
+  }
+
+  .text-theme-muted {
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+}
+
+// Global overrides for hardcoded text colors to support theming
+// This ensures text colors adapt to light/dark mode
+h1, h2, h3, h4, h5, h6, p, span, label, div,
+a:not(.glass-button):not(.glass-button-secondary),
+li, td, th, input, textarea, select, option {
+  color: var(--text-primary);
+}
+
+// Ensure labels in forms use theme colors
+label {
+  color: var(--text-primary) !important;
+}
+
+// Force main content areas to use theme colors
+main, .glass-card, .stat-card {
+  color: var(--text-primary);
+
+  h1, h2, h3, h4, h5, h6, p, span, div, label {
+    color: var(--text-primary);
+  }
+}
+
+// Override Tailwind's text-white utilities for theme support
+.text-white {
+  color: var(--text-primary) !important;
+}
+
+.text-white\/90 {
+  color: var(--text-primary) !important;
+  opacity: 0.9;
+}
+
+.text-white\/80 {
+  color: var(--text-secondary) !important;
+}
+
+.text-white\/70 {
+  color: var(--text-secondary) !important;
+  opacity: 0.85;
+}
+
+.text-white\/60 {
+  color: var(--text-secondary) !important;
+  opacity: 0.75;
+}
+
+.text-white\/50 {
+  color: var(--text-secondary) !important;
+  opacity: 0.7;
+}
+
+.text-white\/40 {
+  color: var(--text-secondary) !important;
+  opacity: 0.6;
+}
+
+.text-white\/30 {
+  color: var(--text-secondary) !important;
+  opacity: 0.5;
+}
+
+.text-white\/20 {
+  color: var(--text-secondary) !important;
+  opacity: 0.3;
+}
+
+.text-white\/10 {
+  color: var(--text-secondary) !important;
+  opacity: 0.2;
+}
+
+// Placeholder text color
+::placeholder {
+  color: var(--text-secondary) !important;
+  opacity: 0.72 !important;
+}
+
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(71, 85, 105, 0.32) !important;
+}
+
+html:not(.dark) input:focus,
+html:not(.dark) textarea:focus,
+html:not(.dark) select:focus {
+  border-color: rgba(37, 99, 235, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+}
+
+// Icon color support (FontAwesome)
+i, .fa, .fas, .far, .fal, .fab {
+  color: inherit;
+}
+
+// Links and buttons should inherit theme colors
+a:not(.glass-button):not(.glass-button-secondary) {
+  color: var(--text-primary);
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+}
+
+button:not(.glass-button):not(.glass-button-secondary) {
+  color: var(--text-primary);
+}
+
+// Override Tailwind gray colors to adapt to theme
+.text-gray-100, .text-gray-200, .text-gray-300 {
+  color: var(--text-secondary) !important;
+  opacity: 0.9;
+}
+
+.text-gray-400, .text-gray-500 {
+  color: var(--text-secondary) !important;
+  opacity: 0.8;
+}
+
+.text-gray-600, .text-gray-700 {
+  color: var(--text-primary) !important;
+  opacity: 0.85;
+}
+
+.text-gray-800, .text-gray-900 {
+  color: var(--text-primary) !important;
+}
+
+.text-slate-400, .text-slate-500, .text-slate-600,
+.text-zinc-400, .text-zinc-500, .text-zinc-600 {
+  color: var(--text-secondary) !important;
+  opacity: 0.8;
+}
+
+// Dark mode variants are handled automatically by our CSS variables
+.dark\:text-white {
+  color: var(--text-primary) !important;
+}
+
+.dark\:text-gray-100, .dark\:text-gray-200, .dark\:text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+
+// Keep semantic colors (red, green, blue, yellow) visible in both themes
+// Red colors for errors and required fields
+.text-red-300, .text-red-400, .text-red-500 {
+  color: #dc2626 !important; // Darker red for light mode (default)
+}
+
+.dark .text-red-300, .dark .text-red-400, .dark .text-red-500 {
+  color: #fca5a5 !important; // Lighter red for dark mode
+}
+
+// Green colors for success
+.text-green-300, .text-green-400, .text-green-500 {
+  color: #16a34a !important; // Darker green for light mode
+}
+
+.dark .text-green-300, .dark .text-green-400, .dark .text-green-500 {
+  color: #86efac !important; // Lighter green for dark mode
+}
+
+// Blue colors for info
+.text-blue-300, .text-blue-400, .text-blue-500 {
+  color: #2563eb !important; // Darker blue for light mode
+}
+
+.dark .text-blue-300, .dark .text-blue-400, .dark .text-blue-500 {
+  color: #93c5fd !important; // Lighter blue for dark mode
+}
+
+// Yellow colors for warnings
+.text-yellow-300, .text-yellow-400, .text-yellow-500 {
+  color: #ca8a04 !important; // Darker yellow for light mode
+}
+
+.dark .text-yellow-300, .dark .text-yellow-400, .dark .text-yellow-500 {
+  color: #fde047 !important; // Lighter yellow for dark mode
+}
+
+// Custom scrollbar with dashboard styling
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 99, 235, 0.65) rgba(226, 232, 240, 0.75);
+}
+
+.dark * {
+  scrollbar-color: rgba(34, 211, 238, 0.72) rgba(15, 23, 42, 0.48);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.72);
+  border-radius: 999px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.48);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.82), rgba(6, 182, 212, 0.78));
+  border-radius: 999px;
+  border: 2px solid rgba(248, 250, 252, 0.85);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.82), rgba(59, 130, 246, 0.88));
+  border-color: rgba(15, 23, 42, 0.72);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.95), rgba(8, 145, 178, 0.95));
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+// Form elements styling
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0px 1000px var(--input-bg) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+// Table styling
+table {
+  @apply w-full border-separate;
+  border-spacing: 0 0.35rem;
+
+  thead {
+    background: transparent;
+    @apply backdrop-blur-sm;
+
+    th {
+      color: var(--text-secondary);
+      @apply px-4 md:px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em];
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.045);
+      @apply transition-all duration-200;
+
+      &:hover {
+        background: var(--table-row-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+      }
+
+      td {
+        color: var(--text-primary);
+        @apply px-4 md:px-5 py-3 text-sm align-middle;
+      }
+
+      td:first-child {
+        @apply rounded-l-xl;
+      }
+
+      td:last-child {
+        @apply rounded-r-xl;
+      }
+    }
+  }
+}
+
+// Animation utilities
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientFlow 3s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+// Loading spinner
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Utility classes
+.text-shadow {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.glow {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.4);
+}
+
+// Print styles
+@media print {
+  body {
+    background: white;
+  }
+}

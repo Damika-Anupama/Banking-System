@@ -1,0 +1,99 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+// Components
+import { ManagerHomeComponent } from '../../view/manager-dashboard/manager.home/manager.home.component';
+import { ManagerAddEmployeeComponent } from '../../view/manager-dashboard/manager.add.employee/manager.add.employee.component';
+import { ManagerLoanApprovalComponent } from '../../view/manager-dashboard/manager.loan.approval/manager.loan.approval.component';
+import { ManagerEmployeesComponent } from '../../view/manager-dashboard/manager.employees/manager.employees.component';
+import { ManagerReportsComponent } from '../../view/manager-dashboard/manager.reports/manager.reports.component';
+import { ManagerAuditLogComponent } from '../../view/manager-dashboard/manager.audit-log/manager.audit-log.component';
+import { ManagerProductsComponent } from '../../view/manager-dashboard/manager.products/manager.products.component';
+import { ManagerAnnouncementsComponent } from '../../view/manager-dashboard/manager.announcements/manager.announcements.component';
+import { ManagerSettingsComponent } from '../../view/manager-dashboard/manager.settings/manager.settings.component';
+import { UnifiedDashboardComponent } from '../../shared/components/unified-dashboard/unified-dashboard.component';
+
+// Configuration
+import { DashboardConfig } from '../../shared/models/navigation-config.model';
+
+// Dashboard configuration for manager
+const managerDashboardConfig: DashboardConfig = {
+  dashboardType: 'manager',
+  logoRoute: '/manager-dashboard',
+  navigationItems: [
+    { label: 'Home', route: './manager-home', icon: 'fa-home', title: 'Home' },
+    { label: 'Loan Approvals', route: './manager-loan-approval', icon: 'fa-handshake', title: 'Loan Approvals' },
+    { label: 'Employees', route: './manager-employees', icon: 'fa-users-gear', title: 'Employees' },
+    { label: 'Reports', route: './manager-reports', icon: 'fa-chart-pie', title: 'Reports' },
+    { label: 'Products', route: './manager-products', icon: 'fa-sliders', title: 'Products' },
+    { label: 'Announcements', route: './manager-announcements', icon: 'fa-bullhorn', title: 'Announcements' },
+    { label: 'Audit Log', route: './manager-audit-log', icon: 'fa-clipboard-list', title: 'Audit Log' },
+    { label: 'Add Employee', route: './manager-add-employee', icon: 'fa-user-plus', title: 'Add Employee' }
+  ]
+};
+
+const routes: Routes = [
+  {
+    path: '',
+    component: UnifiedDashboardComponent,
+    data: { preload: true, config: managerDashboardConfig },
+    children: [
+      {
+        path: '',
+        pathMatch: 'prefix',
+        redirectTo: 'manager-home'
+      },
+      {
+        path: 'manager-home',
+        component: ManagerHomeComponent,
+        title: 'Home'
+      },
+      {
+        path: 'manager-add-employee',
+        component: ManagerAddEmployeeComponent,
+        title: 'Add Employee'
+      },
+      {
+        path: 'manager-loan-approval',
+        component: ManagerLoanApprovalComponent,
+        title: 'Loan Approval'
+      },
+      {
+        path: 'manager-employees',
+        component: ManagerEmployeesComponent,
+        title: 'Employee Management'
+      },
+      {
+        path: 'manager-reports',
+        component: ManagerReportsComponent,
+        title: 'Branch Reports'
+      },
+      {
+        path: 'manager-products',
+        component: ManagerProductsComponent,
+        title: 'Product Configuration'
+      },
+      {
+        path: 'manager-audit-log',
+        component: ManagerAuditLogComponent,
+        title: 'Audit Log'
+      },
+      {
+        path: 'manager-announcements',
+        component: ManagerAnnouncementsComponent,
+        title: 'Announcements'
+      },
+      {
+        path: 'manager-settings',
+        component: ManagerSettingsComponent,
+        title: 'Settings'
+      }
+    ]
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class ManagerRoutingModule { }

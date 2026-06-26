@@ -1,0 +1,115 @@
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-headset"></i> Employee operations</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Serve customers faster with visible branch priorities</h1>
+      <p class="demo-subtitle">A focused employee dashboard for onboarding, customer support, withdrawals, and loan handoffs with demo-ready customer context.</p>
+    </div>
+    <a routerLink="/employee-dashboard/employee-register-customer" class="glass-button w-fit"><i class="fas fa-user-plus mr-2"></i>Add customer</a>
+  </div>
+</section>
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Customers</p><h2 class="mt-2 text-3xl font-black text-white">{{ customerCount }}</h2><p class="mt-1 text-xs text-blue-100">Demo branch records</p></div><div class="demo-kpi-icon"><i class="fas fa-users"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Ready for service</p><h2 class="mt-2 text-3xl font-black text-white">{{ readyCount }}</h2><p class="mt-1 text-xs text-emerald-100">Onboarding complete</p></div><div class="demo-kpi-icon"><i class="fas fa-id-card"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Needs attention</p><h2 class="mt-2 text-3xl font-black text-white">{{ needsAttentionCount }}</h2><p class="mt-1 text-xs text-amber-100">Loan review + onboarding</p></div><div class="demo-kpi-icon"><i class="fas fa-triangle-exclamation"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next action</p><h2 class="mt-2 text-xl font-black text-white">{{ firstName(loanReviewCustomer) || firstName(onboardingCustomer) || 'All clear' }}</h2><p class="mt-1 text-xs text-cyan-100">{{ (loanReviewCustomer || onboardingCustomer) ? 'Top of the review queue' : 'No pending actions' }}</p></div><div class="demo-kpi-icon"><i class="fas fa-list-check"></i></div></div></article>
+</section>
+<section class="grid grid-cols-1 gap-5 xl:grid-cols-3 mb-8">
+  <article class="demo-section-card xl:col-span-2">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div><h2 class="demo-section-title">Customer service queue</h2><p class="demo-section-helper">Prioritized sample work for a branch employee.</p></div>
+      <div class="relative">
+        <input class="glass-input pl-9 max-w-sm" placeholder="Search name, ID, status…" [(ngModel)]="searchTerm" (ngModelChange)="onCustomerSearchChange()" name="customerSearch" />
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+      </div>
+    </div>
+    <div class="mt-5 grid gap-3 md:grid-cols-2">
+      <div class="demo-action-card"><i class="fas fa-id-card text-emerald-200"></i><span><strong class="block text-white">Ready for service</strong><span class="text-sm text-slate-300">{{ readyCount }} customers onboarding complete</span></span><span class="ml-auto demo-status-pill demo-status-success">{{ readyCount }}</span></div>
+      <div class="demo-action-card"><i class="fas fa-file-invoice-dollar text-amber-200"></i><span><strong class="block text-white">Loan review</strong><span class="text-sm text-slate-300">Follow up with {{ firstName(loanReviewCustomer) }}</span></span><span class="ml-auto demo-status-pill demo-status-warning">{{ byStatusCount('Loan review') }}</span></div>
+      <div class="demo-action-card"><i class="fas fa-user-clock text-cyan-200"></i><span><strong class="block text-white">New onboarding</strong><span class="text-sm text-slate-300">{{ firstName(onboardingCustomer) }} profile pending account setup</span></span><span class="ml-auto demo-status-pill demo-status-info">{{ byStatusCount('New onboarding') }}</span></div>
+      <div class="demo-action-card"><i class="fas fa-star text-violet-200"></i><span><strong class="block text-white">Priority customer</strong><span class="text-sm text-slate-300">{{ firstName(priorityCustomer) }} has {{ priorityCustomer?.account_count || 0 }} linked accounts</span></span><span class="ml-auto demo-status-pill demo-status-info">VIP</span></div>
+    </div>
+  </article>
+  <article class="demo-section-card">
+    <h2 class="demo-section-title">Employee quick actions</h2><p class="demo-section-helper">Useful operational shortcuts.</p>
+    <div class="mt-5 space-y-3">
+      <a routerLink="/employee-dashboard/employee-register-customer" class="demo-action-card"><i class="fas fa-user-plus text-cyan-200"></i><span><strong class="block text-white">Register customer</strong><span class="text-sm text-slate-300">Start onboarding</span></span></a>
+      <a routerLink="/employee-dashboard/employee-withdraw" class="demo-action-card"><i class="fas fa-money-bill-transfer text-emerald-200"></i><span><strong class="block text-white">Withdrawal</strong><span class="text-sm text-slate-300">Process cash request</span></span></a>
+      <a routerLink="/employee-dashboard/employee-create-loan" class="demo-action-card"><i class="fas fa-file-signature text-amber-200"></i><span><strong class="block text-white">Manual loan</strong><span class="text-sm text-slate-300">Create application</span></span></a>
+    </div>
+  </article>
+</section>
+<!-- Customers Table -->
+<section class="demo-section-card animate-slide-up">
+  <div class="mb-6">
+    <h2 class="demo-section-title"><i class="fas fa-users mr-2 text-glass-cyan"></i>All customers</h2>
+    <p class="demo-section-helper">Complete branch customer directory.</p>
+  </div>
+
+  <!-- Table -->
+  <div>
+    <table class="w-full table-fixed">
+      <thead>
+        <tr>
+          <th class="w-12 text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th class="text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Customer</th>
+          <th class="hidden md:table-cell text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Gender</th>
+          <th class="hidden lg:table-cell text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Date of birth</th>
+          <th class="text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let customer of pagedCustomers; let i = index"
+          class="cursor-pointer transition-all duration-300 hover:bg-white/5 border-t border-white/5"
+          (click)="showCustomerDetails(customer)"
+          title="View customer details"
+        >
+          <td class="px-4 py-3 text-white/70 font-mono">{{ customerRangeStart + i }}</td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="glass-badge shrink-0 bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">{{ customer.user_id }}</span>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white">{{ customer.fullname }}</p>
+                <p class="truncate text-xs text-white/50">{{ '@' + customer.username }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="hidden md:table-cell px-4 py-3">
+            <span
+              class="glass-badge"
+              [ngClass]="{
+                'bg-gradient-to-r from-glass-blue/80 to-glass-cyan/80': customer.gender === 'Male',
+                'bg-gradient-to-r from-glass-pink/80 to-glass-purple/80': customer.gender === 'Female',
+                'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80': customer.gender !== 'Male' && customer.gender !== 'Female'
+              }"
+            >
+              <i [ngClass]="{ 'fas fa-mars': customer.gender === 'Male', 'fas fa-venus': customer.gender === 'Female', 'fas fa-genderless': customer.gender !== 'Male' && customer.gender !== 'Female' }" class="mr-1"></i>
+              {{ customer.gender }}
+            </span>
+          </td>
+          <td class="hidden lg:table-cell px-4 py-3 text-white/80">{{ customer.dob | date: 'MMM d, y' }}</td>
+          <td class="px-4 py-3 text-white/70 text-sm truncate">{{ customer.email }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredCustomers.length === 0" class="text-center py-12">
+      <div class="text-6xl text-white/20 mb-4">
+        <i class="fas fa-users"></i>
+      </div>
+      <p class="text-white/60">{{ (customers && customers.length) ? 'No customers match your search.' : 'No customers found' }}</p>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="filteredCustomers.length > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+      <p class="text-xs text-white/60">Showing {{ customerRangeStart }}–{{ customerRangeEnd }} of {{ filteredCustomers.length }} customers</p>
+      <div class="flex items-center gap-2">
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="customerPage === 1" [class.opacity-40]="customerPage === 1" (click)="setCustomerPage(customerPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+        <span class="text-xs text-white/70">Page {{ customerPage }} of {{ totalCustomerPages }}</span>
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="customerPage === totalCustomerPages" [class.opacity-40]="customerPage === totalCustomerPages" (click)="setCustomerPage(customerPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>

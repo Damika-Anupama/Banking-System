@@ -1,0 +1,90 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-money-check-dollar"></i> Cheque operations</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Cheque clearing</h1>
+      <p class="demo-subtitle">Track deposited cheques through the clearing cycle and post cleared funds.</p>
+    </div>
+    <div class="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white/70">
+      <i class="fas fa-hourglass-half mr-2 text-glass-orange"></i>
+      Pending value: <strong class="text-white">Rs. {{ pendingValue | number }}</strong>
+    </div>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Received</p><h2 class="mt-2 text-3xl font-black text-white">{{ receivedCount }}</h2><p class="mt-1 text-xs text-amber-100">Awaiting clearing</p></div><div class="demo-kpi-icon"><i class="fas fa-inbox"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">In clearing</p><h2 class="mt-2 text-3xl font-black text-white">{{ inClearingCount }}</h2><p class="mt-1 text-xs text-blue-100">With clearing house</p></div><div class="demo-kpi-icon"><i class="fas fa-arrows-rotate"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Cleared</p><h2 class="mt-2 text-3xl font-black text-white">{{ clearedCount }}</h2><p class="mt-1 text-xs text-emerald-100">Funds credited</p></div><div class="demo-kpi-icon"><i class="fas fa-circle-check"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total in pipeline</p><h2 class="mt-2 text-3xl font-black text-white">{{ cheques.length }}</h2><p class="mt-1 text-xs text-cyan-100">All cheques tracked</p></div><div class="demo-kpi-icon"><i class="fas fa-layer-group"></i></div></div></article>
+</section>
+
+<!-- Cheque table -->
+<section class="demo-section-card animate-slide-up">
+  <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-5">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-money-check-dollar mr-2 text-glass-cyan"></i>Clearing pipeline</h2>
+      <p class="demo-section-helper">Advance cheques through clearing or mark them returned.</p>
+    </div>
+    <div class="flex flex-col gap-2 sm:flex-row">
+      <div class="relative">
+        <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search cheque, account, bank…" [(ngModel)]="searchTerm" name="chequeSearch" />
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+      </div>
+      <select class="glass-input" [(ngModel)]="statusFilter" name="chequeStatusFilter">
+        <option value="all">All statuses</option>
+        <option value="Received">Received</option>
+        <option value="In clearing">In clearing</option>
+        <option value="Cleared">Cleared</option>
+        <option value="Returned">Returned</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="demo-table-shell is-fluid overflow-x-auto">
+    <table class="w-full table-fixed">
+      <thead>
+        <tr>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Cheque</th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Drawer bank</th>
+          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">To account</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Expected</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+          <th class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filteredCheques" class="transition-all duration-300 hover:bg-white/5">
+          <td class="px-5 py-3">
+            <p class="font-semibold text-white">{{ c.cheque_no }}</p>
+            <p class="text-xs text-white/50">{{ c.cheque_id }}</p>
+          </td>
+          <td class="hidden md:table-cell px-5 py-3 text-white/90 truncate">{{ c.drawer_bank }}</td>
+          <td class="hidden lg:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ c.account_id }}</td>
+          <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ c.amount | number }}</td>
+          <td class="hidden lg:table-cell px-5 py-3 text-white/90 whitespace-nowrap">{{ c.expected_clear | date: 'MMM d' }}</td>
+          <td class="px-5 py-3"><span class="demo-status-pill" [ngClass]="statusTone(c.status)">{{ c.status }}</span></td>
+          <td class="px-5 py-3 text-right">
+            <div class="flex flex-wrap justify-end gap-2">
+              <button *ngIf="canAdvance(c)" type="button" class="decision-btn decision-btn--approve" (click)="advance(c)">
+                <i class="fas fa-arrow-right"></i>{{ c.status === 'Received' ? 'To clearing' : 'Clear' }}
+              </button>
+              <button *ngIf="canAdvance(c)" type="button" class="decision-btn decision-btn--reject" (click)="markReturned(c)">
+                <i class="fas fa-rotate-left"></i>Return
+              </button>
+              <span *ngIf="!canAdvance(c)" class="text-xs text-white/40"><i class="fas fa-flag-checkered mr-1"></i>Final</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredCheques.length === 0" class="text-center py-12">
+      <div class="text-6xl text-white/20 mb-4"><i class="fas fa-money-check-dollar"></i></div>
+      <p class="text-white/60">No cheques match your filters.</p>
+    </div>
+  </div>
+</section>

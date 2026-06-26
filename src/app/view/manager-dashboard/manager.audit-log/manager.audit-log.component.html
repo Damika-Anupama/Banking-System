@@ -1,0 +1,69 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-clipboard-list"></i> Governance</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Audit log</h1>
+      <p class="demo-subtitle">Branch activity trail — approvals, staff changes, account events, and security alerts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Logged events</p><h2 class="mt-2 text-3xl font-black text-white">{{ entries.length }}</h2><p class="mt-1 text-xs text-blue-100">This period</p></div><div class="demo-kpi-icon"><i class="fas fa-list"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Approvals</p><h2 class="mt-2 text-3xl font-black text-white">{{ approvalCount }}</h2><p class="mt-1 text-xs text-emerald-100">Decisions granted</p></div><div class="demo-kpi-icon"><i class="fas fa-circle-check"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Rejections</p><h2 class="mt-2 text-3xl font-black text-white">{{ rejectionCount }}</h2><p class="mt-1 text-xs text-rose-100">Decisions declined</p></div><div class="demo-kpi-icon"><i class="fas fa-circle-xmark"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Security events</p><h2 class="mt-2 text-3xl font-black text-white">{{ securityCount }}</h2><p class="mt-1 text-xs text-amber-100">Flags & checks</p></div><div class="demo-kpi-icon"><i class="fas fa-shield-halved"></i></div></div></article>
+</section>
+
+<!-- Audit table -->
+<section class="demo-section-card animate-slide-up">
+  <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-5">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-timeline mr-2 text-glass-cyan"></i>Activity trail</h2>
+      <p class="demo-section-helper">Chronological record of branch actions.</p>
+    </div>
+    <div class="flex flex-col gap-2 sm:flex-row">
+      <div class="relative">
+        <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search actor, action, detail…" [(ngModel)]="searchTerm" name="auditSearch" />
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+      </div>
+      <select class="glass-input" [(ngModel)]="categoryFilter" name="categoryFilter">
+        <option value="all">All categories</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="demo-table-shell is-fluid overflow-x-auto">
+    <table class="w-full table-fixed">
+      <thead>
+        <tr>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Time</th>
+          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actor</th>
+          <th class="hidden sm:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Category</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Action</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Outcome</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of filteredEntries" class="transition-all duration-300 hover:bg-white/5">
+          <td class="hidden md:table-cell px-5 py-3 text-white/90 whitespace-nowrap">{{ e.timestamp | date: 'MMM d, HH:mm' }}</td>
+          <td class="hidden lg:table-cell px-5 py-3 text-white/90 truncate">{{ e.actor }}</td>
+          <td class="hidden sm:table-cell px-5 py-3"><span class="glass-badge" [ngClass]="categoryTone(e.category)">{{ e.category }}</span></td>
+          <td class="px-5 py-3">
+            <p class="font-semibold text-white truncate">{{ e.action }}</p>
+            <p class="text-xs text-white/50 truncate">{{ e.detail }}</p>
+          </td>
+          <td class="px-5 py-3"><span class="demo-status-pill" [ngClass]="outcomeTone(e.outcome)">{{ e.outcome }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredEntries.length === 0" class="text-center py-12">
+      <div class="text-6xl text-white/20 mb-4"><i class="fas fa-clipboard-list"></i></div>
+      <p class="text-white/60">No audit entries match your filters.</p>
+    </div>
+  </div>
+</section>

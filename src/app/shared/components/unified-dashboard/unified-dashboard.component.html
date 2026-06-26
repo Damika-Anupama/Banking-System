@@ -1,0 +1,265 @@
+<!-- Customer Dashboard Layout (original style with different structure) -->
+<div *ngIf="isCustomerDashboard()" class="customer-dashboard-shell min-h-screen lg:h-screen lg:overflow-hidden lg:flex">
+  <!-- Sidebar -->
+  <aside class="sidebar-wrapper glass-sidebar hidden lg:flex lg:flex-col w-64 fixed h-full z-20">
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10">
+      <a [routerLink]="config.logoRoute" class="flex items-center justify-center">
+        <img
+          [src]="(isDarkMode$ | async) ? 'assets/logo-dark.png' : 'assets/logo.png'"
+          alt="Banking System logo"
+          class="h-32 w-auto max-w-full rounded-2xl px-4 py-3 object-contain shadow-lg ring-1"
+          [ngClass]="(isDarkMode$ | async) ? 'bg-slate-950 ring-cyan-300/20' : 'bg-white ring-slate-200'"
+        >
+      </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-6 overflow-y-auto">
+      <ul class="space-y-2">
+        <li *ngFor="let item of navigationItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: false }"
+            [attr.aria-label]="item.label"
+            class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
+          >
+            <i [class]="'fas ' + item.icon + ' text-xl'"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+      <!-- Command palette shortcut hint -->
+      <div class="mt-4 flex items-center gap-2 rounded-xl border border-white/8 bg-white/[0.04] px-3 py-2 text-xs text-white/35 cursor-pointer hover:bg-white/[0.08] transition" (click)="openCommandPalette()" title="Open command palette">
+        <i class="fas fa-search text-[10px]"></i>
+        <span>Search pages...</span>
+        <span class="ml-auto font-mono text-[10px] border border-white/15 rounded px-1">⌘K</span>
+      </div>
+    </nav>
+
+    <!-- Footer Links -->
+    <div class="p-4 border-t border-white/10">
+      <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-sm font-semibold profile-name">{{ sessionUser.name }}</span>
+          <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }}</span>
+        </span>
+        <i class="fas fa-ellipsis-vertical text-white/40"></i>
+      </button>
+      <div class="mb-4 grid grid-cols-4 gap-2">
+        <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
+          <i class="fas fa-bell"></i>
+          <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">{{ unreadCount }}</span>
+        </button>
+        <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
+        <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
+        <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+      <p class="text-white/30 text-[10px] text-center font-mono mb-1">{{ clockDisplay }}</p>
+      <p class="text-white/50 text-xs text-center">
+        &copy; {{ currentYear }} Banking System
+      </p>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col lg:ml-64 min-w-0 lg:h-screen lg:overflow-hidden">
+    <!-- Top Navbar -->
+    <header class="glass-navbar sticky top-0 z-10 lg:hidden">
+      <div class="flex items-center justify-between px-4 lg:px-8 py-4">
+        <!-- Mobile Menu Button & Logo -->
+        <div class="flex items-center gap-4">
+          <button
+            class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+            aria-label="Open navigation menu" title="Open navigation menu"
+            (click)="toggleSidebar()"
+          >
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+          <img
+            [src]="(isDarkMode$ | async) ? 'assets/logo-dark.png' : 'assets/logo.png'"
+            alt="Banking System logo"
+            class="h-10 w-auto lg:hidden"
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="customer-dashboard-content flex-1 min-h-0 p-4 lg:p-8 overflow-y-auto overscroll-contain">
+      <div class="max-w-7xl mx-auto">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div
+    *ngIf="isSidebarOpen"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <!-- Mobile Sidebar -->
+  <aside
+    *ngIf="isSidebarOpen"
+    class="sidebar-wrapper glass-sidebar flex flex-col w-64 fixed h-full z-40 lg:hidden animate-slide-right"
+  >
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+      <a [routerLink]="config.logoRoute" class="flex items-center">
+        <img
+          [src]="(isDarkMode$ | async) ? 'assets/logo-dark.png' : 'assets/logo.png'"
+          alt="Banking System logo"
+          class="h-28 w-auto max-w-full rounded-2xl px-4 py-3 object-contain shadow-lg ring-1"
+          [ngClass]="(isDarkMode$ | async) ? 'bg-slate-950 ring-cyan-300/20' : 'bg-white ring-slate-200'"
+        >
+      </a>
+      <button
+        class="text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+        aria-label="Close navigation menu" title="Close navigation menu"
+        (click)="toggleSidebar()"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-6 overflow-y-auto">
+      <ul class="space-y-2">
+        <li *ngFor="let item of navigationItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: false }"
+            [attr.aria-label]="item.label"
+            class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
+            (click)="toggleSidebar()"
+          >
+            <i [class]="'fas ' + item.icon + ' text-xl'"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer Links -->
+    <div class="p-4 border-t border-white/10">
+      <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-sm font-semibold profile-name">{{ sessionUser.name }}</span>
+          <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }}</span>
+        </span>
+        <i class="fas fa-ellipsis-vertical text-white/40"></i>
+      </button>
+      <div class="mb-4 grid grid-cols-4 gap-2">
+        <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
+          <i class="fas fa-bell"></i>
+          <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">{{ unreadCount }}</span>
+        </button>
+        <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
+        <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
+        <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+      <p class="text-white/30 text-[10px] text-center font-mono mb-1">{{ clockDisplay }}</p>
+      <p class="text-white/50 text-xs text-center">
+        &copy; {{ currentYear }} Banking System
+      </p>
+    </div>
+  </aside>
+</div>
+
+<!-- Employee/Manager Dashboard Layout -->
+<div *ngIf="!isCustomerDashboard()" class="min-h-screen lg:h-screen lg:overflow-hidden">
+  <!-- Mobile Sidebar Overlay -->
+  <div
+    *ngIf="isSidebarOpen"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <!-- Sidebar -->
+  <aside
+    class="fixed left-0 top-0 h-full w-72 glass-sidebar z-50 transform transition-transform duration-300 ease-in-out"
+    [ngClass]="{'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen, 'lg:translate-x-0': true}"
+  >
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10">
+      <a [routerLink]="config.logoRoute" class="flex items-center gap-3">
+        <img [src]="(isDarkMode$ | async) ? 'assets/logo-dark.png' : 'assets/logo.png'" alt="Banking System logo" class="h-32 w-auto max-w-full rounded-2xl px-4 py-3 object-contain shadow-lg ring-1"
+          [ngClass]="(isDarkMode$ | async) ? 'bg-slate-950 ring-cyan-300/20' : 'bg-white ring-slate-200'" />
+      </a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="p-4 space-y-2">
+      <a
+        *ngFor="let item of navigationItems"
+        [routerLink]="item.route"
+        routerLinkActive="active-nav-item"
+        [attr.aria-label]="item.label"
+        class="nav-item"
+      >
+        <i [class]="'fas ' + item.icon + ' nav-icon'"></i>
+        <span>{{ item.label }}</span>
+      </a>
+      <!-- Command palette shortcut hint -->
+      <div class="mt-2 flex items-center gap-2 rounded-xl border border-white/8 bg-white/[0.04] px-3 py-2 text-xs text-white/35 cursor-pointer hover:bg-white/[0.08] transition" (click)="openCommandPalette()" title="Open command palette">
+        <i class="fas fa-search text-[10px]"></i>
+        <span>Search pages...</span>
+        <span class="ml-auto font-mono text-[10px] border border-white/15 rounded px-1">⌘K</span>
+      </div>
+    </nav>
+
+    <!-- Footer -->
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+      <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-sm font-semibold profile-name">{{ sessionUser.name }}</span>
+          <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }}</span>
+        </span>
+        <i class="fas fa-ellipsis-vertical text-white/40"></i>
+      </button>
+      <div class="mb-4 grid grid-cols-4 gap-2">
+        <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
+          <i class="fas fa-bell"></i>
+          <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">{{ unreadCount }}</span>
+        </button>
+        <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
+        <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
+        <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+      <div class="text-white/60 text-xs text-center">
+        <p class="font-semibold text-white/80 mb-1">Banking System</p>
+        <p class="text-white/30 text-[10px] font-mono mt-1">{{ clockDisplay }}</p>
+        <p class="mt-1">© {{ currentYear }}</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="lg:ml-72 min-w-0 lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
+    <!-- Top Navbar -->
+    <nav class="glass-navbar sticky top-0 z-30 lg:hidden">
+      <div class="flex items-center justify-between">
+        <!-- Left: Mobile Menu Button -->
+        <button
+          class="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+          aria-label="Open navigation menu" title="Open navigation menu"
+          (click)="toggleSidebar()"
+        >
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="p-6 flex-1 min-h-0 lg:overflow-y-auto overscroll-contain">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,115 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-users-gear"></i> Branch staffing</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Employee management</h1>
+      <p class="demo-subtitle">Manage your branch team — review roles, activity, and access status.</p>
+    </div>
+    <a routerLink="/manager-dashboard/manager-add-employee" class="glass-button w-fit"><i class="fas fa-user-plus mr-2"></i>Add employee</a>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Team size</p><h2 class="mt-2 text-3xl font-black text-white">{{ totalCount }}</h2><p class="mt-1 text-xs text-blue-100">Branch employees</p></div><div class="demo-kpi-icon"><i class="fas fa-users"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Active</p><h2 class="mt-2 text-3xl font-black text-white">{{ activeCount }}</h2><p class="mt-1 text-xs text-emerald-100">With dashboard access</p></div><div class="demo-kpi-icon"><i class="fas fa-user-check"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Inactive</p><h2 class="mt-2 text-3xl font-black text-white">{{ inactiveCount }}</h2><p class="mt-1 text-xs text-rose-100">Access suspended</p></div><div class="demo-kpi-icon"><i class="fas fa-user-slash"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Transactions handled</p><h2 class="mt-2 text-2xl font-black text-white">{{ totalTransactions | number }}</h2><p class="mt-1 text-xs text-cyan-100">Team lifetime total</p></div><div class="demo-kpi-icon"><i class="fas fa-arrow-trend-up"></i></div></div></article>
+</section>
+
+<!-- Role breakdown -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <h2 class="demo-section-title"><i class="fas fa-sitemap mr-2 text-glass-purple"></i>Role distribution</h2>
+  <p class="demo-section-helper">Team composition across branch roles.</p>
+  <div class="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div *ngFor="let role of roles" class="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+      <p class="text-xs uppercase tracking-wider text-slate-400">{{ role }}</p>
+      <p class="mt-1 text-2xl font-black">{{ roleCount(role) }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Performance leaderboard -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-trophy mr-2 text-glass-amber"></i>Performance leaderboard</h2>
+      <p class="demo-section-helper">Lifetime transactions handled by active employees.</p>
+    </div>
+    <span class="demo-status-pill demo-status-success"><i class="fas fa-users mr-1"></i>{{ activeCount }} active</span>
+  </div>
+  <div class="relative mt-5 h-64">
+    <canvas id="employeePerformanceChart"></canvas>
+  </div>
+</section>
+
+<!-- Roster -->
+<section class="demo-section-card animate-slide-up">
+  <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-5">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-id-badge mr-2 text-glass-cyan"></i>Employee roster</h2>
+      <p class="demo-section-helper">Click a row for details, or toggle access status.</p>
+    </div>
+    <div class="flex flex-col gap-2 sm:flex-row">
+      <div class="relative">
+        <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search name, ID, role…" [(ngModel)]="searchTerm" name="employeeSearch" />
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+      </div>
+      <select class="glass-input" [(ngModel)]="roleFilter" name="roleFilter">
+        <option value="all">All roles</option>
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="demo-table-shell is-fluid overflow-x-auto">
+    <table class="w-full table-fixed">
+      <thead>
+        <tr>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Employee</th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Role</th>
+          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Joined</th>
+          <th class="hidden lg:table-cell text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Transactions</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+          <th class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let emp of filteredEmployees" class="cursor-pointer transition-all duration-300 hover:bg-white/5" (click)="viewEmployee(emp)" title="View employee details">
+          <td class="px-5 py-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-xs font-bold text-white">{{ initials(emp.fullname) }}</span>
+              <div class="min-w-0">
+                <p class="truncate font-medium text-white">{{ emp.fullname }}</p>
+                <p class="truncate text-xs text-white/50">{{ emp.employee_id }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="hidden md:table-cell px-5 py-3">
+            <span class="glass-badge" [ngClass]="roleTone(emp.role)">{{ emp.role }}</span>
+          </td>
+          <td class="hidden lg:table-cell px-5 py-3 text-white/90 whitespace-nowrap">{{ emp.joined_date | date: 'MMM y' }}</td>
+          <td class="hidden lg:table-cell px-5 py-3 text-right text-white/90 font-semibold">{{ emp.transactions_handled | number }}</td>
+          <td class="px-5 py-3">
+            <span class="demo-status-pill" [ngClass]="emp.status === 'Active' ? 'demo-status-success' : 'demo-status-danger'">{{ emp.status }}</span>
+          </td>
+          <td class="px-5 py-3 text-right">
+            <button type="button"
+                    class="decision-btn"
+                    [ngClass]="emp.status === 'Active' ? 'decision-btn--reject' : 'decision-btn--approve'"
+                    (click)="$event.stopPropagation(); toggleStatus(emp)">
+              <i class="fas" [ngClass]="emp.status === 'Active' ? 'fa-user-slash' : 'fa-user-check'"></i>
+              {{ emp.status === 'Active' ? 'Deactivate' : 'Activate' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredEmployees.length === 0" class="text-center py-12">
+      <div class="text-6xl text-white/20 mb-4"><i class="fas fa-users-slash"></i></div>
+      <p class="text-white/60">No employees match your filters.</p>
+    </div>
+  </div>
+</section>

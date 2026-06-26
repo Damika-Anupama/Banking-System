@@ -1,0 +1,60 @@
+<div *ngIf="isOpen" class="palette-overlay" (click)="close()">
+  <div class="palette-modal" (click)="$event.stopPropagation()" role="dialog" aria-label="Command palette" aria-modal="true">
+
+    <!-- Search input row -->
+    <div class="palette-search-row">
+      <i class="fas fa-search palette-search-icon"></i>
+      <input
+        id="palette-search-input"
+        type="text"
+        class="palette-input"
+        placeholder="Search pages, actions, features..."
+        [value]="query"
+        (input)="onSearchInput($event)"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Search"
+      />
+      <span class="palette-esc-hint">Esc</span>
+    </div>
+
+    <div class="palette-divider"></div>
+
+    <!-- Results list -->
+    <ul *ngIf="items.length > 0" class="palette-list" role="listbox">
+      <li
+        *ngFor="let item of items; let i = index"
+        class="palette-item"
+        [class.palette-item--active]="selectedIndex === i"
+        role="option"
+        [attr.aria-selected]="selectedIndex === i"
+        (click)="navigate(item)"
+        (mouseenter)="selectedIndex = i"
+      >
+        <span class="palette-item-icon">
+          <i [class]="'fas ' + item.icon"></i>
+        </span>
+        <span class="palette-item-text">
+          <span class="palette-item-label">{{ item.label }}</span>
+          <span class="palette-item-desc">{{ item.description }}</span>
+        </span>
+        <i *ngIf="selectedIndex === i" class="fas fa-arrow-right palette-item-arrow"></i>
+      </li>
+    </ul>
+
+    <!-- Empty state -->
+    <div *ngIf="items.length === 0" class="palette-empty">
+      <i class="fas fa-magnifying-glass"></i>
+      <p>No results for <strong>"{{ query }}"</strong></p>
+    </div>
+
+    <!-- Footer hints -->
+    <div class="palette-footer">
+      <span><kbd>↑↓</kbd> Navigate</span>
+      <span><kbd>↵</kbd> Open</span>
+      <span><kbd>Esc</kbd> Close</span>
+      <span class="palette-footer-brand">Banking System</span>
+    </div>
+
+  </div>
+</div>

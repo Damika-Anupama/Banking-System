@@ -1,0 +1,453 @@
+.transaction-workspace {
+  display: block;
+}
+
+/* Horizontal transfer stepper */
+.transfer-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.transfer-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0.25rem 0.25rem;
+}
+
+.transfer-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 180ms ease;
+}
+
+.transfer-step-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 180ms ease;
+}
+
+.transfer-step.is-active .transfer-step-badge {
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+.transfer-step.is-active .transfer-step-label { color: #fff; }
+
+.transfer-step.is-done .transfer-step-badge {
+  background: rgba(16, 185, 129, 0.9);
+  border-color: transparent;
+  color: #fff;
+}
+.transfer-step.is-done .transfer-step-label { color: rgba(255, 255, 255, 0.85); }
+
+.transfer-step-divider {
+  flex: 1;
+  height: 2px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 180ms ease;
+}
+.transfer-step-divider.is-done { background: rgba(16, 185, 129, 0.6); }
+
+@media (max-width: 480px) {
+  .transfer-step-label { display: none; }
+}
+
+/* Light-mode stepper */
+:host-context(html:not(.dark)) .transfer-step-badge {
+  border-color: rgba(15, 23, 42, 0.18);
+  background: rgba(15, 23, 42, 0.04);
+  color: #475569;
+}
+:host-context(html:not(.dark)) .transfer-step-label { color: #64748b; }
+:host-context(html:not(.dark)) .transfer-step.is-active .transfer-step-label { color: #0f172a; }
+:host-context(html:not(.dark)) .transfer-step.is-done .transfer-step-label { color: #334155; }
+:host-context(html:not(.dark)) .transfer-step-divider { background: rgba(15, 23, 42, 0.12); }
+
+.transaction-header-meta,
+.transaction-history-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.transaction-header-meta {
+  align-items: center;
+}
+
+.transaction-account-hero,
+.transaction-limit-card {
+  padding: 1rem;
+}
+
+.transaction-kpi-card,
+.transaction-control-row,
+.transaction-review-card,
+.transaction-summary-chip {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  padding: 0.875rem;
+}
+
+.transaction-kpi-card p,
+.transaction-summary-chip span,
+.transaction-control-row span,
+.transaction-review-card span {
+  color: rgb(203 213 225);
+  font-size: 0.75rem;
+}
+
+.transaction-kpi-card strong,
+.transaction-summary-chip strong,
+.transaction-control-row strong,
+.transaction-review-card strong {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.transaction-kpi-card span,
+.transaction-review-card p {
+  display: block;
+  margin-top: 0.25rem;
+  color: rgb(148 163 184);
+  font-size: 0.72rem;
+}
+
+.transaction-control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.transaction-review-card {
+  min-height: 100%;
+}
+
+.transaction-form-section {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1rem;
+}
+
+.transaction-form-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.transaction-form-section-header > span {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #fff;
+  font-weight: 900;
+}
+
+.transaction-form-section-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.transaction-form-section-header p {
+  margin: 0.2rem 0 0;
+  color: rgb(148 163 184);
+  font-size: 0.78rem;
+}
+
+.transaction-review-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.transaction-review-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.transaction-review-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.45rem;
+}
+
+.transaction-review-list strong {
+  margin-top: 0;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.transaction-account-card {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.875rem;
+  color: #fff;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.transaction-account-card:hover,
+.transaction-account-card.is-selected {
+  border-color: rgba(103, 232, 249, 0.45);
+  background: rgba(34, 211, 238, 0.12);
+  transform: translateY(-1px);
+}
+
+.transaction-account-card strong,
+.transaction-account-card small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-account-card small {
+  margin-top: 0.2rem;
+  color: rgb(203 213 225);
+  font-size: 0.75rem;
+}
+
+.transaction-account-check {
+  color: rgb(103 232 249);
+  flex: 0 0 auto;
+  padding-top: 0.125rem;
+}
+
+.transaction-account-balance {
+  flex: 0 0 auto;
+  color: rgb(209 250 229);
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.transaction-history-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.transaction-history-tools .glass-input {
+  min-width: 12rem;
+}
+
+.transaction-history-table {
+  min-width: 900px !important;
+}
+
+.transaction-history-table th,
+.transaction-history-table td {
+  padding: 1rem 1.1rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.transaction-history-table th {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.transaction-history-table tbody tr {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.transaction-history-table td strong,
+.transaction-history-table td small {
+  display: block;
+}
+
+.transaction-history-table td small {
+  margin-top: 0.2rem;
+  color: rgb(148 163 184);
+  font-size: 0.75rem;
+}
+
+.transaction-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgb(224 242 254);
+  font-weight: 700;
+}
+
+.transaction-action-btn {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.transaction-channel {
+  color: rgb(103 232 249) !important;
+  font-weight: 700;
+}
+
+.transaction-pagination {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+}
+
+.transaction-page-size,
+.transaction-page-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.transaction-page-size span,
+.transaction-page-controls span {
+  color: rgb(203 213 225);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.transaction-page-size .glass-input {
+  width: 5rem;
+  min-width: 5rem;
+  padding: 0.45rem 0.75rem;
+}
+
+.transaction-page-controls {
+  flex-wrap: wrap;
+}
+
+.transaction-page-controls .glass-button-secondary {
+  padding: 0.45rem 0.8rem;
+  font-size: 0.78rem;
+}
+
+.transaction-page-controls .glass-button-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+
+@media (min-width: 768px) {
+  .transaction-pagination {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 1024px) {
+  .transaction-history-header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .transaction-history-tools,
+  .transaction-header-meta {
+    flex-direction: column;
+  }
+
+  .transaction-history-tools .glass-input,
+  .transaction-history-tools .relative {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+:host-context(html:not(.dark)) .transaction-workspace .demo-page-header,
+:host-context(html:not(.dark)) .transaction-workspace .demo-section-card,
+:host-context(html:not(.dark)) .transaction-workspace .transaction-kpi-card,
+:host-context(html:not(.dark)) .transaction-workspace .transaction-control-row,
+:host-context(html:not(.dark)) .transaction-workspace .transaction-review-card,
+:host-context(html:not(.dark)) .transaction-workspace .transaction-form-section,
+:host-context(html:not(.dark)) .transaction-workspace .transaction-summary-chip,
+:host-context(html:not(.dark)) .transaction-workspace .demo-table-shell {
+  border-color: rgba(37, 99, 235, 0.16) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Linked source account rows are list items, not elevated cards — flat in light mode */
+:host-context(html:not(.dark)) .transaction-workspace .transaction-account-card {
+  border-color: rgba(37, 99, 235, 0.16) !important;
+  background: rgba(248, 250, 252, 0.9) !important;
+  box-shadow: none !important;
+}
+
+:host-context(html:not(.dark)) .transaction-workspace .demo-title,
+:host-context(html:not(.dark)) .transaction-workspace .demo-section-title,
+:host-context(html:not(.dark)) .transaction-workspace .transaction-form-section-header h3,
+:host-context(html:not(.dark)) .transaction-workspace strong,
+:host-context(html:not(.dark)) .transaction-workspace td,
+:host-context(html:not(.dark)) .transaction-workspace th,
+:host-context(html:not(.dark)) .transaction-workspace .font-bold,
+:host-context(html:not(.dark)) .transaction-workspace .font-black {
+  color: #0f172a !important;
+}
+
+:host-context(html:not(.dark)) .transaction-workspace p,
+:host-context(html:not(.dark)) .transaction-workspace small,
+:host-context(html:not(.dark)) .transaction-workspace span,
+:host-context(html:not(.dark)) .transaction-workspace .demo-section-helper,
+:host-context(html:not(.dark)) .transaction-workspace .text-slate-300,
+:host-context(html:not(.dark)) .transaction-workspace .text-white\/50 {
+  color: #334155 !important;
+}
+
+:host-context(html:not(.dark)) .transaction-workspace .demo-status-pill,
+:host-context(html:not(.dark)) .transaction-workspace .glass-badge {
+  border-color: rgba(14, 165, 233, 0.24) !important;
+  color: #075985 !important;
+}
+
+:host-context(html:not(.dark)) .transaction-workspace .transaction-account-card:hover,
+:host-context(html:not(.dark)) .transaction-workspace .transaction-account-card.is-selected,
+:host-context(html:not(.dark)) .transaction-workspace .transaction-history-table tbody tr:hover {
+  background: rgba(224, 242, 254, 0.8) !important;
+}
+
+:host-context(html:not(.dark)) .transaction-workspace .glass-input {
+  border-color: rgba(37, 99, 235, 0.2) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  color: #0f172a !important;
+}

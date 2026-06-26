@@ -212,7 +212,7 @@ If you have MySQL installed locally:
 The database dump includes pre-configured test accounts for all three user types:
 
 #### Customer Account
-- **Email:** damikaanupama@gmail.com
+- **Email:** demo.user@example.com
 - **Password:** 1234
 - **Access:** Account management, transfers, withdrawals, online loan applications, fixed deposits
 
@@ -344,7 +344,7 @@ Keep-Alive Service  → UptimeRobot    (FREE)
 
 | Role | Email | Password |
 |------|-------|----------|
-| Customer | damikaanupama@gmail.com | 1234 |
+| Customer | demo.user@example.com | 1234 |
 | Employee | nimalnimal@gmail.com | 4567 |
 | Manager | jkesoni@alexa.com | Jewelle |
 

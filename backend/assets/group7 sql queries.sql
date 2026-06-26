@@ -147,7 +147,7 @@ CREATE TABLE `loan_installment` (
 
 
 INSERT INTO user (username, password, fullname, type, gender, dob, address, email, contact_no) VALUES
-("Damia", "$2b$10$UBJKoR/jDtcYmmk4FpvgTuDVThJS/Luh3U5WANxFz2dIC./CzbnXy", "Damika Anupama", "CUSTOMER", "MALE", NOW(), "No.17, Train Road, Panaduwara", "damikaanupama@gmail.com", "0721436578"),
+("Damia", "$2b$10$UBJKoR/jDtcYmmk4FpvgTuDVThJS/Luh3U5WANxFz2dIC./CzbnXy", "Damika Anupama", "CUSTOMER", "MALE", NOW(), "No.17, Train Road, Panaduwara", "demo.user@example.com", "0721436578"),
 ('agerlghyg0', 'Abigail', 'Abigail Gerling', 'ADMIN', 'MALE', '2022-11-09 13:55:03', '2031 Welch Pass', 'agerling0@intel.com', '2557996331'),
 ('bbackman1', 'Bartolemo', 'Bartolemo Backman', 'MANAGER', 'OTHER', '2022-11-27 01:17:35', '1039 Northfield Lane', 'bbackman1@icq.com', '1516546427'),
 ('agalway2', 'Alyce', 'Alyce Galway', 'EMPLOYEE', 'OTHER', '2022-11-24 21:40:02', '9937 Green Ridge Alley', 'agalway2@intel.com', '1619268157'),
