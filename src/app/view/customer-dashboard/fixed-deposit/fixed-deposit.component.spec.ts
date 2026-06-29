@@ -5,7 +5,7 @@
  * Target coverage: 90%+
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -546,37 +546,43 @@ describe('FixedDepositComponent', () => {
       );
     });
 
-    it('should accept valid positive amount as string (lines 174-182 pass)', () => {
+    it('should accept valid positive amount as string (lines 174-182 pass)', fakeAsync(() => {
       component.selectedSavingAccount = { saving_account_id: 1, account_type: 'SAVINGS', amount: '100000' };
       component.selectedPackage = 1;
       component.savingAccountId = 1;
       component.fdAmount = '50000';
       component.duration = '1 year';
       component.rpa = '14%';
+      component.acceptedTerms = true;
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
 
       mockFDService.createFD.and.returnValue(of({ message: 'Success' }));
 
       component.checkForm();
+      tick();
 
       // String '50000' passes regex, Number('50000') = 50000 > 0, passes positive validation
       expect(mockFDService.createFD).toHaveBeenCalled();
-    });
+    }));
 
-    it('should accept valid positive amount as number (lines 174-182 pass)', () => {
+    it('should accept valid positive amount as number (lines 174-182 pass)', fakeAsync(() => {
       component.selectedSavingAccount = { saving_account_id: 1, account_type: 'SAVINGS', amount: '100000' };
       component.selectedPackage = 1;
       component.savingAccountId = 1;
       component.fdAmount = 25000;
       component.duration = '6 months';
       component.rpa = '13%';
+      component.acceptedTerms = true;
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
 
       mockFDService.createFD.and.returnValue(of({ message: 'Success' }));
 
       component.checkForm();
+      tick();
 
       // Number 25000 passes regex, Number(25000) = 25000 > 0, passes positive validation
       expect(mockFDService.createFD).toHaveBeenCalled();
-    });
+    }));
 
     it('should reject when savingAccountId is not set', () => {
       component.selectedSavingAccount = { saving_account_id: 1, account_type: 'SAVINGS', amount: '100000' };
@@ -602,6 +608,7 @@ describe('FixedDepositComponent', () => {
       component.savingAccountId = 1;
       component.duration = 'invalid duration';
       component.rpa = '13%';
+      component.acceptedTerms = true;
 
       component.checkForm();
 
@@ -621,6 +628,7 @@ describe('FixedDepositComponent', () => {
       component.savingAccountId = 1;
       component.duration = '6 months';
       component.rpa = 'invalid%';
+      component.acceptedTerms = true;
 
       component.checkForm();
 
@@ -640,9 +648,12 @@ describe('FixedDepositComponent', () => {
       component.selectedPackage = 1;
       component.savingAccountId = 1;
       mockLoanService.getFDs.and.returnValue(of({ data: [] }));
+      // checkForm() now requires accepted terms and awaits a confirmation dialog.
+      component.acceptedTerms = true;
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     });
 
-    it('should create FD successfully with 6 months package', () => {
+    it('should create FD successfully with 6 months package', fakeAsync(() => {
       component.fdAmount = 50000;
       component.duration = '6 months';
       component.rpa = '13%';
@@ -650,18 +661,19 @@ describe('FixedDepositComponent', () => {
       mockFDService.createFD.and.returnValue(of({ message: 'FD created successfully' }));
 
       component.checkForm();
+      tick();
 
       expect(mockFDService.createFD).toHaveBeenCalledWith(1, '6_MONTH', '13', 50000);
       expect(component.isCreatingFD).toBe(false);
       expect(Swal.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          title: 'Success',
+          title: 'Fixed deposit placed',
           icon: 'success'
         })
       );
-    });
+    }));
 
-    it('should create FD with 1 year package', () => {
+    it('should create FD with 1 year package', fakeAsync(() => {
       component.fdAmount = 75000;
       component.duration = '1 year';
       component.rpa = '14%';
@@ -669,11 +681,12 @@ describe('FixedDepositComponent', () => {
       mockFDService.createFD.and.returnValue(of({ message: 'Success' }));
 
       component.checkForm();
+      tick();
 
       expect(mockFDService.createFD).toHaveBeenCalledWith(1, '1_YEAR', '14', 75000);
-    });
+    }));
 
-    it('should create FD with 3 years package', () => {
+    it('should create FD with 3 years package', fakeAsync(() => {
       component.fdAmount = 100000;
       component.duration = '3 years';
       component.rpa = '15%';
@@ -681,11 +694,12 @@ describe('FixedDepositComponent', () => {
       mockFDService.createFD.and.returnValue(of({ message: 'Success' }));
 
       component.checkForm();
+      tick();
 
       expect(mockFDService.createFD).toHaveBeenCalledWith(1, '3_YEARS', '15', 100000);
-    });
+    }));
 
-    it('should reset form after successful creation', () => {
+    it('should reset form after successful creation', fakeAsync(() => {
       component.fdAmount = 50000;
       component.duration = '6 months';
       component.rpa = '13%';
@@ -693,6 +707,7 @@ describe('FixedDepositComponent', () => {
       mockFDService.createFD.and.returnValue(of({ message: 'Success' }));
 
       component.checkForm();
+      tick();
 
       expect(component.selectedSavingAccount).toBeUndefined();
       expect(component.selectedPackage).toBeUndefined();
@@ -700,9 +715,9 @@ describe('FixedDepositComponent', () => {
       expect(component.savingAccountId).toBeNull();
       expect(component.duration).toBeNull();
       expect(component.rpa).toBeNull();
-    });
+    }));
 
-    it('should reload FDs after successful creation', () => {
+    it('should reload FDs after successful creation', fakeAsync(() => {
       component.fdAmount = 50000;
       component.duration = '6 months';
       component.rpa = '13%';
@@ -711,11 +726,12 @@ describe('FixedDepositComponent', () => {
       spyOn(component, 'loadFDs');
 
       component.checkForm();
+      tick();
 
       expect(component.loadFDs).toHaveBeenCalled();
-    });
+    }));
 
-    it('should handle response without message', () => {
+    it('should handle response without message', fakeAsync(() => {
       component.fdAmount = 50000;
       component.duration = '6 months';
       component.rpa = '13%';
@@ -723,17 +739,18 @@ describe('FixedDepositComponent', () => {
       mockFDService.createFD.and.returnValue(of({} as any));
 
       component.checkForm();
+      tick();
 
+      // Success dialog is now fixed copy, independent of the response payload.
       expect(Swal.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          title: 'Success',
-          text: 'Fixed deposit created successfully!',
+          title: 'Fixed deposit placed',
           icon: 'success'
         })
       );
-    });
+    }));
 
-    it('should handle string amount', () => {
+    it('should handle string amount', fakeAsync(() => {
       component.fdAmount = '50000';
       component.duration = '6 months';
       component.rpa = '13%';
@@ -741,9 +758,10 @@ describe('FixedDepositComponent', () => {
       mockFDService.createFD.and.returnValue(of({ message: 'Success' }));
 
       component.checkForm();
+      tick();
 
       expect(mockFDService.createFD).toHaveBeenCalledWith(1, '6_MONTH', '13', 50000);
-    });
+    }));
   });
 
   describe('checkForm() - Error Handling', () => {
@@ -754,9 +772,11 @@ describe('FixedDepositComponent', () => {
       component.fdAmount = 50000;
       component.duration = '6 months';
       component.rpa = '13%';
+      component.acceptedTerms = true;
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     });
 
-    it('should handle server error with message', () => {
+    it('should handle server error with message', fakeAsync(() => {
       spyOn(console, 'error');
       const errorResponse = {
         error: { message: 'Insufficient balance' }
@@ -765,6 +785,7 @@ describe('FixedDepositComponent', () => {
       mockFDService.createFD.and.returnValue(throwError(() => errorResponse));
 
       component.checkForm();
+      tick();
 
       expect(component.errorMessage).toBe('Insufficient balance');
       expect(component.isCreatingFD).toBe(false);
@@ -776,31 +797,34 @@ describe('FixedDepositComponent', () => {
           text: 'Insufficient balance'
         })
       );
-    });
+    }));
 
-    it('should handle error without specific message', () => {
+    it('should handle error without specific message', fakeAsync(() => {
       spyOn(console, 'error');
       mockFDService.createFD.and.returnValue(throwError(() => new Error('Network error')));
 
       component.checkForm();
+      tick();
 
       expect(component.errorMessage).toBe('Network error');
-    });
+    }));
 
-    it('should handle error without error object', () => {
+    it('should handle error without error object', fakeAsync(() => {
       spyOn(console, 'error');
       mockFDService.createFD.and.returnValue(throwError(() => ({})));
 
       component.checkForm();
+      tick();
 
       expect(component.errorMessage).toBe('Failed to create fixed deposit');
-    });
+    }));
 
-    it('should handle processing error', () => {
+    it('should handle processing error', fakeAsync(() => {
       spyOn(console, 'error');
       mockFDService.createFD.and.throwError('Processing error');
 
       component.checkForm();
+      tick();
 
       expect(Swal.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
@@ -809,7 +833,7 @@ describe('FixedDepositComponent', () => {
           text: 'Failed to process fixed deposit creation'
         })
       );
-    });
+    }));
   });
 
   describe('Subscription Management', () => {
