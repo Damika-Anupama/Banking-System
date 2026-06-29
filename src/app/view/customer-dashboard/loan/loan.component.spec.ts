@@ -5,7 +5,7 @@
  * Target coverage: 90%+
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -623,6 +623,7 @@ describe('LoanComponent', () => {
       component.loanAmount = 30000;
       component.maximumLoanAmount = 50000;
       component.selectedLoanType = 'Personal';
+      component.acceptedLienConsent = true; // pass the collateral-consent gate
 
       component.proceed();
 
@@ -640,9 +641,12 @@ describe('LoanComponent', () => {
       fixture = TestBed.createComponent(LoanComponent);
       component = fixture.componentInstance;
       localStorage.setItem('userId', '123');
+      // proceed() now requires lien consent and awaits a confirmation dialog.
+      component.acceptedLienConsent = true;
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     });
 
-    it('should apply loan successfully with Personal type', () => {
+    it('should apply loan successfully with Personal type', fakeAsync(() => {
       component.selectedFD = { fd_id: 1, amount: '100000', duration: '1_YEAR' } as any;
       component.selectedLoan = 1;
       component.loanAmount = 30000;
@@ -655,6 +659,7 @@ describe('LoanComponent', () => {
       mockLoanService.getLoans.and.returnValue(of({ data: [] }));
 
       component.proceed();
+      tick();
 
       expect(mockLoanService.applyLoan).toHaveBeenCalledWith(
         1,
@@ -668,12 +673,12 @@ describe('LoanComponent', () => {
       expect(Swal.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'success',
-          title: 'Success'
+          title: 'Loan application submitted'
         })
       );
-    });
+    }));
 
-    it('should apply loan with Business type', () => {
+    it('should apply loan with Business type', fakeAsync(() => {
       component.selectedFD = { fd_id: 2, amount: '200000', duration: '3_YEARS' } as any;
       component.selectedLoan = 3;
       component.loanAmount = 50000;
@@ -686,6 +691,7 @@ describe('LoanComponent', () => {
       mockLoanService.getLoans.and.returnValue(of({ data: [] }));
 
       component.proceed();
+      tick();
 
       expect(mockLoanService.applyLoan).toHaveBeenCalledWith(
         2,
@@ -695,9 +701,9 @@ describe('LoanComponent', () => {
         '15', // String(15.00) = '15'
         'BUSINESS'
       );
-    });
+    }));
 
-    it('should reset form after successful application', () => {
+    it('should reset form after successful application', fakeAsync(() => {
       component.selectedFD = { fd_id: 1, amount: '100000', duration: '1_YEAR' } as any;
       component.selectedLoan = 2;
       component.loanAmount = 40000;
@@ -710,6 +716,7 @@ describe('LoanComponent', () => {
       mockLoanService.getLoans.and.returnValue(of({ data: [] }));
 
       component.proceed();
+      tick();
 
       expect(component.selectedFD).toBeNull();
       expect(component.selectedLoan).toBeUndefined();
@@ -718,9 +725,9 @@ describe('LoanComponent', () => {
       expect(component.maximumLoanAmount).toBe(0);
       expect(component.duration).toBeNull();
       expect(component.interest).toBeNull();
-    });
+    }));
 
-    it('should reload loans after successful application', () => {
+    it('should reload loans after successful application', fakeAsync(() => {
       component.selectedFD = { fd_id: 1, amount: '100000', duration: '1_YEAR' } as any;
       component.selectedLoan = 1;
       component.loanAmount = 30000;
@@ -733,9 +740,10 @@ describe('LoanComponent', () => {
       mockLoanService.getLoans.and.returnValue(of({ data: [] }));
 
       component.proceed();
+      tick();
 
       expect(mockLoanService.getLoans).toHaveBeenCalled();
-    });
+    }));
   });
 
   describe('proceed() - Invalid Interest/Duration', () => {
@@ -753,6 +761,7 @@ describe('LoanComponent', () => {
       component.selectedLoanType = 'Personal';
       component.duration = '6 months';
       component.interest = 'invalid%';
+      component.acceptedLienConsent = true;
 
       component.proceed();
 
@@ -772,6 +781,7 @@ describe('LoanComponent', () => {
       component.selectedLoanType = 'Personal';
       component.duration = 'invalid duration';
       component.interest = '13%';
+      component.acceptedLienConsent = true;
 
       component.proceed();
 
@@ -789,9 +799,11 @@ describe('LoanComponent', () => {
       fixture = TestBed.createComponent(LoanComponent);
       component = fixture.componentInstance;
       localStorage.setItem('userId', '123');
+      component.acceptedLienConsent = true;
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     });
 
-    it('should handle server error', () => {
+    it('should handle server error', fakeAsync(() => {
       spyOn(console, 'error');
       component.selectedFD = { fd_id: 1, amount: '100000', duration: '1_YEAR' } as any;
       component.selectedLoan = 1;
@@ -808,13 +820,14 @@ describe('LoanComponent', () => {
       mockLoanService.applyLoan.and.returnValue(throwError(() => errorResponse));
 
       component.proceed();
+      tick();
 
       expect(component.errorMessage).toBe('Insufficient FD balance');
       expect(component.isProcessingLoan).toBe(false);
       expect(console.error).toHaveBeenCalledWith('Error applying loan:', errorResponse);
-    });
+    }));
 
-    it('should handle processing error', () => {
+    it('should handle processing error', fakeAsync(() => {
       spyOn(console, 'error');
       component.selectedFD = { fd_id: 1, amount: '100000', duration: '1_YEAR' } as any;
       component.selectedLoan = 1;
@@ -827,6 +840,7 @@ describe('LoanComponent', () => {
       mockLoanService.applyLoan.and.throwError('Processing error');
 
       component.proceed();
+      tick();
 
       expect(Swal.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
@@ -835,7 +849,7 @@ describe('LoanComponent', () => {
           text: 'Failed to process loan application'
         })
       );
-    });
+    }));
   });
 
   describe('Subscription Management', () => {
