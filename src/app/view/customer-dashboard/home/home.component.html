@@ -60,8 +60,11 @@
         <p class="demo-section-helper">Choose an account to view balance, branch, and recent money movement.</p>
       </div>
       <div class="relative">
-        <input type="text" name="table_search" placeholder="Search accounts..." [(ngModel)]="searchTerm" class="glass-input pl-10 w-full md:w-64" />
+        <input type="text" name="table_search" placeholder="Search accounts..." [(ngModel)]="searchTerm" (keydown.escape)="searchTerm = ''" aria-label="Search linked accounts" class="glass-input pl-10 pr-10 w-full md:w-64" />
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
+        <button *ngIf="searchTerm" type="button" (click)="searchTerm = ''" aria-label="Clear search" title="Clear search" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors">
+          <i class="fas fa-times-circle"></i>
+        </button>
       </div>
     </div>
 
@@ -122,7 +125,10 @@
 
       <div *ngIf="filteredAccounts.length === 0" class="text-center py-12">
         <div class="text-6xl text-white/20 mb-4"><i class="fas fa-inbox"></i></div>
-        <p class="text-white/60">No accounts match your search.</p>
+        <p class="text-white/60">No accounts match <span *ngIf="searchTerm" class="font-semibold text-white/80">"{{ searchTerm }}"</span><span *ngIf="!searchTerm">your search</span>.</p>
+        <button *ngIf="searchTerm" type="button" (click)="searchTerm = ''" class="mt-3 inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2 text-sm text-white/80 transition hover:bg-white/[0.12]">
+          <i class="fas fa-rotate-left"></i> Clear search
+        </button>
       </div>
     </div>
   </article>
