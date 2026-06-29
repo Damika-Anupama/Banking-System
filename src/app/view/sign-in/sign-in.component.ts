@@ -15,10 +15,15 @@ export class SignInComponent implements OnDestroy {
   password = '';
   isLoading = false;
   submitted = false;
+  showPassword = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
   constructor(private router: Router) {}
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   authenticate(isValid: boolean | null = true): void {
     this.submitted = true;

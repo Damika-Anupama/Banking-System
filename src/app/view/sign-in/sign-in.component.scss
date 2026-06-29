@@ -24,3 +24,39 @@
   border-color: rgba(103, 232, 249, 0.45);
   transform: translateY(-1px);
 }
+
+// Password show/hide toggle
+.password-field-wrap {
+  position: relative;
+}
+
+.password-field-wrap .password-input {
+  padding-right: 3rem;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.55);
+  background: transparent;
+  border: none;
+  border-radius: 0 0.9rem 0.9rem 0;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.password-toggle-btn:hover,
+.password-toggle-btn:focus-visible {
+  color: rgba(103, 232, 249, 0.95);
+  outline: none;
+}
+
+.password-toggle-btn:focus-visible {
+  box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.5);
+}
