@@ -1,7 +1,21 @@
 #!/usr/bin/env node
 
 const baseUrl = process.env.DEMO_URL || 'https://banking-system-nine-sooty.vercel.app/';
-const routes = ['/', '/welcome', '/sign-in', '/sign-up'];
+
+// Public routes plus deep dashboard links and a deliberately unknown path.
+// The deep links and wildcard verify the SPA rewrite serves the app shell for
+// any path (the #1 SPA deploy bug is deep links hard-404ing) rather than only
+// the routes pre-rendered at the root.
+const routes = [
+  '/',
+  '/welcome',
+  '/sign-in',
+  '/sign-up',
+  '/dashboard/home',
+  '/employee-dashboard/employee-home',
+  '/manager-dashboard/manager-home',
+  '/this-route-does-not-exist',
+];
 
 async function checkRoute(route) {
   const url = new URL(route, baseUrl).toString();
