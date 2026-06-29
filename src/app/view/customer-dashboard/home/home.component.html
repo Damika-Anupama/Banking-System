@@ -89,7 +89,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let account of filteredAccounts; trackBy: trackByAccountId" (click)="updateSmallBox(account)" class="cursor-pointer transition-all duration-300 hover:bg-white/5" [ngClass]="{'bg-cyan-300/10': selectedAccount === account}">
+          <tr *ngFor="let account of filteredAccounts; trackBy: trackByAccountId" (click)="updateSmallBox(account)" (keydown.enter)="updateSmallBox(account)" (keydown.space)="$event.preventDefault(); updateSmallBox(account)" tabindex="0" role="button" [attr.aria-pressed]="selectedAccount === account" [attr.aria-label]="'Select account ' + maskAccountId(account.account_id)" class="account-row cursor-pointer transition-all duration-300 hover:bg-white/5" [ngClass]="{'bg-cyan-300/10': selectedAccount === account}">
             <td class="px-5 py-4">
               <div class="flex min-w-0 items-center gap-3">
                 <i class="shrink-0 text-xl text-cyan-200" [ngClass]="selectedAccount === account ? 'fas fa-check-circle' : 'far fa-circle'"></i>

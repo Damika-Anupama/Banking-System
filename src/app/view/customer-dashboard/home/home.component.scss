@@ -242,3 +242,10 @@
 :host-context(html:not(.dark)) .customer-home-surface .glass-input::placeholder {
   color: #64748b !important;
 }
+
+// Keyboard focus indicator for selectable account rows (a11y)
+.account-row:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.85);
+  outline-offset: -2px;
+  background: rgba(34, 211, 238, 0.08);
+}
