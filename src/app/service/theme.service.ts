@@ -9,17 +9,28 @@ export class ThemeService {
   public isDarkMode$: Observable<boolean> = this.isDarkModeSubject.asObservable();
 
   constructor() {
-    // Load theme from localStorage or default to light mode
     const savedTheme = localStorage.getItem('theme');
 
-    // If no theme is saved, default to light mode and save it
-    if (!savedTheme) {
-      localStorage.setItem('theme', 'light');
+    let isDark: boolean;
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+      // Honour the customer's explicit choice.
+      isDark = savedTheme === 'dark';
+    } else {
+      // First visit (or invalid value): follow the OS colour-scheme preference.
+      isDark = this.prefersDarkScheme();
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
 
-    const isDark = savedTheme === 'dark';
     this.isDarkModeSubject.next(isDark);
     this.applyTheme(isDark);
+  }
+
+  private prefersDarkScheme(): boolean {
+    return (
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
   }
 
   toggleTheme(): void {

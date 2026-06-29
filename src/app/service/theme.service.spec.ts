@@ -15,6 +15,11 @@ describe('ThemeService', () => {
     // Clear localStorage before each test
     localStorage.clear();
 
+    // Make the OS colour-scheme deterministic (default: prefers light) so the
+    // first-visit default is stable regardless of the CI runner's settings.
+    // Individual tests reconfigure this spy to simulate a dark OS preference.
+    spyOn(window, 'matchMedia').and.returnValue({ matches: false } as MediaQueryList);
+
     TestBed.configureTestingModule({
       providers: [ThemeService]
     });
@@ -32,11 +37,30 @@ describe('ThemeService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('should initialize with light theme when no saved theme', () => {
+    it('should initialize with light theme when no saved theme and OS prefers light', () => {
+      // matchMedia spy already defaults to { matches: false }
       service = TestBed.inject(ThemeService);
 
       expect(localStorage.getItem('theme')).toBe('light');
       expect(document.documentElement.classList.contains('dark')).toBe(false);
+    });
+
+    it('should follow the OS dark preference on first visit', () => {
+      (window.matchMedia as jasmine.Spy).and.returnValue({ matches: true } as MediaQueryList);
+      service = TestBed.inject(ThemeService);
+
+      expect(service.getCurrentTheme()).toBe(true);
+      expect(localStorage.getItem('theme')).toBe('dark');
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
+    });
+
+    it('should respect an explicit saved choice over the OS preference', () => {
+      (window.matchMedia as jasmine.Spy).and.returnValue({ matches: true } as MediaQueryList);
+      localStorage.setItem('theme', 'light');
+      service = TestBed.inject(ThemeService);
+
+      // Saved 'light' wins even though the OS prefers dark.
+      expect(service.getCurrentTheme()).toBe(false);
     });
 
     it('should load dark theme from localStorage', () => {
