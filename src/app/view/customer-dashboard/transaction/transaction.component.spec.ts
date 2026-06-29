@@ -5,7 +5,7 @@
  * Target coverage: 90%+
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -475,8 +475,8 @@ describe('TransactionComponent', () => {
     });
 
     it('should reject transfer to same account', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC001';
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000001';
       component.balance = '5000';
       component.transfer_amount = '1000';
 
@@ -496,11 +496,13 @@ describe('TransactionComponent', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(TransactionComponent);
       component = fixture.componentInstance;
+      // proceedTransaction now awaits a Swal confirmation before posting the transfer.
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     });
 
-    it('should process transaction successfully', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('should process transaction successfully', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '1000';
       component.sender_remarks = 'Test payment';
@@ -511,10 +513,11 @@ describe('TransactionComponent', () => {
       mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
 
       component.proceedTransaction();
+      tick();
 
       expect(mockTransactionService.proceedTransaction).toHaveBeenCalledWith(
-        'ACC001',
-        'ACC002',
+        'ACC000001',
+        'ACC000002',
         '1000',
         'Test payment',
         'Thank you'
@@ -525,11 +528,11 @@ describe('TransactionComponent', () => {
       expect(component.beneficiary_remarks).toBe('');
       expect(component.to_account).toBe('');
       expect(component.isProcessingTransaction).toBe(false);
-    });
+    }));
 
-    it('should update balance correctly', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('should update balance correctly', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
       component.balance = '10000';
       component.transfer_amount = '2500';
 
@@ -538,13 +541,15 @@ describe('TransactionComponent', () => {
       mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
 
       component.proceedTransaction();
+      tick();
 
       expect(component.balance).toBe('7500');
-    });
+    }));
 
-    it('should reload transactions after successful transfer', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('should reload transactions after successful transfer', fakeAsync(() => {
+      localStorage.removeItem('demoMode');
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '1000';
 
@@ -553,21 +558,24 @@ describe('TransactionComponent', () => {
       mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
 
       component.proceedTransaction();
+      tick();
 
-      expect(mockTransactionService.getTransactions).toHaveBeenCalledWith('ACC001');
-    });
+      expect(mockTransactionService.getTransactions).toHaveBeenCalledWith('ACC000001');
+    }));
   });
 
   describe('proceedTransaction() - Error Handling', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(TransactionComponent);
       component = fixture.componentInstance;
+      // Confirm the transfer dialog so the service call is actually made.
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     });
 
-    it('should handle server error', () => {
+    it('should handle server error', fakeAsync(() => {
       spyOn(console, 'error');
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '1000';
 
@@ -578,23 +586,27 @@ describe('TransactionComponent', () => {
       mockTransactionService.proceedTransaction.and.returnValue(throwError(() => errorResponse));
 
       component.proceedTransaction();
+      tick();
 
       expect(component.errorMessage).toBe('Insufficient funds');
       expect(component.isProcessingTransaction).toBe(false);
       expect(console.error).toHaveBeenCalledWith('Error processing transaction:', errorResponse);
-    });
+    }));
 
-    it('should handle processing error', () => {
+    it('should handle processing error', fakeAsync(() => {
       spyOn(console, 'error');
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '1000';
 
       mockTransactionService.proceedTransaction.and.returnValue(of(null));
-      spyOn(component, 'showToast').and.throwError('Processing error');
+      // Force the success handler's post-processing to throw, hitting the catch block.
+      localStorage.removeItem('demoMode');
+      spyOn(component, 'loadDataToTable').and.throwError('Processing error');
 
       component.proceedTransaction();
+      tick();
 
       expect(component.isProcessingTransaction).toBe(false);
       expect(Swal.fire).toHaveBeenCalledWith(
@@ -604,7 +616,7 @@ describe('TransactionComponent', () => {
           text: 'Failed to process transaction response'
         })
       );
-    });
+    }));
   });
 
   describe('showToast()', () => {
@@ -783,11 +795,12 @@ describe('TransactionComponent', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(TransactionComponent);
       component = fixture.componentInstance;
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     });
 
-    it('should handle decimal transfer amounts', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('should handle decimal transfer amounts', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '999.99';
 
@@ -796,13 +809,14 @@ describe('TransactionComponent', () => {
       mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
 
       component.proceedTransaction();
+      tick();
 
       expect(component.balance).toBe('4000.01');
-    });
+    }));
 
-    it('should handle transfer of entire balance', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('should handle transfer of entire balance', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
       component.balance = '1000';
       component.transfer_amount = '1000';
 
@@ -811,13 +825,14 @@ describe('TransactionComponent', () => {
       mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
 
       component.proceedTransaction();
+      tick();
 
       expect(component.balance).toBe('0');
-    });
+    }));
 
-    it('should handle optional remarks fields', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('should handle optional remarks fields', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '1000';
       component.sender_remarks = '';
@@ -828,14 +843,15 @@ describe('TransactionComponent', () => {
       mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
 
       component.proceedTransaction();
+      tick();
 
       expect(mockTransactionService.proceedTransaction).toHaveBeenCalledWith(
-        'ACC001',
-        'ACC002',
+        'ACC000001',
+        'ACC000002',
         '1000',
         '',
         ''
       );
-    });
+    }));
   });
 });
