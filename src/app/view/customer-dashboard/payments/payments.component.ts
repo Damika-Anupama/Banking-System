@@ -48,6 +48,34 @@ export class PaymentsComponent implements OnInit {
     return Boolean(this.payee.trim() && this.accountId.trim() && this.amount && this.amount > 0 && this.nextDate);
   }
 
+  /** Whole days from today until the order's next payment date (negative = overdue). */
+  private daysUntil(dateStr: string): number {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(dateStr);
+    target.setHours(0, 0, 0, 0);
+    return Math.round((target.getTime() - today.getTime()) / 86400000);
+  }
+
+  /** Human-friendly urgency label for the next payment date. */
+  dueLabel(order: any): string {
+    if (order.status !== 'Active') return 'Paused';
+    const days = this.daysUntil(order.next_date);
+    if (days < 0) return `Overdue by ${Math.abs(days)}d`;
+    if (days === 0) return 'Due today';
+    if (days === 1) return 'Due tomorrow';
+    return `Due in ${days} days`;
+  }
+
+  /** Tone class for the urgency label. */
+  dueClass(order: any): string {
+    if (order.status !== 'Active') return 'text-white/40';
+    const days = this.daysUntil(order.next_date);
+    if (days < 0) return 'text-rose-300';
+    if (days <= 2) return 'text-amber-300';
+    return 'text-emerald-300';
+  }
+
   setUpOrder(): void {
     if (!this.isValid) {
       Swal.fire({ icon: 'error', title: 'Validation error', text: 'Fill payee, account, amount, and next date.' });

@@ -97,7 +97,12 @@
               <p class="font-semibold">Rs. {{ order.amount | number }}</p>
               <small class="block text-xs text-white/50">{{ order.frequency }}</small>
             </td>
-            <td class="px-5 py-3 text-white/90">{{ order.next_date | date: 'MMM d, y' }}</td>
+            <td class="px-5 py-3">
+              <p class="text-white/90">{{ order.next_date | date: 'MMM d, y' }}</p>
+              <small class="block text-xs font-semibold" [ngClass]="dueClass(order)">
+                <i class="fas fa-clock mr-1"></i>{{ dueLabel(order) }}
+              </small>
+            </td>
             <td class="px-5 py-3">
               <span class="demo-status-pill" [ngClass]="order.status === 'Active' ? 'demo-status-success' : 'demo-status-warning'">{{ order.status }}</span>
             </td>
