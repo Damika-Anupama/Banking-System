@@ -57,8 +57,11 @@
           <span class="text-slate-400">Available credit</span>
           <strong class="text-emerald-100">Rs. {{ availableCredit(card) | number }}</strong>
         </div>
-        <div class="mt-2 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-violet-400" [style.width.%]="creditUsedPct(card)"></div></div>
-        <p class="mt-1 text-xs text-white/50">Rs. {{ card.credit_used | number }} used of Rs. {{ card.credit_limit | number }}</p>
+        <div class="mt-2 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full transition-all duration-500" [ngClass]="creditBarClass(card)" [style.width.%]="creditUsedPct(card)"></div></div>
+        <div class="mt-1 flex items-center justify-between text-xs">
+          <span class="text-white/50">Rs. {{ card.credit_used | number }} used of Rs. {{ card.credit_limit | number }}</span>
+          <span class="font-semibold" [ngClass]="creditLabelClass(card)">{{ creditUsedPct(card) }}% · {{ creditUtilizationLabel(card) }}</span>
+        </div>
       </div>
 
       <button type="button" class="glass-button-secondary w-full justify-center" (click)="toggleFreeze(card)">

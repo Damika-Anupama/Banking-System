@@ -34,6 +34,29 @@ export class CardsComponent implements OnInit {
     return Math.min(100, Math.round((Number(card.credit_used || 0) / Number(card.credit_limit)) * 100));
   }
 
+  /** Tailwind bg class for the credit-utilization bar, by health tier. */
+  creditBarClass(card: any): string {
+    const pct = this.creditUsedPct(card);
+    if (pct >= 70) return 'bg-rose-400';
+    if (pct >= 30) return 'bg-amber-400';
+    return 'bg-emerald-400';
+  }
+
+  /** Short utilization health label shown next to the bar. */
+  creditUtilizationLabel(card: any): string {
+    const pct = this.creditUsedPct(card);
+    if (pct >= 70) return 'High utilization';
+    if (pct >= 30) return 'Moderate utilization';
+    return 'Healthy utilization';
+  }
+
+  creditLabelClass(card: any): string {
+    const pct = this.creditUsedPct(card);
+    if (pct >= 70) return 'text-rose-200';
+    if (pct >= 30) return 'text-amber-200';
+    return 'text-emerald-200';
+  }
+
   cardGradient(card: any): string {
     if (card.status === 'Frozen') return 'from-slate-600 to-slate-700';
     return card.type === 'Credit' ? 'from-violet-600 to-indigo-700' : 'from-blue-600 to-cyan-600';
