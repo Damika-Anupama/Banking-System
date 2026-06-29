@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 interface PaletteItem {
@@ -48,14 +48,12 @@ const ALL_ITEMS: PaletteItem[] = [
   templateUrl: './command-palette.component.html',
   styleUrls: ['./command-palette.component.scss']
 })
-export class CommandPaletteComponent implements OnDestroy {
+export class CommandPaletteComponent {
   isOpen = false;
   query = '';
   selectedIndex = 0;
 
   constructor(private router: Router) {}
-
-  ngOnDestroy(): void {}
 
   private get userRole(): string {
     const type = localStorage.getItem('userType');
@@ -103,10 +101,11 @@ export class CommandPaletteComponent implements OnDestroy {
         event.preventDefault();
         this.selectedIndex = Math.max(this.selectedIndex - 1, 0);
         break;
-      case 'Enter':
+      case 'Enter': {
         const item = this.items[this.selectedIndex];
         if (item) this.navigate(item);
         break;
+      }
     }
   }
 

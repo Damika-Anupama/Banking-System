@@ -13,44 +13,32 @@
       </p>
 
       <div class="welcome-value-grid" aria-label="Banking service highlights">
-        <div class="welcome-value-card">
+        <div class="welcome-value-card reveal" style="--reveal-delay: 0.05s">
           <i class="fas fa-wallet"></i>
           <span>Clear account visibility</span>
         </div>
-        <div class="welcome-value-card">
+        <div class="welcome-value-card reveal" style="--reveal-delay: 0.12s">
           <i class="fas fa-paper-plane"></i>
           <span>Smooth fund transfers</span>
         </div>
-        <div class="welcome-value-card">
+        <div class="welcome-value-card reveal" style="--reveal-delay: 0.19s">
           <i class="fas fa-piggy-bank"></i>
           <span>Deposit growth planning</span>
         </div>
-        <div class="welcome-value-card">
+        <div class="welcome-value-card reveal" style="--reveal-delay: 0.26s">
           <i class="fas fa-hand-holding-usd"></i>
           <span>Loan application support</span>
         </div>
       </div>
 
       <div class="welcome-stats-strip" aria-label="Platform statistics">
-        <div class="welcome-stat-item">
-          <span class="welcome-stat-number">14+</span>
-          <span class="welcome-stat-label">Customers</span>
-        </div>
-        <div class="welcome-stat-divider"></div>
-        <div class="welcome-stat-item">
-          <span class="welcome-stat-number">Rs. 4M+</span>
-          <span class="welcome-stat-label">Assets managed</span>
-        </div>
-        <div class="welcome-stat-divider"></div>
-        <div class="welcome-stat-item">
-          <span class="welcome-stat-number">3</span>
-          <span class="welcome-stat-label">Branch locations</span>
-        </div>
-        <div class="welcome-stat-divider"></div>
-        <div class="welcome-stat-item">
-          <span class="welcome-stat-number">99.9%</span>
-          <span class="welcome-stat-label">Uptime</span>
-        </div>
+        <ng-container *ngFor="let stat of stats; let last = last">
+          <div class="welcome-stat-item">
+            <span class="welcome-stat-number">{{ stat.display }}</span>
+            <span class="welcome-stat-label">{{ stat.label }}</span>
+          </div>
+          <div class="welcome-stat-divider" *ngIf="!last"></div>
+        </ng-container>
       </div>
 
       <div class="auth-actions">
