@@ -52,8 +52,10 @@ export class PaymentsComponent implements OnInit {
   private daysUntil(dateStr: string): number {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const target = new Date(dateStr);
-    target.setHours(0, 0, 0, 0);
+    // Parse the YYYY-MM-DD as LOCAL date parts; `new Date('YYYY-MM-DD')` would
+    // parse as UTC midnight and shift the day by one in negative-UTC timezones.
+    const [y, m, d] = String(dateStr).slice(0, 10).split('-').map(Number);
+    const target = new Date(y, (m || 1) - 1, d || 1);
     return Math.round((target.getTime() - today.getTime()) / 86400000);
   }
 
