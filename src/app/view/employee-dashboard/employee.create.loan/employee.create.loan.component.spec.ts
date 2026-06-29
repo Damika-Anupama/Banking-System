@@ -56,8 +56,8 @@ describe('EmployeeCreateLoanComponent', () => {
       ]);
     });
 
-    it('should initialize with empty selectedLoanType', () => {
-      expect(component.selectedLoanType).toBe('');
+    it('should initialize with default selectedLoanType of Personal', () => {
+      expect(component.selectedLoanType).toBe('Personal');
     });
 
     it('should have packageArray with 3 elements', () => {
@@ -102,61 +102,60 @@ describe('EmployeeCreateLoanComponent', () => {
       expect(component.interest).toBe('14%');
     });
 
-    it('should not set duration/interest for invalid index', () => {
+    it('should reset duration/interest to null for invalid index', () => {
       component.selectedLoan = 999;
-      component.duration = undefined;
-      component.interest = undefined;
+      component.duration = '6 months';
+      component.interest = '13%';
 
       component.onLoanSelected();
 
-      expect(component.duration).toBeUndefined();
-      expect(component.interest).toBeUndefined();
+      expect(component.duration).toBeNull();
+      expect(component.interest).toBeNull();
     });
 
-    it('should not set duration/interest for index 0', () => {
+    it('should reset duration/interest to null for index 0', () => {
       component.selectedLoan = 0;
-      component.duration = undefined;
-      component.interest = undefined;
+      component.duration = '6 months';
+      component.interest = '13%';
 
       component.onLoanSelected();
 
-      expect(component.duration).toBeUndefined();
-      expect(component.interest).toBeUndefined();
+      expect(component.duration).toBeNull();
+      expect(component.interest).toBeNull();
     });
 
-    it('should not set duration/interest for negative index', () => {
+    it('should reset duration/interest to null for negative index', () => {
       component.selectedLoan = -1;
-      component.duration = undefined;
-      component.interest = undefined;
+      component.duration = '6 months';
+      component.interest = '13%';
 
       component.onLoanSelected();
 
-      expect(component.duration).toBeUndefined();
-      expect(component.interest).toBeUndefined();
+      expect(component.duration).toBeNull();
+      expect(component.interest).toBeNull();
     });
 
-    it('should handle undefined selectedLoan gracefully', () => {
+    it('should clear duration/interest when selectedLoan is undefined', () => {
       component.selectedLoan = undefined;
       component.duration = 'previous';
       component.interest = 'previous';
 
       component.onLoanSelected();
 
-      // Values should remain unchanged
-      expect(component.duration).toBe('previous');
-      expect(component.interest).toBe('previous');
+      // Stale values are cleared so the UI never shows a mismatched plan
+      expect(component.duration).toBeNull();
+      expect(component.interest).toBeNull();
     });
 
-    it('should handle null selectedLoan gracefully', () => {
+    it('should clear duration/interest when selectedLoan is null', () => {
       component.selectedLoan = null as any;
       component.duration = 'previous';
       component.interest = 'previous';
 
       component.onLoanSelected();
 
-      // Values should remain unchanged
-      expect(component.duration).toBe('previous');
-      expect(component.interest).toBe('previous');
+      expect(component.duration).toBeNull();
+      expect(component.interest).toBeNull();
     });
   });
 
@@ -259,20 +258,20 @@ describe('EmployeeCreateLoanComponent', () => {
 
       component.onLoanSelected();
 
-      // Number(1.9) equals 1.9, which won't match index 1 exactly
-      // but the comparison uses === so it won't match
-      expect(component.duration).toBeUndefined();
+      // Number(1.9) === 1.9 won't match any integer index, so the plan resets
+      expect(component.duration).toBeNull();
+      expect(component.interest).toBeNull();
     });
 
     it('should handle very large index values', () => {
       component.selectedLoan = 999999;
-      component.duration = undefined;
-      component.interest = undefined;
+      component.duration = '6 months';
+      component.interest = '13%';
 
       component.onLoanSelected();
 
-      expect(component.duration).toBeUndefined();
-      expect(component.interest).toBeUndefined();
+      expect(component.duration).toBeNull();
+      expect(component.interest).toBeNull();
     });
 
     it('should handle customerID with special characters', () => {
