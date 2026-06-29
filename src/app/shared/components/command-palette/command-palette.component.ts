@@ -1,12 +1,16 @@
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { ThemeService } from '../../../service/theme.service';
+
+type PaletteAction = 'toggle-theme' | 'sign-out';
 
 interface PaletteItem {
   label: string;
   description: string;
   icon: string;
-  route: string;
   roles: string[];
+  route?: string;
+  action?: PaletteAction;
 }
 
 const ALL_ITEMS: PaletteItem[] = [
@@ -40,6 +44,9 @@ const ALL_ITEMS: PaletteItem[] = [
   { label: 'Announcements', description: 'Post and pin team notices', icon: 'fa-bullhorn', route: '/manager-dashboard/manager-announcements', roles: ['MANAGER', 'DEMO'] },
   { label: 'Product configuration', description: 'Manage banking products & rates', icon: 'fa-layer-group', route: '/manager-dashboard/manager-products', roles: ['MANAGER', 'DEMO'] },
   { label: 'Audit log', description: 'Activity trail & compliance view', icon: 'fa-shield-halved', route: '/manager-dashboard/manager-audit-log', roles: ['MANAGER', 'DEMO'] },
+  // Quick actions (run instantly instead of navigating)
+  { label: 'Toggle theme', description: 'Switch between light and dark mode', icon: 'fa-circle-half-stroke', action: 'toggle-theme', roles: ['*'] },
+  { label: 'Sign out', description: 'End this session and return to sign in', icon: 'fa-right-from-bracket', action: 'sign-out', roles: ['CUSTOMER', 'EMPLOYEE', 'MANAGER', 'DEMO'] },
 ];
 
 @Component({
@@ -53,7 +60,7 @@ export class CommandPaletteComponent {
   query = '';
   selectedIndex = 0;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private themeService: ThemeService) {}
 
   private get userRole(): string {
     const type = localStorage.getItem('userType');
@@ -131,7 +138,25 @@ export class CommandPaletteComponent {
   }
 
   navigate(item: PaletteItem): void {
-    this.router.navigate([item.route]);
+    if (item.action) {
+      this.runAction(item.action);
+    } else if (item.route) {
+      this.router.navigate([item.route]);
+    }
     this.close();
+  }
+
+  private runAction(action: PaletteAction): void {
+    switch (action) {
+      case 'toggle-theme':
+        this.themeService.toggleTheme();
+        break;
+      case 'sign-out':
+        ['token', 'email', 'userType', 'userId', 'demoMode'].forEach(key =>
+          localStorage.removeItem(key)
+        );
+        this.router.navigate(['/sign-in']);
+        break;
+    }
   }
 }
