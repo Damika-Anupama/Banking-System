@@ -15,8 +15,18 @@ export class SignUpComponent {
   confirmPassword = '';
   acceptedTerms = false;
   submitted = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(private router: Router) {}
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   submitSignup(isValid: boolean | null): void {
     this.submitted = true;
