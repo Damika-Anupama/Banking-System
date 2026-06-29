@@ -85,19 +85,41 @@ const routes: Routes = [
 /**
  * Custom Title Strategy
  *
- * Sets the browser tab title with a prefix for all routes
+ * Builds scannable, page-first browser tab titles of the form:
+ *   "Loan Approvals · Manager · Banking System"
+ *   "Sign In · Banking System"
+ *
+ * Page name comes first so it stays readable when browser tabs are narrow,
+ * and a role segment disambiguates same-named pages (e.g. Home/Settings)
+ * across the customer, employee, and manager dashboards.
  */
 @Injectable({ providedIn: 'root' })
 export class TemplatePageTitleStrategy extends TitleStrategy {
+  private static readonly BRAND = 'Banking System';
+
   constructor(private readonly title: Title) {
     super();
   }
 
   override updateTitle(routerState: RouterStateSnapshot) {
-    const title = this.buildTitle(routerState);
-    if (title !== undefined) {
-      this.title.setTitle(`Banking System | ${title}`);
-    }
+    const pageTitle = this.buildTitle(routerState);
+    const area = this.areaFor(routerState.url);
+
+    const segments = [pageTitle, area, TemplatePageTitleStrategy.BRAND].filter(
+      (segment): segment is string => Boolean(segment)
+    );
+
+    // Fall back to a descriptive default if no route-level title was provided.
+    this.title.setTitle(
+      pageTitle ? segments.join(' · ') : `Secure Online Banking · ${TemplatePageTitleStrategy.BRAND}`
+    );
+  }
+
+  private areaFor(url: string): string | null {
+    if (url.startsWith('/manager-dashboard')) return 'Manager';
+    if (url.startsWith('/employee-dashboard')) return 'Employee';
+    if (url.startsWith('/dashboard')) return 'Online Banking';
+    return null;
   }
 }
 
