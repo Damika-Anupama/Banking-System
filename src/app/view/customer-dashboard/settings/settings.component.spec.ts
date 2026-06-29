@@ -742,4 +742,31 @@ describe('SettingsComponent', () => {
       expect(subscription.unsubscribe).toHaveBeenCalled();
     });
   });
+
+  describe('passwordStrength', () => {
+    it('is empty when no password is entered', () => {
+      component.password = '';
+      expect(component.passwordStrength.label).toBe('');
+      expect(component.passwordStrength.width).toBe(0);
+    });
+
+    it('rates a short simple password as weak', () => {
+      component.password = 'abc';
+      expect(component.passwordStrength.label).toBe('Very weak');
+    });
+
+    it('rates a long mixed password as very strong', () => {
+      component.password = 'Abcdef123456!';
+      expect(component.passwordStrength.label).toBe('Very strong');
+      expect(component.passwordStrength.width).toBe(100);
+    });
+
+    it('escalates strength as complexity increases', () => {
+      component.password = 'abcdefgh'; // length>=8 only
+      const weak = component.passwordStrength.width;
+      component.password = 'Abcdefgh1'; // +upper +digit
+      const stronger = component.passwordStrength.width;
+      expect(stronger).toBeGreaterThan(weak);
+    });
+  });
 });

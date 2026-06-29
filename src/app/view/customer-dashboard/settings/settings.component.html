@@ -127,6 +127,15 @@
             <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
           </button>
         </div>
+        <div *ngIf="password">
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-white/50">Password strength</span>
+            <span [ngClass]="passwordStrength.textClass" class="font-semibold">{{ passwordStrength.label }}</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-white/10">
+            <div class="h-1.5 rounded-full transition-all duration-300" [ngClass]="passwordStrength.barClass" [style.width.%]="passwordStrength.width"></div>
+          </div>
+        </div>
         <button type="submit" [disabled]="isSaving || !password" class="glass-button-secondary w-full justify-center" [class.opacity-50]="isSaving || !password">
           <i class="fas fa-shield-alt mr-2"></i>Update password
         </button>

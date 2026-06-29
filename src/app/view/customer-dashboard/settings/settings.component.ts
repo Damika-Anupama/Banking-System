@@ -133,6 +133,26 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.showPassword = !this.showPassword;
   }
 
+  /** Strength scoring for the new-password field (mirrors the sign-up meter). */
+  get passwordStrength(): { label: string; width: number; barClass: string; textClass: string } {
+    const p = this.password;
+    if (!p) return { label: '', width: 0, barClass: '', textClass: '' };
+    let score = 0;
+    if (p.length >= 8) score++;
+    if (p.length >= 12) score++;
+    if (/[A-Z]/.test(p)) score++;
+    if (/[0-9]/.test(p)) score++;
+    if (/[^A-Za-z0-9]/.test(p)) score++;
+    const levels = [
+      { label: 'Very weak', width: 20, barClass: 'bg-red-400', textClass: 'text-red-400' },
+      { label: 'Weak', width: 40, barClass: 'bg-orange-400', textClass: 'text-orange-400' },
+      { label: 'Fair', width: 60, barClass: 'bg-amber-400', textClass: 'text-amber-400' },
+      { label: 'Strong', width: 80, barClass: 'bg-emerald-400', textClass: 'text-emerald-400' },
+      { label: 'Very strong', width: 100, barClass: 'bg-emerald-300', textClass: 'text-emerald-300' },
+    ];
+    return levels[Math.min(score - 1, 4)] || levels[0];
+  }
+
   get maskedEmail(): string {
     const [name, domain] = (this.email || '').split('@');
     if (!name || !domain) return this.email || 'Not provided';
