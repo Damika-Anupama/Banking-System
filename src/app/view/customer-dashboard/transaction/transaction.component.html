@@ -281,7 +281,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of paginatedTransactions; index as i; trackBy: trackByTransaction" (click)="showTransactionDetails(transaction, ((transactionPage - 1) * transactionPageSize) + i)" title="View transaction details">
+          <tr *ngFor="let transaction of paginatedTransactions; index as i; trackBy: trackByTransaction" (click)="showTransactionDetails(transaction, ((transactionPage - 1) * transactionPageSize) + i)" (keydown.enter)="showTransactionDetails(transaction, ((transactionPage - 1) * transactionPageSize) + i)" (keydown.space)="$event.preventDefault(); showTransactionDetails(transaction, ((transactionPage - 1) * transactionPageSize) + i)" tabindex="0" role="button" aria-label="View transaction details" title="View transaction details">
             <td class="font-mono">{{ transactionReference(transaction, ((transactionPage - 1) * transactionPageSize) + i) }}</td>
             <td><span class="transaction-date"><i class="far fa-calendar"></i>{{ transaction.date | date: 'MMM d, y' }}</span><small>{{ transaction.date | date: 'h:mm a' }}</small></td>
             <td>

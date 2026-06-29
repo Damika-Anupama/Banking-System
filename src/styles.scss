@@ -719,6 +719,12 @@ table {
   }
 }
 
+// Keyboard focus indicator for interactive (selectable) table rows (a11y)
+tbody tr[role="button"]:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.85);
+  outline-offset: -2px;
+}
+
 // Animation utilities
 .animate-gradient {
   background-size: 200% 200%;
