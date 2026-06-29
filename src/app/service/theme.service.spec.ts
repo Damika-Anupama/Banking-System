@@ -433,6 +433,29 @@ describe('ThemeService', () => {
     });
   });
 
+  describe('theme-color meta synchronisation', () => {
+    let meta: HTMLMetaElement;
+
+    beforeEach(() => {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'theme-color');
+      document.head.appendChild(meta);
+      service = TestBed.inject(ThemeService);
+    });
+
+    afterEach(() => meta.remove());
+
+    it('sets a dark chrome colour for dark mode', () => {
+      service.setTheme(true);
+      expect(meta.getAttribute('content')).toBe('#0f172a');
+    });
+
+    it('sets a light chrome colour for light mode', () => {
+      service.setTheme(false);
+      expect(meta.getAttribute('content')).toBe('#f8fafc');
+    });
+  });
+
   describe('Edge cases', () => {
     it('should throw error when localStorage is unavailable', () => {
       // This test verifies the service throws error if localStorage fails

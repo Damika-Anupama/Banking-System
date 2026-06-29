@@ -52,6 +52,15 @@ export class ThemeService {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    this.updateThemeColorMeta(isDark);
+  }
+
+  /** Keep the mobile browser chrome (address bar) in sync with the app theme. */
+  private updateThemeColorMeta(isDark: boolean): void {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', isDark ? '#0f172a' : '#f8fafc');
+    }
   }
 
   getCurrentTheme(): boolean {
