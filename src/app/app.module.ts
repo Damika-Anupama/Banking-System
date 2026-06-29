@@ -21,6 +21,7 @@ import { PreloaderComponent } from './shared/preloader/preloader.component';
 // Global UI — available on every page
 import { CommonModule } from '@angular/common';
 import { CommandPaletteComponent } from './shared/components/command-palette/command-palette.component';
+import { RouteProgressComponent } from './shared/components/route-progress/route-progress.component';
 
 /**
  * App Module (Root Module)
@@ -48,6 +49,7 @@ import { CommandPaletteComponent } from './shared/components/command-palette/com
     // Global components used in app.component.html
     PreloaderComponent,
     CommandPaletteComponent,
+    RouteProgressComponent,
     // Global error pages
     NotFoundComponent,
     ServerErrorComponent
