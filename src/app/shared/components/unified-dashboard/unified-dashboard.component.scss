@@ -82,6 +82,7 @@ main:focus-visible {
 
 // Customer dashboard styles
 .nav-link-item {
+  position: relative;
   color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.3s ease;
@@ -98,10 +99,29 @@ main:focus-visible {
     color: var(--text-primary);
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
   }
+
+  // "You are here" accent bar on the active item
+  &.active-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 58%;
+    border-radius: 0 4px 4px 0;
+    background: linear-gradient(180deg, #67e8f9, #3b82f6);
+    box-shadow: 0 0 8px rgba(103, 232, 249, 0.7);
+  }
+
+  &.active-link i {
+    color: #67e8f9;
+  }
 }
 
 // Employee/Manager dashboard styles
 .nav-item {
+  position: relative;
   color: var(--text-secondary);
   background: transparent;
   text-decoration: none;
@@ -118,8 +138,27 @@ main:focus-visible {
 }
 
 .active-nav-item {
+  position: relative;
   color: var(--text-primary);
   @apply bg-gradient-to-r from-glass-purple/30 to-glass-blue/30 shadow-lg;
+
+  // "You are here" accent bar on the active item
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 58%;
+    border-radius: 0 4px 4px 0;
+    background: linear-gradient(180deg, #67e8f9, #3b82f6);
+    box-shadow: 0 0 8px rgba(103, 232, 249, 0.7);
+  }
+
+  i {
+    color: #67e8f9;
+  }
 }
 
 // Common icon button styles
