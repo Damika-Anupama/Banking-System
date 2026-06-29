@@ -457,44 +457,44 @@ describe('HomeComponent', () => {
     });
   });
 
-  describe('initializeChart()', () => {
+  describe('renderSpendingChart()', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(HomeComponent);
       component = fixture.componentInstance;
     });
 
-    it('should initialize chart when canvas exists', () => {
-      // Create mock canvas
+    it('should create a chart instance when canvas and spending data exist', () => {
       const canvas = document.createElement('canvas');
-      canvas.id = 'lineChart';
+      canvas.id = 'spendingChart';
       document.body.appendChild(canvas);
 
-      spyOn(Chart.prototype, 'destroy');
+      spyOnProperty(component, 'spendingByCategory', 'get').and.returnValue([
+        { label: 'Bills', value: 1000 },
+        { label: 'Shopping', value: 500 },
+      ]);
 
-      component.initializeChart();
+      component.renderSpendingChart();
 
-      expect((component as any).chartInstance).toBeDefined();
+      expect((component as any).chartInstance).toBeTruthy();
 
       // Cleanup
+      (component as any).chartInstance?.destroy();
       document.body.removeChild(canvas);
     });
 
-    it('should handle missing canvas gracefully', () => {
-      spyOn(console, 'warn');
+    it('should leave chartInstance null when canvas is missing', () => {
+      (component as any).chartInstance = null;
 
-      component.initializeChart();
-
-      expect(console.warn).toHaveBeenCalledWith('Chart canvas not found');
+      expect(() => component.renderSpendingChart()).not.toThrow();
       expect((component as any).chartInstance).toBeNull();
     });
 
-    it('should handle chart initialization error', () => {
+    it('should handle chart rendering errors without throwing', () => {
       spyOn(console, 'error');
       spyOn(document, 'getElementById').and.throwError('DOM error');
 
-      component.initializeChart();
-
-      expect(console.error).toHaveBeenCalledWith('Error initializing chart:', jasmine.any(Error));
+      expect(() => component.renderSpendingChart()).not.toThrow();
+      expect(console.error).toHaveBeenCalledWith('Error rendering spending chart:', jasmine.any(Error));
     });
   });
 
@@ -542,12 +542,17 @@ describe('HomeComponent', () => {
     it('should destroy chart on ngOnDestroy', () => {
       // Create mock canvas
       const canvas = document.createElement('canvas');
-      canvas.id = 'lineChart';
+      canvas.id = 'spendingChart';
       document.body.appendChild(canvas);
 
-      component.initializeChart();
+      spyOnProperty(component, 'spendingByCategory', 'get').and.returnValue([
+        { label: 'Bills', value: 1000 },
+      ]);
+
+      component.renderSpendingChart();
 
       const chartInstance = (component as any).chartInstance;
+      expect(chartInstance).toBeTruthy();
       spyOn(chartInstance, 'destroy');
 
       component.ngOnDestroy();

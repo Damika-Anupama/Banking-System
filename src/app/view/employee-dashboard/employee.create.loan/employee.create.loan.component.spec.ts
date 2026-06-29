@@ -40,12 +40,8 @@ describe('EmployeeCreateLoanComponent', () => {
       expect(component.customerID).toBe('');
     });
 
-    it('should initialize with zero maximumLoanAmount', () => {
-      expect(component.maximumLoanAmount).toBe(0);
-    });
-
-    it('should initialize with zero loanAmount', () => {
-      expect(component.loanAmount).toBe(0);
+    it('should initialize with null loanAmount', () => {
+      expect(component.loanAmount).toBeNull();
     });
 
     it('should initialize with undefined selectedLoan', () => {
@@ -216,11 +212,6 @@ describe('EmployeeCreateLoanComponent', () => {
       expect(component.customerID).toBe('CUST001');
     });
 
-    it('should allow setting maximumLoanAmount', () => {
-      component.maximumLoanAmount = 500000;
-      expect(component.maximumLoanAmount).toBe(500000);
-    });
-
     it('should allow setting loanAmount', () => {
       component.loanAmount = 250000;
       expect(component.loanAmount).toBe(250000);
@@ -287,11 +278,6 @@ describe('EmployeeCreateLoanComponent', () => {
     it('should handle customerID with special characters', () => {
       component.customerID = 'CUST-001@#$';
       expect(component.customerID).toBe('CUST-001@#$');
-    });
-
-    it('should handle negative maximumLoanAmount', () => {
-      component.maximumLoanAmount = -100000;
-      expect(component.maximumLoanAmount).toBe(-100000);
     });
 
     it('should handle negative loanAmount', () => {
