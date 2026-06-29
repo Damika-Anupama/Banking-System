@@ -1,3 +1,6 @@
+<!-- Skip to main content (accessibility) -->
+<a href="javascript:void(0)" class="skip-to-content" (click)="focusMainContent()">Skip to main content</a>
+
 <!-- Customer Dashboard Layout (original style with different structure) -->
 <div *ngIf="isCustomerDashboard()" class="customer-dashboard-shell min-h-screen lg:h-screen lg:overflow-hidden lg:flex">
   <!-- Sidebar -->
@@ -88,7 +91,7 @@
     </header>
 
     <!-- Page Content -->
-    <main class="customer-dashboard-content flex-1 min-h-0 p-4 lg:p-8 overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
+    <main id="main-content" tabindex="-1" class="customer-dashboard-content flex-1 min-h-0 p-4 lg:p-8 overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
       <div class="max-w-7xl mx-auto">
         <router-outlet></router-outlet>
       </div>
@@ -270,7 +273,7 @@
     </nav>
 
     <!-- Page Content -->
-    <main class="p-6 flex-1 min-h-0 lg:overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
+    <main id="main-content" tabindex="-1" class="p-6 flex-1 min-h-0 lg:overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
       <router-outlet></router-outlet>
     </main>
 

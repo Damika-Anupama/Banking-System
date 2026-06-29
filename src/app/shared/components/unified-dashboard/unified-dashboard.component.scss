@@ -1,5 +1,35 @@
 // Dashboard specific styles - Combined from all dashboards
 
+// Skip to main content link (accessibility) — hidden until keyboard-focused
+.skip-to-content {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -150%);
+  z-index: 9999;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: linear-gradient(135deg, #3b82f6, #22d3ee);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.5);
+  transition: transform 200ms ease;
+}
+
+.skip-to-content:focus,
+.skip-to-content:focus-visible {
+  transform: translate(-50%, 0);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+main:focus,
+main:focus-visible {
+  outline: none;
+}
+
 // Floating "back to top" button
 .back-to-top-btn {
   position: fixed;

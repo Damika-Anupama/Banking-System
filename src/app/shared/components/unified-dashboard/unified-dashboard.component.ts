@@ -34,6 +34,14 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
     this.scrollEl?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  focusMainContent(): void {
+    const main = document.getElementById('main-content');
+    if (main) {
+      main.focus();
+      main.scrollTo?.({ top: 0 });
+    }
+  }
+
   private notificationsByRole: Record<string, any[]> = {
     customer: [
       { icon: 'fa-arrow-down', tone: 'emerald', title: 'Salary credited', detail: 'Rs. 185,000 received into ****2810', time: '2h ago' },
