@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-server-error',
@@ -7,5 +8,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./server-error.component.scss']
 })
 export class ServerErrorComponent {
+  constructor(private location: Location) {}
 
+  retry(): void {
+    window.location.reload();
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
 }
