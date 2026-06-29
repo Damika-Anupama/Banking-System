@@ -662,4 +662,44 @@ describe('HomeComponent', () => {
       expect(component.accountNumber).toBe('ACC001');
     });
   });
+
+  describe('Selected account persistence', () => {
+    const twoAccounts = [
+      { account_id: 'ACC001', amount: '5000', saving_type: 'NORMAL', account_type: 'PERSONAL' },
+      { account_id: 'ACC002', amount: '9000', saving_type: 'NORMAL', account_type: 'PERSONAL' },
+    ];
+
+    beforeEach(() => {
+      fixture = TestBed.createComponent(HomeComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('persists the chosen account id when a row is selected', () => {
+      component.updateSmallBox({ account_id: 'ACC002', amount: '9000' });
+      expect(localStorage.getItem('lastSelectedAccountId')).toBe('ACC002');
+    });
+
+    it('restores the last-viewed account on load when it still exists', () => {
+      localStorage.setItem('lastSelectedAccountId', 'ACC002');
+      mockUserService.getDashboardDetails.and.returnValue(of([{
+        user_id: '123', username: 'Test User', type: 'CUSTOMER', accounts: twoAccounts,
+      }]));
+
+      component.loadDashboardData();
+
+      expect(component.selectedAccount?.account_id).toBe('ACC002');
+      expect(component.balance).toBe('9000');
+    });
+
+    it('falls back to the first account when no saved id matches', () => {
+      localStorage.setItem('lastSelectedAccountId', 'ACC999');
+      mockUserService.getDashboardDetails.and.returnValue(of([{
+        user_id: '123', username: 'Test User', type: 'CUSTOMER', accounts: twoAccounts,
+      }]));
+
+      component.loadDashboardData();
+
+      expect(component.selectedAccount?.account_id).toBe('ACC001');
+    });
+  });
 });

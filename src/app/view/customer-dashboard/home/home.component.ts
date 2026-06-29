@@ -239,6 +239,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
               this.accountNumber = this.accounts[0]['account_id'] || 'N/A';
               this.selectedAccount = this.accounts[0];
             }
+
+            // Re-select the account the customer last viewed, if it still exists.
+            this.restoreSelectedAccount();
           }
 
           // Set user type with null check
@@ -385,8 +388,27 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.accountNumber = account.account_id || 'N/A';
     this.selectedAccount = account;
 
+    // Remember this choice so the dashboard reopens on the same account.
+    try {
+      localStorage.setItem('lastSelectedAccountId', String(account.account_id));
+    } catch {
+      // Ignore storage failures (private mode / quota).
+    }
+
     // Refresh the spending breakdown for the newly selected account.
     setTimeout(() => this.renderSpendingChart());
+  }
+
+  /** Restore the customer's last-viewed account when it is still in the list. */
+  private restoreSelectedAccount(): void {
+    const savedId = localStorage.getItem('lastSelectedAccountId');
+    if (!savedId) return;
+    const match = (this.accounts || []).find(a => String(a?.account_id) === savedId);
+    if (match) {
+      this.selectedAccount = match;
+      this.balance = match.amount || '0';
+      this.accountNumber = match.account_id || 'N/A';
+    }
   }
 
   ngOnDestroy(): void {
