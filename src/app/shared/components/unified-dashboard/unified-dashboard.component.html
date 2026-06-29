@@ -88,11 +88,23 @@
     </header>
 
     <!-- Page Content -->
-    <main class="customer-dashboard-content flex-1 min-h-0 p-4 lg:p-8 overflow-y-auto overscroll-contain">
+    <main class="customer-dashboard-content flex-1 min-h-0 p-4 lg:p-8 overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
       <div class="max-w-7xl mx-auto">
         <router-outlet></router-outlet>
       </div>
     </main>
+
+    <!-- Back to top -->
+    <button
+      type="button"
+      class="back-to-top-btn"
+      [class.is-visible]="showBackToTop"
+      (click)="scrollToTop()"
+      aria-label="Scroll back to top"
+      title="Back to top"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
   </div>
 
   <!-- Mobile Sidebar Overlay -->
@@ -258,8 +270,20 @@
     </nav>
 
     <!-- Page Content -->
-    <main class="p-6 flex-1 min-h-0 lg:overflow-y-auto overscroll-contain">
+    <main class="p-6 flex-1 min-h-0 lg:overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
       <router-outlet></router-outlet>
     </main>
+
+    <!-- Back to top -->
+    <button
+      type="button"
+      class="back-to-top-btn"
+      [class.is-visible]="showBackToTop"
+      (click)="scrollToTop()"
+      aria-label="Scroll back to top"
+      title="Back to top"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
   </div>
 </div>

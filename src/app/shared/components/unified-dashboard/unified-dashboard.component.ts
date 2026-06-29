@@ -21,7 +21,18 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
   unreadCount = 0;
   notificationsRead = false;
   clockDisplay = '';
+  showBackToTop = false;
+  private scrollEl: HTMLElement | null = null;
   private clockInterval: ReturnType<typeof setInterval> | null = null;
+
+  onContentScroll(event: Event): void {
+    this.scrollEl = event.target as HTMLElement;
+    this.showBackToTop = this.scrollEl.scrollTop > 300;
+  }
+
+  scrollToTop(): void {
+    this.scrollEl?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   private notificationsByRole: Record<string, any[]> = {
     customer: [
