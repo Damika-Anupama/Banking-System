@@ -19,8 +19,65 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Initial loading splash shown until Angular boots and replaces <app-root>.
+       Pure inline CSS so it paints instantly, before any bundle loads. -->
+  <style>
+    .app-boot-splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      z-index: 2147483647;
+    }
+    .app-boot-splash__brand {
+      color: #e2e8f0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .app-boot-splash__brand span { color: #67e8f9; }
+    .app-boot-splash__spinner {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 3px solid rgba(103, 232, 249, 0.25);
+      border-top-color: #22d3ee;
+      animation: app-boot-spin 0.9s linear infinite;
+    }
+    .app-boot-splash__hint {
+      color: rgba(226, 232, 240, 0.55);
+      font-size: 0.8rem;
+    }
+    @keyframes app-boot-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .app-boot-splash__spinner { animation-duration: 2s; }
+    }
+  </style>
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <!-- Replaced by the Angular app once it bootstraps -->
+    <div class="app-boot-splash">
+      <div class="app-boot-splash__spinner" role="status" aria-label="Loading"></div>
+      <p class="app-boot-splash__brand">Banking<span>System</span></p>
+      <p class="app-boot-splash__hint">Preparing your secure workspace…</p>
+    </div>
+  </app-root>
+  <noscript>
+    <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;background:#0f1419;color:#e2e8f0;font-family:sans-serif;">
+      <div>
+        <h1 style="font-size:1.4rem;margin-bottom:0.75rem;">JavaScript is required</h1>
+        <p style="color:rgba(226,232,240,0.7);max-width:28rem;">
+          Banking System is an interactive app. Please enable JavaScript in your browser to continue.
+        </p>
+      </div>
+    </div>
+  </noscript>
 </body>
 </html>
