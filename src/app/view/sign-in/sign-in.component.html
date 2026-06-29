@@ -46,9 +46,15 @@
       <div class="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 p-4 text-center">
         <p class="text-sm text-cyan-50">You can view the dashboards without entering sign-in details.</p>
         <div class="auth-demo-grid mt-4">
-          <button type="button" class="auth-demo-btn" aria-label="Open customer dashboard without sign in" (click)="launchDemo('CUSTOMER')"><i class="fas fa-user"></i>Customer</button>
-          <button type="button" class="auth-demo-btn" aria-label="Open employee dashboard without sign in" (click)="launchDemo('EMPLOYEE')"><i class="fas fa-user-tie"></i>Employee</button>
-          <button type="button" class="auth-demo-btn" aria-label="Open manager dashboard without sign in" (click)="launchDemo('MANAGER')"><i class="fas fa-chart-line"></i>Manager</button>
+          <button type="button" class="auth-demo-btn" [class.is-loading]="loadingDemo === 'CUSTOMER'" [disabled]="loadingDemo !== null" aria-label="Open customer dashboard without sign in" (click)="launchDemo('CUSTOMER')">
+            <i class="fas" [ngClass]="loadingDemo === 'CUSTOMER' ? 'fa-spinner fa-spin' : 'fa-user'"></i>{{ loadingDemo === 'CUSTOMER' ? 'Opening…' : 'Customer' }}
+          </button>
+          <button type="button" class="auth-demo-btn" [class.is-loading]="loadingDemo === 'EMPLOYEE'" [disabled]="loadingDemo !== null" aria-label="Open employee dashboard without sign in" (click)="launchDemo('EMPLOYEE')">
+            <i class="fas" [ngClass]="loadingDemo === 'EMPLOYEE' ? 'fa-spinner fa-spin' : 'fa-user-tie'"></i>{{ loadingDemo === 'EMPLOYEE' ? 'Opening…' : 'Employee' }}
+          </button>
+          <button type="button" class="auth-demo-btn" [class.is-loading]="loadingDemo === 'MANAGER'" [disabled]="loadingDemo !== null" aria-label="Open manager dashboard without sign in" (click)="launchDemo('MANAGER')">
+            <i class="fas" [ngClass]="loadingDemo === 'MANAGER' ? 'fa-spinner fa-spin' : 'fa-chart-line'"></i>{{ loadingDemo === 'MANAGER' ? 'Opening…' : 'Manager' }}
+          </button>
         </div>
       </div>
 

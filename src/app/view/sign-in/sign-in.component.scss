@@ -25,6 +25,18 @@
   transform: translateY(-1px);
 }
 
+// Demo role buttons — disabled / loading feedback
+.auth-demo-btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.auth-demo-btn.is-loading {
+  opacity: 1;
+  border-color: rgba(103, 232, 249, 0.55);
+  background: rgba(34, 211, 238, 0.16);
+}
+
 // Password show/hide toggle
 .password-field-wrap {
   position: relative;

@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import Swal from 'sweetalert2';
 import { demoStore } from 'src/app/shared/demo-store';
 
@@ -16,6 +16,7 @@ export class SignInComponent implements OnDestroy {
   isLoading = false;
   submitted = false;
   showPassword = false;
+  loadingDemo: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER' | null = null;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
@@ -44,14 +45,22 @@ export class SignInComponent implements OnDestroy {
   }
 
   launchDemo(type: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER'): void {
+    // Ignore repeat clicks while a workspace is already opening.
+    if (this.loadingDemo) {
+      return;
+    }
     const demoProfiles = {
       CUSTOMER: { email: 'customer@banking-system.app', route: '/dashboard/home' },
       EMPLOYEE: { email: 'employee@banking-system.app', route: '/employee-dashboard/employee-home' },
       MANAGER: { email: 'manager@banking-system.app', route: '/manager-dashboard/manager-home' }
     };
     const profile = demoProfiles[type];
+    this.loadingDemo = type;
     this.seedDemoSession(type, profile.email);
-    this.router.navigate([profile.route]);
+    // Brief delay so the "opening workspace" feedback is visible before routing.
+    this.subscriptions.push(
+      timer(450).subscribe(() => this.router.navigate([profile.route]))
+    );
   }
 
   private handleAuthenticationSuccess(user: any): void {
