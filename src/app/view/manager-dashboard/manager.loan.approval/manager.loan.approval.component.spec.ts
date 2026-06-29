@@ -547,14 +547,16 @@ describe('ManagerLoanApprovalComponent', () => {
   });
 
   describe('Private Method - processApproval', () => {
-    it('should show not implemented message', () => {
+    it('should approve the loan and show a success message', () => {
+      const before = component.approvedCount;
+
       (component as any).processApproval(123);
 
+      expect(component.approvedCount).toBe(before + 1);
       expect(Swal.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          icon: 'warning',
-          title: 'Not Implemented',
-          text: 'Loan approval functionality needs to be implemented'
+          icon: 'success',
+          title: 'Loan approved'
         })
       );
     });
@@ -570,14 +572,16 @@ describe('ManagerLoanApprovalComponent', () => {
   });
 
   describe('Private Method - processRejection', () => {
-    it('should show not implemented message', () => {
+    it('should reject the loan and show a success message', () => {
+      const before = component.rejectedCount;
+
       (component as any).processRejection(123, 'Test reason');
 
+      expect(component.rejectedCount).toBe(before + 1);
       expect(Swal.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          icon: 'warning',
-          title: 'Not Implemented',
-          text: 'Loan rejection functionality needs to be implemented'
+          icon: 'success',
+          title: 'Loan rejected'
         })
       );
     });
