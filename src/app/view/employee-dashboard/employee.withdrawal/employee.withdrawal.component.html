@@ -58,9 +58,9 @@
       <button
         type="submit"
         class="glass-button w-full justify-center"
-        [disabled]="!isValid || isProcessing"
-        [class.opacity-50]="!isValid || isProcessing"
-        [class.cursor-not-allowed]="!isValid || isProcessing"
+        [disabled]="isProcessing"
+        [class.opacity-50]="isProcessing"
+        [class.cursor-not-allowed]="isProcessing"
       >
         <i *ngIf="!isProcessing" class="fas fa-check-circle mr-2"></i>
         <i *ngIf="isProcessing" class="fas fa-spinner fa-spin mr-2"></i>

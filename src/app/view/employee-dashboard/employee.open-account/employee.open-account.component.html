@@ -78,7 +78,7 @@
         </p>
       </div>
 
-      <button type="submit" class="glass-button w-full justify-center" [disabled]="!isValid || isProcessing" [class.opacity-50]="!isValid || isProcessing">
+      <button type="submit" class="glass-button w-full justify-center" [disabled]="isProcessing" [class.opacity-50]="isProcessing">
         <i *ngIf="!isProcessing" class="fas fa-folder-plus mr-2"></i>
         <i *ngIf="isProcessing" class="fas fa-spinner fa-spin mr-2"></i>
         {{ isProcessing ? 'Opening...' : 'Open account' }}

@@ -45,7 +45,7 @@
         <label class="auth-field-label" for="message"><i class="fas fa-align-left mr-2"></i>Message <span class="text-red-300">*</span></label>
         <textarea class="glass-input w-full min-h-[120px] resize-none" rows="4" placeholder="Write your announcement…" [(ngModel)]="message" id="message" name="message"></textarea>
       </div>
-      <button type="submit" class="glass-button w-full justify-center" [disabled]="!isValid || isPosting" [class.opacity-50]="!isValid || isPosting">
+      <button type="submit" class="glass-button w-full justify-center" [disabled]="isPosting" [class.opacity-50]="isPosting">
         <i *ngIf="!isPosting" class="fas fa-bullhorn mr-2"></i>
         <i *ngIf="isPosting" class="fas fa-spinner fa-spin mr-2"></i>
         {{ isPosting ? 'Posting...' : 'Post announcement' }}

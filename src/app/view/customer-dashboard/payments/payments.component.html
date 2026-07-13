@@ -61,7 +61,7 @@
         </div>
       </div>
 
-      <button type="submit" class="glass-button w-full justify-center" [disabled]="!isValid || isSaving" [class.opacity-50]="!isValid || isSaving">
+      <button type="submit" class="glass-button w-full justify-center" [disabled]="isSaving" [class.opacity-50]="isSaving">
         <i *ngIf="!isSaving" class="fas fa-check-circle mr-2"></i>
         <i *ngIf="isSaving" class="fas fa-spinner fa-spin mr-2"></i>
         {{ isSaving ? 'Saving...' : 'Create standing order' }}

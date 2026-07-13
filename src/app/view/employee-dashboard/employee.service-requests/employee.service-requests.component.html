@@ -56,7 +56,7 @@
         <label class="auth-field-label" for="newSummary"><i class="fas fa-clipboard-list mr-2"></i>Summary <span class="text-red-300">*</span></label>
         <textarea class="glass-input w-full min-h-[90px] resize-none" rows="3" placeholder="Describe the customer's request" [(ngModel)]="newSummary" id="newSummary" name="newSummary"></textarea>
       </div>
-      <button type="submit" class="glass-button w-full justify-center" [disabled]="!isValid || isSubmitting" [class.opacity-50]="!isValid || isSubmitting">
+      <button type="submit" class="glass-button w-full justify-center" [disabled]="isSubmitting" [class.opacity-50]="isSubmitting">
         <i *ngIf="!isSubmitting" class="fas fa-paper-plane mr-2"></i>
         <i *ngIf="isSubmitting" class="fas fa-spinner fa-spin mr-2"></i>
         {{ isSubmitting ? 'Logging...' : 'Create ticket' }}
