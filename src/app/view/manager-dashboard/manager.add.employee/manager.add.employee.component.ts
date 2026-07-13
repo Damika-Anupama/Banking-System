@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AddEmployeeService } from 'src/app/service/manager/add.employee.service';
 import { Subscription } from 'rxjs';
-import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 @Component({
   selector: 'app-manager.add.employee',
@@ -25,75 +25,120 @@ export class ManagerAddEmployeeComponent implements OnInit, OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private addEmployee: AddEmployeeService, private router: Router) {}
+  constructor(
+    private addEmployee: AddEmployeeService,
+    private router: Router,
+    private toastService: ToastService
+  ) {}
+
+  /** Fields the user has left, so errors appear on blur rather than while typing. */
+  touched: Record<string, boolean> = {};
+
+  private readonly validatedFields = [
+    'fullname',
+    'username',
+    'password',
+    'email',
+    'contact_no',
+    'gender',
+    'dob',
+    'address',
+  ];
+
+  /**
+   * Single source of truth for validity, so a rule cannot be enforced on submit
+   * but left invisible on the field that broke it.
+   */
+  get fieldErrors(): Record<string, string | null> {
+    return {
+      fullname: this.fullname?.trim() ? null : "Enter the employee's full name.",
+
+      username: this.username?.trim() ? null : 'Choose a username.',
+
+      password: !this.password
+        ? 'Set a password.'
+        : this.password.length < 6
+          ? 'Use at least 6 characters.'
+          : null,
+
+      email: !this.email?.trim()
+        ? 'Enter an email address.'
+        : !this.isValidEmail(this.email)
+          ? 'Enter a valid email address.'
+          : null,
+
+      contact_no: !this.contact_no?.trim()
+        ? 'Enter a contact number.'
+        : !this.isValidContactNumber(this.contact_no)
+          ? 'Enter a valid contact number.'
+          : null,
+
+      gender: !this.gender
+        ? 'Select a gender.'
+        : !this.normalizeGender(this.gender)
+          ? 'Select a valid gender.'
+          : null,
+
+      dob: this.dob ? null : 'Enter a date of birth.',
+
+      address: this.address?.trim() ? null : 'Enter an address.',
+    };
+  }
+
+  get hasFieldErrors(): boolean {
+    return this.validatedFields.some((field) => this.fieldErrors[field]);
+  }
+
+  get firstFieldError(): string | null {
+    for (const field of this.validatedFields) {
+      const error = this.fieldErrors[field];
+      if (error) return error;
+    }
+    return null;
+  }
+
+  errorFor(field: string): string | null {
+    return this.touched[field] ? this.fieldErrors[field] : null;
+  }
+
+  markTouched(field: string): void {
+    this.touched[field] = true;
+  }
+
+  markAllTouched(): void {
+    this.validatedFields.forEach((field) => (this.touched[field] = true));
+  }
 
   ngOnInit(): void {
     // Load and validate branch_id
     const isDemo = localStorage.getItem('demoMode') === 'true';
     this.branch_id = localStorage.getItem('branchId') || (isDemo ? 'BR-001' : null);
     if (!this.branch_id) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Branch ID not found. Please log in again.',
-        icon: 'error',
-      });
+      this.toastService.error('Branch not found', 'Branch ID not found. Please log in again.');
     }
   }
 
   submit(): void {
-    // Form validation
-    if (!this.validateForm()) {
-      return;
-    }
-
     this.isLoading = true;
     this.errorMessage = '';
 
     try {
-      // Validate branch_id
+      // Inside the try: validation reads the field rules, and a rule throwing
+      // should be handled here rather than escaping submit().
+      if (!this.validateForm()) {
+        this.isLoading = false;
+        return;
+      }
+
+      // Branch comes from the session, not the form, so it is not a field error.
       if (!this.branch_id) {
         this.isLoading = false;
-        Swal.fire({
-          title: 'Error',
-          text: 'Branch ID is missing. Please log in again.',
-          icon: 'error',
-        });
+        this.toastService.error('Branch not found', 'Branch ID is missing. Please log in again.');
         return;
       }
 
-      // Convert gender to uppercase format
-      const normalizedGender = this.normalizeGender(this.gender);
-      if (!normalizedGender) {
-        this.isLoading = false;
-        Swal.fire({
-          title: 'Error',
-          text: 'Invalid gender selection',
-          icon: 'error',
-        });
-        return;
-      }
-
-      // Validate email format
-      if (!this.isValidEmail(this.email)) {
-        this.isLoading = false;
-        Swal.fire({
-          title: 'Error',
-          text: 'Please enter a valid email address',
-          icon: 'error',
-        });
-        return;
-      }
-
-      // Validate contact number
-      if (!this.isValidContactNumber(this.contact_no)) {
-        this.isLoading = false;
-        Swal.fire({
-          title: 'Error',
-          text: 'Please enter a valid contact number',
-          icon: 'error',
-        });
-        return;
-      }
+      // validateForm() has already rejected an unmappable gender.
+      const normalizedGender = this.normalizeGender(this.gender) as string;
 
       const body = {
         username: this.username.trim(),
@@ -115,37 +160,27 @@ export class ManagerAddEmployeeComponent implements OnInit, OnDestroy {
           // Null/undefined check for response
           if (!res) {
             this.errorMessage = 'No response received from server';
-            Swal.fire({
-              title: 'Error',
-              text: this.errorMessage,
-              icon: 'error',
-            });
+            this.toastService.error('Could not add employee', this.errorMessage);
             return;
           }
 
           const isDemo = localStorage.getItem('demoMode') === 'true';
-          Swal.fire({
-            title: 'Success',
-            text: res.message || 'Employee added successfully',
-            icon: 'success',
-          }).then(() => {
-            this.resetForm();
-            // In demo mode, return to home so the updated employee count is visible.
-            if (isDemo) {
-              this.router.navigate(['/manager-dashboard/manager-home']);
-            }
-          });
+          this.toastService.success(
+            'Employee added',
+            res.message || 'Employee added successfully'
+          );
+          this.resetForm();
+          // In demo mode, return to home so the updated employee count is visible.
+          if (isDemo) {
+            this.router.navigate(['/manager-dashboard/manager-home']);
+          }
         },
         error: (err) => {
           console.error('Error adding employee:', err);
           this.isLoading = false;
           this.errorMessage = err?.error?.message || err?.message || 'Failed to add employee';
 
-          Swal.fire({
-            title: 'Error',
-            text: this.errorMessage,
-            icon: 'error',
-          });
+          this.toastService.error('Could not add employee', this.errorMessage);
         }
       });
 
@@ -154,41 +189,15 @@ export class ManagerAddEmployeeComponent implements OnInit, OnDestroy {
       console.error('Error in submit process:', error);
       this.isLoading = false;
       this.errorMessage = 'An unexpected error occurred';
-      Swal.fire({
-        title: 'Error',
-        text: this.errorMessage,
-        icon: 'error',
-      });
+      this.toastService.error('Could not add employee', this.errorMessage);
     }
   }
 
   private validateForm(): boolean {
-    // Check for empty fields
-    if (
-      !this.username?.trim() ||
-      !this.password ||
-      !this.fullname?.trim() ||
-      !this.gender ||
-      !this.dob ||
-      !this.address?.trim() ||
-      !this.email?.trim() ||
-      !this.contact_no?.trim()
-    ) {
-      Swal.fire({
-        title: 'Validation Error',
-        text: 'Please fill all the required fields',
-        icon: 'error',
-      });
-      return false;
-    }
-
-    // Validate password length
-    if (this.password.length < 6) {
-      Swal.fire({
-        title: 'Validation Error',
-        text: 'Password must be at least 6 characters long',
-        icon: 'error',
-      });
+    if (this.hasFieldErrors) {
+      // Surface every problem at once, against the field that caused it.
+      this.markAllTouched();
+      this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
       return false;
     }
 

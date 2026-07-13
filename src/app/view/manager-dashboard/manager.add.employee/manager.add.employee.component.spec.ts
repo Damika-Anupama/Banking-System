@@ -13,8 +13,10 @@ import { ManagerAddEmployeeComponent } from './manager.add.employee.component';
 import { AddEmployeeService } from 'src/app/service/manager/add.employee.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('ManagerAddEmployeeComponent', () => {
+  let toastService: ToastService;
   let component: ManagerAddEmployeeComponent;
   let fixture: ComponentFixture<ManagerAddEmployeeComponent>;
   let mockAddEmployeeService: jasmine.SpyObj<AddEmployeeService>;
@@ -35,11 +37,71 @@ describe('ManagerAddEmployeeComponent', () => {
     component = fixture.componentInstance;
 
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: true }));
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
   });
 
   afterEach(() => {
     localStorage.clear();
     fixture.destroy();
+  });
+
+  describe('inline field validation', () => {
+    it('never opens a dialog: nothing on this form is irreversible', () => {
+      component.submit();
+
+      expect(Swal.fire).not.toHaveBeenCalled();
+    });
+
+    it('reports every problem at once rather than one error at a time', () => {
+      component.submit();
+
+      expect(component.errorFor('fullname')).toBe("Enter the employee's full name.");
+      expect(component.errorFor('username')).toBe('Choose a username.');
+      expect(component.errorFor('password')).toBe('Set a password.');
+      expect(component.errorFor('email')).toBe('Enter an email address.');
+      expect(component.errorFor('dob')).toBe('Enter a date of birth.');
+    });
+
+    it('hides an error until the user has left the field', () => {
+      component.email = '';
+
+      // Untouched: the form must not nag before the user has engaged with it.
+      expect(component.errorFor('email')).toBeNull();
+      expect(component.fieldErrors['email']).toBe('Enter an email address.');
+
+      component.markTouched('email');
+      expect(component.errorFor('email')).toBe('Enter an email address.');
+    });
+
+    it('clears the error once the field is corrected', () => {
+      component.email = 'nope';
+      component.markTouched('email');
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
+
+      component.email = 'someone@example.com';
+      expect(component.errorFor('email')).toBeNull();
+    });
+
+    it('points a touched, invalid field at its error message', () => {
+      component.markTouched('email');
+      component.email = 'nope';
+      fixture.detectChanges();
+
+      const input: HTMLInputElement = fixture.nativeElement.querySelector('[name="email"]');
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+
+      // The message must exist at the id the input points to, or a screen
+      // reader announces nothing at all.
+      const describedBy = input.getAttribute('aria-describedby');
+      expect(describedBy).toBe('email-error');
+
+      const message = fixture.nativeElement.querySelector(`#${describedBy}`);
+      expect(message).not.toBeNull();
+      expect(message.getAttribute('role')).toBe('alert');
+    });
   });
 
   describe('Component Initialization', () => {
@@ -78,12 +140,9 @@ describe('ManagerAddEmployeeComponent', () => {
       component.ngOnInit();
 
       expect(component.branch_id).toBeNull();
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Branch ID not found. Please log in again.',
-          icon: 'error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Branch not found',
+        'Branch ID not found. Please log in again.'
       );
     });
   });
@@ -92,13 +151,11 @@ describe('ManagerAddEmployeeComponent', () => {
     it('should reject when all fields are empty', () => {
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields',
-          icon: 'error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
       expect(mockAddEmployeeService.saveEmployee).not.toHaveBeenCalled();
     });
 
@@ -113,12 +170,11 @@ describe('ManagerAddEmployeeComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
     });
 
     it('should reject password shorter than 6 characters', () => {
@@ -133,12 +189,7 @@ describe('ManagerAddEmployeeComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Password must be at least 6 characters long'
-        })
-      );
+      expect(component.errorFor('password')).toBe('Use at least 6 characters.');
     });
   });
 
@@ -155,12 +206,11 @@ describe('ManagerAddEmployeeComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
     });
   });
 
@@ -178,12 +228,9 @@ describe('ManagerAddEmployeeComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Branch ID is missing. Please log in again.',
-          icon: 'error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Branch not found',
+        'Branch ID is missing. Please log in again.'
       );
       expect(mockAddEmployeeService.saveEmployee).not.toHaveBeenCalled();
     });
@@ -226,13 +273,7 @@ describe('ManagerAddEmployeeComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Invalid gender selection',
-          icon: 'error'
-        })
-      );
+      expect(component.errorFor('gender')).toBe('Select a valid gender.');
     });
   });
 
@@ -254,12 +295,7 @@ describe('ManagerAddEmployeeComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Please enter a valid email address'
-        })
-      );
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
     });
   });
 
@@ -281,12 +317,7 @@ describe('ManagerAddEmployeeComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Please enter a valid contact number'
-        })
-      );
+      expect(component.errorFor('contact_no')).toBe('Enter a valid contact number.');
     });
   });
 
@@ -312,12 +343,9 @@ describe('ManagerAddEmployeeComponent', () => {
       await Promise.resolve();
 
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Success',
-          text: 'Employee added successfully',
-          icon: 'success'
-        })
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Employee added',
+        'Employee added successfully'
       );
     });
 
@@ -386,11 +414,9 @@ describe('ManagerAddEmployeeComponent', () => {
       component.submit();
 
       expect(component.errorMessage).toBe('No response received from server');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'No response received from server'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not add employee',
+        'No response received from server'
       );
     });
 
