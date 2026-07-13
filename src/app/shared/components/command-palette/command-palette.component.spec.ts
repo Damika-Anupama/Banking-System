@@ -96,4 +96,40 @@ describe('CommandPaletteComponent', () => {
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard/loan']);
     });
   });
+  describe('focus management', () => {
+    it('hands focus back to whatever opened it', (done) => {
+      const opener = document.createElement('button');
+      document.body.appendChild(opener);
+      opener.focus();
+
+      component.open();
+      expect(component.isOpen).toBe(true);
+
+      component.close();
+
+      // Without this, closing the palette drops a keyboard user at the top of
+      // the document, losing their place entirely.
+      expect(document.activeElement).toBe(opener);
+
+      document.body.removeChild(opener);
+      done();
+    });
+
+    it('closes on Escape', () => {
+      component.open();
+
+      component.onGlobalKeyDown(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      expect(component.isOpen).toBe(false);
+    });
+
+    it('ignores Escape when it is not open', () => {
+      component.isOpen = false;
+
+      component.onGlobalKeyDown(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      expect(component.isOpen).toBe(false);
+    });
+  });
+
 });

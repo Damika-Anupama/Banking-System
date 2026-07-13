@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ThemeService } from '../../../service/theme.service';
 import { DashboardConfig, NavigationItem } from '../../models/navigation-config.model';
+import { trapTabKey } from '../../focus-trap';
 
 @Component({
   selector: 'app-unified-dashboard',
@@ -165,8 +166,51 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** Whatever had focus before the drawer opened, so it can be handed back. */
+  private sidebarOpener: HTMLElement | null = null;
+
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
+    if (this.isSidebarOpen) {
+      this.closeSidebar();
+    } else {
+      this.openSidebar();
+    }
+  }
+
+  openSidebar(): void {
+    this.sidebarOpener = document.activeElement as HTMLElement | null;
+    this.isSidebarOpen = true;
+
+    // Move focus into the drawer, otherwise a keyboard user opens it and then
+    // tabs through the page behind it.
+    setTimeout(() => {
+      const drawer = document.getElementById('mobile-sidebar');
+      drawer?.querySelector<HTMLElement>('a, button')?.focus();
+    }, 30);
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
+
+    const opener = this.sidebarOpener;
+    this.sidebarOpener = null;
+    if (opener && typeof opener.focus === 'function') {
+      opener.focus();
+    }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onSidebarKeyDown(event: KeyboardEvent): void {
+    if (!this.isSidebarOpen) return;
+
+    // Escape closes the drawer: it covers the page, so there must be a way out
+    // that does not require finding the close button by sight.
+    if (event.key === 'Escape') {
+      this.closeSidebar();
+      return;
+    }
+
+    trapTabKey(event, document.getElementById('mobile-sidebar'));
   }
 
   isSmallScreen(): boolean {

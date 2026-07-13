@@ -87,6 +87,38 @@ describe('UnifiedDashboardComponent', () => {
     });
   });
 
+  describe('mobile drawer focus management', () => {
+    it('closes on Escape, so the drawer is not a trap without an exit', () => {
+      component.openSidebar();
+      expect(component.isSidebarOpen).toBe(true);
+
+      component.onSidebarKeyDown(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      expect(component.isSidebarOpen).toBe(false);
+    });
+
+    it('ignores Escape when the drawer is already closed', () => {
+      component.isSidebarOpen = false;
+
+      component.onSidebarKeyDown(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      expect(component.isSidebarOpen).toBe(false);
+    });
+
+    it('hands focus back to whatever opened it', () => {
+      const opener = document.createElement('button');
+      document.body.appendChild(opener);
+      opener.focus();
+
+      component.openSidebar();
+      component.closeSidebar();
+
+      expect(document.activeElement).toBe(opener);
+
+      document.body.removeChild(opener);
+    });
+  });
+
   describe('back-to-top', () => {
     it('reveals the button only after scrolling past 300px', () => {
       component.onContentScroll({ target: { scrollTop: 120, scrollTo: () => {} } } as unknown as Event);

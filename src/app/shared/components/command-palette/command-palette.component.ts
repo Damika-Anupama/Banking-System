@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../../service/theme.service';
+import { trapTabKey } from '../../focus-trap';
 
 type PaletteAction = 'toggle-theme' | 'sign-out';
 
@@ -96,6 +97,11 @@ export class CommandPaletteComponent {
       return;
     }
     if (!this.isOpen) return;
+
+    // aria-modal="true" promises the rest of the page is inert; without this,
+    // Tab would walk straight out of the dialog and make that a lie.
+    if (trapTabKey(event, this.dialogElement())) return;
+
     switch (event.key) {
       case 'Escape':
         this.close();
@@ -116,7 +122,15 @@ export class CommandPaletteComponent {
     }
   }
 
+  /** Whatever had focus before the palette opened, so it can be handed back. */
+  private previouslyFocused: HTMLElement | null = null;
+
+  private dialogElement(): HTMLElement | null {
+    return document.querySelector<HTMLElement>('.palette-modal');
+  }
+
   open(): void {
+    this.previouslyFocused = document.activeElement as HTMLElement | null;
     this.isOpen = true;
     this.query = '';
     this.selectedIndex = 0;
@@ -130,6 +144,14 @@ export class CommandPaletteComponent {
     this.isOpen = false;
     this.query = '';
     this.selectedIndex = 0;
+
+    // Returning focus to the opener: without this, closing the palette drops the
+    // keyboard user back at the top of the document, losing their place.
+    const opener = this.previouslyFocused;
+    this.previouslyFocused = null;
+    if (opener && typeof opener.focus === 'function') {
+      opener.focus();
+    }
   }
 
   onSearchInput(event: Event): void {
