@@ -14,9 +14,11 @@ import { UserService } from 'src/app/service/customer/user.service';
 import { FilterPipe } from 'src/app/pipes/filter.pipe';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { Chart } from 'chart.js';
 
 describe('HomeComponent', () => {
+  let toastService: ToastService;
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let mockRouter: jasmine.SpyObj<Router>;
@@ -38,6 +40,10 @@ describe('HomeComponent', () => {
 
     // Spy on Swal
     spyOn(Swal, 'fire');
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'error');
+    spyOn(toastService, 'warning');
 
     // Clear localStorage
     localStorage.clear();
@@ -224,13 +230,9 @@ describe('HomeComponent', () => {
       expect(component.accountNumber).toBe('N/A');
       expect(component.selectedAccount).toBeNull();
       expect(component.errorMessage).toBe('No accounts available');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'No Accounts',
-          text: 'You do not have any accounts yet.'
-        })
-      );
+      // The table now states the no-accounts case inline, and correctly distinguishes
+      // it from an empty search result.
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle null accounts array', () => {
@@ -279,13 +281,8 @@ describe('HomeComponent', () => {
 
       expect(component.errorMessage).toBe('No user data available');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'No user data available'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle empty array response', () => {
@@ -319,13 +316,8 @@ describe('HomeComponent', () => {
 
       expect(component.errorMessage).toBe('Invalid user data format');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Invalid user data format'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle server error with message', () => {
@@ -341,13 +333,8 @@ describe('HomeComponent', () => {
       expect(component.errorMessage).toBe('Unauthorized access');
       expect(component.isLoading).toBe(false);
       expect(console.error).toHaveBeenCalledWith('Error loading dashboard data:', errorResponse);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Unauthorized access'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle server error without specific message', () => {

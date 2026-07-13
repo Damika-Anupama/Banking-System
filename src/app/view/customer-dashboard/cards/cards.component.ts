@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { demoStore } from 'src/app/shared/demo-store';
 
 @Component({
@@ -11,7 +12,7 @@ import { demoStore } from 'src/app/shared/demo-store';
 export class CardsComponent implements OnInit {
   cards: any[] = [];
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private toastService: ToastService) {}
 
   ngOnInit(): void {
     this.cards = demoStore.getCards();
@@ -79,12 +80,10 @@ export class CardsComponent implements OnInit {
         demoStore.toggleCardFreeze(card.id);
         this.cards = [...demoStore.getCards()];
         this.cdr.detectChanges();
-        Swal.fire({
-          icon: 'success',
-          title: freezing ? 'Card frozen' : 'Card unfrozen',
-          timer: 1400,
-          showConfirmButton: false
-        });
+        this.toastService.success(
+          freezing ? 'Card frozen' : 'Card unfrozen',
+          `•••• ${card.number_last4}`
+        );
       }
     });
   }

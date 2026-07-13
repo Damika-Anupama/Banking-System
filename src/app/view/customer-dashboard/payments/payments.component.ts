@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { demoStore } from 'src/app/shared/demo-store';
 import { createDemoStandingOrder } from 'src/app/shared/demo-banking-fixtures';
 
@@ -10,6 +11,8 @@ import { createDemoStandingOrder } from 'src/app/shared/demo-banking-fixtures';
   styleUrls: ['./payments.component.scss']
 })
 export class PaymentsComponent implements OnInit {
+  constructor(private toastService: ToastService) {}
+
   orders: any[] = [];
 
   // Form
@@ -80,7 +83,7 @@ export class PaymentsComponent implements OnInit {
 
   setUpOrder(): void {
     if (!this.isValid) {
-      Swal.fire({ icon: 'error', title: 'Validation error', text: 'Fill payee, account, amount, and next date.' });
+      this.toastService.error('Check the order details', 'Fill payee, account, amount, and next date.');
       return;
     }
     this.isSaving = true;
@@ -97,13 +100,10 @@ export class PaymentsComponent implements OnInit {
 
     setTimeout(() => {
       this.isSaving = false;
-      Swal.fire({
-        icon: 'success',
-        title: 'Standing order created',
-        html: `<strong>${order.payee}</strong> · Rs. ${order.amount.toLocaleString()} ${order.frequency.toLowerCase()}`,
-        timer: 1800,
-        showConfirmButton: false
-      });
+      this.toastService.success(
+        'Standing order created',
+        `${order.payee} · Rs. ${order.amount.toLocaleString()} ${order.frequency.toLowerCase()}`
+      );
       this.resetForm();
     }, 400);
   }
@@ -126,7 +126,7 @@ export class PaymentsComponent implements OnInit {
       if (result.isConfirmed) {
         demoStore.removeStandingOrder(order.id);
         this.orders = demoStore.getStandingOrders();
-        Swal.fire({ icon: 'success', title: 'Order cancelled', timer: 1400, showConfirmButton: false });
+        this.toastService.success('Order cancelled');
       }
     });
   }

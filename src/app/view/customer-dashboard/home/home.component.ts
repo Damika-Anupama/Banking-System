@@ -6,6 +6,7 @@ import { UserService } from 'src/app/service/customer/user.service';
 import { ThemeService } from 'src/app/service/theme.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
 Chart.register(...registerables);
 
@@ -169,7 +170,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       .sort((a, b) => b.value - a.value);
   }
 
-  constructor(private router: Router, private userService: UserService, private themeService: ThemeService) {}
+  constructor(private router: Router, private userService: UserService, private themeService: ThemeService, private toastService: ToastService) {}
 
   ngOnInit() {
     this.loadDashboardData();
@@ -193,11 +194,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!user || !Array.isArray(user) || user.length === 0) {
           this.errorMessage = 'No user data available';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not load accounts', this.errorMessage);
           return;
         }
 
@@ -205,11 +202,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!user[0] || !user[0]['user_id']) {
           this.errorMessage = 'Invalid user data format';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not load accounts', this.errorMessage);
           return;
         }
 
@@ -225,11 +218,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.accountNumber = 'N/A';
             this.selectedAccount = null;
             this.isLoading = false;
-            Swal.fire({
-              icon: 'warning',
-              title: 'No Accounts',
-              text: 'You do not have any accounts yet.'
-            });
           } else {
             this.accounts = user[0]['accounts'];
 
@@ -266,11 +254,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           console.error('Error processing dashboard data:', error);
           this.errorMessage = 'Failed to process user data';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not load accounts', this.errorMessage);
         }
       },
       error: (err) => {
@@ -278,11 +262,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.errorMessage = err?.error?.message || err?.message || 'Failed to load dashboard data';
         this.isLoading = false;
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not load accounts', this.errorMessage);
       }
     });
 
