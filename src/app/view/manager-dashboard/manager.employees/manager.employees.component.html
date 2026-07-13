@@ -56,14 +56,14 @@
         <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search name, ID, role…" [(ngModel)]="searchTerm" name="employeeSearch" />
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
       </div>
-      <select class="glass-input" [(ngModel)]="roleFilter" name="roleFilter">
+      <select class="glass-input" [(ngModel)]="roleFilter" name="roleFilter" aria-label="Role filter">
         <option value="all">All roles</option>
         <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
       </select>
     </div>
   </div>
 
-  <div class="demo-table-shell is-fluid overflow-x-auto">
+  <div class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Table, scrollable">
     <table class="w-full table-fixed">
         <caption class="sr-only">Employee roster</caption>
       <thead>
@@ -87,7 +87,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let emp of filteredEmployees" class="cursor-pointer transition-all duration-300 hover:bg-white/5" (click)="viewEmployee(emp)" (keydown.enter)="viewEmployee(emp)" (keydown.space)="$event.preventDefault(); viewEmployee(emp)" tabindex="0" role="button" aria-label="View employee details" title="View employee details">
+        <tr *ngFor="let emp of filteredEmployees" class="cursor-pointer transition-all duration-300 hover:bg-white/5" (click)="viewEmployee(emp)" (keydown.enter)="viewEmployee(emp)" (keydown.space)="$event.preventDefault(); viewEmployee(emp)" tabindex="0" title="View employee details">
           <td class="px-5 py-3">
             <div class="flex items-center gap-3 min-w-0">
               <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-xs font-bold text-white">{{ initials(emp.fullname) }}</span>

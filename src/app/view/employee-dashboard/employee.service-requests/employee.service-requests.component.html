@@ -76,7 +76,7 @@
           <input class="glass-input pl-9 w-full sm:w-52" placeholder="Search tickets…" [(ngModel)]="searchTerm" name="ticketSearch" />
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
         </div>
-        <select class="glass-input" [(ngModel)]="statusFilter" name="statusFilter">
+        <select class="glass-input" [(ngModel)]="statusFilter" name="statusFilter" aria-label="Status filter">
           <option value="all">All statuses</option>
           <option value="Open">Open</option>
           <option value="In progress">In progress</option>
@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <div class="demo-table-shell is-fluid overflow-x-auto">
+    <div class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Table, scrollable">
       <table class="w-full table-fixed">
         <caption class="sr-only">Service request tickets</caption>
         <thead>
@@ -98,7 +98,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let req of filteredRequests" class="cursor-pointer transition-all duration-300 hover:bg-white/5" (click)="view(req)" (keydown.enter)="view(req)" (keydown.space)="$event.preventDefault(); view(req)" tabindex="0" role="button" aria-label="View ticket details" title="View ticket">
+          <tr *ngFor="let req of filteredRequests" class="cursor-pointer transition-all duration-300 hover:bg-white/5" (click)="view(req)" (keydown.enter)="view(req)" (keydown.space)="$event.preventDefault(); view(req)" tabindex="0" title="View ticket">
             <td class="px-5 py-3">
               <p class="font-semibold text-white truncate">{{ req.customer }}</p>
               <p class="text-xs text-white/50">{{ req.ticket_id }}</p>

@@ -29,14 +29,14 @@
         <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search actor, action, detail…" [(ngModel)]="searchTerm" name="auditSearch" />
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
       </div>
-      <select class="glass-input" [(ngModel)]="categoryFilter" name="categoryFilter">
+      <select class="glass-input" [(ngModel)]="categoryFilter" name="categoryFilter" aria-label="Category filter">
         <option value="all">All categories</option>
         <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
       </select>
     </div>
   </div>
 
-  <div class="demo-table-shell is-fluid overflow-x-auto">
+  <div class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Table, scrollable">
     <table class="w-full table-fixed">
         <caption class="sr-only">Audit log</caption>
       <thead>

@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <div class="demo-table-shell mt-5 overflow-x-auto">
+    <div class="demo-table-shell mt-5 overflow-x-auto" tabindex="0" role="region" aria-label="Table, scrollable">
       <table class="linked-accounts-table w-full table-fixed">
         <caption class="sr-only">Your accounts</caption>
         <colgroup>
@@ -90,7 +90,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let account of filteredAccounts; trackBy: trackByAccountId" (click)="updateSmallBox(account)" (keydown.enter)="updateSmallBox(account)" (keydown.space)="$event.preventDefault(); updateSmallBox(account)" tabindex="0" role="button" [attr.aria-pressed]="selectedAccount === account" [attr.aria-label]="'Select account ' + maskAccountId(account.account_id)" class="account-row cursor-pointer transition-all duration-300 hover:bg-white/5" [ngClass]="{'bg-cyan-300/10': selectedAccount === account}">
+          <tr *ngFor="let account of filteredAccounts; trackBy: trackByAccountId" role="button" (click)="updateSmallBox(account)" (keydown.enter)="updateSmallBox(account)" (keydown.space)="$event.preventDefault(); updateSmallBox(account)" tabindex="0" [attr.aria-pressed]="selectedAccount === account" [attr.aria-label]="'Select account ' + maskAccountId(account.account_id)" class="account-row cursor-pointer transition-all duration-300 hover:bg-white/5" [ngClass]="{'bg-cyan-300/10': selectedAccount === account}">
             <td class="px-5 py-4">
               <div class="flex min-w-0 items-center gap-3">
                 <i class="shrink-0 text-xl text-cyan-200" [ngClass]="selectedAccount === account ? 'fas fa-check-circle' : 'far fa-circle'"></i>
@@ -257,7 +257,7 @@
       </div>
       <div>
         <label class="text-xs text-slate-400 mb-1 block">Tenor</label>
-        <select class="glass-input w-full text-sm" [(ngModel)]="fdCalcMonths" name="fdCalcMonths">
+        <select class="glass-input w-full text-sm" [(ngModel)]="fdCalcMonths" name="fdCalcMonths" aria-label="Fd calc months">
           <option [ngValue]="3">3 months · 6.50% p.a.</option>
           <option [ngValue]="6">6 months · 7.75% p.a.</option>
           <option [ngValue]="12">12 months · 9.50% p.a.</option>

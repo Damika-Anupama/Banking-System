@@ -66,7 +66,7 @@
       </div>
 
       <!-- Horizontal stepper -->
-      <div class="transfer-stepper" role="tablist">
+      <div class="transfer-stepper" role="group" aria-label="Transfer steps">
         <ng-container *ngFor="let step of transferSteps; let last = last">
           <button type="button" class="transfer-step"
                   [class.is-active]="transferStep === step.num"
@@ -267,12 +267,12 @@
           <input type="text" name="transaction_search" placeholder="Search reference, purpose, type..." class="glass-input pl-10" [(ngModel)]="transactionSearchTerm" (ngModelChange)="onTransactionFilterChange()" />
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
         </div>
-        <select class="glass-input" [(ngModel)]="transactionDirectionFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_direction_filter">
+        <select class="glass-input" [(ngModel)]="transactionDirectionFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_direction_filter" aria-label="Transaction direction filter">
           <option value="all">All directions</option>
           <option value="in">Incoming only</option>
           <option value="out">Outgoing only</option>
         </select>
-        <select class="glass-input" [(ngModel)]="transactionStatusFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_status_filter">
+        <select class="glass-input" [(ngModel)]="transactionStatusFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_status_filter" aria-label="Transaction status filter">
           <option value="all">All statuses</option>
           <option value="posted">Posted</option>
           <option value="review">Review</option>
@@ -332,7 +332,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let entry of paginatedTransactions; trackBy: trackByEntry" (click)="showTransactionDetails(entry.row, entry.index)" (keydown.enter)="showTransactionDetails(entry.row, entry.index)" (keydown.space)="$event.preventDefault(); showTransactionDetails(entry.row, entry.index)" tabindex="0" role="button" aria-label="View transaction details" title="View transaction details">
+          <tr *ngFor="let entry of paginatedTransactions; trackBy: trackByEntry" (click)="showTransactionDetails(entry.row, entry.index)" (keydown.enter)="showTransactionDetails(entry.row, entry.index)" (keydown.space)="$event.preventDefault(); showTransactionDetails(entry.row, entry.index)" tabindex="0" title="View transaction details">
             <td class="font-mono">{{ transactionReference(entry.row, entry.index) }}</td>
             <td><span class="transaction-date"><i class="far fa-calendar"></i>{{ entry.row.date | date: 'MMM d, y' }}</span><small>{{ entry.row.date | date: 'h:mm a' }}</small></td>
             <td>
@@ -362,7 +362,7 @@
       <div *ngIf="filteredTransactions.length > 0" class="transaction-pagination">
         <div class="transaction-page-size">
           <span>Rows per page</span>
-          <select class="glass-input" [(ngModel)]="transactionPageSize" (ngModelChange)="onPageSizeChange()" name="transaction_page_size">
+          <select class="glass-input" [(ngModel)]="transactionPageSize" (ngModelChange)="onPageSizeChange()" name="transaction_page_size" aria-label="Transaction page size">
             <option *ngFor="let size of transactionPageSizes" [ngValue]="size">{{ size }}</option>
           </select>
         </div>
