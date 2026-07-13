@@ -578,6 +578,51 @@ describe('ManagerLoanApprovalComponent', () => {
     });
   });
 
+  describe('sorting the approval queue', () => {
+    beforeEach(() => {
+      component.loans = [
+        { loan_basic_detail_id: 'LN-1', customer_id: 'CUS-3', amount: 500,  interest: 13, duration_days: 180 },
+        { loan_basic_detail_id: 'LN-2', customer_id: 'CUS-1', amount: 9000, interest: 15, duration_days: 360 },
+        { loan_basic_detail_id: 'LN-3', customer_id: 'CUS-2', amount: 100,  interest: 14, duration_days: 90 },
+      ];
+    });
+
+    const amounts = () => component.filteredLoans.map((l: any) => l.amount);
+
+    it('leaves the queue in its own order until asked to sort', () => {
+      expect(amounts()).toEqual([500, 9000, 100]);
+    });
+
+    it('sorts by amount, largest first — the manager triages big loans', () => {
+      component.toggleSort('amount');
+
+      expect(amounts()).toEqual([9000, 500, 100]);
+    });
+
+    it('cycles back to the queue order on a third click', () => {
+      component.toggleSort('amount');
+      component.toggleSort('amount');
+      component.toggleSort('amount');
+
+      expect(component.sort.column).toBeNull();
+      expect(amounts()).toEqual([500, 9000, 100]);
+    });
+
+    it('sorts and searches together, rather than one replacing the other', () => {
+      component.searchTerm = 'CUS';
+      component.toggleSort('amount');
+
+      expect(amounts()).toEqual([9000, 500, 100]);
+    });
+
+    it('exposes the sort state for assistive tech', () => {
+      expect(component.sort.stateFor('amount')).toBe('none');
+
+      component.toggleSort('amount');
+      expect(component.sort.stateFor('amount')).toBe('descending');
+    });
+  });
+
   describe('Subscription Management', () => {
     const mockLoans = {
       data: [

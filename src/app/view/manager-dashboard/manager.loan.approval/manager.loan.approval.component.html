@@ -35,8 +35,12 @@
       <thead>
         <tr>
           <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
-          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Customer</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('customer')">
+            <button type="button" class="th-sort" (click)="toggleSort('customer')">Customer<i class="fas ml-1" [ngClass]="sort.iconFor('customer')" aria-hidden="true"></i></button>
+          </th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('amount')">
+            <button type="button" class="th-sort" (click)="toggleSort('amount')">Amount<i class="fas ml-1" [ngClass]="sort.iconFor('amount')" aria-hidden="true"></i></button>
+          </th>
           <th class="hidden sm:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Type</th>
           <th class="text-center px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Action</th>
         </tr>

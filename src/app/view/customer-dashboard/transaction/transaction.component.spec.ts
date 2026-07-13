@@ -712,14 +712,14 @@ describe('TransactionComponent', () => {
     const amounts = () => component.filteredTransactions.map((t: any) => t.amount);
 
     it('starts unsorted, preserving the ledger order', () => {
-      expect(component.sortColumn).toBeNull();
+      expect(component.sort.column).toBeNull();
       expect(amounts()).toEqual([500, 9000, 100]);
     });
 
     it('sorts by amount, largest first', () => {
       component.toggleSort('amount');
 
-      expect(component.sortDirection).toBe('desc');
+      expect(component.sort.direction).toBe('desc');
       expect(amounts()).toEqual([9000, 500, 100]);
     });
 
@@ -728,11 +728,11 @@ describe('TransactionComponent', () => {
       expect(amounts()).toEqual([9000, 500, 100]);
 
       component.toggleSort('amount');
-      expect(component.sortDirection).toBe('asc');
+      expect(component.sort.direction).toBe('asc');
       expect(amounts()).toEqual([100, 500, 9000]);
 
       component.toggleSort('amount');
-      expect(component.sortColumn).toBeNull();
+      expect(component.sort.column).toBeNull();
       expect(amounts()).toEqual([500, 9000, 100]);
     });
 
@@ -753,8 +753,8 @@ describe('TransactionComponent', () => {
 
       component.toggleSort('date');
 
-      expect(component.sortColumn).toBe('date');
-      expect(component.sortDirection).toBe('desc');
+      expect(component.sort.column).toBe('date');
+      expect(component.sort.direction).toBe('desc');
     });
 
     it('returns to page one when the sort changes', () => {

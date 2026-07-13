@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { demoStore } from 'src/app/shared/demo-store';
 import { ToastService } from 'src/app/service/toast.service';
+import { TableSort } from 'src/app/shared/table-sort';
 
 @Component({
   selector: 'app-manager.loan.approval',
@@ -36,14 +37,29 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
     );
   }
 
+  /** Sortable columns for the approval queue. */
+  readonly sort = new TableSort<any>({
+    amount: (l) => Number(l?.amount || 0),
+    interest: (l) => Number(l?.interest || 0),
+    duration: (l) => Number(l?.duration_days || 0),
+    customer: (l) => String(l?.customer_id || '').toLowerCase(),
+  });
+
+  toggleSort(column: string): void {
+    this.sort.toggle(column);
+  }
+
   get filteredLoans(): any[] {
     const list = this.loans || [];
     const q = this.searchTerm.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter((l: any) =>
-      [l.loan_basic_detail_id, l.customer_id, l.loan_type, String(l.amount)]
-        .some(v => v && String(v).toLowerCase().includes(q))
-    );
+    const matched = !q
+      ? list
+      : list.filter((l: any) =>
+          [l.loan_basic_detail_id, l.customer_id, l.loan_type, String(l.amount)]
+            .some(v => v && String(v).toLowerCase().includes(q))
+        );
+
+    return this.sort.apply(matched);
   }
 
   get pendingCount(): number {

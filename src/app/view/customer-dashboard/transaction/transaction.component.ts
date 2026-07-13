@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { demoStore } from 'src/app/shared/demo-store';
 import { createDemoBeneficiary } from 'src/app/shared/demo-banking-fixtures';
 import { ToastService } from 'src/app/service/toast.service';
+import { TableSort } from 'src/app/shared/table-sort';
 
 @Component({
   selector: 'app-transaction',
@@ -250,7 +251,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return matchesDirection && matchesStatus && (!query || searchable.includes(query));
     });
 
-    return this.sortDecorated(matched);
+    return this.sort.apply(matched);
   }
 
   get filteredTransactions(): any[] {
@@ -259,72 +260,34 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   // ---- Sorting -------------------------------------------------------------
 
-  sortColumn: 'date' | 'amount' | 'type' | 'status' | null = null;
-  sortDirection: 'asc' | 'desc' = 'desc';
+  /**
+   * Sorts the decorated rows, so a row keeps the ledger position its reference
+   * is derived from even after reordering.
+   */
+  readonly sort = new TableSort<{ row: any; index: number }>({
+    date: ({ row }) => new Date(row?.date || 0).getTime(),
+    amount: ({ row }) => Number(row?.amount || 0),
+    type: ({ row }) => String(row?.type || '').toLowerCase(),
+    status: ({ row }) => this.transactionAuditState(row).toLowerCase(),
+  });
 
-  /** Cycles a column through descending, ascending, then unsorted. */
-  toggleSort(column: 'date' | 'amount' | 'type' | 'status'): void {
-    if (this.sortColumn !== column) {
-      this.sortColumn = column;
-      this.sortDirection = 'desc';
-    } else if (this.sortDirection === 'desc') {
-      this.sortDirection = 'asc';
-    } else {
-      this.sortColumn = null;
-    }
+  toggleSort(column: string): void {
+    this.sort.toggle(column);
+    // Staying on page 3 of a re-sorted list shows rows nobody asked for.
     this.transactionPage = 1;
   }
 
-  /** Arrow shown on the header. Purely decorative: aria-sort carries the meaning. */
+  sortStateFor(column: string): 'ascending' | 'descending' | 'none' {
+    return this.sort.stateFor(column);
+  }
+
   sortIconFor(column: string): string {
-    if (this.sortColumn !== column) return 'fa-sort';
-    return this.sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down';
+    return this.sort.iconFor(column);
   }
 
   trackByEntry(_i: number, entry: { row: any; index: number }): string {
     return this.transactionReference(entry.row, entry.index);
   }
-
-  /** The aria-sort value for a column header, so the state is announced. */
-  sortStateFor(column: string): 'ascending' | 'descending' | 'none' {
-    if (this.sortColumn !== column) return 'none';
-    return this.sortDirection === 'asc' ? 'ascending' : 'descending';
-  }
-
-  private sortValue(row: any, column: string): number | string {
-    switch (column) {
-      case 'date':
-        return new Date(row?.date || 0).getTime();
-      case 'amount':
-        return Number(row?.amount || 0);
-      case 'status':
-        return this.transactionAuditState(row).toLowerCase();
-      default:
-        return String(row?.type || '').toLowerCase();
-    }
-  }
-
-  private sortDecorated(
-    rows: { row: any; index: number }[]
-  ): { row: any; index: number }[] {
-    const column = this.sortColumn;
-    if (!column) {
-      return rows;
-    }
-
-    const factor = this.sortDirection === 'asc' ? 1 : -1;
-
-    return [...rows].sort((a, b) => {
-      const left = this.sortValue(a.row, column);
-      const right = this.sortValue(b.row, column);
-      if (left < right) return -1 * factor;
-      if (left > right) return 1 * factor;
-      // Stable tie-break on the original position, so equal rows do not
-      // reshuffle between change-detection passes.
-      return a.index - b.index;
-    });
-  }
-
 
   get totalTransactionPages(): number {
     return Math.max(1, Math.ceil(this.filteredTransactions.length / this.transactionPageSize));
