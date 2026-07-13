@@ -9,6 +9,7 @@ import {
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { finalize, timeout, catchError } from 'rxjs/operators';
 import { LoadingService } from '../service/loading.service';
+import { SKIP_GLOBAL_LOADER } from './http-context';
 
 @Injectable()
 export class LoadingInterceptorInterceptor implements HttpInterceptor {
@@ -16,14 +17,24 @@ export class LoadingInterceptorInterceptor implements HttpInterceptor {
   private readonly DEFAULT_TIMEOUT = 30000; // 30 seconds default timeout
   private readonly REQUEST_TIMEOUT_MAP = new Map<string, number>();
 
+  /**
+   * A request that resolves faster than this never raises the overlay. Flashing
+   * a full-screen dim for a 90ms fetch reads as a glitch, not as progress.
+   */
+  private readonly LOADER_GRACE_MS = 300;
+  private graceTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor(private loadingService: LoadingService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // Increment active requests counter
-    this.incrementActiveRequests();
+    // Views that render their own inline placeholder (e.g. a skeleton table) opt
+    // out of the overlay, but still get timeout and error handling below.
+    const tracksLoading = !request.context.get(SKIP_GLOBAL_LOADER);
 
-    // Show loading indicator
-    this.showLoadingIfNeeded();
+    if (tracksLoading) {
+      this.incrementActiveRequests();
+      this.showLoadingIfNeeded();
+    }
 
     // Determine timeout for this request
     const requestTimeout = this.getRequestTimeout(request);
@@ -68,6 +79,7 @@ export class LoadingInterceptorInterceptor implements HttpInterceptor {
 
       // Always decrement counter and hide loading when done
       finalize(() => {
+        if (!tracksLoading) return;
         this.decrementActiveRequests();
         this.hideLoadingIfNeeded();
       })
@@ -107,12 +119,19 @@ export class LoadingInterceptorInterceptor implements HttpInterceptor {
   }
 
   /**
-   * Shows loading indicator if this is the first request
+   * Arms the overlay if this is the first request, but only actually shows it
+   * once the request has been in flight longer than the grace period.
    */
   private showLoadingIfNeeded(): void {
     try {
-      if (this.activeRequests === 1) {
-        this.loadingService.show();
+      if (this.activeRequests === 1 && !this.graceTimer) {
+        this.graceTimer = setTimeout(() => {
+          this.graceTimer = null;
+          // Re-check: the request may well have landed inside the grace period.
+          if (this.activeRequests > 0) {
+            this.loadingService.show();
+          }
+        }, this.LOADER_GRACE_MS);
       }
     } catch (error) {
       console.error('Error showing loading indicator:', error);
@@ -125,6 +144,7 @@ export class LoadingInterceptorInterceptor implements HttpInterceptor {
   private hideLoadingIfNeeded(): void {
     try {
       if (this.activeRequests === 0) {
+        this.clearGraceTimer();
         this.loadingService.hide();
       }
     } catch (error) {
@@ -135,6 +155,13 @@ export class LoadingInterceptorInterceptor implements HttpInterceptor {
       } catch (e) {
         console.error('Failed to force hide loading indicator:', e);
       }
+    }
+  }
+
+  private clearGraceTimer(): void {
+    if (this.graceTimer) {
+      clearTimeout(this.graceTimer);
+      this.graceTimer = null;
     }
   }
 
@@ -203,6 +230,7 @@ export class LoadingInterceptorInterceptor implements HttpInterceptor {
     try {
       console.warn('Resetting active requests counter');
       this.activeRequests = 0;
+      this.clearGraceTimer();
       this.loadingService.hide();
     } catch (error) {
       console.error('Error resetting active requests:', error);

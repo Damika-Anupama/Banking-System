@@ -4,6 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { DEMO_SAVING_ACCOUNTS, createDemoFixedDeposit } from 'src/app/shared/demo-banking-fixtures';
+import { skipGlobalLoader } from '../../interceptors/http-context';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +27,8 @@ export class FixedDepositService {
     }
 
     return this.http.get<any>(
-      environment.baseUrl + `/api/v1/fd/savingAccountsDetails/${userId}`
+      environment.baseUrl + `/api/v1/fd/savingAccountsDetails/${userId}`,
+      skipGlobalLoader()
     ).pipe(
       timeout(30000),
       retry(2),

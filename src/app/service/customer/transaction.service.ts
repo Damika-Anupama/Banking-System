@@ -4,6 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { DEMO_ACCOUNTS, DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
+import { skipGlobalLoader } from '../../interceptors/http-context';
 
 @Injectable({
   providedIn: 'root'
@@ -108,7 +109,7 @@ export class TransactionService {
       return of({ data: demoTransactions[accountIdStr] || [] });
     }
 
-    return this.http.get<any>(environment.baseUrl + `/api/v1/transaction/tableDetails/${accountIdStr}`)
+    return this.http.get<any>(environment.baseUrl + `/api/v1/transaction/tableDetails/${accountIdStr}`, skipGlobalLoader())
       .pipe(
         timeout(30000),
         retry(2),

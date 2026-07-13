@@ -5,11 +5,12 @@
  * Target coverage: 95%+
  */
 
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { LoadingInterceptorInterceptor } from './loading-interceptor.interceptor';
 import { LoadingService } from '../service/loading.service';
+import { skipGlobalLoader } from './http-context';
 
 describe('LoadingInterceptorInterceptor', () => {
   let httpMock: HttpTestingController;
@@ -55,16 +56,44 @@ describe('LoadingInterceptorInterceptor', () => {
   });
 
   describe('Loading State Management', () => {
-    it('should show loading for first request', (done) => {
-      httpClient.get(TEST_URL).subscribe(() => {
-        done();
-      });
-
-      expect(loadingService.show).toHaveBeenCalled();
+    it('should show loading for a first request that outlives the grace period', fakeAsync(() => {
+      httpClient.get(TEST_URL).subscribe();
 
       const req = httpMock.expectOne(TEST_URL);
+
+      // Nothing is shown while the request is still inside the grace window.
+      tick(299);
+      expect(loadingService.show).not.toHaveBeenCalled();
+
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+
       req.flush({ data: 'success' });
-    });
+      tick();
+    }));
+
+    it('should never flash the overlay for a request that resolves quickly', fakeAsync(() => {
+      httpClient.get(TEST_URL).subscribe();
+
+      const req = httpMock.expectOne(TEST_URL);
+      tick(100);
+      req.flush({ data: 'success' });
+      tick(500);
+
+      expect(loadingService.show).not.toHaveBeenCalled();
+    }));
+
+    it('should not raise the overlay for a request that opts out', fakeAsync(() => {
+      httpClient.get(TEST_URL, skipGlobalLoader()).subscribe();
+
+      const req = httpMock.expectOne(TEST_URL);
+      tick(1000);
+      expect(loadingService.show).not.toHaveBeenCalled();
+
+      req.flush({ data: 'success' });
+      tick();
+      expect(interceptor.getActiveRequestsCount()).toBe(0);
+    }));
 
     it('should hide loading after request completes', (done) => {
       httpClient.get(TEST_URL).subscribe(() => {
@@ -94,27 +123,23 @@ describe('LoadingInterceptorInterceptor', () => {
       req.flush({}, { status: 500, statusText: 'Error' });
     });
 
-    it('should not show loading for second concurrent request', (done) => {
-      let completed = 0;
-      const checkDone = () => {
-        completed++;
-        if (completed === 2) done();
-      };
-
+    it('should not show loading for second concurrent request', fakeAsync(() => {
       loadingService.show.calls.reset();
 
-      httpClient.get(TEST_URL + '/1').subscribe(() => checkDone());
-      httpClient.get(TEST_URL + '/2').subscribe(() => checkDone());
-
-      // show() should only be called once for the first request
-      expect(loadingService.show).toHaveBeenCalledTimes(1);
+      httpClient.get(TEST_URL + '/1').subscribe();
+      httpClient.get(TEST_URL + '/2').subscribe();
 
       const req1 = httpMock.expectOne(TEST_URL + '/1');
       const req2 = httpMock.expectOne(TEST_URL + '/2');
 
+      // Both requests share one grace timer, so the overlay is raised once.
+      tick(300);
+      expect(loadingService.show).toHaveBeenCalledTimes(1);
+
       req1.flush({});
       req2.flush({});
-    });
+      tick();
+    }));
 
     it('should hide loading only after all requests complete', (done) => {
       let completed = 0;

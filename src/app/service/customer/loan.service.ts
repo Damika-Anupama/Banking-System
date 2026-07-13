@@ -4,6 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { DEMO_CUSTOMER_LOANS, DEMO_FIXED_DEPOSITS, createDemoLoan } from 'src/app/shared/demo-banking-fixtures';
+import { skipGlobalLoader } from '../../interceptors/http-context';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,7 @@ export class LoanService {
       return throwError(() => new Error('User ID not found in local storage'));
     }
 
-    return this.http.get<any>(environment.baseUrl + `/api/v1/fd/user/${userId}`)
+    return this.http.get<any>(environment.baseUrl + `/api/v1/fd/user/${userId}`, skipGlobalLoader())
       .pipe(
         timeout(30000),
         retry(2),
@@ -50,7 +51,7 @@ export class LoanService {
       return throwError(() => new Error('User ID not found in local storage'));
     }
 
-    return this.http.get<any>(environment.baseUrl + `/api/v1/loan/user/${userId}`)
+    return this.http.get<any>(environment.baseUrl + `/api/v1/loan/user/${userId}`, skipGlobalLoader())
       .pipe(
         timeout(30000),
         retry(2),
