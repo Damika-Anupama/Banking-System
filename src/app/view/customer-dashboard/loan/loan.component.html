@@ -55,7 +55,7 @@
     <form class="space-y-5">
       <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div class="min-w-0">
-          <label class="auth-field-label">
+          <label class="auth-field-label" for="selectedFD">
             <i class="fas fa-piggy-bank mr-2"></i>Fixed deposit <span class="text-red-300">*</span>
           </label>
           <div class="relative">
@@ -63,7 +63,7 @@
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedFD"
               (change)="onFDSelected(); markTouched('selectedFD')"
-              name="selectedFD"
+              id="selectedFD" name="selectedFD"
               [class.field-invalid]="errorFor('selectedFD')"
               [attr.aria-invalid]="errorFor('selectedFD') ? 'true' : null"
               [attr.aria-describedby]="errorFor('selectedFD') ? 'selectedFD-error' : null"
@@ -79,7 +79,7 @@
         </div>
 
         <div class="min-w-0">
-          <label class="auth-field-label">
+          <label class="auth-field-label" for="loanAmount">
             <i class="fas fa-money-bill-wave mr-2"></i>Loan amount <span class="text-red-300">*</span>
           </label>
           <div class="relative">
@@ -89,7 +89,7 @@
               class="glass-input pl-14 w-full"
               placeholder="0.00"
               [(ngModel)]="loanAmount"
-              name="loanAmount"
+              id="loanAmount" name="loanAmount"
               min="1"
               (blur)="checkLoanAmount()"
               [class.field-invalid]="errorFor('loanAmount')"
@@ -102,7 +102,7 @@
         </div>
 
         <div class="min-w-0">
-          <label class="auth-field-label">
+          <label class="auth-field-label" for="selectedPackage">
             <i class="fas fa-calendar-alt mr-2"></i>Payment plan <span class="text-red-300">*</span>
           </label>
           <div class="relative">
@@ -110,7 +110,7 @@
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedLoan"
               (ngModelChange)="onLoanSelected(); markTouched('selectedLoan')"
-              name="selectedPackage"
+              id="selectedPackage" name="selectedPackage"
               [class.field-invalid]="errorFor('selectedLoan')"
               [attr.aria-invalid]="errorFor('selectedLoan') ? 'true' : null"
               [attr.aria-describedby]="errorFor('selectedLoan') ? 'selectedLoan-error' : null"
@@ -127,7 +127,7 @@
       </div>
 
       <div>
-        <label class="auth-field-label">
+        <label class="auth-field-label" for="loanType">
           <i class="fas fa-tags mr-2"></i>Select Loan Type <span class="text-red-300">*</span>
         </label>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -135,7 +135,7 @@
               <input
                 type="radio"
                 [(ngModel)]="selectedLoanType"
-                name="loanType"
+                id="loanType" name="loanType"
                 value="Personal"
                 class="hidden peer"
               />

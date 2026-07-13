@@ -101,8 +101,8 @@
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="fas fa-university mr-2"></i>From account</label>
-              <select class="glass-input w-full" [(ngModel)]="account_id" name="source_account" (ngModelChange)="updateSmallBox((accounts || []).find(account => account.account_id === $event))">
+              <label class="auth-field-label" for="source_account"><i class="fas fa-university mr-2"></i>From account</label>
+              <select class="glass-input w-full" [(ngModel)]="account_id" id="source_account" name="source_account" (ngModelChange)="updateSmallBox((accounts || []).find(account => account.account_id === $event))">
                 <option *ngFor="let account of accounts; trackBy: trackByAccountId" [value]="account.account_id">
                   {{ maskAccountId(account.account_id) }} — {{ formatSavingType(account.saving_type) }} — Rs. {{ amountOf(account) | number }}
                 </option>
@@ -111,17 +111,17 @@
             </div>
 
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="fas fa-user mr-2"></i>Beneficiary name</label>
-              <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva / ABC Suppliers" [(ngModel)]="beneficiary_name" name="beneficiary_name" />
+              <label class="auth-field-label" for="beneficiary_name"><i class="fas fa-user mr-2"></i>Beneficiary name</label>
+              <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva / ABC Suppliers" [(ngModel)]="beneficiary_name" id="beneficiary_name" name="beneficiary_name" />
               <p class="mt-2 text-xs text-white/50">Displayed in the final review and receipt.</p>
             </div>
 
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="fas fa-user-check mr-2"></i>Beneficiary account <span class="text-red-300">*</span></label>
+              <label class="auth-field-label" for="to_account"><i class="fas fa-user-check mr-2"></i>Beneficiary account <span class="text-red-300">*</span></label>
               <div class="flex gap-2">
                 <div class="relative flex-1 min-w-0">
                   <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
-                  <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492811" [(ngModel)]="to_account" name="to_account"
+                  <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492811" [(ngModel)]="to_account" id="to_account" name="to_account"
                     (blur)="markTouched('to_account')"
                     [class.field-invalid]="errorFor('to_account')"
                     [attr.aria-invalid]="errorFor('to_account') ? 'true' : null"
@@ -138,8 +138,8 @@
             </div>
 
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="fas fa-tags mr-2"></i>Payment category</label>
-              <select class="glass-input w-full" [(ngModel)]="payment_category" name="payment_category">
+              <label class="auth-field-label" for="payment_category"><i class="fas fa-tags mr-2"></i>Payment category</label>
+              <select class="glass-input w-full" [(ngModel)]="payment_category" id="payment_category" name="payment_category">
                 <option *ngFor="let category of paymentCategories" [value]="category">{{ category }}</option>
               </select>
               <p class="mt-2 text-xs text-white/50">Useful for reconciliation and statement filtering.</p>
@@ -151,10 +151,10 @@
         <div *ngIf="transferStep === 2" class="space-y-4 animate-fade-in">
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
+              <label class="auth-field-label" for="transfer_amount"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
-                <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" [(ngModel)]="transfer_amount" name="transfer_amount" min="1"
+                <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" [(ngModel)]="transfer_amount" id="transfer_amount" name="transfer_amount" min="1"
                   (blur)="markTouched('transfer_amount')"
                   [class.field-invalid]="errorFor('transfer_amount')"
                   [attr.aria-invalid]="errorFor('transfer_amount') ? 'true' : null"
@@ -167,14 +167,14 @@
             </div>
 
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="far fa-calendar mr-2"></i>Execution date</label>
-              <input type="date" class="glass-input w-full" [(ngModel)]="schedule_date" name="schedule_date" />
+              <label class="auth-field-label" for="schedule_date"><i class="far fa-calendar mr-2"></i>Execution date</label>
+              <input type="date" class="glass-input w-full" [(ngModel)]="schedule_date" id="schedule_date" name="schedule_date" />
               <p class="mt-2 text-xs text-white/50">Use today for immediate posting.</p>
             </div>
 
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="fas fa-bolt mr-2"></i>Priority</label>
-              <select class="glass-input w-full" [(ngModel)]="transfer_priority" name="transfer_priority">
+              <label class="auth-field-label" for="transfer_priority"><i class="fas fa-bolt mr-2"></i>Priority</label>
+              <select class="glass-input w-full" [(ngModel)]="transfer_priority" id="transfer_priority" name="transfer_priority">
                 <option value="Standard">Standard</option>
                 <option value="Instant">Instant</option>
               </select>
@@ -184,8 +184,8 @@
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="fas fa-clipboard-list mr-2"></i>Payment purpose <span class="text-red-300">*</span></label>
-              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="e.g. Supplier invoice INV-1042 for May services" [(ngModel)]="sender_remarks" name="sender_remarks"
+              <label class="auth-field-label" for="sender_remarks"><i class="fas fa-clipboard-list mr-2"></i>Payment purpose <span class="text-red-300">*</span></label>
+              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="e.g. Supplier invoice INV-1042 for May services" [(ngModel)]="sender_remarks" id="sender_remarks" name="sender_remarks"
                 (blur)="markTouched('sender_remarks')"
                 [class.field-invalid]="errorFor('sender_remarks')"
                 [attr.aria-invalid]="errorFor('sender_remarks') ? 'true' : null"
@@ -195,8 +195,8 @@
               </p>
             </div>
             <div class="min-w-0">
-              <label class="auth-field-label"><i class="fas fa-message mr-2"></i>Beneficiary note <span class="text-red-300">*</span></label>
-              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="Narration shown to beneficiary" [(ngModel)]="beneficiary_remarks" name="beneficiary_remarks"
+              <label class="auth-field-label" for="beneficiary_remarks"><i class="fas fa-message mr-2"></i>Beneficiary note <span class="text-red-300">*</span></label>
+              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="Narration shown to beneficiary" [(ngModel)]="beneficiary_remarks" id="beneficiary_remarks" name="beneficiary_remarks"
                 (blur)="markTouched('beneficiary_remarks')"
                 [class.field-invalid]="errorFor('beneficiary_remarks')"
                 [attr.aria-invalid]="errorFor('beneficiary_remarks') ? 'true' : null"

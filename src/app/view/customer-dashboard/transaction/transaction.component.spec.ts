@@ -816,6 +816,37 @@ describe('TransactionComponent', () => {
     });
   });
 
+  describe('label association', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: [] }));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+      fixture.detectChanges();
+    });
+
+    it('points every field label at a control that exists', () => {
+      const host: HTMLElement = fixture.nativeElement;
+      const labels = Array.from(host.querySelectorAll<HTMLLabelElement>('label.auth-field-label'));
+
+      expect(labels.length).toBeGreaterThan(0);
+
+      labels.forEach((label) => {
+        const target = label.getAttribute('for');
+
+        // A label with no `for` that does not wrap its input names nothing: the
+        // field is announced as blank, and clicking the label does not focus it.
+        expect(target)
+          .withContext(`label "${label.textContent?.trim()}" has no for=`)
+          .toBeTruthy();
+
+        expect(host.querySelector(`#${target}`))
+          .withContext(`label points at #${target}, which does not exist`)
+          .not.toBeNull();
+      });
+    });
+  });
+
   describe('showToast()', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(TransactionComponent);

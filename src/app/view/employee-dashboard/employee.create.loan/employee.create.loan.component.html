@@ -20,10 +20,10 @@
     <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
       <!-- Customer lookup -->
       <div>
-        <label class="auth-field-label"><i class="fas fa-user mr-2"></i>Customer <span class="text-red-300">*</span></label>
+        <label class="auth-field-label" for="customerID"><i class="fas fa-user mr-2"></i>Customer <span class="text-red-300">*</span></label>
         <div class="relative">
           <i class="fas fa-user absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/50"></i>
-          <select class="glass-input pl-12 appearance-none cursor-pointer" [(ngModel)]="customerID" name="customerID">
+          <select class="glass-input pl-12 appearance-none cursor-pointer" [(ngModel)]="customerID" id="customerID" name="customerID">
             <option value="" disabled selected>Select a customer</option>
             <option *ngFor="let c of customers" [value]="c.user_id">{{ c.fullname }} — {{ c.user_id }}</option>
           </select>
@@ -36,10 +36,10 @@
 
       <!-- Loan Amount -->
       <div>
-        <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Loan amount <span class="text-red-300">*</span></label>
+        <label class="auth-field-label" for="loanAmount"><i class="fas fa-money-bill-wave mr-2"></i>Loan amount <span class="text-red-300">*</span></label>
         <div class="relative">
           <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
-          <input type="number" class="glass-input pl-14" placeholder="Enter loan amount" min="1" [(ngModel)]="loanAmount" name="loanAmount" />
+          <input type="number" class="glass-input pl-14" placeholder="Enter loan amount" min="1" [(ngModel)]="loanAmount" id="loanAmount" name="loanAmount" />
         </div>
       </div>
     </div>
@@ -47,10 +47,10 @@
     <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
       <!-- Loan Package -->
       <div>
-        <label class="auth-field-label"><i class="fas fa-calendar-alt mr-2"></i>Payment plan <span class="text-red-300">*</span></label>
+        <label class="auth-field-label" for="selectedPackage"><i class="fas fa-calendar-alt mr-2"></i>Payment plan <span class="text-red-300">*</span></label>
         <div class="relative">
           <i class="fas fa-calendar-alt absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/50"></i>
-          <select class="glass-input pl-12 appearance-none cursor-pointer" [(ngModel)]="selectedLoan" (ngModelChange)="onLoanSelected()" name="selectedPackage">
+          <select class="glass-input pl-12 appearance-none cursor-pointer" [(ngModel)]="selectedLoan" (ngModelChange)="onLoanSelected()" id="selectedPackage" name="selectedPackage">
             <option [ngValue]="undefined" disabled selected>Select a payment plan</option>
             <option *ngFor="let package of packageArray" [ngValue]="package.index">
               Package {{ package.index }} | {{ package.period }} | {{ package.interest }} p.a.
@@ -62,10 +62,10 @@
 
       <!-- Loan Type -->
       <div>
-        <label class="auth-field-label"><i class="fas fa-tags mr-2"></i>Loan type <span class="text-red-300">*</span></label>
+        <label class="auth-field-label" for="loanType"><i class="fas fa-tags mr-2"></i>Loan type <span class="text-red-300">*</span></label>
         <div class="grid grid-cols-2 gap-4">
           <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="selectedLoanType" name="loanType" value="Personal" class="hidden peer" />
+            <input type="radio" [(ngModel)]="selectedLoanType" id="loanType" name="loanType" value="Personal" class="hidden peer" />
             <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-4 transition-all duration-300 peer-checked:border-glass-purple peer-checked:bg-white/[0.12]">
               <div class="flex items-center gap-3">
                 <i class="fas fa-user text-glass-purple text-2xl"></i>
@@ -88,8 +88,8 @@
 
     <!-- Purpose -->
     <div>
-      <label class="auth-field-label"><i class="fas fa-clipboard-list mr-2"></i>Purpose</label>
-      <textarea class="glass-input min-h-[90px] resize-none" rows="2" placeholder="e.g. Home renovation, working capital" [(ngModel)]="purpose" name="purpose"></textarea>
+      <label class="auth-field-label" for="purpose"><i class="fas fa-clipboard-list mr-2"></i>Purpose</label>
+      <textarea class="glass-input min-h-[90px] resize-none" rows="2" placeholder="e.g. Home renovation, working capital" [(ngModel)]="purpose" id="purpose" name="purpose"></textarea>
     </div>
 
     <!-- Repayment estimate -->

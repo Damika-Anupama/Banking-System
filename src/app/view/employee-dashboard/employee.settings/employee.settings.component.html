@@ -50,8 +50,8 @@
     <form *ngIf="isEditingProfile" (ngSubmit)="saveSettings()" #settingsForm="ngForm" class="space-y-5">
       <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
-          <label class="auth-field-label">Username <span class="text-red-300">*</span></label>
-          <input type="text" [(ngModel)]="username" name="username"
+          <label class="auth-field-label" for="username">Username <span class="text-red-300">*</span></label>
+          <input type="text" [(ngModel)]="username" id="username" name="username"
           (blur)="markTouched('username')"
           [class.field-invalid]="errorFor('username')"
           [attr.aria-invalid]="errorFor('username') ? 'true' : null"
@@ -59,8 +59,8 @@
         <p *ngIf="errorFor('username')" id="username-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('username') }}</p>
         </div>
         <div>
-          <label class="auth-field-label">Full name <span class="text-red-300">*</span></label>
-          <input type="text" [(ngModel)]="fullname" name="fullname"
+          <label class="auth-field-label" for="fullname">Full name <span class="text-red-300">*</span></label>
+          <input type="text" [(ngModel)]="fullname" id="fullname" name="fullname"
           (blur)="markTouched('fullname')"
           [class.field-invalid]="errorFor('fullname')"
           [attr.aria-invalid]="errorFor('fullname') ? 'true' : null"
@@ -68,8 +68,8 @@
         <p *ngIf="errorFor('fullname')" id="fullname-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('fullname') }}</p>
         </div>
         <div>
-          <label class="auth-field-label">Email address <span class="text-red-300">*</span></label>
-          <input type="email" [(ngModel)]="email" name="email"
+          <label class="auth-field-label" for="email">Email address <span class="text-red-300">*</span></label>
+          <input type="email" [(ngModel)]="email" id="email" name="email"
           (blur)="markTouched('email')"
           [class.field-invalid]="errorFor('email')"
           [attr.aria-invalid]="errorFor('email') ? 'true' : null"
@@ -77,16 +77,16 @@
         <p *ngIf="errorFor('email')" id="email-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('email') }}</p>
         </div>
         <div>
-          <label class="auth-field-label">Contact number</label>
-          <input type="tel" [(ngModel)]="contactNo" name="contactNo" class="glass-input" pattern="[0-9]{10}" />
+          <label class="auth-field-label" for="contactNo">Contact number</label>
+          <input type="tel" [(ngModel)]="contactNo" id="contactNo" name="contactNo" class="glass-input" pattern="[0-9]{10}" />
         </div>
         <div>
-          <label class="auth-field-label">Date of birth</label>
-          <input type="date" [(ngModel)]="dob" name="dob" class="glass-input" />
+          <label class="auth-field-label" for="dob">Date of birth</label>
+          <input type="date" [(ngModel)]="dob" id="dob" name="dob" class="glass-input" />
         </div>
         <div>
-          <label class="auth-field-label">Gender</label>
-          <select [(ngModel)]="gender" name="gender" class="glass-input">
+          <label class="auth-field-label" for="gender">Gender</label>
+          <select [(ngModel)]="gender" id="gender" name="gender" class="glass-input">
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
             <option value="OTHER">Other</option>
@@ -95,8 +95,8 @@
       </div>
 
       <div>
-        <label class="auth-field-label">Address</label>
-        <textarea [(ngModel)]="address" name="address" class="glass-input resize-none" rows="3"></textarea>
+        <label class="auth-field-label" for="address">Address</label>
+        <textarea [(ngModel)]="address" id="address" name="address" class="glass-input resize-none" rows="3"></textarea>
       </div>
 
       <div class="flex flex-wrap gap-3 pt-2">

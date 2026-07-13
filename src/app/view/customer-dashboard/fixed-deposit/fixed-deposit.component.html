@@ -54,7 +54,7 @@
     <form class="space-y-5">
       <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div class="min-w-0">
-          <label class="auth-field-label">
+          <label class="auth-field-label" for="selectedSavingAccount">
             <i class="fas fa-university mr-2"></i>Saving account <span class="text-red-300">*</span>
           </label>
           <div class="relative">
@@ -62,7 +62,7 @@
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedSavingAccount"
               (change)="onAccountSelected(); markTouched('selectedSavingAccount')"
-              name="selectedSavingAccount"
+              id="selectedSavingAccount" name="selectedSavingAccount"
               [class.field-invalid]="errorFor('selectedSavingAccount')"
               [attr.aria-invalid]="errorFor('selectedSavingAccount') ? 'true' : null"
               [attr.aria-describedby]="errorFor('selectedSavingAccount') ? 'selectedSavingAccount-error' : null"
@@ -78,7 +78,7 @@
         </div>
 
         <div class="min-w-0">
-          <label class="auth-field-label">
+          <label class="auth-field-label" for="selectedPackage">
             <i class="fas fa-box mr-2"></i>FD package <span class="text-red-300">*</span>
           </label>
           <div class="relative">
@@ -86,7 +86,7 @@
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedPackage"
               (ngModelChange)="onPackageSelected(); markTouched('selectedPackage')"
-              name="selectedPackage"
+              id="selectedPackage" name="selectedPackage"
               [class.field-invalid]="errorFor('selectedPackage')"
               [attr.aria-invalid]="errorFor('selectedPackage') ? 'true' : null"
               [attr.aria-describedby]="errorFor('selectedPackage') ? 'selectedPackage-error' : null"
@@ -102,7 +102,7 @@
         </div>
 
         <div class="min-w-0">
-          <label class="auth-field-label">
+          <label class="auth-field-label" for="fdAmount">
             <i class="fas fa-money-bill-wave mr-2"></i>Deposit amount <span class="text-red-300">*</span>
           </label>
           <div class="relative">
@@ -112,7 +112,7 @@
               class="glass-input pl-14 w-full"
               placeholder="0.00"
               [(ngModel)]="fdAmount"
-              name="fdAmount"
+              id="fdAmount" name="fdAmount"
               min="1"
               (blur)="markTouched('fdAmount')"
               [class.field-invalid]="errorFor('fdAmount')"

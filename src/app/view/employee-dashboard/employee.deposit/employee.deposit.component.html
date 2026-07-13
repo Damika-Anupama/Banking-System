@@ -23,10 +23,10 @@
 
     <form class="space-y-5" (ngSubmit)="processDeposit()">
       <div>
-        <label class="auth-field-label"><i class="fas fa-university mr-2"></i>Account number <span class="text-red-300">*</span></label>
+        <label class="auth-field-label" for="accountNumber"><i class="fas fa-university mr-2"></i>Account number <span class="text-red-300">*</span></label>
         <div class="relative">
           <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
-          <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492810" [(ngModel)]="accountNumber" name="accountNumber" list="branch-accounts" />
+          <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492810" [(ngModel)]="accountNumber" id="accountNumber" name="accountNumber" list="branch-accounts" />
           <datalist id="branch-accounts">
             <option *ngFor="let a of accounts" [value]="a.account_id"></option>
           </datalist>
@@ -47,10 +47,10 @@
       </div>
 
       <div>
-        <label class="auth-field-label"><i class="fas fa-layer-group mr-2"></i>Deposit method</label>
+        <label class="auth-field-label" for="method"><i class="fas fa-layer-group mr-2"></i>Deposit method</label>
         <div class="grid grid-cols-3 gap-3">
           <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="method" name="method" value="Cash" class="hidden peer" />
+            <input type="radio" [(ngModel)]="method" id="method" name="method" value="Cash" class="hidden peer" />
             <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-3 text-center transition-all peer-checked:border-glass-emerald peer-checked:bg-white/[0.12]">
               <i class="fas fa-money-bill-wave text-glass-emerald text-lg"></i><div class="mt-1 text-xs font-semibold">Cash</div>
             </div>
@@ -71,16 +71,16 @@
       </div>
 
       <div *ngIf="method === 'Cheque'">
-        <label class="auth-field-label"><i class="fas fa-hashtag mr-2"></i>Cheque number <span class="text-red-300">*</span></label>
-        <input type="text" class="glass-input w-full" placeholder="e.g. 884201" [(ngModel)]="reference" name="reference" />
+        <label class="auth-field-label" for="reference"><i class="fas fa-hashtag mr-2"></i>Cheque number <span class="text-red-300">*</span></label>
+        <input type="text" class="glass-input w-full" placeholder="e.g. 884201" [(ngModel)]="reference" id="reference" name="reference" />
         <p class="mt-2 text-xs text-white/50">Cheque deposits are credited after clearing.</p>
       </div>
 
       <div>
-        <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
+        <label class="auth-field-label" for="amount"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
         <div class="relative">
           <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
-          <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" min="1" [(ngModel)]="amount" name="amount" />
+          <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" min="1" [(ngModel)]="amount" id="amount" name="amount" />
         </div>
       </div>
 

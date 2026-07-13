@@ -26,20 +26,20 @@
     </div>
     <form class="space-y-5" (ngSubmit)="createRequest()">
       <div>
-        <label class="auth-field-label"><i class="fas fa-user mr-2"></i>Customer <span class="text-red-300">*</span></label>
-        <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva" [(ngModel)]="newCustomer" name="newCustomer" />
+        <label class="auth-field-label" for="newCustomer"><i class="fas fa-user mr-2"></i>Customer <span class="text-red-300">*</span></label>
+        <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva" [(ngModel)]="newCustomer" id="newCustomer" name="newCustomer" />
       </div>
       <div>
-        <label class="auth-field-label"><i class="fas fa-tags mr-2"></i>Category</label>
-        <select class="glass-input w-full" [(ngModel)]="newCategory" name="newCategory">
+        <label class="auth-field-label" for="newCategory"><i class="fas fa-tags mr-2"></i>Category</label>
+        <select class="glass-input w-full" [(ngModel)]="newCategory" id="newCategory" name="newCategory">
           <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
         </select>
       </div>
       <div>
-        <label class="auth-field-label"><i class="fas fa-flag mr-2"></i>Priority</label>
+        <label class="auth-field-label" for="newPriority"><i class="fas fa-flag mr-2"></i>Priority</label>
         <div class="grid grid-cols-3 gap-3">
           <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="newPriority" name="newPriority" value="Low" class="hidden peer" />
+            <input type="radio" [(ngModel)]="newPriority" id="newPriority" name="newPriority" value="Low" class="hidden peer" />
             <div class="rounded-xl border-2 border-white/10 bg-white/[0.06] p-2 text-center text-xs font-semibold transition-all peer-checked:border-glass-emerald peer-checked:bg-white/[0.12]">Low</div>
           </label>
           <label class="cursor-pointer">
@@ -53,8 +53,8 @@
         </div>
       </div>
       <div>
-        <label class="auth-field-label"><i class="fas fa-clipboard-list mr-2"></i>Summary <span class="text-red-300">*</span></label>
-        <textarea class="glass-input w-full min-h-[90px] resize-none" rows="3" placeholder="Describe the customer's request" [(ngModel)]="newSummary" name="newSummary"></textarea>
+        <label class="auth-field-label" for="newSummary"><i class="fas fa-clipboard-list mr-2"></i>Summary <span class="text-red-300">*</span></label>
+        <textarea class="glass-input w-full min-h-[90px] resize-none" rows="3" placeholder="Describe the customer's request" [(ngModel)]="newSummary" id="newSummary" name="newSummary"></textarea>
       </div>
       <button type="submit" class="glass-button w-full justify-center" [disabled]="!isValid || isSubmitting" [class.opacity-50]="!isValid || isSubmitting">
         <i *ngIf="!isSubmitting" class="fas fa-paper-plane mr-2"></i>

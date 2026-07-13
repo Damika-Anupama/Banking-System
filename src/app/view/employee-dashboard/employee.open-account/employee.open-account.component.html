@@ -19,8 +19,8 @@
 
     <form class="space-y-5" (ngSubmit)="openAccount()">
       <div>
-        <label class="auth-field-label"><i class="fas fa-user mr-2"></i>Customer <span class="text-red-300">*</span></label>
-        <select class="glass-input w-full" [(ngModel)]="customerId" name="customerId">
+        <label class="auth-field-label" for="customerId"><i class="fas fa-user mr-2"></i>Customer <span class="text-red-300">*</span></label>
+        <select class="glass-input w-full" [(ngModel)]="customerId" id="customerId" name="customerId">
           <option value="" disabled selected>Select a customer</option>
           <option *ngFor="let c of customers" [value]="c.user_id">{{ c.fullname }} — {{ c.user_id }}</option>
         </select>
@@ -28,10 +28,10 @@
       </div>
 
       <div>
-        <label class="auth-field-label"><i class="fas fa-layer-group mr-2"></i>Product</label>
+        <label class="auth-field-label" for="product"><i class="fas fa-layer-group mr-2"></i>Product</label>
         <div class="grid grid-cols-3 gap-3">
           <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="product" name="product" value="Savings" class="hidden peer" />
+            <input type="radio" [(ngModel)]="product" id="product" name="product" value="Savings" class="hidden peer" />
             <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-3 text-center transition-all peer-checked:border-glass-emerald peer-checked:bg-white/[0.12]">
               <i class="fas fa-wallet text-glass-emerald text-lg"></i><div class="mt-1 text-xs font-semibold">Savings</div>
             </div>
@@ -53,25 +53,25 @@
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div class="min-w-0">
-          <label class="auth-field-label"><i class="fas fa-user-tag mr-2"></i>Holder type</label>
-          <select class="glass-input w-full" [(ngModel)]="holderType" name="holderType">
+          <label class="auth-field-label" for="holderType"><i class="fas fa-user-tag mr-2"></i>Holder type</label>
+          <select class="glass-input w-full" [(ngModel)]="holderType" id="holderType" name="holderType">
             <option value="Personal">Personal</option>
             <option value="Organization">Organization</option>
           </select>
         </div>
         <div class="min-w-0">
-          <label class="auth-field-label"><i class="fas fa-building mr-2"></i>Branch</label>
-          <select class="glass-input w-full" [(ngModel)]="branch" name="branch">
+          <label class="auth-field-label" for="branch"><i class="fas fa-building mr-2"></i>Branch</label>
+          <select class="glass-input w-full" [(ngModel)]="branch" id="branch" name="branch">
             <option *ngFor="let b of branches" [value]="b">{{ b }}</option>
           </select>
         </div>
       </div>
 
       <div>
-        <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Opening balance <span class="text-red-300">*</span></label>
+        <label class="auth-field-label" for="openingBalance"><i class="fas fa-money-bill-wave mr-2"></i>Opening balance <span class="text-red-300">*</span></label>
         <div class="relative">
           <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
-          <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" min="0" [(ngModel)]="openingBalance" name="openingBalance" />
+          <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" min="0" [(ngModel)]="openingBalance" id="openingBalance" name="openingBalance" />
         </div>
         <p class="mt-2 text-xs" [ngClass]="belowMinimum ? 'text-rose-300' : 'text-white/50'">
           <i class="fas fa-circle-info mr-1"></i>Minimum for {{ product }}: Rs. {{ minimumDeposit | number }}
