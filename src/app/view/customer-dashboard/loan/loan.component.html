@@ -193,9 +193,9 @@
         type="button"
         class="glass-button w-full justify-center md:w-auto"
         (click)="proceed()"
-        [disabled]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType || !acceptedLienConsent"
-        [class.opacity-50]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType || !acceptedLienConsent"
-        [class.cursor-not-allowed]="!selectedFD || !loanAmount || !selectedLoan || !selectedLoanType || !acceptedLienConsent"
+        [disabled]="isProcessingLoan"
+        [class.opacity-50]="isProcessingLoan"
+        [class.cursor-not-allowed]="isProcessingLoan"
       >
         <i class="fas fa-check-circle mr-2"></i>
         Submit Loan Application

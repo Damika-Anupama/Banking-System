@@ -100,7 +100,7 @@
       </div>
 
       <div class="flex flex-wrap gap-3 pt-2">
-        <button type="submit" [disabled]="isSaving || !settingsForm.valid" class="glass-button justify-center" [class.opacity-50]="isSaving || !settingsForm.valid">
+        <button type="submit" [disabled]="isSaving" class="glass-button justify-center" [class.opacity-50]="isSaving">
           <i *ngIf="!isSaving" class="fas fa-save mr-2"></i>
           <i *ngIf="isSaving" class="fas fa-spinner fa-spin mr-2"></i>
           {{ isSaving ? 'Saving...' : 'Save profile' }}

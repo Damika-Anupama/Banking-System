@@ -231,10 +231,10 @@
     <div class="flex gap-3 pt-4">
       <button
         type="submit"
-        [disabled]="isSaving || !settingsForm.valid"
+        [disabled]="isSaving"
         class="glass-button justify-center"
-        [class.opacity-50]="isSaving || !settingsForm.valid"
-        [class.cursor-not-allowed]="isSaving || !settingsForm.valid"
+        [class.opacity-50]="isSaving"
+        [class.cursor-not-allowed]="isSaving"
       >
         <i *ngIf="!isSaving" class="fas fa-save mr-2"></i>
         <i *ngIf="isSaving" class="fas fa-spinner fa-spin mr-2"></i>

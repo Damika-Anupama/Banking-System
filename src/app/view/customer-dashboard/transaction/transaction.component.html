@@ -127,7 +127,7 @@
                     [attr.aria-invalid]="errorFor('to_account') ? 'true' : null"
                     [attr.aria-describedby]="errorFor('to_account') ? 'to_account-error' : null" />
                 </div>
-                <button type="button" class="glass-button-secondary shrink-0" [disabled]="!canSaveBeneficiary" [class.opacity-50]="!canSaveBeneficiary" (click)="saveBeneficiary()" title="Save as beneficiary">
+                <button type="button" class="glass-button-secondary shrink-0" [disabled]="false" [class.opacity-50]="false" (click)="saveBeneficiary()" title="Save as beneficiary">
                   <i class="fas fa-bookmark"></i>
                 </button>
               </div>
@@ -230,7 +230,7 @@
           <button type="button" class="glass-button ml-auto justify-center" *ngIf="transferStep < 3" (click)="nextTransferStep()">
             Next<i class="fas fa-chevron-right ml-2"></i>
           </button>
-          <button type="button" class="glass-button ml-auto justify-center" *ngIf="transferStep === 3" [disabled]="!transferReady" [class.opacity-50]="!transferReady" [class.cursor-not-allowed]="!transferReady" (click)="proceedTransaction()">
+          <button type="button" class="glass-button ml-auto justify-center" *ngIf="transferStep === 3" [disabled]="isProcessingTransaction" [class.opacity-50]="isProcessingTransaction" [class.cursor-not-allowed]="isProcessingTransaction" (click)="proceedTransaction()">
             <i class="fas fa-shield-check mr-2"></i>Authorize transfer
           </button>
         </div>

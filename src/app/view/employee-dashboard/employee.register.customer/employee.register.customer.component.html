@@ -236,9 +236,9 @@
         type="button"
         class="glass-button justify-center"
         (click)="submit()"
-        [disabled]="!fullname || !username || !password || !email || !address || !contact_no || !gender || !dob"
-        [class.opacity-50]="!fullname || !username || !password || !email || !address || !contact_no || !gender || !dob"
-        [class.cursor-not-allowed]="!fullname || !username || !password || !email || !address || !contact_no || !gender || !dob"
+        [disabled]="isLoading"
+        [class.opacity-50]="isLoading"
+        [class.cursor-not-allowed]="isLoading"
       >
         <i class="fas fa-check-circle mr-2"></i>
         Register Customer

@@ -149,9 +149,9 @@
         type="button"
         class="glass-button w-full md:w-auto justify-center"
         (click)="checkForm()"
-        [disabled]="!selectedSavingAccount || !selectedPackage || !fdAmount || !acceptedTerms"
-        [class.opacity-50]="!selectedSavingAccount || !selectedPackage || !fdAmount || !acceptedTerms"
-        [class.cursor-not-allowed]="!selectedSavingAccount || !selectedPackage || !fdAmount || !acceptedTerms"
+        [disabled]="isCreatingFD"
+        [class.opacity-50]="isCreatingFD"
+        [class.cursor-not-allowed]="isCreatingFD"
       >
         <i class="fas fa-check-circle mr-2"></i>
         Proceed with Fixed Deposit
