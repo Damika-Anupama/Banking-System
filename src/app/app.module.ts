@@ -22,6 +22,7 @@ import { PreloaderComponent } from './shared/preloader/preloader.component';
 import { CommonModule } from '@angular/common';
 import { CommandPaletteComponent } from './shared/components/command-palette/command-palette.component';
 import { RouteProgressComponent } from './shared/components/route-progress/route-progress.component';
+import { ToastHostComponent } from './shared/components/toast-host/toast-host.component';
 
 /**
  * App Module (Root Module)
@@ -50,6 +51,7 @@ import { RouteProgressComponent } from './shared/components/route-progress/route
     PreloaderComponent,
     CommandPaletteComponent,
     RouteProgressComponent,
+    ToastHostComponent,
     // Global error pages
     NotFoundComponent,
     ServerErrorComponent

@@ -15,6 +15,7 @@ import { TransactionComponent } from './transaction.component';
 import { TransactionService } from 'src/app/service/customer/transaction.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('TransactionComponent', () => {
   let component: TransactionComponent;
@@ -620,9 +621,14 @@ describe('TransactionComponent', () => {
   });
 
   describe('showToast()', () => {
+    let toastService: ToastService;
+
     beforeEach(() => {
       fixture = TestBed.createComponent(TransactionComponent);
       component = fixture.componentInstance;
+      toastService = TestBed.inject(ToastService);
+      spyOn(toastService, 'success');
+      spyOn(toastService, 'error');
     });
 
     it('should show success toast for successful transfer', () => {
@@ -630,13 +636,11 @@ describe('TransactionComponent', () => {
 
       component.showToast(data);
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Success',
-          text: 'Transfer created successfully!',
-          icon: 'success'
-        })
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Transfer created',
+        'Transfer created successfully!'
       );
+      expect(toastService.error).not.toHaveBeenCalled();
     });
 
     it('should show error toast for failed transfer', () => {
@@ -644,24 +648,15 @@ describe('TransactionComponent', () => {
 
       component.showToast(data);
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Transfer failed',
-          icon: 'error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Transaction failed', 'Transfer failed');
     });
 
     it('should handle null data', () => {
       component.showToast(null);
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Invalid response from server',
-          icon: 'error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Transaction failed',
+        'Invalid response from server'
       );
     });
 
@@ -670,13 +665,13 @@ describe('TransactionComponent', () => {
 
       component.showToast(data);
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Transaction failed',
-          icon: 'error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Transaction failed', 'Transaction failed');
+    });
+
+    it('should not open a blocking modal for transfer feedback', () => {
+      component.showToast({ message: 'Transfer created successfully!' });
+
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 

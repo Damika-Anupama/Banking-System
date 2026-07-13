@@ -1,0 +1,31 @@
+<div class="toast-host">
+  <div class="toast-region" role="status" aria-live="polite" aria-atomic="false">
+    <ng-container *ngFor="let toast of polite; trackBy: trackById">
+      <ng-container *ngTemplateOutlet="toastCard; context: { $implicit: toast }"></ng-container>
+    </ng-container>
+  </div>
+
+  <div class="toast-region" role="alert" aria-live="assertive" aria-atomic="false">
+    <ng-container *ngFor="let toast of assertive; trackBy: trackById">
+      <ng-container *ngTemplateOutlet="toastCard; context: { $implicit: toast }"></ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #toastCard let-toast>
+  <div class="toast" [ngClass]="'toast--' + toast.kind">
+    <span class="toast__icon" aria-hidden="true">{{ iconFor(toast.kind) }}</span>
+    <div class="toast__body">
+      <p class="toast__title">{{ toast.title }}</p>
+      <p class="toast__detail" *ngIf="toast.detail">{{ toast.detail }}</p>
+    </div>
+    <button
+      type="button"
+      class="toast__close"
+      [attr.aria-label]="'Dismiss notification: ' + toast.title"
+      (click)="dismiss(toast.id)"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</ng-template>

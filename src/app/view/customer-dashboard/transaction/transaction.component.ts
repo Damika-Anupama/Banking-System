@@ -5,6 +5,7 @@ import { TransactionService } from 'src/app/service/customer/transaction.service
 import { Subscription } from 'rxjs';
 import { demoStore } from 'src/app/shared/demo-store';
 import { createDemoBeneficiary } from 'src/app/shared/demo-banking-fixtures';
+import { ToastService } from 'src/app/service/toast.service';
 
 @Component({
   selector: 'app-transaction',
@@ -213,7 +214,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
     return latest ? new Date(latest) : null;
   }
 
-  constructor(private router: Router, private transactionService: TransactionService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private router: Router,
+    private transactionService: TransactionService,
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.loadAccountDetails();
@@ -356,26 +362,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   showToast(data: any) {
     if (!data) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Invalid response from server',
-        icon: 'error'
-      });
+      this.toastService.error('Transaction failed', 'Invalid response from server');
       return;
     }
 
     if (data.message == 'Transfer created successfully!') {
-      Swal.fire({
-        title: 'Success',
-        text: data.message,
-        icon: 'success'
-      });
+      this.toastService.success('Transfer created', data.message);
     } else {
-      Swal.fire({
-        title: 'Error',
-        text: data.message || 'Transaction failed',
-        icon: 'error'
-      });
+      this.toastService.error('Transaction failed', data.message || 'Transaction failed');
     }
   }
 
