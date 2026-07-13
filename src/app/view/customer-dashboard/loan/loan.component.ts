@@ -3,6 +3,7 @@ import { fd } from 'src/app/model/FD';
 import { loanPackage } from 'src/app/model/LoanPackage';
 import { LoanService } from 'src/app/service/customer/loan.service';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -38,7 +39,74 @@ export class LoanComponent implements OnInit, OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private loanService: LoanService) {}
+  constructor(private loanService: LoanService, private toastService: ToastService) {}
+
+  /** Fields the user has left, so errors appear on blur rather than while typing. */
+  touched: Record<string, boolean> = {};
+
+  private readonly validatedFields = [
+    'selectedFD',
+    'loanAmount',
+    'selectedLoan',
+    'selectedLoanType',
+    'acceptedLienConsent',
+  ];
+
+  /**
+   * Single source of truth for loan-application validity. proceed() and the
+   * inline errors read the same rules, so a rule cannot be enforced on submit
+   * but left invisible on the field that broke it.
+   */
+  get fieldErrors(): Record<string, string | null> {
+    const amount = Number(this.loanAmount);
+
+    return {
+      selectedFD: this.selectedFD?.fd_id
+        ? null
+        : 'Select the fixed deposit to borrow against.',
+
+      loanAmount: !this.loanAmount
+        ? 'Enter a loan amount.'
+        : !Number.isFinite(amount) || amount <= 0
+          ? 'Enter a valid positive loan amount.'
+          : amount > this.maximumLoanAmount
+            ? `Amount cannot exceed your maximum of Rs. ${this.maximumLoanAmount.toFixed(2)}.`
+            : null,
+
+      selectedLoan: this.selectedLoan ? null : 'Choose a loan package.',
+
+      selectedLoanType: this.selectedLoanType ? null : 'Choose a loan type.',
+
+      // A lien puts the customer's fixed deposit at risk, so consent is explicit.
+      acceptedLienConsent: this.acceptedLienConsent
+        ? null
+        : 'Consent to the lien on your fixed deposit before submitting.',
+    };
+  }
+
+  get hasFieldErrors(): boolean {
+    return this.validatedFields.some((field) => this.fieldErrors[field]);
+  }
+
+  get firstFieldError(): string | null {
+    for (const field of this.validatedFields) {
+      const error = this.fieldErrors[field];
+      if (error) return error;
+    }
+    return null;
+  }
+
+  errorFor(field: string): string | null {
+    return this.touched[field] ? this.fieldErrors[field] : null;
+  }
+
+  markTouched(field: string): void {
+    this.touched[field] = true;
+  }
+
+  markAllTouched(): void {
+    this.validatedFields.forEach((field) => (this.touched[field] = true));
+  }
 
   ngOnInit(): void {
     this.loadFDs();
@@ -55,24 +123,11 @@ export class LoanComponent implements OnInit, OnDestroy {
         if (!data || !data.data) {
           this.fds = [];
           this.isLoadingFDs = false;
-          Swal.fire({
-            icon: 'warning',
-            title: 'No Fixed Deposits',
-            text: 'You do not have any fixed deposits available for loan application.'
-          });
           return;
         }
 
         this.fds = Array.isArray(data.data) ? data.data : [];
         this.isLoadingFDs = false;
-
-        if (this.fds.length === 0) {
-          Swal.fire({
-            icon: 'info',
-            title: 'No Fixed Deposits',
-            text: 'You need to create a fixed deposit before applying for a loan.'
-          });
-        }
       },
       error: (err) => {
         console.error('Error loading FDs:', err);
@@ -80,11 +135,7 @@ export class LoanComponent implements OnInit, OnDestroy {
         this.isLoadingFDs = false;
         this.fds = [];
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not load loan workspace', this.errorMessage);
       }
     });
 
@@ -238,11 +289,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     // Null check for selectedFD
     if (!this.selectedFD || !this.selectedFD.amount || !this.selectedFD.fd_id) {
       this.maximumLoanAmount = 0;
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Selection',
-        text: 'Please select a valid fixed deposit'
-      });
+      this.toastService.error('Invalid selection', 'Please select a valid fixed deposit.');
       return;
     }
 
@@ -251,11 +298,7 @@ export class LoanComponent implements OnInit, OnDestroy {
 
       if (isNaN(fdAmount) || fdAmount <= 0) {
         this.maximumLoanAmount = 0;
-        Swal.fire({
-          icon: 'error',
-          title: 'Invalid Amount',
-          text: 'Selected fixed deposit has an invalid amount'
-        });
+        this.toastService.error('Invalid amount', 'Selected fixed deposit has an invalid amount.');
         return;
       }
 
@@ -269,11 +312,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error calculating maximum loan amount:', error);
       this.maximumLoanAmount = 0;
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to calculate maximum loan amount'
-      });
+      this.toastService.error('Could not calculate', 'Failed to calculate maximum loan amount.');
     }
   }
 
@@ -295,72 +334,23 @@ export class LoanComponent implements OnInit, OnDestroy {
   }
 
   checkLoanAmount() {
-    if (!this.loanAmount || this.loanAmount <= 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Amount',
-        text: 'Please enter a valid loan amount'
-      });
-      return;
-    }
-
-    if (this.loanAmount > this.maximumLoanAmount) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Amount Exceeds Limit',
-        text: `Loan amount should be less than or equal to maximum loan amount (${this.maximumLoanAmount.toFixed(2)})`
-      });
-    }
+    // The amount rule lives in fieldErrors; leaving the field just reveals it.
+    this.markTouched('loanAmount');
   }
 
   async proceed() {
-    // Form validation
-    if (!this.selectedFD || !this.selectedLoan || !this.loanAmount || !this.selectedLoanType) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: 'Please select all the fields (FD, Loan Package, Amount, Loan Type)'
-      });
-      return;
-    }
+    // Surface every problem at once, against the field that caused it.
+    this.markAllTouched();
 
-    // Validate loan amount
-    if (this.loanAmount <= 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Amount',
-        text: 'Please enter a valid positive loan amount'
-      });
-      return;
-    }
-
-    // Validate loan amount doesn't exceed maximum
-    if (this.loanAmount > this.maximumLoanAmount) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Amount Exceeds Limit',
-        text: `Loan amount should be less than or equal to ${this.maximumLoanAmount.toFixed(2)}`
-      });
-      return;
-    }
-
-    if (!this.acceptedLienConsent) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Collateral Consent Required',
-        text: 'Please consent to placing a lien on the selected fixed deposit before submitting.'
-      });
+    if (this.hasFieldErrors) {
+      this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
       return;
     }
 
     // Validate user ID exists
     const userId = localStorage.getItem("userId") || (localStorage.getItem('demoMode') === 'true' ? 'CUS-1001' : null);
     if (!userId) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Authentication Error',
-        text: 'User ID not found. Please log in again.'
-      });
+      this.toastService.error('Session expired', 'User ID not found. Please log in again.');
       return;
     }
 
@@ -386,11 +376,7 @@ export class LoanComponent implements OnInit, OnDestroy {
           interestRate = 15.00;
           break;
         default:
-          Swal.fire({
-            icon: 'error',
-            title: 'Invalid Interest',
-            text: 'Please select a valid loan package'
-          });
+          this.toastService.error('Invalid package', 'Please select a valid loan package.');
           return;
       }
 
@@ -407,11 +393,7 @@ export class LoanComponent implements OnInit, OnDestroy {
           durationInDays = 30 * 36;
           break;
         default:
-          Swal.fire({
-            icon: 'error',
-            title: 'Invalid Duration',
-            text: 'Please select a valid loan package'
-          });
+          this.toastService.error('Invalid package', 'Please select a valid loan package.');
           return;
       }
 
@@ -477,22 +459,14 @@ export class LoanComponent implements OnInit, OnDestroy {
           this.errorMessage = err?.error?.message || err?.message || 'Failed to apply for loan';
           this.isProcessingLoan = false;
 
-          Swal.fire({
-            icon: 'error',
-            title: 'Loan Application Failed',
-            text: this.errorMessage
-          });
+          this.toastService.error('Loan application failed', this.errorMessage);
         }
       });
 
       this.subscriptions.push(sub);
     } catch (error) {
       console.error('Error processing loan application:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to process loan application'
-      });
+      this.toastService.error('Loan application failed', 'Failed to process loan application.');
     }
   }
 

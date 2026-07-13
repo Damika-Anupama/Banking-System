@@ -13,8 +13,10 @@ import { LoanComponent } from './loan.component';
 import { LoanService } from 'src/app/service/customer/loan.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('LoanComponent', () => {
+  let toastService: ToastService;
   let component: LoanComponent;
   let fixture: ComponentFixture<LoanComponent>;
   let mockLoanService: jasmine.SpyObj<LoanService>;
@@ -37,6 +39,12 @@ describe('LoanComponent', () => {
 
     // Spy on Swal
     spyOn(Swal, 'fire');
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
+    spyOn(toastService, 'warning');
+    spyOn(toastService, 'info');
 
     // Clear localStorage
     localStorage.clear();
@@ -123,13 +131,8 @@ describe('LoanComponent', () => {
       component.loadFDs();
 
       expect(component.fds).toEqual([]);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'info',
-          title: 'No Fixed Deposits',
-          text: 'You need to create a fixed deposit before applying for a loan.'
-        })
-      );
+      // The page already renders the no-FD state inline; a popup repeating it is noise.
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle null response', () => {
@@ -138,12 +141,8 @@ describe('LoanComponent', () => {
       component.loadFDs();
 
       expect(component.fds).toEqual([]);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'No Fixed Deposits'
-        })
-      );
+      // The page already renders the no-FD state inline; a popup repeating it is noise.
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle missing data property', () => {
@@ -346,13 +345,8 @@ describe('LoanComponent', () => {
       component.onFDSelected();
 
       expect(component.maximumLoanAmount).toBe(0);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Invalid Selection',
-          text: 'Please select a valid fixed deposit'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Invalid selection', 'Please select a valid fixed deposit.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject FD with null amount', () => {
@@ -377,12 +371,11 @@ describe('LoanComponent', () => {
       component.onFDSelected();
 
       expect(component.maximumLoanAmount).toBe(0);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Invalid Amount'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Invalid amount',
+        'Selected fixed deposit has an invalid amount.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject FD with zero amount', () => {
@@ -493,13 +486,9 @@ describe('LoanComponent', () => {
 
       component.checkLoanAmount();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Invalid Amount',
-          text: 'Please enter a valid loan amount'
-        })
-      );
+      // Leaving the field reveals the inline error rather than popping a dialog.
+      expect(component.errorFor('loanAmount')).toBe('Enter a loan amount.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject negative amount', () => {
@@ -507,12 +496,8 @@ describe('LoanComponent', () => {
 
       component.checkLoanAmount();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Invalid Amount'
-        })
-      );
+      expect(component.errorFor('loanAmount')).toBe('Enter a valid positive loan amount.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should warn when exceeding maximum', () => {
@@ -521,12 +506,8 @@ describe('LoanComponent', () => {
 
       component.checkLoanAmount();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Amount Exceeds Limit'
-        })
-      );
+      expect(component.errorFor('loanAmount')).toContain('cannot exceed');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should allow valid amount within limit', () => {
@@ -555,13 +536,8 @@ describe('LoanComponent', () => {
 
       component.proceed();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please select all the fields (FD, Loan Package, Amount, Loan Type)'
-        })
-      );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject zero loan amount', () => {
@@ -573,13 +549,8 @@ describe('LoanComponent', () => {
       component.proceed();
 
       // loanAmount = 0 is falsy, so the "all fields" validation triggers first
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please select all the fields (FD, Loan Package, Amount, Loan Type)'
-        })
-      );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject negative loan amount', () => {
@@ -591,12 +562,8 @@ describe('LoanComponent', () => {
 
       component.proceed();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Invalid Amount'
-        })
-      );
+      expect(component.errorFor('loanAmount')).toBe('Enter a valid positive loan amount.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject amount exceeding maximum', () => {
@@ -608,12 +575,8 @@ describe('LoanComponent', () => {
 
       component.proceed();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Amount Exceeds Limit'
-        })
-      );
+      expect(component.errorFor('loanAmount')).toContain('cannot exceed');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject missing userId', () => {
@@ -627,12 +590,11 @@ describe('LoanComponent', () => {
 
       component.proceed();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Authentication Error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Session expired',
+        'User ID not found. Please log in again.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -765,11 +727,9 @@ describe('LoanComponent', () => {
 
       component.proceed();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Invalid Interest'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Invalid package',
+        'Please select a valid loan package.'
       );
     });
 
@@ -785,11 +745,9 @@ describe('LoanComponent', () => {
 
       component.proceed();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Invalid Duration'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Invalid package',
+        'Please select a valid loan package.'
       );
     });
   });
@@ -842,12 +800,11 @@ describe('LoanComponent', () => {
       component.proceed();
       tick();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to process loan application'
-        })
+      // The form is valid here, so the review confirmation legitimately opens;
+      // it is the *failure* that must not be another dialog.
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Loan application failed',
+        'Failed to process loan application.'
       );
     }));
   });

@@ -62,8 +62,11 @@
             <select
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedFD"
-              (change)="onFDSelected()"
+              (change)="onFDSelected(); markTouched('selectedFD')"
               name="selectedFD"
+              [class.field-invalid]="errorFor('selectedFD')"
+              [attr.aria-invalid]="errorFor('selectedFD') ? 'true' : null"
+              [attr.aria-describedby]="errorFor('selectedFD') ? 'selectedFD-error' : null"
             >
               <option [ngValue]="null" disabled selected>Select a fixed deposit</option>
               <option *ngFor="let account of fds" [ngValue]="account">
@@ -72,6 +75,7 @@
             </select>
             <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
           </div>
+          <p *ngIf="errorFor('selectedFD')" id="selectedFD-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedFD') }}</p>
         </div>
 
         <div class="min-w-0">
@@ -87,10 +91,14 @@
               [(ngModel)]="loanAmount"
               name="loanAmount"
               min="1"
-              (ngModelChange)="checkLoanAmount()"
+              (blur)="checkLoanAmount()"
+              [class.field-invalid]="errorFor('loanAmount')"
+              [attr.aria-invalid]="errorFor('loanAmount') ? 'true' : null"
+              [attr.aria-describedby]="errorFor('loanAmount') ? 'loanAmount-error' : null"
             />
           </div>
-          <p class="text-white/50 text-xs mt-2" *ngIf="maximumLoanAmount">Max: Rs. {{ maximumLoanAmount | number }} · LTV {{ ltvPercent }}%</p>
+          <p class="text-white/50 text-xs mt-2" *ngIf="maximumLoanAmount && !errorFor('loanAmount')">Max: Rs. {{ maximumLoanAmount | number }} · LTV {{ ltvPercent }}%</p>
+          <p *ngIf="errorFor('loanAmount')" id="loanAmount-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('loanAmount') }}</p>
         </div>
 
         <div class="min-w-0">
@@ -101,8 +109,11 @@
             <select
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedLoan"
-              (ngModelChange)="onLoanSelected()"
+              (ngModelChange)="onLoanSelected(); markTouched('selectedLoan')"
               name="selectedPackage"
+              [class.field-invalid]="errorFor('selectedLoan')"
+              [attr.aria-invalid]="errorFor('selectedLoan') ? 'true' : null"
+              [attr.aria-describedby]="errorFor('selectedLoan') ? 'selectedLoan-error' : null"
             >
               <option value="" disabled selected>Select a plan</option>
               <option *ngFor="let package of packageArray" [value]="package.index">
@@ -111,6 +122,7 @@
             </select>
             <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
           </div>
+          <p *ngIf="errorFor('selectedLoan')" id="selectedLoan-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedLoan') }}</p>
         </div>
       </div>
 
@@ -169,9 +181,13 @@
       </div>
 
       <label class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
-        <input type="checkbox" class="mt-1" [(ngModel)]="acceptedLienConsent" name="acceptedLienConsent" />
+        <input type="checkbox" class="mt-1" [(ngModel)]="acceptedLienConsent" name="acceptedLienConsent"
+          [attr.aria-invalid]="errorFor('acceptedLienConsent') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('acceptedLienConsent') ? 'acceptedLienConsent-error' : null" />
         <span>I consent to placing a lien on the selected fixed deposit until this loan is settled.</span>
       </label>
+      <p *ngIf="errorFor('acceptedLienConsent')" id="acceptedLienConsent-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('acceptedLienConsent') }}</p>
+      <p *ngIf="errorFor('selectedLoanType')" id="selectedLoanType-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedLoanType') }}</p>
 
       <button
         type="button"
