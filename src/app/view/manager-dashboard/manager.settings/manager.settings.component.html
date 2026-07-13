@@ -31,11 +31,16 @@
           type="text"
           [(ngModel)]="username"
           name="username"
+          (blur)="markTouched('username')"
+          [class.field-invalid]="errorFor('username')"
+          [attr.aria-invalid]="errorFor('username') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('username') ? 'username-error' : null"
           class="glass-input pl-12"
           placeholder="Enter username"
           required
           minlength="3"
         />
+        <p *ngIf="errorFor('username')" id="username-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('username') }}</p>
       </div>
     </div>
 
@@ -50,10 +55,15 @@
           type="text"
           [(ngModel)]="fullname"
           name="fullname"
+          (blur)="markTouched('fullname')"
+          [class.field-invalid]="errorFor('fullname')"
+          [attr.aria-invalid]="errorFor('fullname') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('fullname') ? 'fullname-error' : null"
           class="glass-input pl-12"
           placeholder="Enter full name"
           required
         />
+        <p *ngIf="errorFor('fullname')" id="fullname-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('fullname') }}</p>
       </div>
     </div>
 
@@ -68,11 +78,16 @@
           type="email"
           [(ngModel)]="email"
           name="email"
+          (blur)="markTouched('email')"
+          [class.field-invalid]="errorFor('email')"
+          [attr.aria-invalid]="errorFor('email') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('email') ? 'email-error' : null"
           class="glass-input pl-12"
           placeholder="Enter email address"
           required
           email
         />
+        <p *ngIf="errorFor('email')" id="email-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('email') }}</p>
       </div>
     </div>
 
@@ -87,9 +102,14 @@
           [type]="showPassword ? 'text' : 'password'"
           [(ngModel)]="password"
           name="password"
+          (blur)="markTouched('password')"
+          [class.field-invalid]="errorFor('password')"
+          [attr.aria-invalid]="errorFor('password') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('password') ? 'password-error' : null"
           class="glass-input pl-12 pr-12"
           placeholder="Enter new password"
         />
+        <p *ngIf="errorFor('password')" id="password-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('password') }}</p>
         <button
           type="button"
           (click)="togglePasswordVisibility()"

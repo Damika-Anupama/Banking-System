@@ -13,8 +13,10 @@ import { EmployeeSettingsComponent } from './employee.settings.component';
 import { UserService } from 'src/app/service/customer/user.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('EmployeeSettingsComponent', () => {
+  let toastService: ToastService;
   let component: EmployeeSettingsComponent;
   let fixture: ComponentFixture<EmployeeSettingsComponent>;
   let mockUserService: jasmine.SpyObj<UserService>;
@@ -35,6 +37,10 @@ describe('EmployeeSettingsComponent', () => {
     component = fixture.componentInstance;
 
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: true }));
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
 
     localStorage.setItem('userId', '123');
     localStorage.setItem('email', 'employee@example.com');
@@ -74,13 +80,11 @@ describe('EmployeeSettingsComponent', () => {
 
       component.ngOnInit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'User session not found. Please log in again.'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Session expired',
+        'User session not found. Please log in again.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should call loadUserData on ngOnInit if userId exists', () => {
@@ -137,13 +141,11 @@ describe('EmployeeSettingsComponent', () => {
 
       expect(component.errorMessage).toBe('User data not found');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Could not load user data'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load settings',
+        'Could not load user data.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle empty data array', () => {
@@ -152,12 +154,11 @@ describe('EmployeeSettingsComponent', () => {
       component.loadUserData();
 
       expect(component.errorMessage).toBe('User data not found');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          text: 'Could not load user data'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load settings',
+        'Could not load user data.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error loading user data', () => {
@@ -168,12 +169,8 @@ describe('EmployeeSettingsComponent', () => {
 
       expect(component.errorMessage).toBe('Network error');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load settings', 'Network error');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -187,13 +184,8 @@ describe('EmployeeSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Username must be at least 3 characters'
-        })
-      );
+      expect(component.errorFor('username')).toBe('Username must be at least 3 characters.');
+      expect(Swal.fire).not.toHaveBeenCalled();
       expect(mockUserService.updateUser).not.toHaveBeenCalled();
     });
 
@@ -202,13 +194,8 @@ describe('EmployeeSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter a valid email address'
-        })
-      );
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject fullname shorter than 2 characters', () => {
@@ -216,13 +203,8 @@ describe('EmployeeSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter your full name'
-        })
-      );
+      expect(component.errorFor('fullname')).toBe('Enter your full name.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject password shorter than 6 characters if provided', () => {
@@ -230,13 +212,8 @@ describe('EmployeeSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Password must be at least 6 characters (leave empty to keep current password)'
-        })
-      );
+      expect(component.errorFor('password')).toContain('at least 6 characters');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should allow empty password', () => {
@@ -325,13 +302,11 @@ describe('EmployeeSettingsComponent', () => {
     it('should show success message', () => {
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'success',
-          title: 'Success',
-          text: 'Settings updated successfully'
-        })
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Settings saved',
+        'Settings updated successfully.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should trim whitespace from fields', () => {
@@ -365,13 +340,8 @@ describe('EmployeeSettingsComponent', () => {
 
       expect(component.errorMessage).toBe('Update failed');
       expect(component.isSaving).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Update Failed',
-          text: 'Update failed'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not save settings', 'Update failed');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should log error to console', () => {

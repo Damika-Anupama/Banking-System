@@ -13,8 +13,10 @@ import { ManagerSettingsComponent } from './manager.settings.component';
 import { UserService } from 'src/app/service/customer/user.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('ManagerSettingsComponent', () => {
+  let toastService: ToastService;
   let component: ManagerSettingsComponent;
   let fixture: ComponentFixture<ManagerSettingsComponent>;
   let mockUserService: jasmine.SpyObj<UserService>;
@@ -35,12 +37,65 @@ describe('ManagerSettingsComponent', () => {
     component = fixture.componentInstance;
 
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: true }));
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
     spyOn(console, 'error');
   });
 
   afterEach(() => {
     localStorage.clear();
     fixture.destroy();
+  });
+
+  describe('inline field validation', () => {
+    it('never opens a dialog: nothing on this form is irreversible', () => {
+      component.saveSettings();
+
+      expect(Swal.fire).not.toHaveBeenCalled();
+    });
+
+    it('treats an empty password as "keep my current one", not an error', () => {
+      component.password = '';
+
+      expect(component.fieldErrors['password']).toBeNull();
+    });
+
+    it('rejects a password that is supplied but too short', () => {
+      component.password = 'abc';
+
+      expect(component.fieldErrors['password']).toContain('at least 6 characters');
+    });
+
+    it('hides an error until the user has left the field', () => {
+      component.username = '';
+
+      // Untouched: the form must not nag before the user has engaged with it.
+      expect(component.errorFor('username')).toBeNull();
+      expect(component.fieldErrors['username']).toBe('Username must be at least 3 characters.');
+
+      component.markTouched('username');
+      expect(component.errorFor('username')).not.toBeNull();
+    });
+
+    it('points a touched, invalid field at its error message', () => {
+      component.markTouched('email');
+      component.email = 'nope';
+      fixture.detectChanges();
+
+      const input: HTMLInputElement = fixture.nativeElement.querySelector('[name="email"]');
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+
+      // The message must exist at the id the input points to, or a screen
+      // reader announces nothing at all.
+      const describedBy = input.getAttribute('aria-describedby');
+      expect(describedBy).toBe('email-error');
+
+      const message = fixture.nativeElement.querySelector(`#${describedBy}`);
+      expect(message).not.toBeNull();
+      expect(message.getAttribute('role')).toBe('alert');
+    });
   });
 
   describe('Component Initialization', () => {
@@ -129,13 +184,11 @@ describe('ManagerSettingsComponent', () => {
       component.ngOnInit();
 
       expect(component.userId).toBe('');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'User session not found. Please log in again.'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Session expired',
+        'User session not found. Please log in again.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
       expect(mockUserService.getById).not.toHaveBeenCalled();
     });
 
@@ -295,13 +348,11 @@ describe('ManagerSettingsComponent', () => {
 
       expect(component.errorMessage).toBe('User data not found');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Could not load user data'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load settings',
+        'Could not load user data.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle response without data property', () => {
@@ -310,13 +361,11 @@ describe('ManagerSettingsComponent', () => {
       component.loadUserData();
 
       expect(component.errorMessage).toBe('User data not found');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Could not load user data'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load settings',
+        'Could not load user data.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle empty data array', () => {
@@ -336,13 +385,8 @@ describe('ManagerSettingsComponent', () => {
 
       expect(component.errorMessage).toBe('Failed to load user');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to load user'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load settings', 'Failed to load user');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error without message', () => {
@@ -403,13 +447,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Username must be at least 3 characters'
-        })
-      );
+      expect(component.errorFor('username')).toBe('Username must be at least 3 characters.');
+      expect(Swal.fire).not.toHaveBeenCalled();
       expect(mockUserService.updateUser).not.toHaveBeenCalled();
     });
 
@@ -420,13 +459,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Username must be at least 3 characters'
-        })
-      );
+      expect(component.errorFor('username')).toBe('Username must be at least 3 characters.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject username with only whitespace', () => {
@@ -436,13 +470,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Username must be at least 3 characters'
-        })
-      );
+      expect(component.errorFor('username')).toBe('Username must be at least 3 characters.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject empty email', () => {
@@ -452,13 +481,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter a valid email address'
-        })
-      );
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject invalid email without @', () => {
@@ -468,13 +492,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter a valid email address'
-        })
-      );
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject empty fullname', () => {
@@ -484,13 +503,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter your full name'
-        })
-      );
+      expect(component.errorFor('fullname')).toBe('Enter your full name.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject fullname shorter than 2 characters', () => {
@@ -500,13 +514,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter your full name'
-        })
-      );
+      expect(component.errorFor('fullname')).toBe('Enter your full name.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject fullname with only whitespace', () => {
@@ -516,13 +525,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter your full name'
-        })
-      );
+      expect(component.errorFor('fullname')).toBe('Enter your full name.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject password shorter than 6 characters when provided', () => {
@@ -533,13 +537,8 @@ describe('ManagerSettingsComponent', () => {
 
       component.saveSettings();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Password must be at least 6 characters (leave empty to keep current password)'
-        })
-      );
+      expect(component.errorFor('password')).toContain('at least 6 characters');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should accept empty password', () => {
@@ -600,13 +599,11 @@ describe('ManagerSettingsComponent', () => {
       await Promise.resolve();
 
       expect(component.isSaving).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'success',
-          title: 'Success',
-          text: 'Settings updated successfully'
-        })
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Settings saved',
+        'Settings updated successfully.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should call updateUser with correct data', () => {
@@ -728,13 +725,8 @@ describe('ManagerSettingsComponent', () => {
 
       expect(component.errorMessage).toBe('Update failed');
       expect(component.isSaving).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Update Failed',
-          text: 'Update failed'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not save settings', 'Update failed');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error without message', () => {

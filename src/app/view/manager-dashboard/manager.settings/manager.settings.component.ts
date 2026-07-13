@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from 'src/app/service/customer/user.service';
 import { Subscription } from 'rxjs';
-import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 @Component({
   selector: 'app-manager.settings',
@@ -31,18 +31,71 @@ export class ManagerSettingsComponent implements OnInit, OnDestroy {
   showPassword = false;
   private subscriptions: Subscription[] = [];
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService,
+    private toastService: ToastService
+  ) {}
+
+  /** Fields the user has left, so errors appear on blur rather than while typing. */
+  touched: Record<string, boolean> = {};
+
+  private readonly validatedFields = ['username', 'email', 'fullname', 'password'];
+
+  /**
+   * Single source of truth for settings validity. Password is optional here:
+   * an empty field means "keep my current password", so only a non-empty value
+   * that is too short is an error.
+   */
+  get fieldErrors(): Record<string, string | null> {
+    return {
+      username: !this.username || this.username.trim().length < 3
+        ? 'Username must be at least 3 characters.'
+        : null,
+
+      email: !this.email || !this.email.includes('@')
+        ? 'Enter a valid email address.'
+        : null,
+
+      fullname: !this.fullname || this.fullname.trim().length < 2
+        ? 'Enter your full name.'
+        : null,
+
+      password: this.password && this.password.trim().length > 0 && this.password.length < 6
+        ? 'Use at least 6 characters, or leave empty to keep your current password.'
+        : null,
+    };
+  }
+
+  get hasFieldErrors(): boolean {
+    return this.validatedFields.some((field) => this.fieldErrors[field]);
+  }
+
+  get firstFieldError(): string | null {
+    for (const field of this.validatedFields) {
+      const error = this.fieldErrors[field];
+      if (error) return error;
+    }
+    return null;
+  }
+
+  errorFor(field: string): string | null {
+    return this.touched[field] ? this.fieldErrors[field] : null;
+  }
+
+  markTouched(field: string): void {
+    this.touched[field] = true;
+  }
+
+  markAllTouched(): void {
+    this.validatedFields.forEach((field) => (this.touched[field] = true));
+  }
+
 
   ngOnInit(): void {
     this.userId = localStorage.getItem('userId') || '';
     this.email = localStorage.getItem('email') || '';
 
     if (!this.userId) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'User session not found. Please log in again.'
-      });
+      this.toastService.error('Session expired', 'User session not found. Please log in again.');
       return;
     }
 
@@ -61,11 +114,7 @@ export class ManagerSettingsComponent implements OnInit, OnDestroy {
         if (!data || !data.data || data.data.length === 0) {
           this.errorMessage = 'User data not found';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Could not load user data'
-          });
+          this.toastService.error('Could not load settings', 'Could not load user data.');
           return;
         }
 
@@ -100,11 +149,7 @@ export class ManagerSettingsComponent implements OnInit, OnDestroy {
         console.error('Error loading user data:', err);
         this.errorMessage = err.message || 'Failed to load user data';
         this.isLoading = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not load settings', this.errorMessage);
       }
     });
 
@@ -122,41 +167,11 @@ export class ManagerSettingsComponent implements OnInit, OnDestroy {
    * Save user settings
    */
   saveSettings(): void {
-    // Validation
-    if (!this.username || this.username.trim().length < 3) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: 'Username must be at least 3 characters'
-      });
-      return;
-    }
+    // Surface every problem at once, against the field that caused it.
+    this.markAllTouched();
 
-    if (!this.email || !this.email.includes('@')) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: 'Please enter a valid email address'
-      });
-      return;
-    }
-
-    if (!this.fullname || this.fullname.trim().length < 2) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: 'Please enter your full name'
-      });
-      return;
-    }
-
-    // If password is provided, validate it
-    if (this.password && this.password.trim().length > 0 && this.password.length < 6) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: 'Password must be at least 6 characters (leave empty to keep current password)'
-      });
+    if (this.hasFieldErrors) {
+      this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
       return;
     }
 
@@ -178,11 +193,7 @@ export class ManagerSettingsComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.isSaving = false;
 
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Settings updated successfully'
-        });
+        this.toastService.success('Settings saved', 'Settings updated successfully.');
 
         // Update original data
         this.originalData = {
@@ -208,11 +219,7 @@ export class ManagerSettingsComponent implements OnInit, OnDestroy {
         this.errorMessage = err.message || 'Failed to update settings';
         this.isSaving = false;
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Update Failed',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not save settings', this.errorMessage);
       }
     });
 

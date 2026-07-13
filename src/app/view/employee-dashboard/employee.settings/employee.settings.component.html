@@ -51,15 +51,30 @@
       <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
           <label class="auth-field-label">Username <span class="text-red-300">*</span></label>
-          <input type="text" [(ngModel)]="username" name="username" class="glass-input" required minlength="3" />
+          <input type="text" [(ngModel)]="username" name="username"
+          (blur)="markTouched('username')"
+          [class.field-invalid]="errorFor('username')"
+          [attr.aria-invalid]="errorFor('username') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('username') ? 'username-error' : null" class="glass-input" required minlength="3" />
+        <p *ngIf="errorFor('username')" id="username-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('username') }}</p>
         </div>
         <div>
           <label class="auth-field-label">Full name <span class="text-red-300">*</span></label>
-          <input type="text" [(ngModel)]="fullname" name="fullname" class="glass-input" required />
+          <input type="text" [(ngModel)]="fullname" name="fullname"
+          (blur)="markTouched('fullname')"
+          [class.field-invalid]="errorFor('fullname')"
+          [attr.aria-invalid]="errorFor('fullname') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('fullname') ? 'fullname-error' : null" class="glass-input" required />
+        <p *ngIf="errorFor('fullname')" id="fullname-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('fullname') }}</p>
         </div>
         <div>
           <label class="auth-field-label">Email address <span class="text-red-300">*</span></label>
-          <input type="email" [(ngModel)]="email" name="email" class="glass-input" required email />
+          <input type="email" [(ngModel)]="email" name="email"
+          (blur)="markTouched('email')"
+          [class.field-invalid]="errorFor('email')"
+          [attr.aria-invalid]="errorFor('email') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('email') ? 'email-error' : null" class="glass-input" required email />
+        <p *ngIf="errorFor('email')" id="email-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('email') }}</p>
         </div>
         <div>
           <label class="auth-field-label">Contact number</label>
@@ -119,7 +134,12 @@
       <form (ngSubmit)="saveSettings()" class="space-y-4">
         <p class="text-white/60 text-sm">Change only the password while keeping your verified profile details unchanged.</p>
         <div class="relative">
-          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="glass-input pr-12" placeholder="New password" />
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password"
+          (blur)="markTouched('password')"
+          [class.field-invalid]="errorFor('password')"
+          [attr.aria-invalid]="errorFor('password') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('password') ? 'password-error' : null" class="glass-input pr-12" placeholder="New password" />
+        <p *ngIf="errorFor('password')" id="password-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('password') }}</p>
           <button type="button" (click)="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white" aria-label="Toggle password visibility">
             <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
           </button>
