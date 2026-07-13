@@ -81,11 +81,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   nextTransferStep(): void {
     if (this.transferStep === 1 && !this.step1Valid) {
-      Swal.fire({ icon: 'info', title: 'Add beneficiary details', text: 'Choose a source account and a valid (different) beneficiary account.' });
+      this.toastService.info('Add beneficiary details', 'Choose a source account and a valid (different) beneficiary account.');
       return;
     }
     if (this.transferStep === 2 && !this.step2Valid) {
-      Swal.fire({ icon: 'info', title: 'Complete the amount step', text: 'Enter an amount, payment purpose, and beneficiary note.' });
+      this.toastService.info('Complete the amount step', 'Enter an amount, payment purpose, and beneficiary note.');
       return;
     }
     this.transferStep = Math.min(3, this.transferStep + 1);
@@ -251,11 +251,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
   async saveBeneficiary(): Promise<void> {
     const account = this.to_account.trim().toUpperCase();
     if (!account) {
-      Swal.fire({ icon: 'info', title: 'No account entered', text: 'Enter a beneficiary account number first.' });
+      this.toastService.info('No account entered', 'Enter a beneficiary account number first.');
       return;
     }
     if (demoStore.hasBeneficiary(account)) {
-      Swal.fire({ icon: 'info', title: 'Already saved', text: 'This account is already in your beneficiaries.' });
+      this.toastService.info('Already saved', 'This account is already in your beneficiaries.');
       return;
     }
     const result = await Swal.fire({
@@ -273,7 +273,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     demoStore.addBeneficiary(createDemoBeneficiary({ name: result.value.trim(), account_id: account }));
     this.beneficiaries = demoStore.getBeneficiaries();
-    Swal.fire({ icon: 'success', title: 'Beneficiary saved', timer: 1500, showConfirmButton: false });
+    this.toastService.success('Beneficiary saved');
   }
 
   removeBeneficiary(beneficiary: any, event: Event): void {
@@ -292,11 +292,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         if (!data || !data.data || !Array.isArray(data.data) || data.data.length === 0) {
           this.errorMessage = 'No account data available';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not load accounts', this.errorMessage);
           return;
         }
 
@@ -317,11 +313,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
             }
           } else {
             this.errorMessage = 'No accounts found';
-            Swal.fire({
-              icon: 'warning',
-              title: 'No Accounts',
-              text: 'You do not have any accounts yet.'
-            });
+            this.toastService.warning('No accounts', 'You do not have any accounts yet.');
           }
 
           this.isLoading = false;
@@ -329,11 +321,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
           console.error('Error processing account data:', error);
           this.errorMessage = 'Failed to process account data';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not load accounts', this.errorMessage);
         }
       },
       error: (err) => {
@@ -341,11 +329,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.errorMessage = err?.error?.message || err?.message || 'Failed to load account details';
         this.isLoading = false;
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not load accounts', this.errorMessage);
       }
     });
 
@@ -387,51 +371,34 @@ export class TransactionComponent implements OnInit, OnDestroy {
   async proceedTransaction() {
     // Form validation
     if (!this.account_id || !this.to_account || !this.transfer_amount) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: 'Please fill in all required fields (Account, To Account, Amount)'
-      });
+      this.toastService.error('Missing details', 'Fill in all required fields (Account, To Account, Amount).');
       return;
     }
 
     // Validate amount is a positive number
     const amount = Number(this.transfer_amount);
     if (isNaN(amount) || amount <= 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: 'Please enter a valid positive amount'
-      });
+      this.toastService.error('Invalid amount', 'Enter a valid positive amount.');
       return;
     }
 
     // Check sufficient balance
     const currentBalance = Number(this.balance);
     if (amount > currentBalance) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Insufficient Balance',
-        text: 'Transfer amount exceeds available balance'
-      });
+      this.toastService.error('Insufficient balance', 'Transfer amount exceeds available balance.');
       return;
     }
 
     if (amount > this.dailyTransferLimit) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Daily Limit Exceeded',
-        text: `Single demo transfers are limited to Rs. ${this.dailyTransferLimit.toLocaleString()}`
-      });
+      this.toastService.error(
+        'Daily limit exceeded',
+        `Single demo transfers are limited to Rs. ${this.dailyTransferLimit.toLocaleString()}.`
+      );
       return;
     }
 
     if (!/^ACC-?\d{6,}$/.test(this.to_account.trim())) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Check beneficiary account',
-        text: 'Use a valid account format such as ACC-492811 before continuing.'
-      });
+      this.toastService.error('Check beneficiary account', 'Use a valid account format such as ACC-492811 before continuing.');
       return;
     }
 
@@ -440,11 +407,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     // Check if transferring to same account
     if (this.account_id === normalizedToAccount) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Transfer',
-        text: 'Cannot transfer to the same account'
-      });
+      this.toastService.error('Invalid transfer', 'Cannot transfer to the same account.');
       return;
     }
 
@@ -537,11 +500,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         } catch (error) {
           console.error('Error processing transaction response:', error);
           this.isProcessingTransaction = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to process transaction response'
-          });
+          this.toastService.error('Transfer failed', 'Failed to process transaction response.');
         }
       },
       error: (err) => {
@@ -549,11 +508,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.errorMessage = err?.error?.message || err?.message || 'Failed to process transaction';
         this.isProcessingTransaction = false;
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Transaction Failed',
-          text: this.errorMessage
-        });
+        this.toastService.error('Transfer failed', this.errorMessage);
       }
     });
 
@@ -677,7 +632,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   downloadStatement(): void {
     const rows = this.filteredTransactions;
     if (!rows.length) {
-      Swal.fire({ icon: 'info', title: 'Nothing to export', text: 'There are no transactions matching the current filters.' });
+      this.toastService.info('Nothing to export', 'There are no transactions matching the current filters.');
       return;
     }
 
@@ -710,13 +665,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    Swal.fire({
-      icon: 'success',
-      title: 'Statement downloaded',
-      html: `${rows.length} transaction${rows.length === 1 ? '' : 's'} exported as CSV.`,
-      timer: 1800,
-      showConfirmButton: false
-    });
+    this.toastService.success(
+      'Statement downloaded',
+      `${rows.length} transaction${rows.length === 1 ? '' : 's'} exported as CSV.`
+    );
   }
 
   showTransactionDetails(transaction: any, index: number = 0): void {

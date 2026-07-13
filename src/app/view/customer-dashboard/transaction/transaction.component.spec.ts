@@ -23,6 +23,7 @@ describe('TransactionComponent', () => {
   let mockRouter: jasmine.SpyObj<Router>;
   let mockTransactionService: jasmine.SpyObj<TransactionService>;
   let mockChangeDetectorRef: jasmine.SpyObj<ChangeDetectorRef>;
+  let toastService: ToastService;
 
   beforeEach(async () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
@@ -46,6 +47,13 @@ describe('TransactionComponent', () => {
 
     // Spy on Swal
     spyOn(Swal, 'fire');
+
+    // Recoverable feedback is expected to be non-blocking, so assert on toasts.
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
+    spyOn(toastService, 'warning');
+    spyOn(toastService, 'info');
   });
 
   describe('Component Initialization', () => {
@@ -211,13 +219,11 @@ describe('TransactionComponent', () => {
 
       expect(component.errorMessage).toBe('No account data available');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'No account data available'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load accounts',
+        'No account data available'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle missing data property', () => {
@@ -251,13 +257,11 @@ describe('TransactionComponent', () => {
 
       expect(component.errorMessage).toBe('No accounts found');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'No Accounts',
-          text: 'You do not have any accounts yet.'
-        })
+      expect(toastService.warning).toHaveBeenCalledWith(
+        'No accounts',
+        'You do not have any accounts yet.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle array with undefined first element', () => {
@@ -267,13 +271,11 @@ describe('TransactionComponent', () => {
 
       expect(component.errorMessage).toBe('No accounts found');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'No Accounts',
-          text: 'You do not have any accounts yet.'
-        })
+      expect(toastService.warning).toHaveBeenCalledWith(
+        'No accounts',
+        'You do not have any accounts yet.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle server error with message', () => {
@@ -384,13 +386,11 @@ describe('TransactionComponent', () => {
 
       component.proceedTransaction();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please fill in all required fields (Account, To Account, Amount)'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Missing details',
+        'Fill in all required fields (Account, To Account, Amount).'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
       expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
     });
 
@@ -401,13 +401,11 @@ describe('TransactionComponent', () => {
 
       component.proceedTransaction();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please fill in all required fields (Account, To Account, Amount)'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Missing details',
+        'Fill in all required fields (Account, To Account, Amount).'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject invalid amount (non-numeric)', () => {
@@ -417,13 +415,11 @@ describe('TransactionComponent', () => {
 
       component.proceedTransaction();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter a valid positive amount'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Invalid amount',
+        'Enter a valid positive amount.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject negative amount', () => {
@@ -433,13 +429,11 @@ describe('TransactionComponent', () => {
 
       component.proceedTransaction();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter a valid positive amount'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Invalid amount',
+        'Enter a valid positive amount.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject zero amount', () => {
@@ -449,13 +443,11 @@ describe('TransactionComponent', () => {
 
       component.proceedTransaction();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Validation Error',
-          text: 'Please enter a valid positive amount'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Invalid amount',
+        'Enter a valid positive amount.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject transfer exceeding balance', () => {
@@ -466,13 +458,11 @@ describe('TransactionComponent', () => {
 
       component.proceedTransaction();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Insufficient Balance',
-          text: 'Transfer amount exceeds available balance'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Insufficient balance',
+        'Transfer amount exceeds available balance.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject transfer to same account', () => {
@@ -483,13 +473,11 @@ describe('TransactionComponent', () => {
 
       component.proceedTransaction();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Invalid Transfer',
-          text: 'Cannot transfer to the same account'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Invalid transfer',
+        'Cannot transfer to the same account.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -610,25 +598,57 @@ describe('TransactionComponent', () => {
       tick();
 
       expect(component.isProcessingTransaction).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to process transaction response'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Transfer failed',
+        'Failed to process transaction response.'
       );
     }));
   });
 
-  describe('showToast()', () => {
-    let toastService: ToastService;
-
+  describe('blocking vs non-blocking feedback', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(TransactionComponent);
       component = fixture.componentInstance;
-      toastService = TestBed.inject(ToastService);
-      spyOn(toastService, 'success');
-      spyOn(toastService, 'error');
+    });
+
+    it('still asks the user to confirm a transfer before moving money', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Invoice';
+      component.beneficiary_remarks = 'Thanks';
+
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: false }) as any);
+
+      component.proceedTransaction();
+      tick();
+
+      // A transfer is irreversible, so this one must stay modal.
+      expect(Swal.fire).toHaveBeenCalledWith(
+        jasmine.objectContaining({ title: 'Review transfer details' })
+      );
+      // Declining the confirmation must not post the transfer.
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    }));
+
+    it('does not block on a validation failure', fakeAsync(() => {
+      component.account_id = '';
+      component.to_account = '';
+      component.transfer_amount = '';
+
+      component.proceedTransaction();
+      tick();
+
+      expect(toastService.error).toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
+    }));
+  });
+
+  describe('showToast()', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
     });
 
     it('should show success toast for successful transfer', () => {
