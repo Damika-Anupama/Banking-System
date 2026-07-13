@@ -1,8 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
-import Swal from 'sweetalert2';
 import { demoStore } from 'src/app/shared/demo-store';
+import { ToastService } from 'src/app/service/toast.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -20,7 +20,7 @@ export class SignInComponent implements OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private toastService: ToastService) {}
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -89,11 +89,7 @@ export class SignInComponent implements OnDestroy {
       console.error('Error storing authentication data:', error);
       this.isLoading = false;
       this.errorMessage = 'Failed to store authentication data';
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: this.errorMessage
-      });
+      this.toastService.error('Sign-in failed', this.errorMessage);
       return;
     }
 
@@ -107,11 +103,7 @@ export class SignInComponent implements OnDestroy {
     const message = error?.error?.message || error?.message || 'Invalid email or password';
     this.isLoading = false;
     this.errorMessage = message;
-    Swal.fire({
-      icon: 'error',
-      title: 'Authentication Failed',
-      text: message
-    });
+    this.toastService.error('Sign-in failed', message);
   }
 
   private openCustomerDashboard(email: string): void {
@@ -122,11 +114,7 @@ export class SignInComponent implements OnDestroy {
       console.error('Error storing authentication data:', error);
       this.isLoading = false;
       this.errorMessage = 'Failed to store authentication data';
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: this.errorMessage
-      });
+      this.toastService.error('Sign-in failed', this.errorMessage);
       return;
     }
 
@@ -138,21 +126,14 @@ export class SignInComponent implements OnDestroy {
   private showValidationError(message: string): void {
     this.isLoading = false;
     this.errorMessage = message;
-    Swal.fire({
-      icon: 'error',
-      title: 'Validation Error',
-      text: message
-    });
+    // The offending field is already marked inline; this is just the summary.
+    this.toastService.error('Check your details', message);
   }
 
   private showAuthenticationError(message: string): void {
     this.isLoading = false;
     this.errorMessage = message;
-    Swal.fire({
-      icon: 'error',
-      title: 'Authentication Error',
-      text: message
-    });
+    this.toastService.error('Sign-in failed', message);
   }
 
   private isValidEmail(email: string): boolean {
