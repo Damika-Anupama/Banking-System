@@ -93,14 +93,33 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * The nav item matching the current URL. Longest match wins, so a nested
+   * Nav routes are declared relative ('./transaction'), while router.url is
+   * absolute ('/dashboard/transaction'), so they are compared on their final
+   * segment. Comparing them directly silently matched nothing, which left the
+   * breadcrumb permanently hidden.
+   */
+  private routeSegment(route: string): string {
+    return (route || '').replace(/^\.?\/+/, '').replace(/\/+$/, '');
+  }
+
+  /**
+   * The nav item matching the current URL. Longest segment wins, so a nested
    * route does not resolve to a shorter sibling that happens to share a prefix.
    */
   get currentPageLabel(): string {
-    const url = this.router.url || '';
+    const url = (this.router.url || '').split(/[?#]/)[0];
+
     const match = (this.navigationItems || [])
-      .filter((item) => url.startsWith(item.route))
-      .sort((a, b) => b.route.length - a.route.length)[0];
+      .filter((item) => {
+        const segment = this.routeSegment(item.route);
+        return (
+          !!segment && (url.endsWith(`/${segment}`) || url.includes(`/${segment}/`))
+        );
+      })
+      .sort(
+        (a, b) => this.routeSegment(b.route).length - this.routeSegment(a.route).length
+      )[0];
+
     return match?.label ?? '';
   }
 

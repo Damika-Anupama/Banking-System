@@ -39,10 +39,13 @@ describe('UnifiedDashboardComponent', () => {
   });
 
   describe('navigation orientation', () => {
+    // The real config declares routes RELATIVE ('./transaction') while
+    // router.url is absolute. The first version of this test invented absolute
+    // routes, so it passed against a breadcrumb that never rendered in the app.
     const navItems = [
-      { icon: 'fa-home', label: 'Home', route: '/dashboard/home' },
-      { icon: 'fa-list', label: 'Transactions', route: '/dashboard/transaction' },
-      { icon: 'fa-vault', label: 'Fixed deposits', route: '/dashboard/fixed-deposit' },
+      { icon: 'fa-home', label: 'Home', route: './home' },
+      { icon: 'fa-list', label: 'Transactions', route: './transaction' },
+      { icon: 'fa-vault', label: 'Fixed deposits', route: './fixed-deposit' },
     ];
 
     const atUrl = (url: string) => {
