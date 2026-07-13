@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { getPasswordStrength, PasswordStrength } from 'src/app/shared/password-strength';
+import { focusFirstError } from 'src/app/shared/focus-first-error';
 
 @Component({
   selector: 'app-settings',
@@ -87,6 +88,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
     for (const field of this.validatedFields) {
       const error = this.fieldErrors[field];
       if (error) return error;
+    }
+    return null;
+  }
+
+  /** The first field the form rejected, so focus can be sent straight to it. */
+  get firstErrorField(): string | null {
+    for (const field of this.validatedFields) {
+      if (this.fieldErrors[field]) return field;
     }
     return null;
   }
@@ -211,6 +220,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
     if (this.hasFieldErrors) {
       this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
+      focusFirstError(this.firstErrorField);
       return;
     }
 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { RegisterCustomerService } from 'src/app/service/employee/register.customer.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/service/toast.service';
+import { focusFirstError } from 'src/app/shared/focus-first-error';
 
 @Component({
   selector: 'app-employee.register.customer',
@@ -96,6 +97,14 @@ export class EmployeeRegisterCustomerComponent implements OnDestroy {
     return null;
   }
 
+  /** The first field the form rejected, so focus can be sent straight to it. */
+  get firstErrorField(): string | null {
+    for (const field of this.validatedFields) {
+      if (this.fieldErrors[field]) return field;
+    }
+    return null;
+  }
+
   errorFor(field: string): string | null {
     return this.touched[field] ? this.fieldErrors[field] : null;
   }
@@ -181,6 +190,7 @@ export class EmployeeRegisterCustomerComponent implements OnDestroy {
 
     if (this.hasFieldErrors) {
       this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
+      focusFirstError(this.firstErrorField);
       return false;
     }
 

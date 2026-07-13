@@ -7,6 +7,7 @@ import { demoStore } from 'src/app/shared/demo-store';
 import { createDemoBeneficiary } from 'src/app/shared/demo-banking-fixtures';
 import { ToastService } from 'src/app/service/toast.service';
 import { TableSort } from 'src/app/shared/table-sort';
+import { focusFirstError } from 'src/app/shared/focus-first-error';
 
 @Component({
   selector: 'app-transaction',
@@ -122,6 +123,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
     for (const field of this.validatedFields) {
       const error = this.fieldErrors[field];
       if (error) return error;
+    }
+    return null;
+  }
+
+  /** The first field the form rejected, so focus can be sent straight to it. */
+  get firstErrorField(): string | null {
+    for (const field of this.validatedFields) {
+      if (this.fieldErrors[field]) return field;
     }
     return null;
   }
@@ -506,6 +515,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     if (this.hasFieldErrors) {
       this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
+      focusFirstError(this.firstErrorField);
       return;
     }
 

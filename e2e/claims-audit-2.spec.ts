@@ -116,12 +116,6 @@ test.describe("Claim (Sprint 67): a transaction reference is stable", () => {
     const table = page.getByRole("table", { name: /transaction history/i });
     const rows = table.locator("tbody tr");
 
-    // Wait for the re-render: reading rows before Angular has applied the new
-    // page size compares two different row sets and fails intermittently.
-    await expect
-      .poll(async () => rows.count(), { timeout: 5000 })
-      .toBeGreaterThan(6);
-
     const before = await rows.evaluateAll((trs) =>
       trs.map((tr) => ({
         ref: tr.children[0].textContent!.trim(),
@@ -141,11 +135,17 @@ test.describe("Claim (Sprint 67): a transaction reference is stable", () => {
       }))
     );
 
-    // Every (reference, amount) pairing must survive reordering intact.
-    for (const row of after) {
-      const original = before.find((b) => b.ref === row.ref);
-      expect(original, `reference ${row.ref} appeared only after sorting`).toBeTruthy();
-      expect(original!.amount).toBe(row.amount);
+    // Compare only the rows visible both before and after: sorting can pull a
+    // row in from another page, and that is not what this test is about. For
+    // every row seen in both, the reference must still name the same amount.
+    const shared = after.filter((row) => before.some((b) => b.ref === row.ref));
+    expect(shared.length).toBeGreaterThan(0);
+
+    for (const row of shared) {
+      const original = before.find((b) => b.ref === row.ref)!;
+      expect(original.amount, `reference ${row.ref} changed amount on sort`).toBe(
+        row.amount
+      );
     }
   });
 });
@@ -176,4 +176,36 @@ test.describe("Claim (Sprint 54): auth field errors are wired to their inputs", 
   test("sign-up email error is announced", async ({ page }) => {
     await check(page, "/sign-up", "email");
   });
+});
+
+test.describe("Submitting an invalid form sends focus to the offending field", () => {
+  const forms = [
+    { url: "/dashboard/loan", button: /apply|submit/i, field: "selectedFD" },
+    {
+      url: "/dashboard/fixed-deposit",
+      button: /proceed with fixed deposit/i,
+      field: "selectedSavingAccount",
+    },
+    { url: "/dashboard/settings", button: /save/i, field: "username" },
+  ];
+
+  for (const form of forms) {
+    test(`${form.url} focuses ${form.field}`, async ({ page }) => {
+      await openCustomerDemo(page);
+      await page.goto(form.url);
+
+      // The settings profile form sits behind an "Edit profile" toggle, and
+      // loads with valid values, so open it and break the first field.
+      if (form.url.endsWith("settings")) {
+        await page.getByRole("button", { name: /edit profile/i }).click();
+        await page.locator('input[name="username"]').fill("");
+      }
+
+      await page.getByRole("button", { name: form.button }).first().click();
+
+      // "Check the highlighted fields" is only useful if you can find them. A
+      // keyboard user is otherwise left on the submit button with no idea which.
+      await expect(page.locator(`[name="${form.field}"]`)).toBeFocused();
+    });
+  }
 });

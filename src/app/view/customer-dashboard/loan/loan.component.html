@@ -102,7 +102,7 @@
         </div>
 
         <div class="min-w-0">
-          <label class="auth-field-label" for="selectedPackage">
+          <label class="auth-field-label" for="selectedLoan">
             <i class="fas fa-calendar-alt mr-2"></i>Payment plan <span class="text-red-300">*</span>
           </label>
           <div class="relative">
@@ -110,7 +110,7 @@
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedLoan"
               (ngModelChange)="onLoanSelected(); markTouched('selectedLoan')"
-              id="selectedPackage" name="selectedPackage"
+              id="selectedLoan" name="selectedLoan"
               [class.field-invalid]="errorFor('selectedLoan')"
               [attr.aria-invalid]="errorFor('selectedLoan') ? 'true' : null"
               [attr.aria-describedby]="errorFor('selectedLoan') ? 'selectedLoan-error' : null"
@@ -127,7 +127,7 @@
       </div>
 
       <div>
-        <label class="auth-field-label" for="loanType">
+        <label class="auth-field-label" for="selectedLoanType">
           <i class="fas fa-tags mr-2"></i>Select Loan Type <span class="text-red-300">*</span>
         </label>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -135,7 +135,7 @@
               <input
                 type="radio"
                 [(ngModel)]="selectedLoanType"
-                id="loanType" name="loanType"
+                id="selectedLoanType" name="selectedLoanType"
                 value="Personal"
                 class="hidden peer"
               />
@@ -154,7 +154,7 @@
               <input
                 type="radio"
                 [(ngModel)]="selectedLoanType"
-                name="loanType"
+                name="selectedLoanType"
                 value="Business"
                 class="hidden peer"
               />
