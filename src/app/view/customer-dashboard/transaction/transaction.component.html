@@ -264,15 +264,15 @@
       </div>
       <div class="transaction-history-tools">
         <div class="relative">
-          <input type="text" name="transaction_search" placeholder="Search reference, purpose, type..." class="glass-input pl-10" [(ngModel)]="transactionSearchTerm" (ngModelChange)="onTransactionFilterChange()" />
+          <input type="text" name="transaction_search" placeholder="Search reference, purpose, type..." class="glass-input pl-10" [(ngModel)]="transactionSearchTerm" (ngModelChange)="onTransactionFilterChange()"  id="transaction_search"/>
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
         </div>
-        <select class="glass-input" [(ngModel)]="transactionDirectionFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_direction_filter" aria-label="Transaction direction filter">
+        <select class="glass-input" [(ngModel)]="transactionDirectionFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_direction_filter" aria-label="Transaction direction filter" id="transaction_direction_filter">
           <option value="all">All directions</option>
           <option value="in">Incoming only</option>
           <option value="out">Outgoing only</option>
         </select>
-        <select class="glass-input" [(ngModel)]="transactionStatusFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_status_filter" aria-label="Transaction status filter">
+        <select class="glass-input" [(ngModel)]="transactionStatusFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_status_filter" aria-label="Transaction status filter" id="transaction_status_filter">
           <option value="all">All statuses</option>
           <option value="posted">Posted</option>
           <option value="review">Review</option>
@@ -362,7 +362,7 @@
       <div *ngIf="filteredTransactions.length > 0" class="transaction-pagination">
         <div class="transaction-page-size">
           <span>Rows per page</span>
-          <select class="glass-input" [(ngModel)]="transactionPageSize" (ngModelChange)="onPageSizeChange()" name="transaction_page_size" aria-label="Transaction page size">
+          <select class="glass-input" [(ngModel)]="transactionPageSize" (ngModelChange)="onPageSizeChange()" name="transaction_page_size" aria-label="Transaction page size" id="transaction_page_size">
             <option *ngFor="let size of transactionPageSizes" [ngValue]="size">{{ size }}</option>
           </select>
         </div>

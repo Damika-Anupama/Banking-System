@@ -138,9 +138,9 @@
           (blur)="markTouched('password')"
           [class.field-invalid]="errorFor('password')"
           [attr.aria-invalid]="errorFor('password') ? 'true' : null"
-          [attr.aria-describedby]="errorFor('password') ? 'password-error' : null" class="glass-input pr-12" placeholder="New password" />
+          [attr.aria-describedby]="errorFor('password') ? 'password-error' : null" class="glass-input pr-12" placeholder="New password"  id="password"/>
         <p *ngIf="errorFor('password')" id="password-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('password') }}</p>
-          <button type="button" (click)="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white" aria-label="Toggle password visibility">
+          <button type="button" (click)="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white" aria-label="Toggle password visibility" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword">
             <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
           </button>
         </div>

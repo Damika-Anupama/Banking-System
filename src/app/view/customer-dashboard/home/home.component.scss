@@ -26,9 +26,12 @@
 }
 
 .dashboard-loan-button {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
-  color: #f8fafc;
+  /* Was #f8fafc on a 6%-white background: fine on the dark theme, and 2.37:1 —
+     effectively white on white — on the light one. The theme tokens already
+     flip with the theme, so use them rather than a hardcoded near-white. */
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-primary);
   text-decoration: none;
   transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
 }

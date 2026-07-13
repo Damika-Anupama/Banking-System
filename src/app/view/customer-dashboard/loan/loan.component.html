@@ -131,7 +131,7 @@
           <i class="fas fa-tags mr-2"></i>Select Loan Type <span class="text-red-300">*</span>
         </label>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label class="cursor-pointer">
+            <label for="selectedLoanType" class="cursor-pointer">
               <input
                 type="radio"
                 [(ngModel)]="selectedLoanType"
@@ -150,14 +150,14 @@
               </div>
             </label>
 
-            <label class="cursor-pointer">
+            <label for="selectedLoanType-Business" class="cursor-pointer">
               <input
                 type="radio"
                 [(ngModel)]="selectedLoanType"
                 name="selectedLoanType"
                 value="Business"
                 class="hidden peer"
-              />
+               id="selectedLoanType-Business"/>
               <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-4 transition-all duration-300 peer-checked:border-glass-cyan peer-checked:bg-white/[0.12]">
                 <div class="flex items-center gap-3">
                   <i class="fas fa-briefcase text-glass-cyan text-2xl"></i>
@@ -180,10 +180,10 @@
         </div>
       </div>
 
-      <label class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
+      <label for="acceptedLienConsent" class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
         <input type="checkbox" class="mt-1" [(ngModel)]="acceptedLienConsent" name="acceptedLienConsent"
           [attr.aria-invalid]="errorFor('acceptedLienConsent') ? 'true' : null"
-          [attr.aria-describedby]="errorFor('acceptedLienConsent') ? 'acceptedLienConsent-error' : null" />
+          [attr.aria-describedby]="errorFor('acceptedLienConsent') ? 'acceptedLienConsent-error' : null"  id="acceptedLienConsent"/>
         <span>I consent to placing a lien on the selected fixed deposit until this loan is settled.</span>
       </label>
       <p *ngIf="errorFor('acceptedLienConsent')" id="acceptedLienConsent-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('acceptedLienConsent') }}</p>

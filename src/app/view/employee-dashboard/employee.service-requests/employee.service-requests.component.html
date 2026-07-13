@@ -38,16 +38,16 @@
       <div>
         <label class="auth-field-label" for="newPriority"><i class="fas fa-flag mr-2"></i>Priority</label>
         <div class="grid grid-cols-3 gap-3">
-          <label class="cursor-pointer">
+          <label for="newPriority" class="cursor-pointer">
             <input type="radio" [(ngModel)]="newPriority" id="newPriority" name="newPriority" value="Low" class="hidden peer" />
             <div class="rounded-xl border-2 border-white/10 bg-white/[0.06] p-2 text-center text-xs font-semibold transition-all peer-checked:border-glass-emerald peer-checked:bg-white/[0.12]">Low</div>
           </label>
-          <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="newPriority" name="newPriority" value="Medium" class="hidden peer" />
+          <label for="newPriority-Medium" class="cursor-pointer">
+            <input type="radio" [(ngModel)]="newPriority" name="newPriority" value="Medium" class="hidden peer"  id="newPriority-Medium"/>
             <div class="rounded-xl border-2 border-white/10 bg-white/[0.06] p-2 text-center text-xs font-semibold transition-all peer-checked:border-glass-cyan peer-checked:bg-white/[0.12]">Medium</div>
           </label>
-          <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="newPriority" name="newPriority" value="High" class="hidden peer" />
+          <label for="newPriority-High" class="cursor-pointer">
+            <input type="radio" [(ngModel)]="newPriority" name="newPriority" value="High" class="hidden peer"  id="newPriority-High"/>
             <div class="rounded-xl border-2 border-white/10 bg-white/[0.06] p-2 text-center text-xs font-semibold transition-all peer-checked:border-glass-pink peer-checked:bg-white/[0.12]">High</div>
           </label>
         </div>
@@ -73,10 +73,10 @@
       </div>
       <div class="flex flex-col gap-2 sm:flex-row">
         <div class="relative">
-          <input class="glass-input pl-9 w-full sm:w-52" placeholder="Search tickets…" [(ngModel)]="searchTerm" name="ticketSearch" />
+          <input class="glass-input pl-9 w-full sm:w-52" placeholder="Search tickets…" [(ngModel)]="searchTerm" name="ticketSearch"  id="ticketSearch"/>
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
         </div>
-        <select class="glass-input" [(ngModel)]="statusFilter" name="statusFilter" aria-label="Status filter">
+        <select class="glass-input" [(ngModel)]="statusFilter" name="statusFilter" aria-label="Status filter" id="statusFilter">
           <option value="all">All statuses</option>
           <option value="Open">Open</option>
           <option value="In progress">In progress</option>

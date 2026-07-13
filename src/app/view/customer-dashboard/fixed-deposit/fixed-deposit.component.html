@@ -136,10 +136,10 @@
         </div>
       </div>
 
-      <label class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
+      <label for="acceptedTerms" class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
         <input type="checkbox" class="mt-1" [(ngModel)]="acceptedTerms" name="acceptedTerms"
           [attr.aria-invalid]="errorFor('acceptedTerms') ? 'true' : null"
-          [attr.aria-describedby]="errorFor('acceptedTerms') ? 'acceptedTerms-error' : null" />
+          [attr.aria-describedby]="errorFor('acceptedTerms') ? 'acceptedTerms-error' : null"  id="acceptedTerms"/>
         <span>I confirm the selected FD term, maturity estimate, and applicable early-withdrawal conditions.</span>
       </label>
       <p *ngIf="errorFor('acceptedTerms')" id="acceptedTerms-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('acceptedTerms') }}</p>

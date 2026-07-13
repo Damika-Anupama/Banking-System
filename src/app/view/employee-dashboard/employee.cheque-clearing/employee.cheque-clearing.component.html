@@ -30,10 +30,10 @@
     </div>
     <div class="flex flex-col gap-2 sm:flex-row">
       <div class="relative">
-        <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search cheque, account, bank…" [(ngModel)]="searchTerm" name="chequeSearch" />
+        <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search cheque, account, bank…" [(ngModel)]="searchTerm" name="chequeSearch"  id="chequeSearch"/>
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
       </div>
-      <select class="glass-input" [(ngModel)]="statusFilter" name="chequeStatusFilter" aria-label="Cheque status filter">
+      <select class="glass-input" [(ngModel)]="statusFilter" name="chequeStatusFilter" aria-label="Cheque status filter" id="chequeStatusFilter">
         <option value="all">All statuses</option>
         <option value="Received">Received</option>
         <option value="In clearing">In clearing</option>

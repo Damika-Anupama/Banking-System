@@ -64,7 +64,7 @@
       <div>
         <label class="auth-field-label" for="loanType"><i class="fas fa-tags mr-2"></i>Loan type <span class="text-red-300">*</span></label>
         <div class="grid grid-cols-2 gap-4">
-          <label class="cursor-pointer">
+          <label for="loanType" class="cursor-pointer">
             <input type="radio" [(ngModel)]="selectedLoanType" id="loanType" name="loanType" value="Personal" class="hidden peer" />
             <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-4 transition-all duration-300 peer-checked:border-glass-purple peer-checked:bg-white/[0.12]">
               <div class="flex items-center gap-3">
@@ -73,8 +73,8 @@
               </div>
             </div>
           </label>
-          <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="selectedLoanType" name="loanType" value="Business" class="hidden peer" />
+          <label for="loanType-Business" class="cursor-pointer">
+            <input type="radio" [(ngModel)]="selectedLoanType" name="loanType" value="Business" class="hidden peer"  id="loanType-Business"/>
             <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-4 transition-all duration-300 peer-checked:border-glass-cyan peer-checked:bg-white/[0.12]">
               <div class="flex items-center gap-3">
                 <i class="fas fa-briefcase text-glass-cyan text-2xl"></i>

@@ -53,10 +53,10 @@
     </div>
     <div class="flex flex-col gap-2 sm:flex-row">
       <div class="relative">
-        <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search name, ID, role…" [(ngModel)]="searchTerm" name="employeeSearch" />
+        <input class="glass-input pl-9 w-full sm:w-56" placeholder="Search name, ID, role…" [(ngModel)]="searchTerm" name="employeeSearch"  id="employeeSearch"/>
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
       </div>
-      <select class="glass-input" [(ngModel)]="roleFilter" name="roleFilter" aria-label="Role filter">
+      <select class="glass-input" [(ngModel)]="roleFilter" name="roleFilter" aria-label="Role filter" id="roleFilter">
         <option value="all">All roles</option>
         <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
       </select>

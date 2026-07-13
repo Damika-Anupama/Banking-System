@@ -21,7 +21,7 @@
     <div class="palette-divider"></div>
 
     <!-- Results list -->
-    <ul *ngIf="items.length > 0" class="palette-list" role="listbox">
+    <ul *ngIf="items.length > 0" class="palette-list" role="listbox" aria-label="Search results" tabindex="0">
       <li
         *ngFor="let item of items; let i = index"
         class="palette-item"

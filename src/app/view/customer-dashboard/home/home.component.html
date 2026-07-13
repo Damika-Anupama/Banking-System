@@ -60,7 +60,7 @@
         <p class="demo-section-helper">Choose an account to view balance, branch, and recent money movement.</p>
       </div>
       <div class="relative">
-        <input type="text" name="table_search" placeholder="Search accounts..." [(ngModel)]="searchTerm" (keydown.escape)="searchTerm = ''" aria-label="Search linked accounts" class="glass-input pl-10 pr-10 w-full md:w-64" />
+        <input type="text" name="table_search" placeholder="Search accounts..." [(ngModel)]="searchTerm" (keydown.escape)="searchTerm = ''" aria-label="Search linked accounts" class="glass-input pl-10 pr-10 w-full md:w-64"  id="table_search"/>
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
         <button *ngIf="searchTerm" type="button" (click)="searchTerm = ''" aria-label="Clear search" title="Clear search" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors">
           <i class="fas fa-times-circle"></i>
@@ -252,12 +252,12 @@
     <p class="text-xs font-semibold uppercase tracking-wider text-cyan-200 mb-4"><i class="fas fa-calculator mr-2"></i>Fixed deposit return calculator</p>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 items-end">
       <div>
-        <label class="text-xs text-slate-400 mb-1 block">Principal (Rs.)</label>
-        <input type="number" class="glass-input w-full text-sm" placeholder="100,000" [(ngModel)]="fdCalcPrincipal" name="fdCalcPrincipal" min="1000" />
+        <label for="fdCalcPrincipal" class="text-xs text-slate-400 mb-1 block">Principal (Rs.)</label>
+        <input type="number" class="glass-input w-full text-sm" placeholder="100,000" [(ngModel)]="fdCalcPrincipal" name="fdCalcPrincipal" min="1000"  id="fdCalcPrincipal"/>
       </div>
       <div>
-        <label class="text-xs text-slate-400 mb-1 block">Tenor</label>
-        <select class="glass-input w-full text-sm" [(ngModel)]="fdCalcMonths" name="fdCalcMonths" aria-label="Fd calc months">
+        <label for="fdCalcMonths" class="text-xs text-slate-400 mb-1 block">Tenor</label>
+        <select class="glass-input w-full text-sm" [(ngModel)]="fdCalcMonths" name="fdCalcMonths" aria-label="Fd calc months" id="fdCalcMonths">
           <option [ngValue]="3">3 months · 6.50% p.a.</option>
           <option [ngValue]="6">6 months · 7.75% p.a.</option>
           <option [ngValue]="12">12 months · 9.50% p.a.</option>
