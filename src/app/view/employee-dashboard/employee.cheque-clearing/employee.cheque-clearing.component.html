@@ -45,21 +45,22 @@
 
   <div class="demo-table-shell is-fluid overflow-x-auto">
     <table class="w-full table-fixed">
+        <caption class="sr-only">Cheques in clearing</caption>
       <thead>
         <tr>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Cheque</th>
-          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('bank')">
+          <th scope="col" class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Cheque</th>
+          <th scope="col" class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('bank')">
             <button type="button" class="th-sort" (click)="toggleSort('bank')">Drawer bank<i class="fas ml-1" [ngClass]="sort.iconFor('bank')" aria-hidden="true"></i></button>
           </th>
-          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">To account</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('amount')">
+          <th scope="col" class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">To account</th>
+          <th scope="col" class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('amount')">
             <button type="button" class="th-sort" (click)="toggleSort('amount')">Amount<i class="fas ml-1" [ngClass]="sort.iconFor('amount')" aria-hidden="true"></i></button>
           </th>
-          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Expected</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('status')">
+          <th scope="col" class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Expected</th>
+          <th scope="col" class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('status')">
             <button type="button" class="th-sort" (click)="toggleSort('status')">Status<i class="fas ml-1" [ngClass]="sort.iconFor('status')" aria-hidden="true"></i></button>
           </th>
-          <th class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
+          <th scope="col" class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
       <tbody>

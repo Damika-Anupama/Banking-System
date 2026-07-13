@@ -847,6 +847,38 @@ describe('TransactionComponent', () => {
     });
   });
 
+  describe('table semantics', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: [] }));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+      component.transactions = [
+        { type: 'Transfer', amount: 500, date: '2026-03-01T10:00:00', status: 'up' },
+      ];
+      fixture.detectChanges();
+    });
+
+    it('names the table, so it is not announced as an unlabelled grid', () => {
+      const caption = fixture.nativeElement.querySelector('table caption');
+
+      expect(caption).not.toBeNull();
+      expect(caption.textContent.trim()).toBe('Transaction history');
+    });
+
+    it('scopes every header to its column, so cells are announced with their header', () => {
+      const host = fixture.nativeElement as HTMLElement;
+      const headers = Array.from(host.querySelectorAll<HTMLTableCellElement>('table th'));
+
+      expect(headers.length).toBeGreaterThan(0);
+      headers.forEach((th) => {
+        expect(th.getAttribute('scope'))
+          .withContext(`header "${th.textContent?.trim()}" has no scope`)
+          .toBe('col');
+      });
+    });
+  });
+
   describe('showToast()', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(TransactionComponent);

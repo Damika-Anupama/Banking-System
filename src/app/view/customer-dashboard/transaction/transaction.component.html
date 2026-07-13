@@ -299,35 +299,36 @@
 
     <div *ngIf="!isLoadingTransactions" class="demo-table-shell mt-5 overflow-x-auto">
       <table class="transaction-history-table w-full">
+        <caption class="sr-only">Transaction history</caption>
         <thead>
           <tr>
-            <th>Reference</th>
-            <th [attr.aria-sort]="sortStateFor('date')">
+            <th scope="col">Reference</th>
+            <th scope="col" [attr.aria-sort]="sortStateFor('date')">
               <button type="button" class="th-sort" (click)="toggleSort('date')">
                 Value date
                 <i class="fas" [ngClass]="sortIconFor('date')" aria-hidden="true"></i>
               </button>
             </th>
-            <th [attr.aria-sort]="sortStateFor('type')">
+            <th scope="col" [attr.aria-sort]="sortStateFor('type')">
               <button type="button" class="th-sort" (click)="toggleSort('type')">
                 Type &amp; narration
                 <i class="fas" [ngClass]="sortIconFor('type')" aria-hidden="true"></i>
               </button>
             </th>
-            <th>Direction</th>
-            <th class="text-right" [attr.aria-sort]="sortStateFor('amount')">
+            <th scope="col">Direction</th>
+            <th scope="col" class="text-right" [attr.aria-sort]="sortStateFor('amount')">
               <button type="button" class="th-sort th-sort--right" (click)="toggleSort('amount')">
                 Amount
                 <i class="fas" [ngClass]="sortIconFor('amount')" aria-hidden="true"></i>
               </button>
             </th>
-            <th [attr.aria-sort]="sortStateFor('status')">
+            <th scope="col" [attr.aria-sort]="sortStateFor('status')">
               <button type="button" class="th-sort" (click)="toggleSort('status')">
                 Status
                 <i class="fas" [ngClass]="sortIconFor('status')" aria-hidden="true"></i>
               </button>
             </th>
-            <th class="text-right">Actions</th>
+            <th scope="col" class="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>

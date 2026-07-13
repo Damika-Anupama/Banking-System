@@ -217,13 +217,14 @@
   <!-- Table -->
   <div *ngIf="!isLoadingLoans">
     <table class="w-full table-fixed">
+        <caption class="sr-only">Your loans</caption>
       <thead>
         <tr>
-          <th class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan</th>
-          <th class="hidden md:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
-          <th class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Outstanding</th>
-          <th class="hidden lg:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Next due</th>
-          <th class="text-right px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
+          <th scope="col" class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Loan</th>
+          <th scope="col" class="hidden md:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+          <th scope="col" class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Outstanding</th>
+          <th scope="col" class="hidden lg:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Next due</th>
+          <th scope="col" class="text-right px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
       <tbody>

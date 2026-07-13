@@ -285,9 +285,13 @@ export class TransactionComponent implements OnInit, OnDestroy {
     return this.sort.iconFor(column);
   }
 
-  trackByEntry(_i: number, entry: { row: any; index: number }): string {
-    return this.transactionReference(entry.row, entry.index);
-  }
+  /**
+   * Arrow property, not a method: Angular calls trackBy with `this` unbound, so
+   * a method that reaches for this.transactionReference throws the moment the
+   * table renders a row.
+   */
+  trackByEntry = (_i: number, entry: { row: any; index: number }): string =>
+    this.transactionReference(entry.row, entry.index);
 
   get totalTransactionPages(): number {
     return Math.max(1, Math.ceil(this.filteredTransactions.length / this.transactionPageSize));
@@ -682,9 +686,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     return String(account?.account_id || _index);
   }
 
-  trackByTransaction(index: number, transaction: any): string {
-    return transaction?.reference || this.transactionReference(transaction, index);
-  }
+  trackByTransaction = (index: number, transaction: any): string =>
+    transaction?.reference || this.transactionReference(transaction, index);
 
   transactionReference(transaction: any, index: number = 0): string {
     if (transaction?.reference) {

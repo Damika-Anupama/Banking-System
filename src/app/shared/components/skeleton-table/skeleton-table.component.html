@@ -3,7 +3,7 @@
   <table class="skeleton-table__grid" aria-hidden="true">
     <thead>
       <tr>
-        <th *ngFor="let column of columnRange">{{ column }}</th>
+        <th scope="col" *ngFor="let column of columnRange">{{ column }}</th>
       </tr>
     </thead>
     <tbody>

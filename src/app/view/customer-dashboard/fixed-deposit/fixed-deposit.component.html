@@ -172,13 +172,14 @@
     <!-- Table -->
     <div *ngIf="!isLoadingFDs">
       <table class="w-full table-fixed">
+        <caption class="sr-only">Your fixed deposits</caption>
         <thead>
           <tr>
-            <th class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Deposit</th>
-            <th class="hidden md:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Duration</th>
-            <th class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Maturity</th>
-            <th class="hidden sm:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
-            <th class="text-right px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
+            <th scope="col" class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Deposit</th>
+            <th scope="col" class="hidden md:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Duration</th>
+            <th scope="col" class="text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Maturity</th>
+            <th scope="col" class="hidden sm:table-cell text-left px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+            <th scope="col" class="text-right px-4 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
