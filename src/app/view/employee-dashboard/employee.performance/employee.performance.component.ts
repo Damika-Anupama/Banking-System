@@ -44,7 +44,7 @@ export class EmployeePerformanceComponent implements AfterViewInit, OnDestroy {
     { label: 'Cash deposits',    count: 16, icon: 'fa-money-bill-trend-up' },
     { label: 'Cash withdrawals', count: 14, icon: 'fa-money-bill-wave' },
     { label: 'Account opening',  count: 3,  icon: 'fa-folder-plus' },
-    { label: 'Customer lookups', count: 21, icon: 'fa-user-magnifying-glass' },
+    { label: 'Customer lookups', count: 21, icon: 'fa-user-tag' },
     { label: 'Service tickets',  count: 5,  icon: 'fa-headset' }
   ];
 

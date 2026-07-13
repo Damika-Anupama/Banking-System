@@ -24,7 +24,7 @@ const employeeDashboardConfig: DashboardConfig = {
   logoRoute: '/employee-dashboard',
   navigationItems: [
     { label: 'Home', route: './employee-home', icon: 'fa-home', title: 'Home' },
-    { label: 'Customer 360', route: './employee-customer-360', icon: 'fa-user-magnifying-glass', title: 'Customer 360' },
+    { label: 'Customer 360', route: './employee-customer-360', icon: 'fa-user-tag', title: 'Customer 360' },
     { label: 'Deposit', route: './employee-deposit', icon: 'fa-money-bill-trend-up', title: 'Deposit' },
     { label: 'Withdrawal', route: './employee-withdraw', icon: 'fa-money-bill-wave', title: 'Withdrawal' },
     { label: 'Open Account', route: './employee-open-account', icon: 'fa-folder-plus', title: 'Open Account' },

@@ -33,7 +33,7 @@ const ALL_ITEMS: PaletteItem[] = [
   { label: 'Cash deposit', description: 'Process customer deposits', icon: 'fa-money-bill-trend-up', route: '/employee-dashboard/employee-deposit', roles: ['EMPLOYEE', 'DEMO'] },
   { label: 'Withdrawal', description: 'Process cash withdrawal requests', icon: 'fa-money-bill-wave', route: '/employee-dashboard/employee-withdraw', roles: ['EMPLOYEE', 'DEMO'] },
   { label: 'Create loan', description: 'Manual loan application entry', icon: 'fa-file-signature', route: '/employee-dashboard/employee-create-loan', roles: ['EMPLOYEE', 'DEMO'] },
-  { label: 'Customer 360', description: 'Full customer relationship view', icon: 'fa-user-magnifying-glass', route: '/employee-dashboard/employee-customer360', roles: ['EMPLOYEE', 'DEMO'] },
+  { label: 'Customer 360', description: 'Full customer relationship view', icon: 'fa-user-tag', route: '/employee-dashboard/employee-customer360', roles: ['EMPLOYEE', 'DEMO'] },
   { label: 'Cheque clearing', description: 'Process and clear cheques', icon: 'fa-file-invoice-dollar', route: '/employee-dashboard/employee-cheque-clearing', roles: ['EMPLOYEE', 'DEMO'] },
   { label: 'Service requests', description: 'Customer support tickets', icon: 'fa-headset', route: '/employee-dashboard/employee-service-requests', roles: ['EMPLOYEE', 'DEMO'] },
   { label: 'My performance', description: 'Daily targets & activity metrics', icon: 'fa-chart-bar', route: '/employee-dashboard/employee-performance', roles: ['EMPLOYEE', 'DEMO'] },

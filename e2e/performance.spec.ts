@@ -43,13 +43,61 @@ test("the fonts still actually load and apply", async ({ page }) => {
 });
 
 test("first paint is not blocked behind a chain of stylesheets", async ({ page }) => {
-  await page.goto("/sign-in", { waitUntil: "load" });
+  // Best of three: a local box running several browsers at once produces noisy
+  // outliers, and a canary that cries wolf gets ignored. The bug this guards
+  // against (a serialised @import chain) is a structural 5s, not a 200ms wobble.
+  const samples: number[] = [];
+  for (let i = 0; i < 3; i++) {
+    await page.goto("/sign-in", { waitUntil: "load" });
+    samples.push(
+      await page.evaluate(
+        () => performance.getEntriesByName("first-contentful-paint")[0]?.startTime ?? Infinity
+      )
+    );
+  }
 
-  const fcp = await page.evaluate(
-    () => performance.getEntriesByName("first-contentful-paint")[0]?.startTime ?? Infinity
-  );
+  expect(Math.min(...samples)).toBeLessThan(3000);
+});
 
-  // Generous: this caught a 5.4s FCP. It is a canary for a serialised chain
-  // coming back, not a benchmark.
-  expect(fcp).toBeLessThan(3000);
+test("icons are self-hosted: no third-party icon requests", async ({ page }) => {
+  const external: string[] = [];
+  page.on("request", (r) => {
+    if (/cdnjs|fontawesome\.com|kit\.fontawesome/.test(r.url())) external.push(r.url());
+  });
+
+  await page.goto("/sign-in");
+  await page
+    .getByRole("button", { name: /Open customer dashboard without sign in/i })
+    .click();
+  await page.goto("/dashboard/transaction");
+  await page.waitForLoadState("networkidle");
+
+  // The icons used to come from a CDN: a third party in the critical path of
+  // every page load, and 212kB of stylesheet and font to draw 168 glyphs.
+  expect(external).toEqual([]);
+});
+
+test("every visible icon actually renders a glyph", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page
+    .getByRole("button", { name: /Open customer dashboard without sign in/i })
+    .click();
+  await page.goto("/dashboard/transaction");
+
+  const blank = await page.evaluate(async () => {
+    await (document as any).fonts.ready;
+    return [...document.querySelectorAll('i[class*="fa-"]')]
+      .filter((el) => {
+        const visible =
+          getComputedStyle(el).display !== "none" &&
+          (el as HTMLElement).offsetParent !== null;
+        return visible && el.getBoundingClientRect().width === 0;
+      })
+      .map((el) => (el as HTMLElement).className);
+  });
+
+  // A subsetted font drops any glyph nobody asked for, so an icon named in a
+  // template but missing from the subset renders as nothing at all. This is the
+  // check that the subset covers what the app actually uses.
+  expect(blank).toEqual([]);
 });

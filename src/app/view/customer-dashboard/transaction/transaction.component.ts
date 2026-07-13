@@ -64,7 +64,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   readonly transferSteps = [
     { num: 1, label: 'Beneficiary', icon: 'fa-user-check' },
     { num: 2, label: 'Amount', icon: 'fa-money-bill-wave' },
-    { num: 3, label: 'Review', icon: 'fa-shield-check' },
+    { num: 3, label: 'Review', icon: 'fa-shield-halved' },
   ];
   private subscriptions: Subscription[] = [];
 
