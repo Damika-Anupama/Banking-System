@@ -5,6 +5,7 @@ import { FDSelectedSavingAccount } from 'src/app/model/FDSelectedSavingAccount';
 import { FixedDepositService } from 'src/app/service/customer/fixed-deposit.service';
 import { LoanService } from 'src/app/service/customer/loan.service';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -40,8 +41,75 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
 
   constructor(
     private fdService: FixedDepositService,
-    private loanService: LoanService
+    private loanService: LoanService,
+    private toastService: ToastService
   ) {}
+
+  /** Fields the user has left, so errors appear on blur rather than while typing. */
+  touched: Record<string, boolean> = {};
+
+  private readonly validatedFields = [
+    'selectedSavingAccount',
+    'selectedPackage',
+    'fdAmount',
+    'acceptedTerms',
+  ];
+
+  /**
+   * Single source of truth for FD placement validity. checkForm() and the
+   * inline errors read the same rules.
+   */
+  get fieldErrors(): Record<string, string | null> {
+    const raw = this.fdAmount;
+    const amount = Number(raw);
+
+    return {
+      selectedSavingAccount: this.selectedSavingAccount?.saving_account_id
+        ? null
+        : 'Select the saving account to fund this deposit.',
+
+      selectedPackage: this.selectedPackage ? null : 'Choose a deposit package.',
+
+      fdAmount: !raw
+        ? 'Enter a deposit amount.'
+        : !raw.toString().match(/^[0-9]+$/)
+          ? 'Enter a valid amount (whole numbers only).'
+          : !Number.isFinite(amount) || amount <= 0
+            ? 'Enter a valid positive amount.'
+            : amount > this.selectedAccountBalance
+              ? `Amount cannot exceed the account balance of Rs. ${this.selectedAccountBalance.toLocaleString()}.`
+              : null,
+
+      // Locking money away has real consequences, so this consent is explicit.
+      acceptedTerms: this.acceptedTerms
+        ? null
+        : 'Accept the maturity and early withdrawal terms before placing the deposit.',
+    };
+  }
+
+  get hasFieldErrors(): boolean {
+    return this.validatedFields.some((field) => this.fieldErrors[field]);
+  }
+
+  get firstFieldError(): string | null {
+    for (const field of this.validatedFields) {
+      const error = this.fieldErrors[field];
+      if (error) return error;
+    }
+    return null;
+  }
+
+  errorFor(field: string): string | null {
+    return this.touched[field] ? this.fieldErrors[field] : null;
+  }
+
+  markTouched(field: string): void {
+    this.touched[field] = true;
+  }
+
+  markAllTouched(): void {
+    this.validatedFields.forEach((field) => (this.touched[field] = true));
+  }
 
   ngOnInit(): void {
     this.loadSavingAccounts();
@@ -58,24 +126,11 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
         if (!res || !res.result) {
           this.savingAccounts = [];
           this.isLoadingSavingAccounts = false;
-          Swal.fire({
-            icon: 'warning',
-            title: 'No Saving Accounts',
-            text: 'You do not have any saving accounts available.'
-          });
           return;
         }
 
         this.savingAccounts = Array.isArray(res.result) ? res.result : [];
         this.isLoadingSavingAccounts = false;
-
-        if (this.savingAccounts.length === 0) {
-          Swal.fire({
-            icon: 'info',
-            title: 'No Saving Accounts',
-            text: 'You need to create a saving account before creating a fixed deposit.'
-          });
-        }
       },
       error: (err) => {
         console.error('Error loading saving accounts:', err);
@@ -83,11 +138,7 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
         this.isLoadingSavingAccounts = false;
         this.savingAccounts = [];
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not load fixed deposits', this.errorMessage);
       }
     });
 
@@ -220,64 +271,15 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
   }
 
   async checkForm() {
-    // Form validation
-    if (!this.selectedSavingAccount || !this.selectedPackage || !this.fdAmount) {
-      Swal.fire({
-        title: 'Validation Error',
-        text: 'Please select appropriate saving account, package and mention FD amount.',
-        icon: 'error',
-      });
+    // Surface every problem at once, against the field that caused it.
+    this.markAllTouched();
+
+    if (this.hasFieldErrors) {
+      this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
       return;
     }
 
-    // Validate FD amount is a number
-    if (!this.fdAmount.toString().match(/^[0-9]+$/)) {
-      Swal.fire({
-        title: 'Invalid Amount',
-        text: 'Please enter valid amount (numbers only).',
-        icon: 'error',
-      });
-      return;
-    }
-
-    // Validate FD amount is positive
     const amount = Number(this.fdAmount);
-    if (isNaN(amount) || amount <= 0) {
-      Swal.fire({
-        title: 'Invalid Amount',
-        text: 'Please enter a valid positive amount.',
-        icon: 'error',
-      });
-      return;
-    }
-
-    // Validate savingAccountId exists
-    if (!this.savingAccountId) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Invalid saving account selected.',
-        icon: 'error',
-      });
-      return;
-    }
-
-    if (amount > this.selectedAccountBalance) {
-      Swal.fire({
-        title: 'Insufficient Account Balance',
-        text: 'Deposit amount cannot exceed the selected saving account balance.',
-        icon: 'error',
-      });
-      return;
-    }
-
-    if (!this.acceptedTerms) {
-      Swal.fire({
-        title: 'Terms Required',
-        text: 'Please accept the maturity and early withdrawal terms before placing the fixed deposit.',
-        icon: 'warning',
-      });
-      return;
-    }
 
     try {
       // Convert duration
@@ -293,11 +295,7 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
           durationCode = "3_YEARS";
           break;
         default:
-          Swal.fire({
-            title: 'Invalid Duration',
-            text: 'Please select a valid package.',
-            icon: 'error',
-          });
+          this.toastService.error('Invalid package', 'Please select a valid package.');
           return;
       }
 
@@ -314,11 +312,7 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
           rpaCode = "15";
           break;
         default:
-          Swal.fire({
-            title: 'Invalid Interest Rate',
-            text: 'Please select a valid package.',
-            icon: 'error',
-          });
+          this.toastService.error('Invalid package', 'Please select a valid package.');
           return;
       }
 
@@ -379,22 +373,14 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
           this.errorMessage = err?.error?.message || err?.message || 'Failed to create fixed deposit';
           this.isCreatingFD = false;
 
-          Swal.fire({
-            icon: 'error',
-            title: 'FD Creation Failed',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not place deposit', this.errorMessage);
         }
       });
 
       this.subscriptions.push(sub);
     } catch (error) {
       console.error('Error processing FD creation:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to process fixed deposit creation'
-      });
+      this.toastService.error('Could not place deposit', 'Failed to process fixed deposit creation.');
     }
   }
 

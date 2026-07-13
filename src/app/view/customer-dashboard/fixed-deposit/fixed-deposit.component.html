@@ -61,8 +61,11 @@
             <select
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedSavingAccount"
-              (change)="onAccountSelected()"
+              (change)="onAccountSelected(); markTouched('selectedSavingAccount')"
               name="selectedSavingAccount"
+              [class.field-invalid]="errorFor('selectedSavingAccount')"
+              [attr.aria-invalid]="errorFor('selectedSavingAccount') ? 'true' : null"
+              [attr.aria-describedby]="errorFor('selectedSavingAccount') ? 'selectedSavingAccount-error' : null"
             >
               <option [ngValue]="null" disabled selected>Select a saving account</option>
               <option *ngFor="let account of savingAccounts" [ngValue]="account">
@@ -71,6 +74,7 @@
             </select>
             <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
           </div>
+          <p *ngIf="errorFor('selectedSavingAccount')" id="selectedSavingAccount-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedSavingAccount') }}</p>
         </div>
 
         <div class="min-w-0">
@@ -81,8 +85,11 @@
             <select
               class="glass-input w-full appearance-none cursor-pointer pr-10"
               [(ngModel)]="selectedPackage"
-              (ngModelChange)="onPackageSelected()"
+              (ngModelChange)="onPackageSelected(); markTouched('selectedPackage')"
               name="selectedPackage"
+              [class.field-invalid]="errorFor('selectedPackage')"
+              [attr.aria-invalid]="errorFor('selectedPackage') ? 'true' : null"
+              [attr.aria-describedby]="errorFor('selectedPackage') ? 'selectedPackage-error' : null"
             >
               <option value="" disabled selected>Select a package</option>
               <option *ngFor="let package of packageArray" [value]="package.index">
@@ -91,6 +98,7 @@
             </select>
             <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"></i>
           </div>
+          <p *ngIf="errorFor('selectedPackage')" id="selectedPackage-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedPackage') }}</p>
         </div>
 
         <div class="min-w-0">
@@ -106,9 +114,14 @@
               [(ngModel)]="fdAmount"
               name="fdAmount"
               min="1"
+              (blur)="markTouched('fdAmount')"
+              [class.field-invalid]="errorFor('fdAmount')"
+              [attr.aria-invalid]="errorFor('fdAmount') ? 'true' : null"
+              [attr.aria-describedby]="errorFor('fdAmount') ? 'fdAmount-error' : null"
             />
           </div>
-          <p class="text-white/50 text-xs mt-2">Eligible: Rs. {{ selectedAccountBalance | number }}</p>
+          <p class="text-white/50 text-xs mt-2" *ngIf="!errorFor('fdAmount')">Eligible: Rs. {{ selectedAccountBalance | number }}</p>
+          <p *ngIf="errorFor('fdAmount')" id="fdAmount-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('fdAmount') }}</p>
         </div>
       </div>
 
@@ -124,9 +137,12 @@
       </div>
 
       <label class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm text-slate-300">
-        <input type="checkbox" class="mt-1" [(ngModel)]="acceptedTerms" name="acceptedTerms" />
+        <input type="checkbox" class="mt-1" [(ngModel)]="acceptedTerms" name="acceptedTerms"
+          [attr.aria-invalid]="errorFor('acceptedTerms') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('acceptedTerms') ? 'acceptedTerms-error' : null" />
         <span>I confirm the selected FD term, maturity estimate, and applicable early-withdrawal conditions.</span>
       </label>
+      <p *ngIf="errorFor('acceptedTerms')" id="acceptedTerms-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('acceptedTerms') }}</p>
 
       <!-- Submit Button -->
       <button

@@ -14,8 +14,10 @@ import { FixedDepositService } from 'src/app/service/customer/fixed-deposit.serv
 import { LoanService } from 'src/app/service/customer/loan.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('FixedDepositComponent', () => {
+  let toastService: ToastService;
   let component: FixedDepositComponent;
   let fixture: ComponentFixture<FixedDepositComponent>;
   let mockFDService: jasmine.SpyObj<FixedDepositService>;
@@ -44,6 +46,12 @@ describe('FixedDepositComponent', () => {
 
     // Spy on Swal
     spyOn(Swal, 'fire');
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
+    spyOn(toastService, 'warning');
+    spyOn(toastService, 'info');
 
     // Mock initial data calls
     mockFDService.getSavingAccountsDetails.and.returnValue(of({ result: [] }));
@@ -116,12 +124,8 @@ describe('FixedDepositComponent', () => {
 
       expect(component.savingAccounts).toEqual([]);
       expect(component.isLoadingSavingAccounts).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'No Saving Accounts'
-        })
-      );
+      // The page already renders the no-account state inline; a popup repeating it is noise.
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle undefined response', () => {
@@ -130,7 +134,8 @@ describe('FixedDepositComponent', () => {
       component.loadSavingAccounts();
 
       expect(component.savingAccounts).toEqual([]);
-      expect(Swal.fire).toHaveBeenCalled();
+      // The page already renders the no-account state inline; a popup repeating it is noise.
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle response without result property', () => {
@@ -139,12 +144,8 @@ describe('FixedDepositComponent', () => {
       component.loadSavingAccounts();
 
       expect(component.savingAccounts).toEqual([]);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'No Saving Accounts'
-        })
-      );
+      // The page already renders the no-account state inline; a popup repeating it is noise.
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show info message for empty saving accounts', () => {
@@ -153,13 +154,8 @@ describe('FixedDepositComponent', () => {
       component.loadSavingAccounts();
 
       expect(component.savingAccounts).toEqual([]);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'info',
-          title: 'No Saving Accounts',
-          text: 'You need to create a saving account before creating a fixed deposit.'
-        })
-      );
+      // The page already renders the no-account state inline; a popup repeating it is noise.
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle non-array result', () => {
@@ -186,13 +182,7 @@ describe('FixedDepositComponent', () => {
       expect(component.isLoadingSavingAccounts).toBe(false);
       expect(component.savingAccounts).toEqual([]);
       expect(console.error).toHaveBeenCalledWith('Error loading saving accounts:', errorResponse);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Database connection failed'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalled();
     });
 
     it('should handle error without specific message', () => {
@@ -424,13 +414,8 @@ describe('FixedDepositComponent', () => {
 
       component.checkForm();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please select appropriate saving account, package and mention FD amount.',
-          icon: 'error'
-        })
-      );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when saving account is missing', () => {
@@ -440,12 +425,8 @@ describe('FixedDepositComponent', () => {
 
       component.checkForm();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          icon: 'error'
-        })
-      );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when package is missing', () => {
@@ -455,12 +436,8 @@ describe('FixedDepositComponent', () => {
 
       component.checkForm();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          icon: 'error'
-        })
-      );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when FD amount is missing', () => {
@@ -470,12 +447,8 @@ describe('FixedDepositComponent', () => {
 
       component.checkForm();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          icon: 'error'
-        })
-      );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject non-numeric amount', () => {
@@ -485,13 +458,8 @@ describe('FixedDepositComponent', () => {
 
       component.checkForm();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Invalid Amount',
-          text: 'Please enter valid amount (numbers only).',
-          icon: 'error'
-        })
-      );
+      expect(component.errorFor('fdAmount')).not.toBeNull();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject negative amount', () => {
@@ -502,13 +470,8 @@ describe('FixedDepositComponent', () => {
       component.checkForm();
 
       // Negative number doesn't match /^[0-9]+$/ regex, so it triggers "numbers only" error first
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Invalid Amount',
-          text: 'Please enter valid amount (numbers only).',
-          icon: 'error'
-        })
-      );
+      expect(component.errorFor('fdAmount')).not.toBeNull();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject zero amount', () => {
@@ -519,13 +482,8 @@ describe('FixedDepositComponent', () => {
       component.checkForm();
 
       // fdAmount = 0 is falsy, so the "all fields" validation triggers first
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please select appropriate saving account, package and mention FD amount.',
-          icon: 'error'
-        })
-      );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject zero amount as string (lines 176-181)', () => {
@@ -537,13 +495,8 @@ describe('FixedDepositComponent', () => {
       component.checkForm();
 
       // String '0' passes regex /^[0-9]+$/ but Number('0') === 0, so amount <= 0 validation triggers
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Invalid Amount',
-          text: 'Please enter a valid positive amount.',
-          icon: 'error'
-        })
-      );
+      expect(component.errorFor('fdAmount')).not.toBeNull();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should accept valid positive amount as string (lines 174-182 pass)', fakeAsync(() => {
@@ -592,13 +545,7 @@ describe('FixedDepositComponent', () => {
 
       component.checkForm();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Invalid saving account selected.',
-          icon: 'error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalled();
     });
 
     it('should reject invalid duration', () => {
@@ -612,13 +559,7 @@ describe('FixedDepositComponent', () => {
 
       component.checkForm();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Invalid Duration',
-          text: 'Please select a valid package.',
-          icon: 'error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Invalid package', 'Please select a valid package.');
     });
 
     it('should reject invalid interest rate', () => {
@@ -632,13 +573,7 @@ describe('FixedDepositComponent', () => {
 
       component.checkForm();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Invalid Interest Rate',
-          text: 'Please select a valid package.',
-          icon: 'error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Invalid package', 'Please select a valid package.');
     });
   });
 
@@ -790,13 +725,7 @@ describe('FixedDepositComponent', () => {
       expect(component.errorMessage).toBe('Insufficient balance');
       expect(component.isCreatingFD).toBe(false);
       expect(console.error).toHaveBeenCalledWith('Error creating FD:', errorResponse);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'FD Creation Failed',
-          text: 'Insufficient balance'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalled();
     }));
 
     it('should handle error without specific message', fakeAsync(() => {
@@ -826,13 +755,7 @@ describe('FixedDepositComponent', () => {
       component.checkForm();
       tick();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to process fixed deposit creation'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalled();
     }));
   });
 
