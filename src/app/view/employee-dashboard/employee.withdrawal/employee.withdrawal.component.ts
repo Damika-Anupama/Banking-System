@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { DEMO_ACCOUNTS } from 'src/app/shared/demo-banking-fixtures';
+import { ToastService } from 'src/app/service/toast.service';
 
 interface WithdrawalRecord {
   withdrawal_id: string;
@@ -17,6 +18,8 @@ interface WithdrawalRecord {
   styleUrls: ['./employee.withdrawal.component.scss']
 })
 export class EmployeeWithdrawalComponent {
+  constructor(private toastService: ToastService) {}
+
   accountNumber = '';
   amount: number | null = null;
   isProcessing = false;
@@ -63,15 +66,18 @@ export class EmployeeWithdrawalComponent {
 
   processWithdrawal(): void {
     if (this.accountNotFound) {
-      Swal.fire({ icon: 'error', title: 'Account not found', text: 'No branch account matches that number.' });
+      this.toastService.error('Account not found', 'No branch account matches that number.');
       return;
     }
     if (this.exceedsBalance) {
-      Swal.fire({ icon: 'error', title: 'Insufficient balance', text: `Amount exceeds the available balance of Rs. ${this.accountBalance.toLocaleString()}.` });
+      this.toastService.error(
+        'Insufficient balance',
+        `Amount exceeds the available balance of Rs. ${this.accountBalance.toLocaleString()}.`
+      );
       return;
     }
     if (!this.isValid) {
-      Swal.fire({ icon: 'error', title: 'Validation error', text: 'Look up a valid account and enter an amount.' });
+      this.toastService.error('Check the withdrawal details', 'Look up a valid account and enter an amount.');
       return;
     }
 

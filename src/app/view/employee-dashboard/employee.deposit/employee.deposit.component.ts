@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { DEMO_ACCOUNTS } from 'src/app/shared/demo-banking-fixtures';
+import { ToastService } from 'src/app/service/toast.service';
 
 interface DepositRecord {
   deposit_id: string;
@@ -18,6 +19,8 @@ interface DepositRecord {
   styleUrls: ['./employee.deposit.component.scss']
 })
 export class EmployeeDepositComponent {
+  constructor(private toastService: ToastService) {}
+
   accountNumber = '';
   amount: number | null = null;
   method: 'Cash' | 'Cheque' | 'Transfer' = 'Cash';
@@ -72,15 +75,15 @@ export class EmployeeDepositComponent {
 
   processDeposit(): void {
     if (this.accountNotFound) {
-      Swal.fire({ icon: 'error', title: 'Account not found', text: 'No branch account matches that number.' });
+      this.toastService.error('Account not found', 'No branch account matches that number.');
       return;
     }
     if (this.chequeNeedsReference) {
-      Swal.fire({ icon: 'info', title: 'Cheque reference required', text: 'Enter the cheque number for a cheque deposit.' });
+      this.toastService.info('Cheque reference required', 'Enter the cheque number for a cheque deposit.');
       return;
     }
     if (!this.isValid) {
-      Swal.fire({ icon: 'error', title: 'Validation error', text: 'Look up a valid account and enter an amount.' });
+      this.toastService.error('Check the deposit details', 'Look up a valid account and enter an amount.');
       return;
     }
 
