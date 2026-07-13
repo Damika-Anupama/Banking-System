@@ -38,6 +38,55 @@ describe('UnifiedDashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('navigation orientation', () => {
+    const navItems = [
+      { icon: 'fa-home', label: 'Home', route: '/dashboard/home' },
+      { icon: 'fa-list', label: 'Transactions', route: '/dashboard/transaction' },
+      { icon: 'fa-vault', label: 'Fixed deposits', route: '/dashboard/fixed-deposit' },
+    ];
+
+    const atUrl = (url: string) => {
+      const router = TestBed.inject(Router) as any;
+      router.url = url;
+      component.navigationItems = navItems as any;
+    };
+
+    it('names the page the user is currently on', () => {
+      atUrl('/dashboard/transaction');
+
+      expect(component.currentPageLabel).toBe('Transactions');
+    });
+
+    it('resolves a nested route to its section, not a shorter sibling', () => {
+      atUrl('/dashboard/fixed-deposit/new');
+
+      // '/dashboard' would also prefix-match if we took the first hit rather
+      // than the longest one.
+      expect(component.currentPageLabel).toBe('Fixed deposits');
+    });
+
+    it('falls back to no breadcrumb rather than guessing on an unknown route', () => {
+      atUrl('/dashboard/somewhere-else');
+
+      expect(component.currentPageLabel).toBe('');
+    });
+
+    it('names the dashboard the user is inside', () => {
+      component.config = { dashboardType: 'manager', navigationItems: [], logoRoute: '/' } as any;
+      expect(component.dashboardLabel).toBe('Manager dashboard');
+
+      component.config = { dashboardType: 'customer', navigationItems: [], logoRoute: '/' } as any;
+      expect(component.dashboardLabel).toBe('My accounts');
+    });
+
+    it('reports whether the mobile menu is open', () => {
+      expect(component.isSidebarOpen).toBe(false);
+
+      component.toggleSidebar();
+      expect(component.isSidebarOpen).toBe(true);
+    });
+  });
+
   describe('back-to-top', () => {
     it('reveals the button only after scrolling past 300px', () => {
       component.onContentScroll({ target: { scrollTop: 120, scrollTo: () => {} } } as unknown as Event);

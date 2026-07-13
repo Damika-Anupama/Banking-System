@@ -83,6 +83,26 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  /** Human name for the dashboard the user is inside. */
+  get dashboardLabel(): string {
+    const type = this.config?.dashboardType;
+    if (type === 'employee') return 'Employee dashboard';
+    if (type === 'manager') return 'Manager dashboard';
+    return 'My accounts';
+  }
+
+  /**
+   * The nav item matching the current URL. Longest match wins, so a nested
+   * route does not resolve to a shorter sibling that happens to share a prefix.
+   */
+  get currentPageLabel(): string {
+    const url = this.router.url || '';
+    const match = (this.navigationItems || [])
+      .filter((item) => url.startsWith(item.route))
+      .sort((a, b) => b.route.length - a.route.length)[0];
+    return match?.label ?? '';
+  }
+
   ngOnDestroy(): void {
     if (this.clockInterval) {
       clearInterval(this.clockInterval);

@@ -18,14 +18,16 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="flex-1 px-4 py-6 overflow-y-auto">
+    <nav class="flex-1 px-4 py-6 overflow-y-auto" aria-label="Main">
       <ul class="space-y-2">
         <li *ngFor="let item of navigationItems">
           <a
             [routerLink]="item.route"
             routerLinkActive="active-link"
+            #rla="routerLinkActive"
             [routerLinkActiveOptions]="{ exact: false }"
             [attr.aria-label]="item.label"
+            [attr.aria-current]="rla.isActive ? 'page' : null"
             class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
           >
             <i [class]="'fas ' + item.icon + ' text-xl'"></i>
@@ -76,7 +78,10 @@
         <div class="flex items-center gap-4">
           <button
             class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
-            aria-label="Open navigation menu" title="Open navigation menu"
+            [attr.aria-label]="isSidebarOpen ? 'Close navigation menu' : 'Open navigation menu'"
+            [attr.title]="isSidebarOpen ? 'Close navigation menu' : 'Open navigation menu'"
+            [attr.aria-expanded]="isSidebarOpen"
+            aria-controls="mobile-sidebar"
             (click)="toggleSidebar()"
           >
             <i class="fas fa-bars text-xl"></i>
@@ -93,6 +98,18 @@
     <!-- Page Content -->
     <main id="main-content" tabindex="-1" class="customer-dashboard-content flex-1 min-h-0 p-4 lg:p-8 overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
       <div class="max-w-7xl mx-auto">
+        <!-- Breadcrumb: names where the user is, for sighted and screen-reader users alike. -->
+        <nav aria-label="Breadcrumb" class="demo-breadcrumb mb-4" *ngIf="currentPageLabel">
+          <ol>
+            <li>
+              <a [routerLink]="config.logoRoute">{{ dashboardLabel }}</a>
+            </li>
+            <li aria-hidden="true" class="demo-breadcrumb-sep"><i class="fas fa-chevron-right"></i></li>
+            <li>
+              <span aria-current="page">{{ currentPageLabel }}</span>
+            </li>
+          </ol>
+        </nav>
         <router-outlet></router-outlet>
       </div>
     </main>
@@ -120,6 +137,7 @@
   <!-- Mobile Sidebar -->
   <aside
     *ngIf="isSidebarOpen"
+    id="mobile-sidebar"
     class="sidebar-wrapper glass-sidebar flex flex-col w-64 fixed h-full z-40 lg:hidden animate-slide-right"
   >
     <!-- Logo -->
@@ -142,14 +160,16 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="flex-1 px-4 py-6 overflow-y-auto">
+    <nav class="flex-1 px-4 py-6 overflow-y-auto" aria-label="Main (mobile)">
       <ul class="space-y-2">
         <li *ngFor="let item of navigationItems">
           <a
             [routerLink]="item.route"
             routerLinkActive="active-link"
+            #rlaMobile="routerLinkActive"
             [routerLinkActiveOptions]="{ exact: false }"
             [attr.aria-label]="item.label"
+            [attr.aria-current]="rlaMobile.isActive ? 'page' : null"
             class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
             (click)="toggleSidebar()"
           >
@@ -264,7 +284,10 @@
         <!-- Left: Mobile Menu Button -->
         <button
           class="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
-          aria-label="Open navigation menu" title="Open navigation menu"
+          [attr.aria-label]="isSidebarOpen ? 'Close navigation menu' : 'Open navigation menu'"
+          [attr.title]="isSidebarOpen ? 'Close navigation menu' : 'Open navigation menu'"
+          [attr.aria-expanded]="isSidebarOpen"
+          aria-controls="mobile-sidebar"
           (click)="toggleSidebar()"
         >
           <i class="fas fa-bars text-xl"></i>
@@ -274,7 +297,19 @@
 
     <!-- Page Content -->
     <main id="main-content" tabindex="-1" class="p-6 flex-1 min-h-0 lg:overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
-      <router-outlet></router-outlet>
+      <!-- Breadcrumb: names where the user is, for sighted and screen-reader users alike. -->
+        <nav aria-label="Breadcrumb" class="demo-breadcrumb mb-4" *ngIf="currentPageLabel">
+          <ol>
+            <li>
+              <a [routerLink]="config.logoRoute">{{ dashboardLabel }}</a>
+            </li>
+            <li aria-hidden="true" class="demo-breadcrumb-sep"><i class="fas fa-chevron-right"></i></li>
+            <li>
+              <span aria-current="page">{{ currentPageLabel }}</span>
+            </li>
+          </ol>
+        </nav>
+        <router-outlet></router-outlet>
     </main>
 
     <!-- Back to top -->
