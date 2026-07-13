@@ -4,6 +4,7 @@ import { ToastService } from 'src/app/service/toast.service';
 import { DEMO_EMPLOYEES } from 'src/app/shared/demo-banking-fixtures';
 import { demoStore } from 'src/app/shared/demo-store';
 import { Chart, registerables } from 'chart.js';
+import { TableSort } from 'src/app/shared/table-sort';
 Chart.register(...registerables);
 
 interface RosterEmployee {
@@ -52,13 +53,27 @@ export class ManagerEmployeesComponent implements AfterViewInit, OnDestroy {
     this.employees = [...added, ...DEMO_EMPLOYEES.map(e => ({ ...e }))];
   }
 
+  readonly sort = new TableSort<RosterEmployee>({
+    name: (e) => String(e.fullname || '').toLowerCase(),
+    role: (e) => String(e.role || '').toLowerCase(),
+    status: (e) => String(e.status || '').toLowerCase(),
+    handled: (e) => Number(e.transactions_handled || 0),
+    joined: (e) => new Date(e.joined_date || 0).getTime(),
+  });
+
+  toggleSort(column: string): void {
+    this.sort.toggle(column);
+  }
+
   get filteredEmployees(): RosterEmployee[] {
     const q = this.searchTerm.trim().toLowerCase();
-    return this.employees.filter(e => {
+    const matched = this.employees.filter(e => {
       const matchesRole = this.roleFilter === 'all' || e.role === this.roleFilter;
       const matchesSearch = !q || [e.fullname, e.employee_id, e.username, e.email, e.role].join(' ').toLowerCase().includes(q);
       return matchesRole && matchesSearch;
     });
+
+    return this.sort.apply(matched);
   }
 
   get totalCount(): number { return this.employees.length; }

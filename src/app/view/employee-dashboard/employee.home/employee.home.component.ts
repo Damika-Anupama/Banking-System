@@ -3,6 +3,7 @@ import { EmployeeHomeService } from 'src/app/service/employee/employee.home.serv
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
+import { TableSort } from 'src/app/shared/table-sort';
 
 @Component({
   selector: 'app-employee.home',
@@ -19,14 +20,27 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
+  readonly sort = new TableSort<any>({
+    name: (c) => String(c?.fullname || '').toLowerCase(),
+    dob: (c) => new Date(c?.dob || 0).getTime(),
+    email: (c) => String(c?.email || '').toLowerCase(),
+  });
+
+  toggleSort(column: string): void {
+    this.sort.toggle(column);
+  }
+
   get filteredCustomers(): any[] {
     const list = this.customers || [];
     const q = this.searchTerm.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter(c =>
-      [c.fullname, c.username, c.user_id, c.email, c.status, String(c.account_count)]
-        .some(v => v && String(v).toLowerCase().includes(q))
-    );
+    const matched = !q
+      ? list
+      : list.filter(c =>
+          [c.fullname, c.username, c.user_id, c.email, c.status, String(c.account_count)]
+            .some(v => v && String(v).toLowerCase().includes(q))
+        );
+
+    return this.sort.apply(matched);
   }
 
   get totalCustomerPages(): number {

@@ -102,4 +102,44 @@ describe('EmployeeChequeClearingComponent', () => {
       expect(toastService.success).not.toHaveBeenCalled();
     }));
   });
+  describe('sorting the cheque queue', () => {
+    const amounts = () => component.filteredCheques.map((c: any) => c.amount);
+
+    it('sorts by amount, largest first', () => {
+      component.toggleSort('amount');
+
+      const sorted = amounts();
+      expect(sorted).toEqual([...sorted].sort((a, b) => b - a));
+    });
+
+    it('cycles back to the queue order on a third click', () => {
+      const original = amounts();
+
+      component.toggleSort('amount');
+      component.toggleSort('amount');
+      component.toggleSort('amount');
+
+      expect(component.sort.column).toBeNull();
+      expect(amounts()).toEqual(original);
+    });
+
+    it('sorts and filters together, rather than one replacing the other', () => {
+      component.statusFilter = 'Received' as any;
+      component.toggleSort('amount');
+
+      const rows = component.filteredCheques;
+      expect(rows.every((c: any) => c.status === 'Received')).toBe(true);
+
+      const sorted = rows.map((c: any) => c.amount);
+      expect(sorted).toEqual([...sorted].sort((a, b) => b - a));
+    });
+
+    it('exposes the sort state for assistive tech', () => {
+      expect(component.sort.stateFor('amount')).toBe('none');
+
+      component.toggleSort('amount');
+      expect(component.sort.stateFor('amount')).toBe('descending');
+    });
+  });
+
 });

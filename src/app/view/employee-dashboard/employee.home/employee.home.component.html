@@ -52,10 +52,16 @@
       <thead>
         <tr>
           <th class="w-12 text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">#</th>
-          <th class="text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Customer</th>
+          <th class="text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('name')">
+            <button type="button" class="th-sort" (click)="toggleSort('name')">Customer<i class="fas ml-1" [ngClass]="sort.iconFor('name')" aria-hidden="true"></i></button>
+          </th>
           <th class="hidden md:table-cell text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Gender</th>
-          <th class="hidden lg:table-cell text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Date of birth</th>
-          <th class="text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider">Email</th>
+          <th class="hidden lg:table-cell text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('dob')">
+            <button type="button" class="th-sort" (click)="toggleSort('dob')">Date of birth<i class="fas ml-1" [ngClass]="sort.iconFor('dob')" aria-hidden="true"></i></button>
+          </th>
+          <th class="text-left px-4 py-3 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('email')">
+            <button type="button" class="th-sort" (click)="toggleSort('email')">Email<i class="fas ml-1" [ngClass]="sort.iconFor('email')" aria-hidden="true"></i></button>
+          </th>
         </tr>
       </thead>
       <tbody>

@@ -67,11 +67,21 @@
     <table class="w-full table-fixed">
       <thead>
         <tr>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Employee</th>
-          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Role</th>
-          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Joined</th>
-          <th class="hidden lg:table-cell text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Transactions</th>
-          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Status</th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('name')">
+            <button type="button" class="th-sort" (click)="toggleSort('name')">Employee<i class="fas ml-1" [ngClass]="sort.iconFor('name')" aria-hidden="true"></i></button>
+          </th>
+          <th class="hidden md:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('role')">
+            <button type="button" class="th-sort" (click)="toggleSort('role')">Role<i class="fas ml-1" [ngClass]="sort.iconFor('role')" aria-hidden="true"></i></button>
+          </th>
+          <th class="hidden lg:table-cell text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('joined')">
+            <button type="button" class="th-sort" (click)="toggleSort('joined')">Joined<i class="fas ml-1" [ngClass]="sort.iconFor('joined')" aria-hidden="true"></i></button>
+          </th>
+          <th class="hidden lg:table-cell text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('handled')">
+            <button type="button" class="th-sort" (click)="toggleSort('handled')">Transactions<i class="fas ml-1" [ngClass]="sort.iconFor('handled')" aria-hidden="true"></i></button>
+          </th>
+          <th class="text-left px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('status')">
+            <button type="button" class="th-sort" (click)="toggleSort('status')">Status<i class="fas ml-1" [ngClass]="sort.iconFor('status')" aria-hidden="true"></i></button>
+          </th>
           <th class="text-right px-5 py-3 text-white/70 font-semibold text-xs uppercase tracking-wider">Actions</th>
         </tr>
       </thead>

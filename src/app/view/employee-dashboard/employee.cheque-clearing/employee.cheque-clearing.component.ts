@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
+import { TableSort } from 'src/app/shared/table-sort';
 
 type ChequeStatus = 'Received' | 'In clearing' | 'Cleared' | 'Returned';
 
@@ -36,13 +37,25 @@ export class EmployeeChequeClearingComponent {
     { cheque_id: 'CHQ-8781', cheque_no: '447821', account_id: 'ACC-660412', drawer_bank: 'Seylan Bank',       amount: 52000,  deposited: '2026-05-21T13:50:00', expected_clear: '2026-05-24', status: 'Returned' }
   ];
 
+  readonly sort = new TableSort<Cheque>({
+    amount: (c) => Number(c.amount || 0),
+    status: (c) => String(c.status || '').toLowerCase(),
+    bank: (c) => String(c.drawer_bank || '').toLowerCase(),
+  });
+
+  toggleSort(column: string): void {
+    this.sort.toggle(column);
+  }
+
   get filteredCheques(): Cheque[] {
     const q = this.searchTerm.trim().toLowerCase();
-    return this.cheques.filter(c => {
+    const matched = this.cheques.filter(c => {
       const matchesStatus = this.statusFilter === 'all' || c.status === this.statusFilter;
       const matchesSearch = !q || [c.cheque_id, c.cheque_no, c.account_id, c.drawer_bank].join(' ').toLowerCase().includes(q);
       return matchesStatus && matchesSearch;
     });
+
+    return this.sort.apply(matched);
   }
 
   get receivedCount(): number { return this.cheques.filter(c => c.status === 'Received').length; }
