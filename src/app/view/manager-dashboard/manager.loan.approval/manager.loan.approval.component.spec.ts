@@ -12,11 +12,13 @@ import { ManagerLoanApprovalComponent } from './manager.loan.approval.component'
 import { LoanApprovalService } from 'src/app/service/manager/loan.approval.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('ManagerLoanApprovalComponent', () => {
   let component: ManagerLoanApprovalComponent;
   let fixture: ComponentFixture<ManagerLoanApprovalComponent>;
   let mockLoanApprovalService: jasmine.SpyObj<LoanApprovalService>;
+  let toastService: ToastService;
 
   beforeEach(async () => {
     mockLoanApprovalService = jasmine.createSpyObj('LoanApprovalService', ['getUnapprovedLoans']);
@@ -35,6 +37,12 @@ describe('ManagerLoanApprovalComponent', () => {
 
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: true }));
     spyOn(console, 'error');
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
+    spyOn(toastService, 'warning');
+    spyOn(toastService, 'info');
   });
 
   afterEach(() => {
@@ -106,20 +114,15 @@ describe('ManagerLoanApprovalComponent', () => {
       expect(component.errorMessage).toBe('');
     });
 
-    it('should handle empty loans array and show info message', () => {
+    it('does not pop a dialog for an empty queue, which the table already states inline', () => {
       mockLoanApprovalService.getUnapprovedLoans.and.returnValue(of({ data: [] }));
 
       component.loadUnapprovedLoans();
 
       expect(component.loans).toEqual([]);
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'info',
-          title: 'No Pending Loans',
-          text: 'There are no pending loan approvals at this time'
-        })
-      );
+      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(toastService.info).not.toHaveBeenCalled();
     });
 
     it('should not show Swal when loans are present', () => {
@@ -144,13 +147,11 @@ describe('ManagerLoanApprovalComponent', () => {
 
       expect(component.errorMessage).toBe('No data received from server');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'No data received from server'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load loans',
+        'No data received from server'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle undefined response', () => {
@@ -169,13 +170,8 @@ describe('ManagerLoanApprovalComponent', () => {
 
       expect(component.errorMessage).toBe('Invalid data format received');
       expect(component.loans).toEqual([]);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'Warning',
-          text: 'No loan data available'
-        })
-      );
+      expect(toastService.warning).toHaveBeenCalledWith('No loan data', 'No loan data available.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle data property that is not an array', () => {
@@ -207,13 +203,8 @@ describe('ManagerLoanApprovalComponent', () => {
 
       expect(component.errorMessage).toBe('Server error');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Server error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load loans', 'Server error');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error without nested message', () => {
@@ -262,13 +253,11 @@ describe('ManagerLoanApprovalComponent', () => {
       expect(console.error).toHaveBeenCalledWith('Error processing loan data:', jasmine.any(Error));
       expect(component.errorMessage).toBe('Failed to process loan data');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to process loan data'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load loans',
+        'Failed to process loan data'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle TypeError during data processing', () => {
@@ -299,7 +288,11 @@ describe('ManagerLoanApprovalComponent', () => {
       component.loadUnapprovedLoans();
 
       expect(console.error).toHaveBeenCalledWith('Error processing loan data:', jasmine.any(ReferenceError));
-      expect(Swal.fire).toHaveBeenCalled();
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load loans',
+        'Failed to process loan data'
+      );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -307,49 +300,29 @@ describe('ManagerLoanApprovalComponent', () => {
     it('should reject when loanId is null', () => {
       component.approve(null);
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Loan ID is missing'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject when loanId is undefined', () => {
       component.approve(undefined);
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Loan ID is missing'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject when loanId is empty string', () => {
       component.approve('');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Loan ID is missing'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject when no parameter is passed', () => {
       component.approve();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Loan ID is missing'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -402,49 +375,29 @@ describe('ManagerLoanApprovalComponent', () => {
     it('should reject when loanId is null', () => {
       component.reject(null);
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Loan ID is missing'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject when loanId is undefined', () => {
       component.reject(undefined);
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Loan ID is missing'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject when loanId is empty string', () => {
       component.reject('');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Loan ID is missing'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject when no parameter is passed', () => {
       component.reject();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Loan ID is missing'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -553,12 +506,11 @@ describe('ManagerLoanApprovalComponent', () => {
       (component as any).processApproval(123);
 
       expect(component.approvedCount).toBe(before + 1);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'success',
-          title: 'Loan approved'
-        })
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Loan approved',
+        jasmine.stringMatching('removed from the queue')
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should not throw error when called', () => {
@@ -578,12 +530,11 @@ describe('ManagerLoanApprovalComponent', () => {
       (component as any).processRejection(123, 'Test reason');
 
       expect(component.rejectedCount).toBe(before + 1);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'success',
-          title: 'Loan rejected'
-        })
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Loan rejected',
+        jasmine.stringMatching('has been rejected')
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should not throw error when called', () => {
@@ -598,6 +549,32 @@ describe('ManagerLoanApprovalComponent', () => {
     it('should accept any reason string', () => {
       expect(() => (component as any).processRejection(123, 'Short')).not.toThrow();
       expect(() => (component as any).processRejection(123, 'Very long rejection reason with multiple sentences')).not.toThrow();
+    });
+  });
+
+  describe('blocking vs non-blocking feedback', () => {
+    it('still asks the manager to confirm before approving', () => {
+      component.approve('LN-1001');
+
+      // Approving a loan is irreversible, so this one stays modal.
+      expect(Swal.fire).toHaveBeenCalledWith(
+        jasmine.objectContaining({ title: 'Approve Loan' })
+      );
+    });
+
+    it('still asks the manager to confirm, with a reason, before rejecting', () => {
+      component.reject('LN-1001');
+
+      expect(Swal.fire).toHaveBeenCalledWith(
+        jasmine.objectContaining({ title: 'Reject Loan', input: 'textarea' })
+      );
+    });
+
+    it('does not block on a missing loan id', () => {
+      component.approve(undefined);
+
+      expect(toastService.error).toHaveBeenCalledWith('Cannot proceed', 'Loan ID is missing.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 

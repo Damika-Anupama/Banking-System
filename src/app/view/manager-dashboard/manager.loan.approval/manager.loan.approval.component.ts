@@ -3,6 +3,7 @@ import { LoanApprovalService } from 'src/app/service/manager/loan.approval.servi
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { demoStore } from 'src/app/shared/demo-store';
+import { ToastService } from 'src/app/service/toast.service';
 
 @Component({
   selector: 'app-manager.loan.approval',
@@ -19,7 +20,10 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private loanService: LoanApprovalService) { }
+  constructor(
+    private loanService: LoanApprovalService,
+    private toastService: ToastService
+  ) { }
 
   get decidedCount(): number {
     return this.approvedCount + this.rejectedCount;
@@ -72,11 +76,7 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
           if (!data) {
             this.errorMessage = 'No data received from server';
             this.isLoading = false;
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: this.errorMessage
-            });
+            this.toastService.error('Could not load loans', this.errorMessage);
             return;
           }
 
@@ -85,34 +85,17 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
             this.errorMessage = 'Invalid data format received';
             this.loans = [];
             this.isLoading = false;
-            Swal.fire({
-              icon: 'warning',
-              title: 'Warning',
-              text: 'No loan data available'
-            });
+            this.toastService.warning('No loan data', 'No loan data available.');
             return;
           }
 
           this.loans = data.data;
           this.isLoading = false;
-
-          // Show message if no loans found
-          if (this.loans && this.loans.length === 0) {
-            Swal.fire({
-              icon: 'info',
-              title: 'No Pending Loans',
-              text: 'There are no pending loan approvals at this time'
-            });
-          }
         } catch (error) {
           console.error('Error processing loan data:', error);
           this.errorMessage = 'Failed to process loan data';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not load loans', this.errorMessage);
         }
       },
       error: (err) => {
@@ -120,11 +103,7 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
         this.errorMessage = err?.error?.message || err?.message || 'Failed to load unapproved loans';
         this.isLoading = false;
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not load loans', this.errorMessage);
       }
     });
 
@@ -186,11 +165,7 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
   approve(loanId?: any): void {
     // Null/undefined check for loanId
     if (!loanId) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Loan ID is missing'
-      });
+      this.toastService.error('Cannot proceed', 'Loan ID is missing.');
       return;
     }
 
@@ -216,22 +191,17 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
     demoStore.removeLoanApplication(loanId);
     this.removeFromList(loanId);
     this.approvedCount++;
-    Swal.fire({
-      icon: 'success',
-      title: 'Loan approved',
-      html: `Loan <strong>${loanId}</strong> has been approved and removed from the queue.`,
-      confirmButtonText: 'Done'
-    });
+    // The row leaving the queue is the real feedback; the toast just names it.
+    this.toastService.success(
+      'Loan approved',
+      `Loan ${loanId} has been approved and removed from the queue.`
+    );
   }
 
   reject(loanId?: any): void {
     // Null/undefined check for loanId
     if (!loanId) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Loan ID is missing'
-      });
+      this.toastService.error('Cannot proceed', 'Loan ID is missing.');
       return;
     }
 
@@ -266,12 +236,7 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
     demoStore.removeLoanApplication(loanId);
     this.removeFromList(loanId);
     this.rejectedCount++;
-    Swal.fire({
-      icon: 'success',
-      title: 'Loan rejected',
-      html: `Loan <strong>${loanId}</strong> has been rejected.<br><span class="text-sm">Reason: ${reason}</span>`,
-      confirmButtonText: 'Done'
-    });
+    this.toastService.success('Loan rejected', `Loan ${loanId} has been rejected. Reason: ${reason}`);
   }
 
   ngOnDestroy(): void {
