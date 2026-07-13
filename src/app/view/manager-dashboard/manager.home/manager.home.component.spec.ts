@@ -12,8 +12,10 @@ import { ManagerHomeComponent } from './manager.home.component';
 import { ManagerHomeService } from 'src/app/service/manager/manager.home.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('ManagerHomeComponent', () => {
+  let toastService: ToastService;
   let component: ManagerHomeComponent;
   let fixture: ComponentFixture<ManagerHomeComponent>;
   let mockManagerHomeService: jasmine.SpyObj<ManagerHomeService>;
@@ -39,6 +41,12 @@ describe('ManagerHomeComponent', () => {
     component = fixture.componentInstance;
 
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: true }));
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
+    spyOn(toastService, 'warning');
+    spyOn(toastService, 'info');
     spyOn(console, 'error');
     spyOn(console, 'warn');
   });
@@ -201,13 +209,8 @@ describe('ManagerHomeComponent', () => {
 
       expect(component.errorMessage).toBe('No data received from server');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'No data received from server'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load dashboard', 'No data received from server');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle undefined response', () => {
@@ -225,13 +228,8 @@ describe('ManagerHomeComponent', () => {
       component.loadDashboardData();
 
       expect(component.errorMessage).toBe('No data received from server');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'No data received from server'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load dashboard', 'No data received from server');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle empty data array', () => {
@@ -241,13 +239,8 @@ describe('ManagerHomeComponent', () => {
 
       expect(component.errorMessage).toBe('Invalid user data format');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Invalid user data format'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load dashboard', 'Invalid user data format');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle data property that is not an array', () => {
@@ -271,13 +264,8 @@ describe('ManagerHomeComponent', () => {
       component.loadDashboardData();
 
       expect(component.errorMessage).toBe('Missing required user information');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Missing required user information'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load dashboard', 'Missing required user information');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle missing branch_id', () => {
@@ -305,13 +293,8 @@ describe('ManagerHomeComponent', () => {
 
       expect(component.errorMessage).toBe('Server error');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Server error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load dashboard', 'Server error');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error without nested message', () => {
@@ -365,13 +348,8 @@ describe('ManagerHomeComponent', () => {
       expect(console.error).toHaveBeenCalledWith('Error processing dashboard data:', jasmine.any(Error));
       expect(component.errorMessage).toBe('Failed to process dashboard data');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to process dashboard data'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load dashboard', 'Failed to process dashboard data');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 

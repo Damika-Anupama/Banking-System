@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { loanPackage } from 'src/app/model/LoanPackage';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { demoStore } from 'src/app/shared/demo-store';
 import { createDemoLoanApplication } from 'src/app/shared/demo-banking-fixtures';
 
@@ -27,7 +28,7 @@ export class EmployeeCreateLoanComponent implements OnInit {
   purpose = '';
   isProcessing = false;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private toastService: ToastService) { }
 
   ngOnInit(): void {
     this.customers = demoStore.getCustomers();
@@ -61,7 +62,10 @@ export class EmployeeCreateLoanComponent implements OnInit {
 
   async proceed(): Promise<void> {
     if (!this.isValid) {
-      Swal.fire({ icon: 'error', title: 'Validation error', text: 'Select a customer, amount, payment plan, and loan type.' });
+      this.toastService.error(
+        'Check the loan details',
+        'Select a customer, amount, payment plan, and loan type.'
+      );
       return;
     }
 

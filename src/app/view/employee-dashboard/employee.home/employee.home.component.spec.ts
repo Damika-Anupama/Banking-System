@@ -12,8 +12,10 @@ import { EmployeeHomeComponent } from './employee.home.component';
 import { EmployeeHomeService } from 'src/app/service/employee/employee.home.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('EmployeeHomeComponent', () => {
+  let toastService: ToastService;
   let component: EmployeeHomeComponent;
   let fixture: ComponentFixture<EmployeeHomeComponent>;
   let mockEmployeeHomeService: jasmine.SpyObj<EmployeeHomeService>;
@@ -36,6 +38,12 @@ describe('EmployeeHomeComponent', () => {
 
     // Spy on Swal
     spyOn(Swal, 'fire');
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
+    spyOn(toastService, 'warning');
+    spyOn(toastService, 'info');
   });
 
   afterEach(() => {
@@ -93,13 +101,9 @@ describe('EmployeeHomeComponent', () => {
 
       expect(component.customers).toEqual([]);
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'info',
-          title: 'No Customers',
-          text: 'No customers found in the system'
-        })
-      );
+      // The table already renders the empty state inline; a popup repeating it is noise.
+      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(toastService.info).not.toHaveBeenCalled();
     });
 
     it('should set isLoading to true when loading starts', () => {
@@ -146,13 +150,8 @@ describe('EmployeeHomeComponent', () => {
 
       expect(component.errorMessage).toBe('No data received from server');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'No data received from server'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load customers', 'No data received from server');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle undefined response data', () => {
@@ -162,13 +161,8 @@ describe('EmployeeHomeComponent', () => {
 
       expect(component.errorMessage).toBe('No data received from server');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'No data received from server'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load customers', 'No data received from server');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle missing data property', () => {
@@ -179,13 +173,8 @@ describe('EmployeeHomeComponent', () => {
       expect(component.errorMessage).toBe('Invalid data format received');
       expect(component.customers).toEqual([]);
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'Warning',
-          text: 'No customer data available'
-        })
-      );
+      expect(toastService.warning).toHaveBeenCalledWith('No customer data', 'No customer data available.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle null data property', () => {
@@ -206,13 +195,8 @@ describe('EmployeeHomeComponent', () => {
       expect(component.errorMessage).toBe('Invalid data format received');
       expect(component.customers).toEqual([]);
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'warning',
-          title: 'Warning',
-          text: 'No customer data available'
-        })
-      );
+      expect(toastService.warning).toHaveBeenCalledWith('No customer data', 'No customer data available.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle data property as object instead of array', () => {
@@ -238,13 +222,8 @@ describe('EmployeeHomeComponent', () => {
 
       expect(component.errorMessage).toBe('Unauthorized access');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Unauthorized access'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load customers', 'Unauthorized access');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error without error.message', () => {
@@ -372,13 +351,8 @@ describe('EmployeeHomeComponent', () => {
       expect(console.error).toHaveBeenCalledWith('Error processing customer data:', jasmine.any(Error));
       expect(component.errorMessage).toBe('Failed to process customer data');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to process customer data'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load customers', 'Failed to process customer data');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should catch TypeError when accessing nested properties', () => {
@@ -426,13 +400,8 @@ describe('EmployeeHomeComponent', () => {
       expect(console.error).toHaveBeenCalledWith('Error processing customer data:', jasmine.any(Error));
       expect(component.errorMessage).toBe('Failed to process customer data');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to process customer data'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Could not load customers', 'Failed to process customer data');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 

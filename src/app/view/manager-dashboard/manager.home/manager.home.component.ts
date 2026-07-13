@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ManagerHomeService } from 'src/app/service/manager/manager.home.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { demoStore } from 'src/app/shared/demo-store';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
@@ -137,7 +138,7 @@ export class ManagerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return Math.round((this.approvedLoanCount / decided) * 100);
   }
 
-  constructor(private managerService: ManagerHomeService) {}
+  constructor(private managerService: ManagerHomeService, private toastService: ToastService) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -154,11 +155,7 @@ export class ManagerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
           if (!response || !response['data']) {
             this.errorMessage = 'No data received from server';
             this.isLoading = false;
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: this.errorMessage
-            });
+            this.toastService.error('Could not load dashboard', this.errorMessage);
             return;
           }
 
@@ -168,11 +165,7 @@ export class ManagerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
           if (!Array.isArray(user) || user.length === 0) {
             this.errorMessage = 'Invalid user data format';
             this.isLoading = false;
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: this.errorMessage
-            });
+            this.toastService.error('Could not load dashboard', this.errorMessage);
             return;
           }
 
@@ -180,11 +173,7 @@ export class ManagerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
           if (!user[0] || !user[0]['user_id'] || !user[0]['branch_id']) {
             this.errorMessage = 'Missing required user information';
             this.isLoading = false;
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: this.errorMessage
-            });
+            this.toastService.error('Could not load dashboard', this.errorMessage);
             return;
           }
 
@@ -207,11 +196,7 @@ export class ManagerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
           console.error('Error processing dashboard data:', error);
           this.errorMessage = 'Failed to process dashboard data';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not load dashboard', this.errorMessage);
         }
       },
       error: (err) => {
@@ -219,11 +204,7 @@ export class ManagerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.errorMessage = err?.error?.message || err?.message || 'Failed to load dashboard data';
         this.isLoading = false;
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not load dashboard', this.errorMessage);
       }
     });
 

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 interface Announcement {
   id: string;
@@ -18,6 +19,8 @@ interface Announcement {
   styleUrls: ['./manager.announcements.component.scss']
 })
 export class ManagerAnnouncementsComponent {
+  constructor(private toastService: ToastService) {}
+
   // New announcement form
   title = '';
   message = '';
@@ -56,7 +59,7 @@ export class ManagerAnnouncementsComponent {
 
   post(): void {
     if (!this.isValid) {
-      Swal.fire({ icon: 'info', title: 'Missing details', text: 'Add a title and message.' });
+      this.toastService.info('Missing details', 'Add a title and message.');
       return;
     }
     this.isPosting = true;
@@ -76,7 +79,7 @@ export class ManagerAnnouncementsComponent {
       this.audience = 'All staff';
       this.priority = 'Normal';
       this.isPosting = false;
-      Swal.fire({ icon: 'success', title: 'Announcement posted', timer: 1400, showConfirmButton: false });
+      this.toastService.success('Announcement posted');
     }, 500);
   }
 
@@ -96,7 +99,7 @@ export class ManagerAnnouncementsComponent {
     }).then(result => {
       if (!result.isConfirmed) return;
       this.announcements = this.announcements.filter(a => a.id !== item.id);
-      Swal.fire({ icon: 'success', title: 'Deleted', timer: 1100, showConfirmButton: false });
+      this.toastService.success('Announcement deleted');
     });
   }
 }

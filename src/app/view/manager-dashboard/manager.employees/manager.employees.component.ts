@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { DEMO_EMPLOYEES } from 'src/app/shared/demo-banking-fixtures';
 import { demoStore } from 'src/app/shared/demo-store';
 import { Chart, registerables } from 'chart.js';
@@ -31,7 +32,7 @@ export class ManagerEmployeesComponent implements AfterViewInit, OnDestroy {
 
   readonly roles = ['Teller', 'Customer Service Officer', 'Loan Officer', 'Operations Officer'];
 
-  constructor() {
+  constructor(private toastService: ToastService) {
     this.load();
   }
 
@@ -162,12 +163,10 @@ export class ManagerEmployeesComponent implements AfterViewInit, OnDestroy {
     }).then(result => {
       if (!result.isConfirmed) return;
       employee.status = turningOff ? 'Inactive' : 'Active';
-      Swal.fire({
-        icon: 'success',
-        title: turningOff ? 'Employee deactivated' : 'Employee reactivated',
-        timer: 1400,
-        showConfirmButton: false
-      });
+      this.toastService.success(
+        turningOff ? 'Employee deactivated' : 'Employee reactivated',
+        `${employee.fullname} (${employee.employee_id})`
+      );
     });
   }
 

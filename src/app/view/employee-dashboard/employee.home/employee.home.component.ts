@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { EmployeeHomeService } from 'src/app/service/employee/employee.home.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 @Component({
   selector: 'app-employee.home',
@@ -96,7 +97,7 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
     return customer?.fullname ? String(customer.fullname).split(' ')[0] : '—';
   }
 
-  constructor(private home: EmployeeHomeService) { }
+  constructor(private home: EmployeeHomeService, private toastService: ToastService) { }
 
   ngOnInit(): void {
     this.loadCustomers();
@@ -113,11 +114,7 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
           if (!data) {
             this.errorMessage = 'No data received from server';
             this.isLoading = false;
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: this.errorMessage
-            });
+            this.toastService.error('Could not load customers', this.errorMessage);
             return;
           }
 
@@ -126,34 +123,18 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
             this.errorMessage = 'Invalid data format received';
             this.customers = [];
             this.isLoading = false;
-            Swal.fire({
-              icon: 'warning',
-              title: 'Warning',
-              text: 'No customer data available'
-            });
+            this.toastService.warning('No customer data', 'No customer data available.');
             return;
           }
 
           this.customers = data.data;
           this.isLoading = false;
 
-          // Show message if no customers found
-          if (this.customers && this.customers.length === 0) {
-            Swal.fire({
-              icon: 'info',
-              title: 'No Customers',
-              text: 'No customers found in the system'
-            });
-          }
         } catch (error) {
           console.error('Error processing customer data:', error);
           this.errorMessage = 'Failed to process customer data';
           this.isLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: this.errorMessage
-          });
+          this.toastService.error('Could not load customers', this.errorMessage);
         }
       },
       error: (err) => {
@@ -161,11 +142,7 @@ export class EmployeeHomeComponent implements OnInit, OnDestroy {
         this.errorMessage = err?.error?.message || err?.message || 'Failed to load customers';
         this.isLoading = false;
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: this.errorMessage
-        });
+        this.toastService.error('Could not load customers', this.errorMessage);
       }
     });
 
