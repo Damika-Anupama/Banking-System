@@ -121,13 +121,20 @@
               <div class="flex gap-2">
                 <div class="relative flex-1 min-w-0">
                   <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
-                  <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492811" [(ngModel)]="to_account" name="to_account" />
+                  <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492811" [(ngModel)]="to_account" name="to_account"
+                    (blur)="markTouched('to_account')"
+                    [class.field-invalid]="errorFor('to_account')"
+                    [attr.aria-invalid]="errorFor('to_account') ? 'true' : null"
+                    [attr.aria-describedby]="errorFor('to_account') ? 'to_account-error' : null" />
                 </div>
                 <button type="button" class="glass-button-secondary shrink-0" [disabled]="!canSaveBeneficiary" [class.opacity-50]="!canSaveBeneficiary" (click)="saveBeneficiary()" title="Save as beneficiary">
                   <i class="fas fa-bookmark"></i>
                 </button>
               </div>
-              <p class="mt-2 text-xs" [ngClass]="beneficiaryRiskLabel === 'Format verified' ? 'text-emerald-200' : 'text-amber-200'">{{ beneficiaryRiskLabel }}</p>
+              <p *ngIf="errorFor('to_account')" id="to_account-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('to_account') }}
+              </p>
+              <p *ngIf="!errorFor('to_account')" class="mt-2 text-xs" [ngClass]="beneficiaryRiskLabel === 'Format verified' ? 'text-emerald-200' : 'text-amber-200'">{{ beneficiaryRiskLabel }}</p>
             </div>
 
             <div class="min-w-0">
@@ -147,9 +154,16 @@
               <label class="auth-field-label"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
-                <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" [(ngModel)]="transfer_amount" name="transfer_amount" min="1" />
+                <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" [(ngModel)]="transfer_amount" name="transfer_amount" min="1"
+                  (blur)="markTouched('transfer_amount')"
+                  [class.field-invalid]="errorFor('transfer_amount')"
+                  [attr.aria-invalid]="errorFor('transfer_amount') ? 'true' : null"
+                  [attr.aria-describedby]="errorFor('transfer_amount') ? 'transfer_amount-error' : null" />
               </div>
-              <p class="mt-2 text-xs text-white/50">Available: Rs. {{ availableBalance | number }}</p>
+              <p *ngIf="errorFor('transfer_amount')" id="transfer_amount-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('transfer_amount') }}
+              </p>
+              <p *ngIf="!errorFor('transfer_amount')" class="mt-2 text-xs text-white/50">Available: Rs. {{ availableBalance | number }}</p>
             </div>
 
             <div class="min-w-0">
@@ -171,11 +185,25 @@
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div class="min-w-0">
               <label class="auth-field-label"><i class="fas fa-clipboard-list mr-2"></i>Payment purpose <span class="text-red-300">*</span></label>
-              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="e.g. Supplier invoice INV-1042 for May services" [(ngModel)]="sender_remarks" name="sender_remarks"></textarea>
+              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="e.g. Supplier invoice INV-1042 for May services" [(ngModel)]="sender_remarks" name="sender_remarks"
+                (blur)="markTouched('sender_remarks')"
+                [class.field-invalid]="errorFor('sender_remarks')"
+                [attr.aria-invalid]="errorFor('sender_remarks') ? 'true' : null"
+                [attr.aria-describedby]="errorFor('sender_remarks') ? 'sender_remarks-error' : null"></textarea>
+              <p *ngIf="errorFor('sender_remarks')" id="sender_remarks-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('sender_remarks') }}
+              </p>
             </div>
             <div class="min-w-0">
               <label class="auth-field-label"><i class="fas fa-message mr-2"></i>Beneficiary note <span class="text-red-300">*</span></label>
-              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="Narration shown to beneficiary" [(ngModel)]="beneficiary_remarks" name="beneficiary_remarks"></textarea>
+              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="Narration shown to beneficiary" [(ngModel)]="beneficiary_remarks" name="beneficiary_remarks"
+                (blur)="markTouched('beneficiary_remarks')"
+                [class.field-invalid]="errorFor('beneficiary_remarks')"
+                [attr.aria-invalid]="errorFor('beneficiary_remarks') ? 'true' : null"
+                [attr.aria-describedby]="errorFor('beneficiary_remarks') ? 'beneficiary_remarks-error' : null"></textarea>
+              <p *ngIf="errorFor('beneficiary_remarks')" id="beneficiary_remarks-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('beneficiary_remarks') }}
+              </p>
             </div>
           </div>
         </div>

@@ -379,105 +379,149 @@ describe('TransactionComponent', () => {
       component = fixture.componentInstance;
     });
 
-    it('should reject empty required fields', () => {
-      component.account_id = '';
+    /** A valid form, which each test then breaks in exactly one way. */
+    const fillValidForm = () => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Invoice INV-1042';
+      component.beneficiary_remarks = 'Thanks';
+    };
+
+    it('reports every problem at once rather than one error at a time', () => {
+      component.account_id = 'ACC000001';
       component.to_account = '';
+      component.transfer_amount = '';
+      component.sender_remarks = '';
+      component.beneficiary_remarks = '';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('to_account')).toBe('Enter a beneficiary account number.');
+      expect(component.errorFor('transfer_amount')).toBe('Enter an amount.');
+      expect(component.errorFor('sender_remarks')).toBe('Add a payment purpose.');
+      expect(component.errorFor('beneficiary_remarks')).toBe('Add a note for the beneficiary.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
+    });
+
+    it('points the user at the fields rather than only toasting', () => {
+      fillValidForm();
       component.transfer_amount = '';
 
       component.proceedTransaction();
 
       expect(toastService.error).toHaveBeenCalledWith(
-        'Missing details',
-        'Fill in all required fields (Account, To Account, Amount).'
+        'Check the highlighted fields',
+        'Enter an amount.'
       );
-      expect(Swal.fire).not.toHaveBeenCalled();
-      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
     });
 
-    it('should reject missing account_id', () => {
+    it('rejects a missing source account', () => {
+      fillValidForm();
       component.account_id = '';
-      component.to_account = 'ACC002';
-      component.transfer_amount = '1000';
 
       component.proceedTransaction();
 
       expect(toastService.error).toHaveBeenCalledWith(
-        'Missing details',
-        'Fill in all required fields (Account, To Account, Amount).'
+        'No source account',
+        'Select the account to transfer from.'
       );
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
     });
 
-    it('should reject invalid amount (non-numeric)', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('rejects a non-numeric amount', () => {
+      fillValidForm();
       component.transfer_amount = 'invalid';
 
       component.proceedTransaction();
 
-      expect(toastService.error).toHaveBeenCalledWith(
-        'Invalid amount',
-        'Enter a valid positive amount.'
-      );
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(component.errorFor('transfer_amount')).toBe('Enter a valid positive amount.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
     });
 
-    it('should reject negative amount', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('rejects a negative amount', () => {
+      fillValidForm();
       component.transfer_amount = '-100';
 
       component.proceedTransaction();
 
-      expect(toastService.error).toHaveBeenCalledWith(
-        'Invalid amount',
-        'Enter a valid positive amount.'
-      );
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(component.errorFor('transfer_amount')).toBe('Enter a valid positive amount.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
     });
 
-    it('should reject zero amount', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('rejects a zero amount', () => {
+      fillValidForm();
       component.transfer_amount = '0';
 
       component.proceedTransaction();
 
-      expect(toastService.error).toHaveBeenCalledWith(
-        'Invalid amount',
-        'Enter a valid positive amount.'
-      );
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(component.errorFor('transfer_amount')).toBe('Enter a valid positive amount.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
     });
 
-    it('should reject transfer exceeding balance', () => {
-      component.account_id = 'ACC001';
-      component.to_account = 'ACC002';
+    it('rejects a transfer that exceeds the available balance', () => {
+      fillValidForm();
       component.balance = '500';
       component.transfer_amount = '1000';
 
       component.proceedTransaction();
 
-      expect(toastService.error).toHaveBeenCalledWith(
-        'Insufficient balance',
-        'Transfer amount exceeds available balance.'
-      );
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(component.errorFor('transfer_amount')).toContain('exceeds your available balance');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
     });
 
-    it('should reject transfer to same account', () => {
-      component.account_id = 'ACC000001';
-      component.to_account = 'ACC000001';
-      component.balance = '5000';
-      component.transfer_amount = '1000';
+    it('rejects a transfer above the daily limit', () => {
+      fillValidForm();
+      component.balance = '10000000';
+      component.transfer_amount = String(component.dailyTransferLimit + 1);
 
       component.proceedTransaction();
 
-      expect(toastService.error).toHaveBeenCalledWith(
-        'Invalid transfer',
-        'Cannot transfer to the same account.'
-      );
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(component.errorFor('transfer_amount')).toContain('limited to');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a malformed beneficiary account', () => {
+      fillValidForm();
+      component.to_account = 'not-an-account';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('to_account')).toBe('Use a valid account format, such as ACC-492811.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a transfer to the same account', () => {
+      fillValidForm();
+      component.to_account = 'ACC000001';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('to_account')).toBe('You cannot transfer to the same account.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('hides an error until the user has left the field', () => {
+      component.to_account = '';
+
+      // Untouched: the form must not nag before the user has engaged with it.
+      expect(component.errorFor('to_account')).toBeNull();
+      expect(component.fieldErrors['to_account']).toBe('Enter a beneficiary account number.');
+
+      component.markTouched('to_account');
+      expect(component.errorFor('to_account')).toBe('Enter a beneficiary account number.');
+    });
+
+    it('clears the error once the field is corrected', () => {
+      fillValidForm();
+      component.to_account = '';
+      component.markTouched('to_account');
+      expect(component.errorFor('to_account')).not.toBeNull();
+
+      component.to_account = 'ACC000002';
+      expect(component.errorFor('to_account')).toBeNull();
     });
   });
 
@@ -524,6 +568,8 @@ describe('TransactionComponent', () => {
       component.to_account = 'ACC000002';
       component.balance = '10000';
       component.transfer_amount = '2500';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
 
       const mockResponse = { message: 'Transfer created successfully!' };
       mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
@@ -541,6 +587,8 @@ describe('TransactionComponent', () => {
       component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
 
       const mockResponse = { message: 'Transfer created successfully!' };
       mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
@@ -567,6 +615,8 @@ describe('TransactionComponent', () => {
       component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
 
       const errorResponse = {
         error: { message: 'Insufficient funds' }
@@ -588,6 +638,8 @@ describe('TransactionComponent', () => {
       component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
 
       mockTransactionService.proceedTransaction.and.returnValue(of(null));
       // Force the success handler's post-processing to throw, hitting the catch block.
@@ -818,6 +870,8 @@ describe('TransactionComponent', () => {
       component.to_account = 'ACC000002';
       component.balance = '5000';
       component.transfer_amount = '999.99';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
 
       const mockResponse = { message: 'Transfer created successfully!' };
       mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
@@ -834,6 +888,8 @@ describe('TransactionComponent', () => {
       component.to_account = 'ACC000002';
       component.balance = '1000';
       component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
 
       const mockResponse = { message: 'Transfer created successfully!' };
       mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
@@ -845,7 +901,7 @@ describe('TransactionComponent', () => {
       expect(component.balance).toBe('0');
     }));
 
-    it('should handle optional remarks fields', fakeAsync(() => {
+    it('requires the remarks fields, which the form marks as mandatory', fakeAsync(() => {
       component.account_id = 'ACC000001';
       component.to_account = 'ACC000002';
       component.balance = '5000';
@@ -853,20 +909,12 @@ describe('TransactionComponent', () => {
       component.sender_remarks = '';
       component.beneficiary_remarks = '';
 
-      const mockResponse = { message: 'Transfer created successfully!' };
-      mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
-      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
-
       component.proceedTransaction();
       tick();
 
-      expect(mockTransactionService.proceedTransaction).toHaveBeenCalledWith(
-        'ACC000001',
-        'ACC000002',
-        '1000',
-        '',
-        ''
-      );
+      expect(component.errorFor('sender_remarks')).toBe('Add a payment purpose.');
+      expect(component.errorFor('beneficiary_remarks')).toBe('Add a note for the beneficiary.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
     }));
   });
 });

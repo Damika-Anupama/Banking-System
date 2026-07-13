@@ -66,6 +66,78 @@ export class TransactionComponent implements OnInit, OnDestroy {
   ];
   private subscriptions: Subscription[] = [];
 
+  /** Fields the user has interacted with, so errors appear on blur, not while typing. */
+  touched: Record<string, boolean> = {};
+
+  private readonly validatedFields = [
+    'to_account',
+    'transfer_amount',
+    'sender_remarks',
+    'beneficiary_remarks',
+  ];
+
+  /**
+   * The single source of truth for transfer validity: the form, the step gates
+   * and proceedTransaction() all read these, so a rule cannot be enforced in one
+   * place and forgotten in another.
+   */
+  get fieldErrors(): Record<string, string | null> {
+    const to = this.to_account.trim().toUpperCase();
+    const from = (this.account_id || '').trim().toUpperCase();
+    const amount = Number(this.transfer_amount);
+
+    return {
+      to_account: !to
+        ? 'Enter a beneficiary account number.'
+        : !/^ACC-?\d{6,}$/.test(to)
+          ? 'Use a valid account format, such as ACC-492811.'
+          : to === from
+            ? 'You cannot transfer to the same account.'
+            : null,
+
+      transfer_amount: !this.transfer_amount
+        ? 'Enter an amount.'
+        : !Number.isFinite(amount) || amount <= 0
+          ? 'Enter a valid positive amount.'
+          : amount > Number(this.balance || 0)
+            ? `Amount exceeds your available balance of Rs. ${this.availableBalance.toLocaleString()}.`
+            : amount > this.dailyTransferLimit
+              ? `Single demo transfers are limited to Rs. ${this.dailyTransferLimit.toLocaleString()}.`
+              : null,
+
+      sender_remarks: this.sender_remarks.trim() ? null : 'Add a payment purpose.',
+
+      beneficiary_remarks: this.beneficiary_remarks.trim()
+        ? null
+        : 'Add a note for the beneficiary.',
+    };
+  }
+
+  get hasFieldErrors(): boolean {
+    return this.validatedFields.some((field) => this.fieldErrors[field]);
+  }
+
+  get firstFieldError(): string | null {
+    for (const field of this.validatedFields) {
+      const error = this.fieldErrors[field];
+      if (error) return error;
+    }
+    return null;
+  }
+
+  /** An error is only shown once the user has left the field, to avoid nagging mid-type. */
+  errorFor(field: string): string | null {
+    return this.touched[field] ? this.fieldErrors[field] : null;
+  }
+
+  markTouched(field: string): void {
+    this.touched[field] = true;
+  }
+
+  markAllTouched(): void {
+    this.validatedFields.forEach((field) => (this.touched[field] = true));
+  }
+
   get step1Valid(): boolean {
     const from = (this.account_id || '').toUpperCase();
     const to = this.to_account.trim().toUpperCase();
@@ -81,10 +153,15 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   nextTransferStep(): void {
     if (this.transferStep === 1 && !this.step1Valid) {
+      // Reveal the inline error on the offending field instead of only toasting.
+      this.markTouched('to_account');
       this.toastService.info('Add beneficiary details', 'Choose a source account and a valid (different) beneficiary account.');
       return;
     }
     if (this.transferStep === 2 && !this.step2Valid) {
+      ['transfer_amount', 'sender_remarks', 'beneficiary_remarks'].forEach((field) =>
+        this.markTouched(field)
+      );
       this.toastService.info('Complete the amount step', 'Enter an amount, payment purpose, and beneficiary note.');
       return;
     }
@@ -369,47 +446,23 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   async proceedTransaction() {
-    // Form validation
-    if (!this.account_id || !this.to_account || !this.transfer_amount) {
-      this.toastService.error('Missing details', 'Fill in all required fields (Account, To Account, Amount).');
+    // Surface every problem at once, against the field that caused it, rather
+    // than rejecting the form one error at a time.
+    this.markAllTouched();
+
+    if (this.hasFieldErrors) {
+      this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
       return;
     }
 
-    // Validate amount is a positive number
+    if (!this.account_id) {
+      this.toastService.error('No source account', 'Select the account to transfer from.');
+      return;
+    }
+
     const amount = Number(this.transfer_amount);
-    if (isNaN(amount) || amount <= 0) {
-      this.toastService.error('Invalid amount', 'Enter a valid positive amount.');
-      return;
-    }
-
-    // Check sufficient balance
-    const currentBalance = Number(this.balance);
-    if (amount > currentBalance) {
-      this.toastService.error('Insufficient balance', 'Transfer amount exceeds available balance.');
-      return;
-    }
-
-    if (amount > this.dailyTransferLimit) {
-      this.toastService.error(
-        'Daily limit exceeded',
-        `Single demo transfers are limited to Rs. ${this.dailyTransferLimit.toLocaleString()}.`
-      );
-      return;
-    }
-
-    if (!/^ACC-?\d{6,}$/.test(this.to_account.trim())) {
-      this.toastService.error('Check beneficiary account', 'Use a valid account format such as ACC-492811 before continuing.');
-      return;
-    }
-
     const normalizedToAccount = this.to_account.trim().toUpperCase();
     this.to_account = normalizedToAccount;
-
-    // Check if transferring to same account
-    if (this.account_id === normalizedToAccount) {
-      this.toastService.error('Invalid transfer', 'Cannot transfer to the same account.');
-      return;
-    }
 
     const reference = 'TRX-' + Date.now().toString().slice(-8);
     const confirmation = await Swal.fire({
