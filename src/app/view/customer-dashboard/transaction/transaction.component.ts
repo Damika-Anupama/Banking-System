@@ -212,29 +212,116 @@ export class TransactionComponent implements OnInit, OnDestroy {
     return Boolean(this.account_id && this.to_account && this.transfer_amount && this.sender_remarks && this.beneficiary_remarks && !this.isProcessingTransaction);
   }
 
-  get filteredTransactions(): any[] {
-    const rows = this.transactions || [];
+  /**
+   * Rows tagged with their position in the *unfiltered* ledger.
+   *
+   * A transaction without a server reference falls back to one derived from its
+   * row position. Deriving that from the filtered position meant the same
+   * payment showed a different reference depending on the active search or
+   * filter — and sorting would have shuffled them again. The original index is
+   * captured once here and travels with the row.
+   */
+  get decoratedTransactions(): { row: any; index: number }[] {
+    return (this.transactions || []).map((row, index) => ({ row, index }));
+  }
+
+  /** Filtered + sorted rows, each still carrying its original ledger position. */
+  get filteredDecorated(): { row: any; index: number }[] {
     const query = this.transactionSearchTerm.trim().toLowerCase();
 
-    return rows.filter((transaction, index) => {
-      const direction = this.transactionDirection(transaction);
+    const matched = this.decoratedTransactions.filter(({ row, index }) => {
+      const direction = this.transactionDirection(row);
       const matchesDirection = this.transactionDirectionFilter === 'all'
         || (this.transactionDirectionFilter === 'in' && direction === 'Incoming')
         || (this.transactionDirectionFilter === 'out' && direction === 'Outgoing');
-      const matchesStatus = this.transactionStatusFilter === 'all' || this.transactionAuditState(transaction).toLowerCase().includes(this.transactionStatusFilter);
+      const matchesStatus = this.transactionStatusFilter === 'all' || this.transactionAuditState(row).toLowerCase().includes(this.transactionStatusFilter);
       const searchable = [
-        this.transactionReference(transaction, index),
-        transaction?.type,
-        transaction?.channel,
-        transaction?.sender_remarks,
-        transaction?.beneficiary_remarks,
-        transaction?.amount,
-        transaction?.date,
+        this.transactionReference(row, index),
+        row?.type,
+        row?.channel,
+        row?.sender_remarks,
+        row?.beneficiary_remarks,
+        row?.amount,
+        row?.date,
         direction,
-        this.transactionAuditState(transaction)
+        this.transactionAuditState(row)
       ].join(' ').toLowerCase();
 
       return matchesDirection && matchesStatus && (!query || searchable.includes(query));
+    });
+
+    return this.sortDecorated(matched);
+  }
+
+  get filteredTransactions(): any[] {
+    return this.filteredDecorated.map(({ row }) => row);
+  }
+
+  // ---- Sorting -------------------------------------------------------------
+
+  sortColumn: 'date' | 'amount' | 'type' | 'status' | null = null;
+  sortDirection: 'asc' | 'desc' = 'desc';
+
+  /** Cycles a column through descending, ascending, then unsorted. */
+  toggleSort(column: 'date' | 'amount' | 'type' | 'status'): void {
+    if (this.sortColumn !== column) {
+      this.sortColumn = column;
+      this.sortDirection = 'desc';
+    } else if (this.sortDirection === 'desc') {
+      this.sortDirection = 'asc';
+    } else {
+      this.sortColumn = null;
+    }
+    this.transactionPage = 1;
+  }
+
+  /** Arrow shown on the header. Purely decorative: aria-sort carries the meaning. */
+  sortIconFor(column: string): string {
+    if (this.sortColumn !== column) return 'fa-sort';
+    return this.sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down';
+  }
+
+  trackByEntry(_i: number, entry: { row: any; index: number }): string {
+    return this.transactionReference(entry.row, entry.index);
+  }
+
+  /** The aria-sort value for a column header, so the state is announced. */
+  sortStateFor(column: string): 'ascending' | 'descending' | 'none' {
+    if (this.sortColumn !== column) return 'none';
+    return this.sortDirection === 'asc' ? 'ascending' : 'descending';
+  }
+
+  private sortValue(row: any, column: string): number | string {
+    switch (column) {
+      case 'date':
+        return new Date(row?.date || 0).getTime();
+      case 'amount':
+        return Number(row?.amount || 0);
+      case 'status':
+        return this.transactionAuditState(row).toLowerCase();
+      default:
+        return String(row?.type || '').toLowerCase();
+    }
+  }
+
+  private sortDecorated(
+    rows: { row: any; index: number }[]
+  ): { row: any; index: number }[] {
+    const column = this.sortColumn;
+    if (!column) {
+      return rows;
+    }
+
+    const factor = this.sortDirection === 'asc' ? 1 : -1;
+
+    return [...rows].sort((a, b) => {
+      const left = this.sortValue(a.row, column);
+      const right = this.sortValue(b.row, column);
+      if (left < right) return -1 * factor;
+      if (left > right) return 1 * factor;
+      // Stable tie-break on the original position, so equal rows do not
+      // reshuffle between change-detection passes.
+      return a.index - b.index;
     });
   }
 
@@ -243,10 +330,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
     return Math.max(1, Math.ceil(this.filteredTransactions.length / this.transactionPageSize));
   }
 
-  get paginatedTransactions(): any[] {
+  get paginatedTransactions(): { row: any; index: number }[] {
     const page = Math.min(this.transactionPage, this.totalTransactionPages);
     const start = (page - 1) * this.transactionPageSize;
-    return this.filteredTransactions.slice(start, start + this.transactionPageSize);
+    return this.filteredDecorated.slice(start, start + this.transactionPageSize);
   }
 
   get paginationStart(): number {

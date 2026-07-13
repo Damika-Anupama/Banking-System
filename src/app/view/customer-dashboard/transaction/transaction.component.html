@@ -302,32 +302,52 @@
         <thead>
           <tr>
             <th>Reference</th>
-            <th>Value date</th>
-            <th>Type & narration</th>
+            <th [attr.aria-sort]="sortStateFor('date')">
+              <button type="button" class="th-sort" (click)="toggleSort('date')">
+                Value date
+                <i class="fas" [ngClass]="sortIconFor('date')" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th [attr.aria-sort]="sortStateFor('type')">
+              <button type="button" class="th-sort" (click)="toggleSort('type')">
+                Type &amp; narration
+                <i class="fas" [ngClass]="sortIconFor('type')" aria-hidden="true"></i>
+              </button>
+            </th>
             <th>Direction</th>
-            <th class="text-right">Amount</th>
-            <th>Status</th>
+            <th class="text-right" [attr.aria-sort]="sortStateFor('amount')">
+              <button type="button" class="th-sort th-sort--right" (click)="toggleSort('amount')">
+                Amount
+                <i class="fas" [ngClass]="sortIconFor('amount')" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th [attr.aria-sort]="sortStateFor('status')">
+              <button type="button" class="th-sort" (click)="toggleSort('status')">
+                Status
+                <i class="fas" [ngClass]="sortIconFor('status')" aria-hidden="true"></i>
+              </button>
+            </th>
             <th class="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of paginatedTransactions; index as i; trackBy: trackByTransaction" (click)="showTransactionDetails(transaction, ((transactionPage - 1) * transactionPageSize) + i)" (keydown.enter)="showTransactionDetails(transaction, ((transactionPage - 1) * transactionPageSize) + i)" (keydown.space)="$event.preventDefault(); showTransactionDetails(transaction, ((transactionPage - 1) * transactionPageSize) + i)" tabindex="0" role="button" aria-label="View transaction details" title="View transaction details">
-            <td class="font-mono">{{ transactionReference(transaction, ((transactionPage - 1) * transactionPageSize) + i) }}</td>
-            <td><span class="transaction-date"><i class="far fa-calendar"></i>{{ transaction.date | date: 'MMM d, y' }}</span><small>{{ transaction.date | date: 'h:mm a' }}</small></td>
+          <tr *ngFor="let entry of paginatedTransactions; trackBy: trackByEntry" (click)="showTransactionDetails(entry.row, entry.index)" (keydown.enter)="showTransactionDetails(entry.row, entry.index)" (keydown.space)="$event.preventDefault(); showTransactionDetails(entry.row, entry.index)" tabindex="0" role="button" aria-label="View transaction details" title="View transaction details">
+            <td class="font-mono">{{ transactionReference(entry.row, entry.index) }}</td>
+            <td><span class="transaction-date"><i class="far fa-calendar"></i>{{ entry.row.date | date: 'MMM d, y' }}</span><small>{{ entry.row.date | date: 'h:mm a' }}</small></td>
             <td>
-              <strong>{{ transaction.type }}</strong>
-              <small>{{ transaction.sender_remarks || 'No narration captured' }}</small><small class="transaction-channel">{{ transaction.channel || 'Online banking' }}</small>
+              <strong>{{ entry.row.type }}</strong>
+              <small>{{ entry.row.sender_remarks || 'No narration captured' }}</small><small class="transaction-channel">{{ entry.row.channel || 'Online banking' }}</small>
             </td>
             <td>
-              <span class="glass-badge" [ngClass]="transactionDirection(transaction) === 'Incoming' ? 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80' : 'bg-gradient-to-r from-glass-pink/80 to-glass-orange/80'">
-                <i [ngClass]="transactionDirection(transaction) === 'Incoming' ? 'fas fa-arrow-down' : 'fas fa-arrow-up'"></i>
-                {{ transactionDirection(transaction) }}
+              <span class="glass-badge" [ngClass]="transactionDirection(entry.row) === 'Incoming' ? 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80' : 'bg-gradient-to-r from-glass-pink/80 to-glass-orange/80'">
+                <i [ngClass]="transactionDirection(entry.row) === 'Incoming' ? 'fas fa-arrow-down' : 'fas fa-arrow-up'"></i>
+                {{ transactionDirection(entry.row) }}
               </span>
             </td>
-            <td class="text-right font-bold">Rs. {{ transaction.amount | number }}</td>
-            <td><span class="demo-status-pill demo-status-success">{{ transactionAuditState(transaction) }}</span></td>
+            <td class="text-right font-bold">Rs. {{ entry.row.amount | number }}</td>
+            <td><span class="demo-status-pill demo-status-success">{{ transactionAuditState(entry.row) }}</span></td>
             <td class="text-right">
-              <button type="button" class="glass-button-secondary transaction-action-btn" (click)="downloadReceipt(transaction, ((transactionPage - 1) * transactionPageSize) + i); $event.stopPropagation()"><i class="fas fa-receipt"></i>Receipt</button>
+              <button type="button" class="glass-button-secondary transaction-action-btn" (click)="downloadReceipt(entry.row, entry.index); $event.stopPropagation()"><i class="fas fa-receipt"></i>Receipt</button>
             </td>
           </tr>
         </tbody>

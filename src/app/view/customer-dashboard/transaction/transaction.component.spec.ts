@@ -697,6 +697,125 @@ describe('TransactionComponent', () => {
     }));
   });
 
+  describe('sorting the ledger', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      component.account_id = 'ACC000001';
+      component.transactions = [
+        { type: 'Transfer', amount: 500,  date: '2026-03-01T10:00:00', status: 'up' },
+        { type: 'Deposit',  amount: 9000, date: '2026-01-15T10:00:00', status: 'up' },
+        { type: 'Payment',  amount: 100,  date: '2026-02-20T10:00:00', status: 'up' },
+      ];
+    });
+
+    const amounts = () => component.filteredTransactions.map((t: any) => t.amount);
+
+    it('starts unsorted, preserving the ledger order', () => {
+      expect(component.sortColumn).toBeNull();
+      expect(amounts()).toEqual([500, 9000, 100]);
+    });
+
+    it('sorts by amount, largest first', () => {
+      component.toggleSort('amount');
+
+      expect(component.sortDirection).toBe('desc');
+      expect(amounts()).toEqual([9000, 500, 100]);
+    });
+
+    it('cycles descending, ascending, then back to unsorted', () => {
+      component.toggleSort('amount');
+      expect(amounts()).toEqual([9000, 500, 100]);
+
+      component.toggleSort('amount');
+      expect(component.sortDirection).toBe('asc');
+      expect(amounts()).toEqual([100, 500, 9000]);
+
+      component.toggleSort('amount');
+      expect(component.sortColumn).toBeNull();
+      expect(amounts()).toEqual([500, 9000, 100]);
+    });
+
+    it('sorts by date rather than by its formatted string', () => {
+      component.toggleSort('date');
+      component.toggleSort('date'); // ascending
+
+      expect(component.filteredTransactions.map((t: any) => t.date)).toEqual([
+        '2026-01-15T10:00:00',
+        '2026-02-20T10:00:00',
+        '2026-03-01T10:00:00',
+      ]);
+    });
+
+    it('switching column starts that column descending', () => {
+      component.toggleSort('amount');
+      component.toggleSort('amount'); // amount is now ascending
+
+      component.toggleSort('date');
+
+      expect(component.sortColumn).toBe('date');
+      expect(component.sortDirection).toBe('desc');
+    });
+
+    it('returns to page one when the sort changes', () => {
+      component.transactionPage = 3;
+
+      component.toggleSort('amount');
+
+      // Staying on page 3 of a re-sorted list shows the user rows they did not ask for.
+      expect(component.transactionPage).toBe(1);
+    });
+
+    it('exposes the sort state for assistive tech', () => {
+      expect(component.sortStateFor('amount')).toBe('none');
+
+      component.toggleSort('amount');
+      expect(component.sortStateFor('amount')).toBe('descending');
+      expect(component.sortStateFor('date')).toBe('none');
+
+      component.toggleSort('amount');
+      expect(component.sortStateFor('amount')).toBe('ascending');
+    });
+  });
+
+  describe('transaction reference stability', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      component.account_id = 'ACC000001';
+      component.transactions = [
+        { type: 'Transfer', amount: 500,  date: '2026-03-01T10:00:00', status: 'up' },
+        { type: 'Deposit',  amount: 9000, date: '2026-01-15T10:00:00', status: 'up' },
+        { type: 'Payment',  amount: 100,  date: '2026-02-20T10:00:00', status: 'up' },
+      ];
+    });
+
+    const referenceOfPayment = (): string => {
+      const entry = component.paginatedTransactions.find(
+        (e: any) => e.row.type === 'Payment'
+      )!;
+      return component.transactionReference(entry.row, entry.index);
+    };
+
+    it('keeps a transaction reference stable when the list is filtered', () => {
+      const before = referenceOfPayment();
+
+      component.transactionSearchTerm = 'Payment';
+
+      // A reference derived from the *filtered* position changes the moment the
+      // user searches — the same payment would show a different reference.
+      expect(referenceOfPayment()).toBe(before);
+    });
+
+    it('keeps a transaction reference stable when the list is sorted', () => {
+      const before = referenceOfPayment();
+
+      component.toggleSort('amount');
+
+      expect(referenceOfPayment()).toBe(before);
+    });
+  });
+
   describe('showToast()', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(TransactionComponent);
