@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { ToastService } from './toast.service';
 import {
   ErrorResponse,
   BackendErrorResponse,
@@ -20,7 +21,16 @@ import {
 })
 export class ErrorHandlerService {
 
-  constructor() { }
+  /**
+   * Statuses the ErrorInterceptor already surfaces to the user itself (as a
+   * toast, or as a modal for the session-expired and offline cases). This
+   * service must stay quiet for them or the user sees the same failure twice.
+   */
+  private static readonly INTERCEPTOR_NOTIFIED_STATUSES = new Set([
+    0, 401, 403, 404, 408, 429, 500, 502, 503, 504,
+  ]);
+
+  constructor(private toastService: ToastService) { }
 
   /**
    * Main HTTP error handler
@@ -247,15 +257,13 @@ export class ErrorHandlerService {
    * Show error notification based on status code
    */
   private showErrorNotification(status: number, message: string): void {
-    const userMessage = this.getUserFriendlyMessage(status);
-
-    // Don't show notification for certain status codes that redirect
-    if (status === 401) {
-      // Session expired handled by interceptor redirect
+    // The interceptor already notifies the user for the statuses it handles by
+    // name. Notifying again here stacked a second dialog on top of the first.
+    if (ErrorHandlerService.INTERCEPTOR_NOTIFIED_STATUSES.has(status)) {
       return;
     }
 
-    this.showErrorMessage(userMessage);
+    this.toastService.error('Something went wrong', this.getUserFriendlyMessage(status));
   }
 
   /**

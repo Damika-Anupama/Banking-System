@@ -11,6 +11,7 @@ import { catchError, retry, retryWhen, mergeMap, finalize } from 'rxjs/operators
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { ErrorHandlerService } from '../service/error-handler.service';
+import { ToastService } from '../service/toast.service';
 
 /**
  * Global HTTP Error Interceptor
@@ -36,7 +37,8 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   constructor(
     private router: Router,
-    private errorHandlerService: ErrorHandlerService
+    private errorHandlerService: ErrorHandlerService,
+    private toastService: ToastService
   ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
@@ -229,13 +231,10 @@ export class ErrorInterceptor implements HttpInterceptor {
       status: error.status
     });
 
-    Swal.fire({
-      icon: 'error',
-      title: 'Access Denied',
-      text: 'You do not have permission to perform this action. Please contact your administrator if you believe this is an error.',
-      confirmButtonText: 'OK',
-      confirmButtonColor: '#d33'
-    });
+    this.toastService.error(
+      'Access denied',
+      'You do not have permission to perform this action. Contact your administrator if you believe this is an error.'
+    );
   }
 
   /**
@@ -247,13 +246,10 @@ export class ErrorInterceptor implements HttpInterceptor {
       status: error.status
     });
 
-    Swal.fire({
-      icon: 'error',
-      title: 'Resource Not Found',
-      text: 'The requested resource could not be found. It may have been moved or deleted.',
-      confirmButtonText: 'OK',
-      confirmButtonColor: '#d33'
-    });
+    this.toastService.error(
+      'Not found',
+      'The requested resource could not be found. It may have been moved or deleted.'
+    );
   }
 
   /**
@@ -265,19 +261,12 @@ export class ErrorInterceptor implements HttpInterceptor {
       status: error.status
     });
 
-    Swal.fire({
-      icon: 'warning',
-      title: 'Request Timeout',
-      text: 'The request took too long to complete. Please try again.',
-      confirmButtonText: 'Retry',
-      confirmButtonColor: '#3085d6',
-      showCancelButton: true,
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.reload();
-      }
-    });
+    // Already retried with backoff by the time we get here, so there is nothing
+    // for the user to confirm — just tell them it did not land.
+    this.toastService.warning(
+      'Request timed out',
+      'The request took too long to complete. Please try again.'
+    );
   }
 
   /**
@@ -289,15 +278,10 @@ export class ErrorInterceptor implements HttpInterceptor {
       status: error.status
     });
 
-    Swal.fire({
-      icon: 'warning',
-      title: 'Too Many Requests',
-      text: 'You have made too many requests. Please wait a moment and try again.',
-      confirmButtonText: 'OK',
-      confirmButtonColor: '#f39c12',
-      timer: 5000,
-      timerProgressBar: true
-    });
+    this.toastService.warning(
+      'Too many requests',
+      'You have made too many requests. Please wait a moment and try again.'
+    );
   }
 
   /**
@@ -311,14 +295,10 @@ export class ErrorInterceptor implements HttpInterceptor {
       error: error.error
     });
 
-    Swal.fire({
-      icon: 'error',
-      title: 'Server Error',
-      text: 'An internal server error occurred. Our team has been notified. Please try again later.',
-      confirmButtonText: 'OK',
-      confirmButtonColor: '#d33',
-      footer: `<small>Error Code: ${error.status}</small>`
-    });
+    this.toastService.error(
+      'Server error',
+      `An internal server error occurred (${error.status}). Our team has been notified. Please try again later.`
+    );
   }
 
   /**

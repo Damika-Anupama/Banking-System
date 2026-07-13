@@ -10,9 +10,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandlerService } from './error-handler.service';
 import { ErrorSeverity, ErrorType } from '../model/error-response.model';
 import Swal from 'sweetalert2';
+import { ToastService } from './toast.service';
 
 describe('ErrorHandlerService', () => {
   let service: ErrorHandlerService;
+  let toastService: ToastService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -20,9 +22,11 @@ describe('ErrorHandlerService', () => {
     });
 
     service = TestBed.inject(ErrorHandlerService);
+    toastService = TestBed.inject(ToastService);
 
     // Spy on Swal to prevent actual alerts during tests
     spyOn(Swal, 'fire');
+    spyOn(toastService, 'error');
   });
 
   describe('Service Creation', () => {
@@ -85,12 +89,9 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(403);
       expect(result.message).toBe('Forbidden');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          icon: 'error',
-          text: 'You do not have permission to perform this action.'
-        })
-      );
+      // The interceptor owns the 403 notification; notifying here too would double it.
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 404 Not Found error', () => {
@@ -107,7 +108,8 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(404);
       expect(result.message).toBe('Resource not found');
-      expect(Swal.fire).toHaveBeenCalled();
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 408 Request Timeout error', () => {
@@ -120,11 +122,8 @@ describe('ErrorHandlerService', () => {
       const result = service.handleHttpError(httpError);
 
       expect(result.status).toBe(408);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          text: 'The request took too long. Please try again.'
-        })
-      );
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 409 Conflict error', () => {
@@ -138,11 +137,12 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(409);
       expect(result.message).toBe('Email already exists');
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          text: 'There was a conflict with the current state. Please refresh and try again.'
-        })
+      // 409 is not handled by name in the interceptor, so this service surfaces it.
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Something went wrong',
+        'There was a conflict with the current state. Please refresh and try again.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 422 Unprocessable Entity error', () => {
@@ -155,11 +155,11 @@ describe('ErrorHandlerService', () => {
       const result = service.handleHttpError(httpError);
 
       expect(result.status).toBe(422);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          text: 'The data provided could not be processed. Please check your input.'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Something went wrong',
+        'The data provided could not be processed. Please check your input.'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 429 Too Many Requests error', () => {
@@ -172,11 +172,8 @@ describe('ErrorHandlerService', () => {
       const result = service.handleHttpError(httpError);
 
       expect(result.status).toBe(429);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          text: 'Too many requests. Please wait a moment and try again.'
-        })
-      );
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 500 Internal Server Error', () => {
@@ -192,7 +189,8 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(500);
       expect(result.message).toBe('Internal server error');
-      expect(Swal.fire).toHaveBeenCalled();
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 502 Bad Gateway error', () => {
@@ -205,11 +203,8 @@ describe('ErrorHandlerService', () => {
       const result = service.handleHttpError(httpError);
 
       expect(result.status).toBe(502);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          text: 'Bad gateway. The server is temporarily unavailable.'
-        })
-      );
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 503 Service Unavailable error', () => {
@@ -222,11 +217,8 @@ describe('ErrorHandlerService', () => {
       const result = service.handleHttpError(httpError);
 
       expect(result.status).toBe(503);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          text: 'The service is temporarily unavailable. Please try again later.'
-        })
-      );
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 504 Gateway Timeout error', () => {
@@ -239,11 +231,8 @@ describe('ErrorHandlerService', () => {
       const result = service.handleHttpError(httpError);
 
       expect(result.status).toBe(504);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          text: 'Gateway timeout. The server took too long to respond.'
-        })
-      );
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle network error (status 0)', () => {
@@ -258,11 +247,9 @@ describe('ErrorHandlerService', () => {
       const result = service.handleHttpError(httpError);
 
       expect(result.status).toBe(0);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          text: 'Unable to connect to the server. Please check your internet connection.'
-        })
-      );
+      // Interceptor shows the blocking offline modal; this service stays quiet.
+      expect(toastService.error).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error with string error body', () => {
