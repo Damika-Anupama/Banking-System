@@ -261,11 +261,13 @@
       <div class="transaction-summary-chip"><span>Outgoing</span><strong>Rs. {{ totalOutgoing | number }}</strong></div>
     </div>
 
-    <div *ngIf="isLoadingTransactions" class="demo-state-card mt-5">
-      <i class="fas fa-circle-notch fa-spin"></i>
-      <h3>Loading transaction ledger</h3>
-      <p>Fetching posted activity for {{ maskedAccountNumber }}.</p>
-    </div>
+    <app-skeleton-table
+      *ngIf="isLoadingTransactions"
+      class="mt-5 block"
+      [columns]="transactionSkeletonColumns"
+      [rows]="transactionPageSize"
+      label="Loading transaction ledger"
+    ></app-skeleton-table>
 
     <div *ngIf="!isLoadingTransactions" class="demo-table-shell mt-5 overflow-x-auto">
       <table class="transaction-history-table w-full">

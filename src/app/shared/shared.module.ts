@@ -8,6 +8,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 // Shared Components
 import { UnifiedDashboardComponent } from './components/unified-dashboard/unified-dashboard.component';
+import { SkeletonTableComponent } from './components/skeleton-table/skeleton-table.component';
 
 // Shared Pipes
 import { FilterPipe } from '../pipes/filter.pipe';
@@ -29,6 +30,7 @@ import { FilterPipe } from '../pipes/filter.pipe';
   declarations: [
     // Shared Components
     UnifiedDashboardComponent,
+    SkeletonTableComponent,
     // Shared Pipes
     FilterPipe
   ],
@@ -51,6 +53,7 @@ import { FilterPipe } from '../pipes/filter.pipe';
     FontAwesomeModule,
     // Export shared components
     UnifiedDashboardComponent,
+    SkeletonTableComponent,
     // Export shared pipes
     FilterPipe
   ]

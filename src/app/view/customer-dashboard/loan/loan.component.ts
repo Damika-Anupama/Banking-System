@@ -31,6 +31,9 @@ export class LoanComponent implements OnInit, OnDestroy {
 
   isLoadingFDs = false;
   isLoadingLoans = false;
+
+  /** Mirrors the loan table's headers so the skeleton holds the same layout. */
+  readonly loanSkeletonColumns = ['Loan', 'Status', 'Outstanding', 'Next due', 'Actions'];
   isProcessingLoan = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];

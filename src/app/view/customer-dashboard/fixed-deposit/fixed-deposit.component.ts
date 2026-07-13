@@ -31,6 +31,9 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
 
   isLoadingSavingAccounts = false;
   isLoadingFDs = false;
+
+  /** Mirrors the fixed deposit table's headers so the skeleton holds the same layout. */
+  readonly fdSkeletonColumns = ['Deposit', 'Duration', 'Maturity', 'Status', 'Actions'];
   isCreatingFD = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];

@@ -26,11 +26,13 @@
   <a routerLink="/dashboard/fixed-deposit" class="glass-button-secondary mt-4 w-fit mx-auto"><i class="fas fa-vault mr-2"></i>Open a fixed deposit</a>
 </div>
 
-<div *ngIf="isLoadingFDs || isLoadingLoans" class="demo-state-card mb-6">
-  <i class="fas fa-circle-notch fa-spin"></i>
-  <h3>Loading loan workspace</h3>
-  <p>Checking collateral fixed deposits and loan history.</p>
-</div>
+<app-skeleton-table
+  *ngIf="isLoadingFDs || isLoadingLoans"
+  class="mb-6 block"
+  [columns]="loanSkeletonColumns"
+  [rows]="4"
+  label="Loading loan workspace"
+></app-skeleton-table>
 <div *ngIf="errorMessage && !isLoadingFDs" class="demo-state-card mb-6">
   <i class="fas fa-triangle-exclamation"></i>
   <h3>Loans unavailable</h3>
@@ -197,7 +199,7 @@
   </div>
 
   <!-- Table -->
-  <div>
+  <div *ngIf="!isLoadingLoans">
     <table class="w-full table-fixed">
       <thead>
         <tr>

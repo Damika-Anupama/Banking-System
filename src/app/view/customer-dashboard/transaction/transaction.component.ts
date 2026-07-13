@@ -45,6 +45,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
   transactionStatusFilter: 'all' | 'posted' | 'review' = 'all';
   transactionPage = 1;
   transactionPageSize = 6;
+
+  /** Mirrors the transaction table's headers so the skeleton holds the same layout. */
+  readonly transactionSkeletonColumns = [
+    'Reference',
+    'Value date',
+    'Type & narration',
+    'Direction',
+    'Amount',
+    'Status',
+    'Actions',
+  ];
   readonly transactionPageSizes = [6, 10, 15];
   readonly paymentCategories = ['Supplier / invoice', 'Rent / lease', 'Family support', 'Utilities', 'Tax / government', 'Other'];
   transferStep = 1;
