@@ -33,8 +33,15 @@
           placeholder="Enter full name"
           [(ngModel)]="fullname"
           name="fullname"
+          (blur)="markTouched('fullname')"
+          [class.field-invalid]="errorFor('fullname')"
+          [attr.aria-invalid]="errorFor('fullname') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('fullname') ? 'fullname-error' : null"
         />
       </div>
+      <p *ngIf="errorFor('fullname')" id="fullname-error" role="alert" class="field-error">
+        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('fullname') }}
+      </p>
     </div>
 
     <!-- Username -->
@@ -50,8 +57,15 @@
           placeholder="Enter username"
           [(ngModel)]="username"
           name="username"
+          (blur)="markTouched('username')"
+          [class.field-invalid]="errorFor('username')"
+          [attr.aria-invalid]="errorFor('username') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('username') ? 'username-error' : null"
         />
       </div>
+      <p *ngIf="errorFor('username')" id="username-error" role="alert" class="field-error">
+        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('username') }}
+      </p>
     </div>
 
     <!-- Password -->
@@ -67,8 +81,15 @@
           placeholder="Enter password"
           [(ngModel)]="password"
           name="password"
+          (blur)="markTouched('password')"
+          [class.field-invalid]="errorFor('password')"
+          [attr.aria-invalid]="errorFor('password') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('password') ? 'password-error' : null"
         />
       </div>
+      <p *ngIf="errorFor('password')" id="password-error" role="alert" class="field-error">
+        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('password') }}
+      </p>
     </div>
 
     <!-- User Type (Disabled) -->
@@ -100,8 +121,15 @@
           placeholder="Enter email address"
           [(ngModel)]="email"
           name="email"
+          (blur)="markTouched('email')"
+          [class.field-invalid]="errorFor('email')"
+          [attr.aria-invalid]="errorFor('email') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('email') ? 'email-error' : null"
         />
       </div>
+      <p *ngIf="errorFor('email')" id="email-error" role="alert" class="field-error">
+        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('email') }}
+      </p>
     </div>
 
     <!-- Address -->
@@ -117,8 +145,15 @@
           placeholder="Enter address"
           [(ngModel)]="address"
           name="address"
+          (blur)="markTouched('address')"
+          [class.field-invalid]="errorFor('address')"
+          [attr.aria-invalid]="errorFor('address') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('address') ? 'address-error' : null"
         ></textarea>
       </div>
+      <p *ngIf="errorFor('address')" id="address-error" role="alert" class="field-error">
+        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('address') }}
+      </p>
     </div>
 
     <!-- Contact Number -->
@@ -134,8 +169,15 @@
           placeholder="Enter contact number"
           [(ngModel)]="contact_no"
           name="contact_no"
+          (blur)="markTouched('contact_no')"
+          [class.field-invalid]="errorFor('contact_no')"
+          [attr.aria-invalid]="errorFor('contact_no') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('contact_no') ? 'contact_no-error' : null"
         />
       </div>
+      <p *ngIf="errorFor('contact_no')" id="contact_no-error" role="alert" class="field-error">
+        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('contact_no') }}
+      </p>
     </div>
 
     <!-- Gender -->
@@ -149,6 +191,10 @@
           class="glass-input pl-12 appearance-none cursor-pointer"
           [(ngModel)]="gender"
           name="gender"
+          (blur)="markTouched('gender')"
+          [class.field-invalid]="errorFor('gender')"
+          [attr.aria-invalid]="errorFor('gender') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('gender') ? 'gender-error' : null"
         >
           <option value="Male">Male</option>
           <option value="Female">Female</option>
@@ -156,6 +202,9 @@
         </select>
         <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 pointer-events-none"></i>
       </div>
+      <p *ngIf="errorFor('gender')" id="gender-error" role="alert" class="field-error">
+        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('gender') }}
+      </p>
     </div>
 
     <!-- Date of Birth -->
@@ -170,8 +219,15 @@
           class="glass-input pl-12 appearance-none cursor-pointer"
           [(ngModel)]="dob"
           name="dob"
+          (blur)="markTouched('dob')"
+          [class.field-invalid]="errorFor('dob')"
+          [attr.aria-invalid]="errorFor('dob') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('dob') ? 'dob-error' : null"
         />
       </div>
+      <p *ngIf="errorFor('dob')" id="dob-error" role="alert" class="field-error">
+        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('dob') }}
+      </p>
     </div>
 
     <!-- Submit Button -->

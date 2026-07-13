@@ -13,8 +13,10 @@ import { EmployeeRegisterCustomerComponent } from './employee.register.customer.
 import { RegisterCustomerService } from 'src/app/service/employee/register.customer.service';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 describe('EmployeeRegisterCustomerComponent', () => {
+  let toastService: ToastService;
   let component: EmployeeRegisterCustomerComponent;
   let fixture: ComponentFixture<EmployeeRegisterCustomerComponent>;
   let mockRegisterCustomerService: jasmine.SpyObj<RegisterCustomerService>;
@@ -37,6 +39,10 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
     // Spy on Swal
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true, isDenied: false, isDismissed: false, value: true }));
+
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
 
     fixture.detectChanges();
   });
@@ -78,13 +84,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
     it('should show error when all fields are empty', () => {
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields',
-          icon: 'error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
       expect(mockRegisterCustomerService.registerCustomer).not.toHaveBeenCalled();
     });
 
@@ -99,12 +104,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when password is empty', () => {
@@ -118,12 +123,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when fullname is empty', () => {
@@ -137,12 +142,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when gender is empty', () => {
@@ -156,12 +161,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when dob is empty', () => {
@@ -175,12 +180,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when address is empty', () => {
@@ -194,12 +199,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when email is empty', () => {
@@ -213,12 +218,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should show error when contact_no is empty', () => {
@@ -232,12 +237,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -254,12 +259,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject fullname with only whitespace', () => {
@@ -274,12 +279,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject address with only whitespace', () => {
@@ -294,12 +299,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject email with only whitespace', () => {
@@ -314,12 +319,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject contact_no with only whitespace', () => {
@@ -334,12 +339,12 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Please fill all the required fields'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        jasmine.any(String)
       );
+      expect(component.hasFieldErrors).toBe(true);
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -356,12 +361,8 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Validation Error',
-          text: 'Password must be at least 6 characters long'
-        })
-      );
+      expect(component.errorFor('password')).toBe('Use at least 6 characters.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should accept password with exactly 6 characters', () => {
@@ -489,13 +490,8 @@ describe('EmployeeRegisterCustomerComponent', () => {
       component.submit();
 
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Invalid gender selection',
-          icon: 'error'
-        })
-      );
+      expect(component.errorFor('gender')).toBe('Select a valid gender.');
+      expect(Swal.fire).not.toHaveBeenCalled();
       expect(mockRegisterCustomerService.registerCustomer).not.toHaveBeenCalled();
     });
   });
@@ -513,13 +509,8 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Please enter a valid email address',
-          icon: 'error'
-        })
-      );
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject invalid email without domain', () => {
@@ -534,12 +525,8 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Please enter a valid email address'
-        })
-      );
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should reject invalid email without extension', () => {
@@ -554,12 +541,8 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Please enter a valid email address'
-        })
-      );
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should accept valid email format', () => {
@@ -593,13 +576,8 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Please enter a valid contact number',
-          icon: 'error'
-        })
-      );
+      expect(component.errorFor('contact_no')).toBe('Enter a valid contact number.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should accept contact number with exactly 10 digits', () => {
@@ -682,12 +660,8 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       component.submit();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Please enter a valid contact number'
-        })
-      );
+      expect(component.errorFor('contact_no')).toBe('Enter a valid contact number.');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -709,13 +683,11 @@ describe('EmployeeRegisterCustomerComponent', () => {
       await Promise.resolve();
 
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Success',
-          text: 'Customer registered successfully',
-          icon: 'success'
-        })
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Customer registered',
+        'Customer registered successfully'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should trim whitespace from form fields', () => {
@@ -788,13 +760,11 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       await Promise.resolve();
 
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Success',
-          text: 'Customer registered successfully',
-          icon: 'success'
-        })
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Customer registered',
+        'Customer registered successfully'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 
@@ -815,13 +785,11 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       expect(component.errorMessage).toBe('No response received from server');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'No response received from server',
-          icon: 'error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Registration failed',
+        'No response received from server'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle HTTP error with message', () => {
@@ -844,13 +812,8 @@ describe('EmployeeRegisterCustomerComponent', () => {
 
       expect(component.errorMessage).toBe('Username already exists');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'Username already exists',
-          icon: 'error'
-        })
-      );
+      expect(toastService.error).toHaveBeenCalledWith('Registration failed', 'Username already exists');
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error without error.message', () => {
@@ -952,6 +915,60 @@ describe('EmployeeRegisterCustomerComponent', () => {
     });
   });
 
+  describe('inline field validation', () => {
+    it('reports every problem at once rather than one error at a time', () => {
+      component.fullname = '';
+      component.username = '';
+      component.password = '';
+      component.email = '';
+
+      component.submit();
+
+      expect(component.errorFor('fullname')).toBe("Enter the customer's full name.");
+      expect(component.errorFor('username')).toBe('Choose a username.');
+      expect(component.errorFor('password')).toBe('Set a password.');
+      expect(component.errorFor('email')).toBe('Enter an email address.');
+    });
+
+    it('hides an error until the user has left the field', () => {
+      component.email = '';
+
+      // Untouched: the form must not nag before the user has engaged with it.
+      expect(component.errorFor('email')).toBeNull();
+      expect(component.fieldErrors['email']).toBe('Enter an email address.');
+
+      component.markTouched('email');
+      expect(component.errorFor('email')).toBe('Enter an email address.');
+    });
+
+    it('clears the error once the field is corrected', () => {
+      component.email = 'nope';
+      component.markTouched('email');
+      expect(component.errorFor('email')).toBe('Enter a valid email address.');
+
+      component.email = 'someone@example.com';
+      expect(component.errorFor('email')).toBeNull();
+    });
+
+    it('points a touched, invalid field at its error message', () => {
+      component.markTouched('email');
+      component.email = 'nope';
+      fixture.detectChanges();
+
+      const input: HTMLInputElement = fixture.nativeElement.querySelector('[name="email"]');
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+
+      // The message must exist at the id the input points to, or a screen
+      // reader announces nothing at all.
+      const describedBy = input.getAttribute('aria-describedby');
+      expect(describedBy).toBe('email-error');
+
+      const message = fixture.nativeElement.querySelector(`#${describedBy}`);
+      expect(message).not.toBeNull();
+      expect(message.getAttribute('role')).toBe('alert');
+    });
+  });
+
   describe('Try-Catch Error Handling', () => {
     it('should catch and handle JavaScript errors during submit', () => {
       spyOn(console, 'error');
@@ -975,13 +992,11 @@ describe('EmployeeRegisterCustomerComponent', () => {
       expect(console.error).toHaveBeenCalledWith('Error in submit process:', jasmine.any(Error));
       expect(component.errorMessage).toBe('An unexpected error occurred');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'An unexpected error occurred',
-          icon: 'error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Registration failed',
+        'An unexpected error occurred'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
 
     it('should catch TypeError during form processing', () => {
@@ -1051,13 +1066,11 @@ describe('EmployeeRegisterCustomerComponent', () => {
       expect(console.error).toHaveBeenCalledWith('Error in submit process:', jasmine.any(ReferenceError));
       expect(component.errorMessage).toBe('An unexpected error occurred');
       expect(component.isLoading).toBe(false);
-      expect(Swal.fire).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          title: 'Error',
-          text: 'An unexpected error occurred',
-          icon: 'error'
-        })
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Registration failed',
+        'An unexpected error occurred'
       );
+      expect(Swal.fire).not.toHaveBeenCalled();
     });
   });
 

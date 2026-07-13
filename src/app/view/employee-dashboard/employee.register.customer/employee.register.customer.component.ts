@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { RegisterCustomerService } from 'src/app/service/employee/register.customer.service';
 import { Subscription } from 'rxjs';
-import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 @Component({
   selector: 'app-employee.register.customer',
@@ -24,51 +24,104 @@ export class EmployeeRegisterCustomerComponent implements OnDestroy {
   errorMessage = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private registerCustomer: RegisterCustomerService, private router: Router) { }
+  constructor(
+    private registerCustomer: RegisterCustomerService,
+    private router: Router,
+    private toastService: ToastService
+  ) { }
+
+  /** Fields the user has left, so errors appear on blur rather than while typing. */
+  touched: Record<string, boolean> = {};
+
+  private readonly validatedFields = [
+    'fullname',
+    'username',
+    'password',
+    'email',
+    'address',
+    'contact_no',
+    'gender',
+    'dob',
+  ];
+
+  /**
+   * Single source of truth for registration validity, so a rule cannot be
+   * enforced on submit but left invisible on the field that broke it.
+   */
+  get fieldErrors(): Record<string, string | null> {
+    return {
+      fullname: this.fullname?.trim() ? null : "Enter the customer's full name.",
+
+      username: this.username?.trim() ? null : 'Choose a username.',
+
+      password: !this.password
+        ? 'Set a password.'
+        : this.password.length < 6
+          ? 'Use at least 6 characters.'
+          : null,
+
+      email: !this.email?.trim()
+        ? 'Enter an email address.'
+        : !this.isValidEmail(this.email)
+          ? 'Enter a valid email address.'
+          : null,
+
+      address: this.address?.trim() ? null : 'Enter an address.',
+
+      contact_no: !this.contact_no?.trim()
+        ? 'Enter a contact number.'
+        : !this.isValidContactNumber(this.contact_no)
+          ? 'Enter a valid contact number.'
+          : null,
+
+      gender: !this.gender
+        ? 'Select a gender.'
+        : !this.normalizeGender(this.gender)
+          ? 'Select a valid gender.'
+          : null,
+
+      dob: this.dob ? null : 'Enter a date of birth.',
+    };
+  }
+
+  get hasFieldErrors(): boolean {
+    return this.validatedFields.some((field) => this.fieldErrors[field]);
+  }
+
+  get firstFieldError(): string | null {
+    for (const field of this.validatedFields) {
+      const error = this.fieldErrors[field];
+      if (error) return error;
+    }
+    return null;
+  }
+
+  errorFor(field: string): string | null {
+    return this.touched[field] ? this.fieldErrors[field] : null;
+  }
+
+  markTouched(field: string): void {
+    this.touched[field] = true;
+  }
+
+  markAllTouched(): void {
+    this.validatedFields.forEach((field) => (this.touched[field] = true));
+  }
 
   submit(): void {
-    // Form validation
-    if (!this.validateForm()) {
-      return;
-    }
-
     this.isLoading = true;
     this.errorMessage = '';
 
     try {
-      // Convert gender to uppercase format
-      const normalizedGender = this.normalizeGender(this.gender);
-      if (!normalizedGender) {
+      // Inside the try: validation reads the field rules, and a rule throwing
+      // should be handled here rather than escaping submit().
+      if (!this.validateForm()) {
         this.isLoading = false;
-        Swal.fire({
-          title: 'Error',
-          text: 'Invalid gender selection',
-          icon: 'error',
-        });
         return;
       }
 
-      // Validate email format
-      if (!this.isValidEmail(this.email)) {
-        this.isLoading = false;
-        Swal.fire({
-          title: 'Error',
-          text: 'Please enter a valid email address',
-          icon: 'error',
-        });
-        return;
-      }
-
-      // Validate contact number
-      if (!this.isValidContactNumber(this.contact_no)) {
-        this.isLoading = false;
-        Swal.fire({
-          title: 'Error',
-          text: 'Please enter a valid contact number',
-          icon: 'error',
-        });
-        return;
-      }
+      // validateForm() has already rejected an unmappable gender.
+      const normalizedGender = this.normalizeGender(this.gender) as string;
 
       const body = {
         username: this.username.trim(),
@@ -89,37 +142,27 @@ export class EmployeeRegisterCustomerComponent implements OnDestroy {
           // Null/undefined check for response
           if (!res) {
             this.errorMessage = 'No response received from server';
-            Swal.fire({
-              title: 'Error',
-              text: this.errorMessage,
-              icon: 'error',
-            });
+            this.toastService.error('Registration failed', this.errorMessage);
             return;
           }
 
           const isDemo = localStorage.getItem('demoMode') === 'true';
-          Swal.fire({
-            title: 'Success',
-            text: res.message || 'Customer registered successfully',
-            icon: 'success',
-          }).then(() => {
-            this.resetForm();
-            // In demo mode, jump to the customer directory so the new record is visible.
-            if (isDemo) {
-              this.router.navigate(['/employee-dashboard/employee-home']);
-            }
-          });
+          this.toastService.success(
+            'Customer registered',
+            res.message || 'Customer registered successfully'
+          );
+          this.resetForm();
+          // In demo mode, jump to the customer directory so the new record is visible.
+          if (isDemo) {
+            this.router.navigate(['/employee-dashboard/employee-home']);
+          }
         },
         error: (err) => {
           console.error('Error registering customer:', err);
           this.isLoading = false;
           this.errorMessage = err?.error?.message || err?.message || 'Failed to register customer';
 
-          Swal.fire({
-            title: 'Error',
-            text: this.errorMessage,
-            icon: 'error',
-          });
+          this.toastService.error('Registration failed', this.errorMessage);
         }
       });
 
@@ -128,41 +171,16 @@ export class EmployeeRegisterCustomerComponent implements OnDestroy {
       console.error('Error in submit process:', error);
       this.isLoading = false;
       this.errorMessage = 'An unexpected error occurred';
-      Swal.fire({
-        title: 'Error',
-        text: this.errorMessage,
-        icon: 'error',
-      });
+      this.toastService.error('Registration failed', this.errorMessage);
     }
   }
 
   private validateForm(): boolean {
-    // Check for empty fields
-    if (
-      !this.username?.trim() ||
-      !this.password ||
-      !this.fullname?.trim() ||
-      !this.gender ||
-      !this.dob ||
-      !this.address?.trim() ||
-      !this.email?.trim() ||
-      !this.contact_no?.trim()
-    ) {
-      Swal.fire({
-        title: 'Validation Error',
-        text: 'Please fill all the required fields',
-        icon: 'error',
-      });
-      return false;
-    }
+    // Surface every problem at once, against the field that caused it.
+    this.markAllTouched();
 
-    // Validate password length
-    if (this.password.length < 6) {
-      Swal.fire({
-        title: 'Validation Error',
-        text: 'Password must be at least 6 characters long',
-        icon: 'error',
-      });
+    if (this.hasFieldErrors) {
+      this.toastService.error('Check the highlighted fields', this.firstFieldError ?? undefined);
       return false;
     }
 
