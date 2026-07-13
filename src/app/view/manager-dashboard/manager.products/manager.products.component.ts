@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 interface FdTier {
   term: string;
@@ -23,6 +24,8 @@ interface LoanPackage {
   styleUrls: ['./manager.products.component.scss']
 })
 export class ManagerProductsComponent {
+  constructor(private toastService: ToastService) {}
+
   fdTiers: FdTier[] = [
     { term: '3 months',  rate: 11.5, min_amount: 25000 },
     { term: '6 months',  rate: 13.0, min_amount: 25000 },
@@ -78,7 +81,7 @@ export class ManagerProductsComponent {
     });
     if (result.isConfirmed && result.value) {
       tier.rate = Math.round(Number(result.value) * 100) / 100;
-      Swal.fire({ icon: 'success', title: 'Rate updated', timer: 1200, showConfirmButton: false });
+      this.toastService.success('Rate updated');
     }
   }
 
@@ -100,17 +103,12 @@ export class ManagerProductsComponent {
     });
     if (result.isConfirmed && result.value) {
       pkg.rate = Math.round(Number(result.value) * 100) / 100;
-      Swal.fire({ icon: 'success', title: 'Rate updated', timer: 1200, showConfirmButton: false });
+      this.toastService.success('Rate updated');
     }
   }
 
   togglePackage(pkg: LoanPackage): void {
     pkg.active = !pkg.active;
-    Swal.fire({
-      icon: 'success',
-      title: pkg.active ? 'Package enabled' : 'Package disabled',
-      timer: 1100,
-      showConfirmButton: false
-    });
+    this.toastService.success(pkg.active ? 'Package enabled' : 'Package disabled');
   }
 }

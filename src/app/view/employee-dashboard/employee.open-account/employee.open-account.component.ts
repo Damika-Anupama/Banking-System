@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 import { demoStore } from 'src/app/shared/demo-store';
 
 interface OpenedAccount {
@@ -19,6 +20,8 @@ interface OpenedAccount {
   styleUrls: ['./employee.open-account.component.scss']
 })
 export class EmployeeOpenAccountComponent {
+  constructor(private toastService: ToastService) {}
+
   customers: any[] = demoStore.getCustomers();
 
   customerId = '';
@@ -61,15 +64,18 @@ export class EmployeeOpenAccountComponent {
 
   openAccount(): void {
     if (!this.selectedCustomer) {
-      Swal.fire({ icon: 'info', title: 'Select a customer', text: 'Choose the customer this account is for.' });
+      this.toastService.info('Select a customer', 'Choose the customer this account is for.');
       return;
     }
     if (this.belowMinimum) {
-      Swal.fire({ icon: 'error', title: 'Below minimum', text: `${this.product} accounts require at least Rs. ${this.minimumDeposit.toLocaleString()}.` });
+      this.toastService.error(
+        'Below minimum',
+        `${this.product} accounts require at least Rs. ${this.minimumDeposit.toLocaleString()}.`
+      );
       return;
     }
     if (!this.isValid) {
-      Swal.fire({ icon: 'error', title: 'Validation error', text: 'Complete all fields to open the account.' });
+      this.toastService.error('Check the account details', 'Complete all fields to open the account.');
       return;
     }
 

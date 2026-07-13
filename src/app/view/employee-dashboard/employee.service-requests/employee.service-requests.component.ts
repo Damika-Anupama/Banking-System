@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 interface ServiceRequest {
   ticket_id: string;
@@ -19,6 +20,8 @@ interface ServiceRequest {
   styleUrls: ['./employee.service-requests.component.scss']
 })
 export class EmployeeServiceRequestsComponent {
+  constructor(private toastService: ToastService) {}
+
   searchTerm = '';
   statusFilter = 'all';
 
@@ -72,7 +75,7 @@ export class EmployeeServiceRequestsComponent {
 
   createRequest(): void {
     if (!this.isValid) {
-      Swal.fire({ icon: 'info', title: 'Missing details', text: 'Enter the customer and a short summary.' });
+      this.toastService.info('Missing details', 'Enter the customer and a short summary.');
       return;
     }
     this.isSubmitting = true;
@@ -93,17 +96,17 @@ export class EmployeeServiceRequestsComponent {
       this.newCategory = 'Card replacement';
       this.newPriority = 'Medium';
       this.isSubmitting = false;
-      Swal.fire({ icon: 'success', title: 'Ticket created', html: `Reference <strong>${ticket.ticket_id}</strong> logged.`, timer: 1600, showConfirmButton: false });
+      this.toastService.success('Ticket created', `Reference ${ticket.ticket_id} logged.`);
     }, 500);
   }
 
   advance(request: ServiceRequest): void {
     if (request.status === 'Open') {
       request.status = 'In progress';
-      Swal.fire({ icon: 'success', title: 'Marked in progress', timer: 1200, showConfirmButton: false });
+      this.toastService.success('Marked in progress');
     } else if (request.status === 'In progress') {
       request.status = 'Resolved';
-      Swal.fire({ icon: 'success', title: 'Ticket resolved', timer: 1200, showConfirmButton: false });
+      this.toastService.success('Ticket resolved');
     }
   }
 

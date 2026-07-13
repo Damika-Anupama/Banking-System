@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
 
 type ChequeStatus = 'Received' | 'In clearing' | 'Cleared' | 'Returned';
 
@@ -21,6 +22,8 @@ interface Cheque {
   styleUrls: ['./employee.cheque-clearing.component.scss']
 })
 export class EmployeeChequeClearingComponent {
+  constructor(private toastService: ToastService) {}
+
   searchTerm = '';
   statusFilter = 'all';
 
@@ -63,10 +66,13 @@ export class EmployeeChequeClearingComponent {
   advance(cheque: Cheque): void {
     if (cheque.status === 'Received') {
       cheque.status = 'In clearing';
-      Swal.fire({ icon: 'success', title: 'Sent to clearing', timer: 1200, showConfirmButton: false });
+      this.toastService.success('Sent to clearing');
     } else if (cheque.status === 'In clearing') {
       cheque.status = 'Cleared';
-      Swal.fire({ icon: 'success', title: 'Cheque cleared', html: `Rs. ${cheque.amount.toLocaleString()} credited to ${cheque.account_id}.`, timer: 1600, showConfirmButton: false });
+      this.toastService.success(
+        'Cheque cleared',
+        `Rs. ${cheque.amount.toLocaleString()} credited to ${cheque.account_id}.`
+      );
     }
   }
 
@@ -85,7 +91,7 @@ export class EmployeeChequeClearingComponent {
     }).then(result => {
       if (!result.isConfirmed) return;
       cheque.status = 'Returned';
-      Swal.fire({ icon: 'success', title: 'Marked returned', text: `Reason: ${result.value}`, timer: 1600, showConfirmButton: false });
+      this.toastService.success('Marked returned', `Reason: ${result.value}`);
     });
   }
 }
