@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import Swal from 'sweetalert2';
+import { AlertService } from '../shared/lazy-swal';
 import { ToastService } from './toast.service';
 import {
   ErrorResponse,
@@ -30,7 +30,10 @@ export class ErrorHandlerService {
     0, 401, 403, 404, 408, 429, 500, 502, 503, 504,
   ]);
 
-  constructor(private toastService: ToastService) { }
+  constructor(
+    private toastService: ToastService,
+    private alertService: AlertService
+  ) { }
 
   /**
    * Main HTTP error handler
@@ -99,7 +102,7 @@ export class ErrorHandlerService {
    * @param title Optional title (defaults to 'Error')
    */
   showErrorMessage(message: string, title: string = 'Error'): void {
-    Swal.fire({
+    this.alertService.fire({
       icon: 'error',
       title: title,
       text: message,
@@ -122,7 +125,7 @@ export class ErrorHandlerService {
    * @param title Optional title (defaults to 'Success')
    */
   showSuccessMessage(message: string, title: string = 'Success'): void {
-    Swal.fire({
+    this.alertService.fire({
       icon: 'success',
       title: title,
       text: message,
@@ -139,7 +142,7 @@ export class ErrorHandlerService {
    * @param title Optional title (defaults to 'Warning')
    */
   showWarningMessage(message: string, title: string = 'Warning'): void {
-    Swal.fire({
+    this.alertService.fire({
       icon: 'warning',
       title: title,
       text: message,
@@ -154,7 +157,7 @@ export class ErrorHandlerService {
    * @param title Optional title (defaults to 'Information')
    */
   showInfoMessage(message: string, title: string = 'Information'): void {
-    Swal.fire({
+    this.alertService.fire({
       icon: 'info',
       title: title,
       text: message,

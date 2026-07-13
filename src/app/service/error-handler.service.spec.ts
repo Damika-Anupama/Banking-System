@@ -10,9 +10,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandlerService } from './error-handler.service';
 import { ErrorSeverity, ErrorType } from '../model/error-response.model';
 import Swal from 'sweetalert2';
+import { AlertService } from 'src/app/shared/lazy-swal';
 import { ToastService } from './toast.service';
 
 describe('ErrorHandlerService', () => {
+  let alertService: AlertService;
   let service: ErrorHandlerService;
   let toastService: ToastService;
 
@@ -26,6 +28,11 @@ describe('ErrorHandlerService', () => {
 
     // Spy on Swal to prevent actual alerts during tests
     spyOn(Swal, 'fire');
+
+    // SweetAlert is now loaded on demand behind AlertService, so the dialog
+    // assertions spy on the service rather than the library.
+    alertService = TestBed.inject(AlertService);
+    spyOn(alertService, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     spyOn(toastService, 'error');
   });
 
@@ -72,7 +79,7 @@ describe('ErrorHandlerService', () => {
       expect(result.status).toBe(401);
       expect(result.message).toBe('Unauthorized');
       // Should NOT call Swal.fire for 401 (handled by interceptor)
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 403 Forbidden error', () => {
@@ -91,7 +98,7 @@ describe('ErrorHandlerService', () => {
       expect(result.message).toBe('Forbidden');
       // The interceptor owns the 403 notification; notifying here too would double it.
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 404 Not Found error', () => {
@@ -109,7 +116,7 @@ describe('ErrorHandlerService', () => {
       expect(result.status).toBe(404);
       expect(result.message).toBe('Resource not found');
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 408 Request Timeout error', () => {
@@ -123,7 +130,7 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(408);
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 409 Conflict error', () => {
@@ -142,7 +149,7 @@ describe('ErrorHandlerService', () => {
         'Something went wrong',
         'There was a conflict with the current state. Please refresh and try again.'
       );
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 422 Unprocessable Entity error', () => {
@@ -159,7 +166,7 @@ describe('ErrorHandlerService', () => {
         'Something went wrong',
         'The data provided could not be processed. Please check your input.'
       );
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 429 Too Many Requests error', () => {
@@ -173,7 +180,7 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(429);
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 500 Internal Server Error', () => {
@@ -190,7 +197,7 @@ describe('ErrorHandlerService', () => {
       expect(result.status).toBe(500);
       expect(result.message).toBe('Internal server error');
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 502 Bad Gateway error', () => {
@@ -204,7 +211,7 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(502);
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 503 Service Unavailable error', () => {
@@ -218,7 +225,7 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(503);
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle 504 Gateway Timeout error', () => {
@@ -232,7 +239,7 @@ describe('ErrorHandlerService', () => {
 
       expect(result.status).toBe(504);
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle network error (status 0)', () => {
@@ -249,7 +256,7 @@ describe('ErrorHandlerService', () => {
       expect(result.status).toBe(0);
       // Interceptor shows the blocking offline modal; this service stays quiet.
       expect(toastService.error).not.toHaveBeenCalled();
-      expect(Swal.fire).not.toHaveBeenCalled();
+      expect(alertService.fire).not.toHaveBeenCalled();
     });
 
     it('should handle error with string error body', () => {
@@ -394,7 +401,7 @@ describe('ErrorHandlerService', () => {
 
       expect(console.group).toHaveBeenCalled();
       expect(console.error).toHaveBeenCalledWith('Message:', 'Something went wrong');
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'error',
           text: 'An unexpected error occurred. Please try again.'
@@ -431,7 +438,7 @@ describe('ErrorHandlerService', () => {
     it('should display error message with default title', () => {
       service.showErrorMessage('Test error message');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'error',
           title: 'Error',
@@ -444,7 +451,7 @@ describe('ErrorHandlerService', () => {
     it('should display error message with custom title', () => {
       service.showErrorMessage('Test error', 'Custom Error');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'error',
           title: 'Custom Error',
@@ -456,7 +463,7 @@ describe('ErrorHandlerService', () => {
     it('should have correct button color for error', () => {
       service.showErrorMessage('Error');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           confirmButtonColor: '#d33'
         })
@@ -468,7 +475,7 @@ describe('ErrorHandlerService', () => {
     it('should display success message with default title', () => {
       service.showSuccessMessage('Operation successful');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'success',
           title: 'Success',
@@ -481,7 +488,7 @@ describe('ErrorHandlerService', () => {
     it('should display success message with custom title', () => {
       service.showSuccessMessage('Saved', 'Data Saved');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'success',
           title: 'Data Saved',
@@ -493,7 +500,7 @@ describe('ErrorHandlerService', () => {
     it('should have timer progress bar', () => {
       service.showSuccessMessage('Success');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           timerProgressBar: true
         })
@@ -505,7 +512,7 @@ describe('ErrorHandlerService', () => {
     it('should display warning message with default title', () => {
       service.showWarningMessage('This is a warning');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'warning',
           title: 'Warning',
@@ -517,7 +524,7 @@ describe('ErrorHandlerService', () => {
     it('should display warning message with custom title', () => {
       service.showWarningMessage('Be careful', 'Caution');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'warning',
           title: 'Caution',
@@ -529,7 +536,7 @@ describe('ErrorHandlerService', () => {
     it('should have correct button color for warning', () => {
       service.showWarningMessage('Warning');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           confirmButtonColor: '#f39c12'
         })
@@ -541,7 +548,7 @@ describe('ErrorHandlerService', () => {
     it('should display info message with default title', () => {
       service.showInfoMessage('Information message');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'info',
           title: 'Information',
@@ -553,7 +560,7 @@ describe('ErrorHandlerService', () => {
     it('should display info message with custom title', () => {
       service.showInfoMessage('Details', 'More Info');
 
-      expect(Swal.fire).toHaveBeenCalledWith(
+      expect(alertService.fire).toHaveBeenCalledWith(
         jasmine.objectContaining({
           icon: 'info',
           title: 'More Info',

@@ -9,7 +9,7 @@ import {
 import { Observable, throwError, timer } from 'rxjs';
 import { catchError, retry, retryWhen, mergeMap, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import Swal from 'sweetalert2';
+import { AlertService } from '../shared/lazy-swal';
 import { ErrorHandlerService } from '../service/error-handler.service';
 import { ToastService } from '../service/toast.service';
 
@@ -38,7 +38,8 @@ export class ErrorInterceptor implements HttpInterceptor {
   constructor(
     private router: Router,
     private errorHandlerService: ErrorHandlerService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private alertService: AlertService
   ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
@@ -175,7 +176,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       message: error.message
     });
 
-    Swal.fire({
+    this.alertService.fire({
       icon: 'error',
       title: 'Network Error',
       text: 'Unable to connect to the server. Please check your internet connection and try again.',
@@ -185,7 +186,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       cancelButtonText: 'Reload Page',
       cancelButtonColor: '#3085d6'
     }).then((result) => {
-      if (result.dismiss === Swal.DismissReason.cancel) {
+      if (result.dismiss === 'cancel') {
         window.location.reload();
       }
     });
@@ -206,7 +207,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     sessionStorage.clear();
 
     // Show session expired message
-    Swal.fire({
+    this.alertService.fire({
       icon: 'warning',
       title: 'Session Expired',
       text: 'Your session has expired. Please log in again to continue.',

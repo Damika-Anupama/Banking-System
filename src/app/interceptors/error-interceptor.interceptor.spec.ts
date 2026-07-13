@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AlertService } from 'src/app/shared/lazy-swal';
 
 import { ErrorInterceptor } from './error-interceptor.interceptor';
 import { ErrorHandlerService } from '../service/error-handler.service';
@@ -14,6 +15,7 @@ import { ToastService } from '../service/toast.service';
  * dead connection — are allowed to take over the screen with a modal.
  */
 describe('ErrorInterceptor', () => {
+  let alertService: AlertService;
   let httpMock: HttpTestingController;
   let httpClient: HttpClient;
   let toastService: ToastService;
@@ -35,6 +37,11 @@ describe('ErrorInterceptor', () => {
     toastService = TestBed.inject(ToastService);
 
     spyOn(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
+
+    // SweetAlert is now loaded on demand behind AlertService, so the dialog
+    // assertions spy on the service rather than the library.
+    alertService = TestBed.inject(AlertService);
+    spyOn(alertService, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
     spyOn(toastService, 'error');
     spyOn(toastService, 'warning');
   });
@@ -61,41 +68,41 @@ describe('ErrorInterceptor', () => {
     failWith(403);
 
     expect(toastService.error).toHaveBeenCalledWith('Access denied', jasmine.any(String));
-    expect(Swal.fire).not.toHaveBeenCalled();
+    expect(alertService.fire).not.toHaveBeenCalled();
   }));
 
   it('shows a non-blocking toast for a 404, not a modal', fakeAsync(() => {
     failWith(404);
 
     expect(toastService.error).toHaveBeenCalledWith('Not found', jasmine.any(String));
-    expect(Swal.fire).not.toHaveBeenCalled();
+    expect(alertService.fire).not.toHaveBeenCalled();
   }));
 
   it('warns without blocking once a timeout has exhausted its retries', fakeAsync(() => {
     failWith(408, 3);
 
     expect(toastService.warning).toHaveBeenCalledWith('Request timed out', jasmine.any(String));
-    expect(Swal.fire).not.toHaveBeenCalled();
+    expect(alertService.fire).not.toHaveBeenCalled();
   }));
 
   it('warns without blocking when rate limited', fakeAsync(() => {
     failWith(429, 3);
 
     expect(toastService.warning).toHaveBeenCalledWith('Too many requests', jasmine.any(String));
-    expect(Swal.fire).not.toHaveBeenCalled();
+    expect(alertService.fire).not.toHaveBeenCalled();
   }));
 
   it('reports the status code in the server error toast', fakeAsync(() => {
     failWith(503, 3);
 
     expect(toastService.error).toHaveBeenCalledWith('Server error', jasmine.stringMatching('503'));
-    expect(Swal.fire).not.toHaveBeenCalled();
+    expect(alertService.fire).not.toHaveBeenCalled();
   }));
 
   it('still blocks with a modal when the session expires, since the user must re-authenticate', fakeAsync(() => {
     failWith(401);
 
-    expect(Swal.fire).toHaveBeenCalled();
+    expect(alertService.fire).toHaveBeenCalled();
     expect(toastService.error).not.toHaveBeenCalled();
   }));
 
@@ -110,7 +117,7 @@ describe('ErrorInterceptor', () => {
   it('still blocks with a modal when the connection is dead', fakeAsync(() => {
     failWith(0, 3);
 
-    expect(Swal.fire).toHaveBeenCalled();
+    expect(alertService.fire).toHaveBeenCalled();
     expect(toastService.error).not.toHaveBeenCalled();
   }));
 });
