@@ -388,6 +388,30 @@ body {
     box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
   }
 
+  /* The shell's own inner panels (profile card, palette hint, footer text)
+     sit directly on the light sidebar, not inside a demo card, so their
+     white-alpha fills, borders, and text vanish without the same
+     light-mode tint treatment the cards get. */
+  html:not(.dark) .glass-sidebar [class*="bg-white/[0.04]"],
+  html:not(.dark) .glass-navbar [class*="bg-white/[0.04]"] {
+    background-color: rgba(15, 23, 42, 0.03) !important;
+  }
+  html:not(.dark) .glass-sidebar [class*="bg-white/[0.06]"],
+  html:not(.dark) .glass-navbar [class*="bg-white/[0.06]"] {
+    background-color: rgba(15, 23, 42, 0.045) !important;
+  }
+  html:not(.dark) .glass-sidebar [class*="border-white/8"],
+  html:not(.dark) .glass-sidebar [class*="border-white/10"],
+  html:not(.dark) .glass-sidebar [class*="border-white/15"],
+  html:not(.dark) .glass-navbar [class*="border-white/8"],
+  html:not(.dark) .glass-navbar [class*="border-white/10"] {
+    border-color: rgba(15, 23, 42, 0.14) !important;
+  }
+  html:not(.dark) .glass-sidebar [class*="text-white/"],
+  html:not(.dark) .glass-navbar [class*="text-white/"] {
+    color: #475569 !important;
+  }
+
   /* Inner translucent-white panels (inset boxes, tiles, consent rows) inside demo
      cards need a light-mode tint + border so they remain visible. */
   html:not(.dark) .demo-section-card [class*="bg-white/[0.06]"],

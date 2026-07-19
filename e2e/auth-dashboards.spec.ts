@@ -72,6 +72,25 @@ test.describe("Banking System — auth & demo dashboards", () => {
     await expect(page).toHaveURL(/\/manager-dashboard\/manager-home/);
   });
 
+  test("signing up carries the typed name into the dashboard shell", async ({
+    page,
+  }) => {
+    await page.goto("/sign-up");
+    await page.locator("#signup-name").fill("Tharindu Jayasuriya");
+    await page.locator("#signup-email").fill("tharindu@example.com");
+    await page.locator("#signup-password").fill("s3cure-pass");
+    await page.locator("#signup-confirm-password").fill("s3cure-pass");
+    await page.locator("#agreeTerms").check();
+    await page.getByRole("button", { name: /create account/i }).click();
+
+    await expect(page).toHaveURL(/\/dashboard\/home/, { timeout: 10_000 });
+    // The sidebar profile card must show who actually signed up, not the
+    // seeded persona.
+    await expect(page.locator(".profile-name").first()).toHaveText(
+      "Tharindu Jayasuriya"
+    );
+  });
+
   test("sign-in autofocuses the email field so typing can start immediately", async ({
     page,
   }) => {

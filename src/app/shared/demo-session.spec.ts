@@ -22,6 +22,16 @@ describe('seedDemoSession', () => {
     expect(localStorage.getItem('email')).toBe('amara.perera@example.com');
   });
 
+  it('stores the seeded persona name by default', () => {
+    seedDemoSession('CUSTOMER');
+    expect(localStorage.getItem('displayName')).toBe('Amara Perera');
+  });
+
+  it('carries a custom display name, so sign-up keeps the typed name', () => {
+    seedDemoSession('CUSTOMER', 'tharindu@example.com', 'Tharindu Jayasuriya');
+    expect(localStorage.getItem('displayName')).toBe('Tharindu Jayasuriya');
+  });
+
   it('writes a decodable JWT-shaped demo token carrying the role', () => {
     seedDemoSession('MANAGER');
     const token = String(localStorage.getItem('token'));

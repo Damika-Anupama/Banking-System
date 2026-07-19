@@ -240,7 +240,13 @@ export class UserService {
 
     if (localStorage.getItem('demoMode') === 'true') {
       const storedProfile = localStorage.getItem('demoProfile');
-      const profile = storedProfile ? JSON.parse(storedProfile) : DEMO_PROFILE;
+      // Until the profile is edited, reflect whoever actually signed in
+      // (sign-up stores the typed name) so Settings agrees with the shell.
+      const profile = storedProfile ? JSON.parse(storedProfile) : {
+        ...DEMO_PROFILE,
+        fullname: localStorage.getItem('displayName') || DEMO_PROFILE.fullname,
+        email: localStorage.getItem('email') || DEMO_PROFILE.email,
+      };
       return of({ data: [profile] });
     }
 
@@ -289,6 +295,11 @@ export class UserService {
         contact_no: body.contact_no
       };
       localStorage.setItem('demoProfile', JSON.stringify(updatedProfile));
+      // The shell's profile card reads displayName; keep it in step with a
+      // profile edit so the sidebar never contradicts Settings.
+      if (updatedProfile.fullname) {
+        localStorage.setItem('displayName', updatedProfile.fullname);
+      }
       return of({ message: 'Demo profile updated successfully', data: [updatedProfile] });
     }
 

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { getPasswordStrength, PasswordStrength } from 'src/app/shared/password-strength';
+import { seedDemoSession } from 'src/app/shared/demo-session';
 
 @Component({
   selector: 'app-sign-up',
@@ -45,10 +46,9 @@ export class SignUpComponent {
       return;
     }
 
-    localStorage.setItem('demoMode', 'true');
-    localStorage.setItem('token', this.createDemoToken());
-    localStorage.setItem('email', this.email);
-    localStorage.setItem('userType', 'CUSTOMER');
+    // The name the user just typed follows them into the shell, so the
+    // sidebar greets them rather than the seeded persona.
+    seedDemoSession('CUSTOMER', this.email, this.fullName.trim());
 
     Swal.fire({
       customClass: { popup: 'demo-detail-modal' },
@@ -68,21 +68,4 @@ export class SignUpComponent {
     return getPasswordStrength(this.password);
   }
 
-  private createDemoToken(): string {
-    const header = this.base64UrlEncode({ alg: 'HS256', typ: 'JWT' });
-    const payload = this.base64UrlEncode({
-      sub: 'signup-customer',
-      role: 'CUSTOMER',
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
-    });
-
-    return `${header}.${payload}.ZGVtby1zaWduYXR1cmU`;
-  }
-
-  private base64UrlEncode(value: object): string {
-    return btoa(JSON.stringify(value))
-      .replace(/=/g, '')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_');
-  }
 }

@@ -174,7 +174,7 @@ export class CommandPaletteComponent {
         this.themeService.toggleTheme();
         break;
       case 'sign-out':
-        ['token', 'email', 'userType', 'userId', 'demoMode'].forEach(key =>
+        ['token', 'email', 'userType', 'userId', 'demoMode', 'displayName'].forEach(key =>
           localStorage.removeItem(key)
         );
         this.router.navigate(['/sign-in']);

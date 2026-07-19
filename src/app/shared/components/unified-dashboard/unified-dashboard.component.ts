@@ -278,12 +278,15 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
 
   get sessionUser(): { name: string; roleLabel: string; email: string; initials: string } {
     const role = this.config?.dashboardType || 'customer';
-    const names: Record<string, string> = {
+    const fallbackNames: Record<string, string> = {
       customer: 'Amara Perera',
       employee: 'Branch Employee',
       manager: 'Branch Manager',
     };
-    const name = names[role] || 'User';
+    // Whoever actually signed in — a sign-up stores the typed name, the role
+    // launchers store the seeded persona — so the shell never contradicts the
+    // identity shown on the Settings page.
+    const name = localStorage.getItem('displayName') || fallbackNames[role] || 'User';
     const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
     const email = localStorage.getItem('email') || '';
     const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
