@@ -68,6 +68,13 @@
 
 @media (max-width: 480px) {
   .transfer-step-label { display: none; }
+
+  /* With the labels hidden, the badges are the only step-jump controls;
+     32px is under the ~44px touch-target guideline. */
+  .transfer-step-badge {
+    height: 2.75rem;
+    width: 2.75rem;
+  }
 }
 
 /* Light-mode stepper */

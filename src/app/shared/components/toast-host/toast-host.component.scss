@@ -10,6 +10,15 @@
   pointer-events: none;
 }
 
+/* Below the desktop breakpoint a sticky navbar owns the top of the screen;
+   a toast pinned at 1rem would cover the hamburger and block navigation
+   until it dismissed. */
+@media (max-width: 1023px) {
+  .toast-host {
+    top: 4.75rem;
+  }
+}
+
 .toast-region {
   display: flex;
   flex-direction: column;

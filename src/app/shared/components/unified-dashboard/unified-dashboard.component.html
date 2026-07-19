@@ -92,6 +92,16 @@
             class="h-10 w-auto lg:hidden"
           >
         </div>
+        <!-- On desktop the sidebar carries the palette launcher; on a phone
+             this is the only way to open it without a keyboard. -->
+        <button
+          class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+          aria-label="Search pages and actions"
+          title="Search pages and actions"
+          (click)="openCommandPalette()"
+        >
+          <i class="fas fa-search text-xl"></i>
+        </button>
       </div>
     </header>
 
@@ -292,6 +302,15 @@
           (click)="toggleSidebar()"
         >
           <i class="fas fa-bars text-xl"></i>
+        </button>
+        <!-- Touch users cannot press Ctrl+K; give the palette a tap target. -->
+        <button
+          class="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+          aria-label="Search pages and actions"
+          title="Search pages and actions"
+          (click)="openCommandPalette()"
+        >
+          <i class="fas fa-search text-xl"></i>
         </button>
       </div>
     </nav>

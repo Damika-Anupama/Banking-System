@@ -26,6 +26,14 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      // Desktop assertions (visible sidebar, hover states) do not hold on a
+      // phone viewport; the mobile surface has its own spec.
+      testIgnore: /mobile\.spec\.ts/,
+    },
+    {
+      name: "mobile-chromium",
+      use: { ...devices["Pixel 7"] },
+      testMatch: /mobile\.spec\.ts/,
     },
   ],
   webServer: process.env.E2E_BASE_URL
