@@ -35,8 +35,46 @@ export class PaymentsComponent implements OnInit {
     return localIsoToday();
   }
 
+  payeeSuggestions: { name: string; account_id: string }[] = [];
+
   ngOnInit(): void {
+    this.refreshOrders();
+  }
+
+  private refreshOrders(): void {
     this.orders = demoStore.getStandingOrders();
+    this.payeeSuggestions = this.buildPayeeSuggestions();
+  }
+
+  /**
+   * Saved beneficiaries plus payees already on file, deduped by account, so a
+   * recurring payment does not mean retyping a payee the bank already knows.
+   */
+  private buildPayeeSuggestions(): { name: string; account_id: string }[] {
+    const seen = new Set<string>();
+    const suggestions: { name: string; account_id: string }[] = [];
+    const candidates = [
+      ...demoStore.getBeneficiaries().map((b: any) => ({ name: b.name, account_id: b.account_id })),
+      ...this.orders.map(o => ({ name: o.payee, account_id: o.account_id })),
+    ];
+
+    for (const candidate of candidates) {
+      const key = String(candidate.account_id || '').toUpperCase();
+      if (!candidate.name || !key || seen.has(key)) continue;
+      seen.add(key);
+      suggestions.push(candidate);
+      if (suggestions.length >= 6) break;
+    }
+    return suggestions;
+  }
+
+  applySuggestion(suggestion: { name: string; account_id: string }): void {
+    this.payee = suggestion.name;
+    this.accountId = suggestion.account_id;
+    this.markTouched('payee');
+    this.markTouched('accountId');
+    // The identity half is done; carry the user on to the value fields.
+    document.getElementById('amount')?.focus();
   }
 
   get activeOrders(): any[] {
@@ -150,7 +188,7 @@ export class PaymentsComponent implements OnInit {
       next_date: this.nextDate
     });
     demoStore.addStandingOrder(order);
-    this.orders = demoStore.getStandingOrders();
+    this.refreshOrders();
 
     setTimeout(() => {
       this.isSaving = false;
@@ -164,7 +202,7 @@ export class PaymentsComponent implements OnInit {
 
   toggleOrder(order: any): void {
     demoStore.toggleStandingOrder(order.id);
-    this.orders = demoStore.getStandingOrders();
+    this.refreshOrders();
   }
 
   cancelOrder(order: any): void {
@@ -179,7 +217,7 @@ export class PaymentsComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed) {
         demoStore.removeStandingOrder(order.id);
-        this.orders = demoStore.getStandingOrders();
+        this.refreshOrders();
         this.toastService.success('Order cancelled');
       }
     });

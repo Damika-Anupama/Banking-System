@@ -133,6 +133,18 @@ test.describe("Customer — standing order form", () => {
     await expect(page.locator("#nextDate-error")).toHaveText(/cannot be in the past/i);
   });
 
+  test("a known payee chip prefills the form and moves focus to the amount", async ({
+    page,
+  }) => {
+    // Seeded beneficiaries surface as quick-fill chips.
+    const chip = page.getByRole("button", { name: /Sunil Construction/i });
+    await chip.click();
+
+    await expect(page.locator("#payee")).toHaveValue("Sunil Construction");
+    await expect(page.locator("#accountId")).toHaveValue("ACC-772901");
+    await expect(page.locator("#amount")).toBeFocused();
+  });
+
   test("a valid order is created and appears in the list", async ({ page }) => {
     await page.locator("#payee").fill("Dialog Broadband");
     await page.locator("#accountId").fill("ACC-771234");
