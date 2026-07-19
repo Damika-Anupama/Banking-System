@@ -752,7 +752,15 @@ export class TransactionComponent implements OnInit, OnDestroy {
           <div class="demo-detail-row"><span>Generated</span><strong>${new Date().toLocaleString()}</strong></div>
         </div>
       `,
-      confirmButtonText: 'Close'
+      showCancelButton: true,
+      confirmButtonText: '<i class="fas fa-print mr-1" aria-hidden="true"></i> Print receipt',
+      cancelButtonText: 'Close',
+      preConfirm: () => {
+        // The print stylesheet prints only the open dialog, so the receipt
+        // must stay open while the browser's print dialog is up.
+        window.print();
+        return false;
+      }
     });
   }
 

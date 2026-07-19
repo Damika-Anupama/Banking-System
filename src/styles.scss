@@ -761,9 +761,70 @@ tbody tr[role="button"]:focus-visible {
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.4);
 }
 
-// Print styles
+// Print styles: paper gets the content, not the app chrome.
 @media print {
+  app-route-progress,
+  app-preloader,
+  app-command-palette,
+  app-shortcut-help,
+  app-toast-host,
+  .glass-sidebar,
+  .glass-navbar,
+  .back-to-top-btn,
+  .skip-to-content,
+  button {
+    display: none !important;
+  }
+
+  html,
   body {
-    background: white;
+    background: #fff !important;
+  }
+
+  // The sidebar is hidden, so the content must not keep its offset,
+  // and paper does not scroll inside a fixed-height shell.
+  [class*='lg:ml-64'],
+  [class*='lg:ml-72'] {
+    margin-left: 0 !important;
+  }
+
+  [class*='lg:h-screen'],
+  [class*='lg:overflow-hidden'],
+  [class*='overflow-y-auto'] {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  // Dark glass panels would print as ink-wasting slabs; flatten everything
+  // to dark text on paper and keep structure with light borders.
+  * {
+    color: #0f172a !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .demo-section-card,
+  .demo-kpi-card,
+  .demo-table-shell,
+  .demo-page-header {
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  // While a receipt dialog is open, the receipt IS the document: print it
+  // alone. SweetAlert marks the body and mounts its container as a direct
+  // body child, so everything else can be switched off.
+  body.swal2-shown > :not(.swal2-container) {
+    display: none !important;
+  }
+
+  .swal2-container {
+    position: static !important;
+    padding: 0 !important;
   }
 }

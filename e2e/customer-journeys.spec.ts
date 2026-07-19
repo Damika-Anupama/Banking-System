@@ -101,6 +101,46 @@ test.describe("Customer — linked accounts table", () => {
   });
 });
 
+test.describe("Customer — print output", () => {
+  test("print media hides the app chrome", async ({ page }) => {
+    await openCustomerDemo(page);
+    await expect(page.locator("aside.glass-sidebar")).toBeVisible();
+
+    await page.emulateMedia({ media: "print" });
+
+    // Paper gets the content, not the navigation shell.
+    await expect(page.locator("aside.glass-sidebar")).toBeHidden();
+    await expect(page.locator(".back-to-top-btn")).toBeHidden();
+  });
+
+  test("the receipt dialog prints, and stays open while doing so", async ({
+    page,
+  }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/transaction");
+
+    await page.evaluate(() => {
+      (window as any).__printCalls = 0;
+      window.print = () => {
+        (window as any).__printCalls++;
+      };
+    });
+
+    await page
+      .getByRole("button", { name: /receipt/i })
+      .first()
+      .click();
+    const dialog = page.locator(".swal2-popup");
+    await expect(dialog).toBeVisible();
+
+    await page.getByRole("button", { name: /print receipt/i }).click();
+
+    expect(await page.evaluate(() => (window as any).__printCalls)).toBe(1);
+    // The receipt is the print content, so it must not close itself first.
+    await expect(dialog).toBeVisible();
+  });
+});
+
 test.describe("Customer — standing order form", () => {
   test.beforeEach(async ({ page }) => {
     await openCustomerDemo(page);
