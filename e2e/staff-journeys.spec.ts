@@ -147,3 +147,31 @@ test.describe("Staff — shell accessibility", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 });
+
+test.describe("Staff — the last two forms validate inline", () => {
+  test("an empty service request marks its fields and moves focus", async ({
+    page,
+  }) => {
+    await openEmployeeDemo(page);
+    await page.goto("/employee-dashboard/employee-service-requests");
+    await page.getByRole("button", { name: /create ticket/i }).click();
+
+    await expect(page.locator("#newCustomer")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.locator("#newCustomer-error")).toBeVisible();
+    await expect(page.locator("#newSummary-error")).toBeVisible();
+    await expect(page.locator("#newCustomer")).toBeFocused();
+  });
+
+  test("an empty announcement marks its fields and moves focus", async ({
+    page,
+  }) => {
+    await openManagerDemo(page);
+    await page.goto("/manager-dashboard/manager-announcements");
+    await page.getByRole("button", { name: /post announcement/i }).click();
+
+    await expect(page.locator("#title")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.locator("#title-error")).toBeVisible();
+    await expect(page.locator("#message-error")).toBeVisible();
+    await expect(page.locator("#title")).toBeFocused();
+  });
+});

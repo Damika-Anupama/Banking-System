@@ -27,7 +27,14 @@
     <form class="space-y-5" (ngSubmit)="createRequest()">
       <div>
         <label class="auth-field-label" for="newCustomer"><i class="fas fa-user mr-2"></i>Customer <span class="text-red-300">*</span></label>
-        <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva" [(ngModel)]="newCustomer" id="newCustomer" name="newCustomer" />
+        <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva" [(ngModel)]="newCustomer" id="newCustomer" name="newCustomer"
+          (blur)="markTouched('newCustomer')"
+          [class.field-invalid]="errorFor('newCustomer')"
+          [attr.aria-invalid]="errorFor('newCustomer') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('newCustomer') ? 'newCustomer-error' : null" />
+        <p *ngIf="errorFor('newCustomer')" id="newCustomer-error" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('newCustomer') }}
+        </p>
       </div>
       <div>
         <label class="auth-field-label" for="newCategory"><i class="fas fa-tags mr-2"></i>Category</label>
@@ -54,7 +61,14 @@
       </div>
       <div>
         <label class="auth-field-label" for="newSummary"><i class="fas fa-clipboard-list mr-2"></i>Summary <span class="text-red-300">*</span></label>
-        <textarea class="glass-input w-full min-h-[90px] resize-none" rows="3" placeholder="Describe the customer's request" [(ngModel)]="newSummary" id="newSummary" name="newSummary"></textarea>
+        <textarea class="glass-input w-full min-h-[90px] resize-none" rows="3" placeholder="Describe the customer's request" [(ngModel)]="newSummary" id="newSummary" name="newSummary"
+          (blur)="markTouched('newSummary')"
+          [class.field-invalid]="errorFor('newSummary')"
+          [attr.aria-invalid]="errorFor('newSummary') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('newSummary') ? 'newSummary-error' : null"></textarea>
+        <p *ngIf="errorFor('newSummary')" id="newSummary-error" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('newSummary') }}
+        </p>
       </div>
       <button type="submit" class="glass-button w-full justify-center" [disabled]="isSubmitting" [class.opacity-50]="isSubmitting">
         <i *ngIf="!isSubmitting" class="fas fa-paper-plane mr-2"></i>

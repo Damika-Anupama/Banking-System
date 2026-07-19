@@ -23,7 +23,14 @@
     <form class="space-y-5" (ngSubmit)="post()">
       <div>
         <label class="auth-field-label" for="title"><i class="fas fa-heading mr-2"></i>Title <span class="text-red-300">*</span></label>
-        <input type="text" class="glass-input w-full" placeholder="e.g. New FD rates effective Monday" [(ngModel)]="title" id="title" name="title" />
+        <input type="text" class="glass-input w-full" placeholder="e.g. New FD rates effective Monday" [(ngModel)]="title" id="title" name="title"
+          (blur)="markTouched('title')"
+          [class.field-invalid]="errorFor('title')"
+          [attr.aria-invalid]="errorFor('title') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('title') ? 'title-error' : null" />
+        <p *ngIf="errorFor('title')" id="title-error" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('title') }}
+        </p>
       </div>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div class="min-w-0">
@@ -43,7 +50,14 @@
       </div>
       <div>
         <label class="auth-field-label" for="message"><i class="fas fa-align-left mr-2"></i>Message <span class="text-red-300">*</span></label>
-        <textarea class="glass-input w-full min-h-[120px] resize-none" rows="4" placeholder="Write your announcement…" [(ngModel)]="message" id="message" name="message"></textarea>
+        <textarea class="glass-input w-full min-h-[120px] resize-none" rows="4" placeholder="Write your announcement…" [(ngModel)]="message" id="message" name="message"
+          (blur)="markTouched('message')"
+          [class.field-invalid]="errorFor('message')"
+          [attr.aria-invalid]="errorFor('message') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('message') ? 'message-error' : null"></textarea>
+        <p *ngIf="errorFor('message')" id="message-error" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('message') }}
+        </p>
       </div>
       <button type="submit" class="glass-button w-full justify-center" [disabled]="isPosting" [class.opacity-50]="isPosting">
         <i *ngIf="!isPosting" class="fas fa-bullhorn mr-2"></i>

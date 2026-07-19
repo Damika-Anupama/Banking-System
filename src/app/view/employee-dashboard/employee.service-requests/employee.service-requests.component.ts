@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
+import { focusFirstError } from 'src/app/shared/focus-first-error';
 
 interface ServiceRequest {
   ticket_id: string;
@@ -57,8 +58,35 @@ export class EmployeeServiceRequestsComponent {
   get resolvedCount(): number { return this.requests.filter(r => r.status === 'Resolved').length; }
   get highPriorityCount(): number { return this.requests.filter(r => r.priority === 'High' && r.status !== 'Resolved').length; }
 
+  touched: Record<string, boolean> = {};
+  private readonly validatedFields = ['newCustomer', 'newSummary'];
+
+  get fieldErrors(): Record<string, string | null> {
+    return {
+      newCustomer: this.newCustomer.trim() ? null : 'Enter the customer name.',
+      newSummary: this.newSummary.trim() ? null : 'Describe the request in a short summary.',
+    };
+  }
+
   get isValid(): boolean {
-    return this.newCustomer.trim().length > 0 && this.newSummary.trim().length > 0;
+    return this.validatedFields.every(field => !this.fieldErrors[field]);
+  }
+
+  /** The first field the form rejected, so focus can be sent straight to it. */
+  get firstErrorField(): string | null {
+    for (const field of this.validatedFields) {
+      if (this.fieldErrors[field]) return field;
+    }
+    return null;
+  }
+
+  /** An error is only shown once the user has left the field, to avoid nagging mid-type. */
+  errorFor(field: string): string | null {
+    return this.touched[field] ? this.fieldErrors[field] : null;
+  }
+
+  markTouched(field: string): void {
+    this.touched[field] = true;
   }
 
   statusTone(status: string): string {
@@ -75,7 +103,9 @@ export class EmployeeServiceRequestsComponent {
 
   createRequest(): void {
     if (!this.isValid) {
-      this.toastService.info('Missing details', 'Enter the customer and a short summary.');
+      this.validatedFields.forEach(field => (this.touched[field] = true));
+      focusFirstError(this.firstErrorField);
+      this.toastService.error('Missing details', 'Fix the highlighted fields to open the ticket.');
       return;
     }
     this.isSubmitting = true;
@@ -93,6 +123,7 @@ export class EmployeeServiceRequestsComponent {
       this.requests = [ticket, ...this.requests];
       this.newCustomer = '';
       this.newSummary = '';
+      this.touched = {};
       this.newCategory = 'Card replacement';
       this.newPriority = 'Medium';
       this.isSubmitting = false;
