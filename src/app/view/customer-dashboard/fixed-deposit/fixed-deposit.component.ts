@@ -154,6 +154,20 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  /** Clears the placement form after a successful submission. */
+  resetPlacementForm(): void {
+    this.selectedSavingAccount = undefined;
+    this.selectedPackage = undefined;
+    this.fdAmount = null;
+    this.savingAccountId = null;
+    this.duration = null;
+    this.rpa = null;
+    // The next placement must not start pre-consented or covered in the
+    // previous submission's error marks.
+    this.acceptedTerms = false;
+    this.touched = {};
+  }
+
   loadFDs() {
     this.isLoadingFDs = true;
 
@@ -367,13 +381,7 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
             confirmButtonText: 'Done'
           });
 
-          // Reset form
-          this.selectedSavingAccount = undefined;
-          this.selectedPackage = undefined;
-          this.fdAmount = null;
-          this.savingAccountId = null;
-          this.duration = null;
-          this.rpa = null;
+          this.resetPlacementForm();
 
           // Reload FDs
           this.loadFDs();

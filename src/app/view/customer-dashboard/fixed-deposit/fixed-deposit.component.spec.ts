@@ -788,4 +788,26 @@ describe('FixedDepositComponent', () => {
       expect(subscription2.unsubscribe).toHaveBeenCalled();
     });
   });
+
+  describe('resetPlacementForm()', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(FixedDepositComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('clears the terms consent so the next placement is not pre-consented', () => {
+      component.acceptedTerms = true;
+      component.resetPlacementForm();
+      expect(component.acceptedTerms).toBeFalse();
+    });
+
+    it('clears touched state and the placement fields', () => {
+      component.touched = { fdAmount: true, acceptedTerms: true };
+      component.fdAmount = 250000;
+      component.resetPlacementForm();
+      expect(component.touched).toEqual({});
+      expect(component.fdAmount).toBeNull();
+      expect(component.selectedPackage).toBeUndefined();
+    });
+  });
 });

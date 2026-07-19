@@ -1,5 +1,7 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { Subscription } from 'rxjs';
+import { ThemeService } from '../../../service/theme.service';
 Chart.register(...registerables);
 
 interface DayFlow {
@@ -21,11 +23,31 @@ interface Segment {
   templateUrl: './manager.reports.component.html',
   styleUrls: ['./manager.reports.component.scss']
 })
-export class ManagerReportsComponent implements AfterViewInit, OnDestroy {
+export class ManagerReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   period: '7d' | '30d' | 'qtr' = '7d';
 
   private loanChart: Chart | null = null;
   private mixChart: Chart | null = null;
+  private themeSub: Subscription | null = null;
+
+  constructor(private themeService: ThemeService) {}
+
+  ngOnInit(): void {
+    // Chart colours are computed at render time, so a theme toggle must
+    // rebuild the charts or the axis/legend colours stay in the old theme.
+    this.themeSub = this.themeService.isDarkMode$.subscribe(() =>
+      setTimeout(() => this.rerenderCharts())
+    );
+  }
+
+  private rerenderCharts(): void {
+    this.loanChart?.destroy();
+    this.mixChart?.destroy();
+    this.loanChart = null;
+    this.mixChart = null;
+    this.renderLoanChart();
+    this.renderMixChart();
+  }
 
   readonly cashFlow: DayFlow[] = [
     { label: 'Mon', deposits: 820000,  withdrawals: 540000 },
@@ -82,6 +104,7 @@ export class ManagerReportsComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.themeSub?.unsubscribe();
     this.loanChart?.destroy();
     this.mixChart?.destroy();
   }

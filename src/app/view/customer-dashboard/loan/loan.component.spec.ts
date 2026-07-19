@@ -833,4 +833,32 @@ describe('LoanComponent', () => {
       expect(subscription2.unsubscribe).toHaveBeenCalled();
     });
   });
+
+  describe('resetApplicationForm()', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(LoanComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('clears the lien consent so the next application is not pre-consented', () => {
+      component.acceptedLienConsent = true;
+      component.resetApplicationForm();
+      expect(component.acceptedLienConsent).toBeFalse();
+    });
+
+    it('clears touched state so prior error marks do not flash on a fresh form', () => {
+      component.touched = { loanAmount: true, acceptedLienConsent: true };
+      component.resetApplicationForm();
+      expect(component.touched).toEqual({});
+    });
+
+    it('clears the amount and selections', () => {
+      component.loanAmount = 50000;
+      component.selectedLoanType = 'Personal';
+      component.resetApplicationForm();
+      expect(component.loanAmount).toBe(0);
+      expect(component.selectedLoanType).toBe('');
+      expect(component.selectedFD).toBeNull();
+    });
+  });
 });

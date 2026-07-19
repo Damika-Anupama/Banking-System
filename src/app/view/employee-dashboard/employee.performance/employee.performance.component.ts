@@ -1,5 +1,7 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { Subscription } from 'rxjs';
+import { ThemeService } from '../../../service/theme.service';
 Chart.register(...registerables);
 
 interface Target {
@@ -21,9 +23,24 @@ interface ActivityRow {
   templateUrl: './employee.performance.component.html',
   styleUrls: ['./employee.performance.component.scss']
 })
-export class EmployeePerformanceComponent implements AfterViewInit, OnDestroy {
+export class EmployeePerformanceComponent implements OnInit, AfterViewInit, OnDestroy {
   private weeklyChart: Chart | null = null;
+  private themeSub: Subscription | null = null;
   today = new Date();
+
+  constructor(private themeService: ThemeService) {}
+
+  ngOnInit(): void {
+    // Chart colours are computed at render time, so a theme toggle must
+    // rebuild the chart or the axis/grid colours stay in the old theme.
+    this.themeSub = this.themeService.isDarkMode$.subscribe(() =>
+      setTimeout(() => {
+        this.weeklyChart?.destroy();
+        this.weeklyChart = null;
+        this.renderWeeklyChart();
+      })
+    );
+  }
 
   // Headline stats for the day.
   transactionsToday = 38;
@@ -81,6 +98,7 @@ export class EmployeePerformanceComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.themeSub?.unsubscribe();
     this.weeklyChart?.destroy();
   }
 

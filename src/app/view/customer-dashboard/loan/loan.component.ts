@@ -151,6 +151,21 @@ export class LoanComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  /** Clears the application form after a successful submission. */
+  resetApplicationForm(): void {
+    this.selectedFD = null as any;
+    this.selectedLoan = undefined;
+    this.loanAmount = 0;
+    this.selectedLoanType = '';
+    this.maximumLoanAmount = 0;
+    this.duration = null;
+    this.interest = null;
+    // The next application must not start pre-consented or covered in the
+    // previous submission's error marks.
+    this.acceptedLienConsent = false;
+    this.touched = {};
+  }
+
   loadLoans() {
     this.isLoadingLoans = true;
 
@@ -452,14 +467,7 @@ export class LoanComponent implements OnInit, OnDestroy {
             confirmButtonText: 'Done'
           });
 
-          // Reset form
-          this.selectedFD = null as any;
-          this.selectedLoan = undefined;
-          this.loanAmount = 0;
-          this.selectedLoanType = '';
-          this.maximumLoanAmount = 0;
-          this.duration = null;
-          this.interest = null;
+          this.resetApplicationForm();
 
           // Reload loans
           this.loadLoans();
