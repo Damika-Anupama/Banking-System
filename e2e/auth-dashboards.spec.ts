@@ -31,6 +31,13 @@ test.describe("Banking System — auth & demo dashboards", () => {
     ).toBeVisible();
   });
 
+  test("sign-in autofocuses the email field so typing can start immediately", async ({
+    page,
+  }) => {
+    await page.goto("/sign-in");
+    await expect(page.locator("#signin-email")).toBeFocused();
+  });
+
   test("customer demo opens the customer dashboard", async ({ page }) => {
     await page.goto("/sign-in");
     await page

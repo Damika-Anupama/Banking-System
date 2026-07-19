@@ -29,6 +29,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   searchTerm = '';
   isLoading = false;
   errorMessage = '';
+  /** Mirrors the linked-accounts table headers so the skeleton holds its shape. */
+  readonly accountSkeletonColumns = ['Account', 'Product', 'Ownership', 'Branch', 'Status', 'Balance'];
   private subscriptions: Subscription[] = [];
   private chartInstance: Chart | null = null;
 

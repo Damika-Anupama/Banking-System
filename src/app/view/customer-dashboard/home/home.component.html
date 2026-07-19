@@ -68,7 +68,15 @@
       </div>
     </div>
 
-    <div class="demo-table-shell mt-5 overflow-x-auto" tabindex="0" role="region" aria-label="Table, scrollable">
+    <app-skeleton-table
+      *ngIf="isLoading"
+      class="mt-5 block"
+      [columns]="accountSkeletonColumns"
+      [rows]="4"
+      label="Loading your accounts"
+    ></app-skeleton-table>
+
+    <div *ngIf="!isLoading" class="demo-table-shell mt-5 overflow-x-auto" tabindex="0" role="region" aria-label="Table, scrollable">
       <table class="linked-accounts-table w-full table-fixed">
         <caption class="sr-only">Your accounts</caption>
         <colgroup>

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
 import { demoStore } from 'src/app/shared/demo-store';
@@ -10,7 +10,8 @@ import { ToastService } from 'src/app/service/toast.service';
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
-export class SignInComponent implements OnDestroy {
+export class SignInComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('emailInput') emailInput?: ElementRef<HTMLInputElement>;
   email = '';
   password = '';
   isLoading = false;
@@ -21,6 +22,11 @@ export class SignInComponent implements OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(private router: Router, private toastService: ToastService) {}
+
+  ngAfterViewInit(): void {
+    // Native autofocus only fires on a full page load, not on router navigation.
+    this.emailInput?.nativeElement.focus();
+  }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;

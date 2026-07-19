@@ -16,6 +16,13 @@
   <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Frozen</p><h2 class="mt-2 text-3xl font-black text-white">{{ frozenCount }}</h2><p class="mt-1 text-xs text-amber-100">Temporarily blocked</p></div><div class="demo-kpi-icon"><i class="fas fa-snowflake"></i></div></div></article>
 </section>
 
+<!-- Empty state: a profile with no issued cards would otherwise see "0 cards" above a blank page. -->
+<section *ngIf="cards.length === 0" class="demo-section-card animate-fade-in text-center py-12">
+  <div class="text-6xl text-white/20 mb-4"><i class="fas fa-credit-card"></i></div>
+  <p class="text-white/60">No cards linked to this profile yet</p>
+  <p class="text-white/40 text-sm mt-2">Ask your branch to issue a debit or credit card and it will appear here.</p>
+</section>
+
 <!-- Card grid -->
 <section class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
   <article *ngFor="let card of cards" class="demo-section-card animate-slide-up">

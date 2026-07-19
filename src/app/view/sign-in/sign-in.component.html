@@ -12,7 +12,7 @@
       <form #frm="ngForm" (ngSubmit)="authenticate(frm.valid)" class="mt-7 space-y-5" novalidate>
         <div>
           <label for="signin-email" class="auth-field-label"><i class="fas fa-envelope mr-2"></i>Email address</label>
-          <input id="signin-email" type="email" name="email" #emailModel="ngModel" [(ngModel)]="email" required email autocomplete="email" placeholder="amara.perera@example.com" class="glass-input w-full" [class.auth-input-error]="emailModel.invalid && (emailModel.dirty || emailModel.touched || submitted)"
+          <input id="signin-email" type="email" name="email" #emailInput #emailModel="ngModel" [(ngModel)]="email" required email autocomplete="email" placeholder="amara.perera@example.com" class="glass-input w-full" [class.auth-input-error]="emailModel.invalid && (emailModel.dirty || emailModel.touched || submitted)"
             [attr.aria-invalid]="emailModel.invalid && (emailModel.dirty || emailModel.touched || submitted) ? 'true' : null"
             [attr.aria-describedby]="emailModel.invalid && (emailModel.dirty || emailModel.touched || submitted) ? 'signin-email-error' : null" />
           <p id="signin-email-error" role="alert" *ngIf="emailModel.errors?.['required'] && (emailModel.dirty || emailModel.touched || submitted)" class="auth-error-text">Email address is required.</p>
