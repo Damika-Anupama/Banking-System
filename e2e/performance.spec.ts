@@ -1,5 +1,21 @@
 import { test, expect } from "@playwright/test";
 
+test("the social share card is a real, correctly-typed image", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/welcome");
+  const url = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute("content");
+  expect(url).toBeTruthy();
+
+  // Fetch by path against the server under test, not the production domain.
+  const res = await request.get(new URL(url!).pathname);
+  expect(res.status()).toBe(200);
+  expect(res.headers()["content-type"]).toContain("image/jpeg");
+});
+
 /**
  * Load-performance guards.
  *

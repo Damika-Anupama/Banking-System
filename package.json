@@ -15,7 +15,8 @@
     "smoke:live": "node scripts/smoke-live-demo.mjs",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
     "verify": "npm run lint && npm run test:ci && npm run build:prod && npm run test:e2e",
-    "icons": "node scripts/build-icon-subset.mjs"
+    "icons": "node scripts/build-icon-subset.mjs",
+    "og": "node scripts/build-og-image.mjs"
   },
   "private": true,
   "dependencies": {
