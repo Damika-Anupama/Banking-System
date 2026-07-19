@@ -17,6 +17,7 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
   isLoading = false;
   submitted = false;
   showPassword = false;
+  capsLockOn = false;
   loadingDemo: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER' | null = null;
   errorMessage = '';
   private subscriptions: Subscription[] = [];

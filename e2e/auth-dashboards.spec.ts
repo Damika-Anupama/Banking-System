@@ -38,6 +38,30 @@ test.describe("Banking System — auth & demo dashboards", () => {
     await expect(page.locator("#signin-email")).toBeFocused();
   });
 
+  test("typing with Caps Lock on warns under the password field, and blur clears it", async ({
+    page,
+  }) => {
+    await page.goto("/sign-in");
+    const password = page.locator("#signin-password");
+    await password.click();
+
+    // Playwright cannot toggle the real Caps Lock key, but getModifierState
+    // reads whatever the event was constructed with.
+    await password.evaluate((input) => {
+      input.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: "A",
+          bubbles: true,
+          modifierCapsLock: true,
+        })
+      );
+    });
+    await expect(page.getByText(/caps lock is on/i)).toBeVisible();
+
+    await page.locator("#signin-email").click();
+    await expect(page.getByText(/caps lock is on/i)).toBeHidden();
+  });
+
   test("customer demo opens the customer dashboard", async ({ page }) => {
     await page.goto("/sign-in");
     await page

@@ -233,6 +233,11 @@ html:not(.dark) .settings-security-row strong {
   @apply mt-2 text-sm font-medium text-rose-200;
 }
 
+/* Advisory, not blocking: Caps Lock warnings under masked password fields. */
+.auth-warning-text {
+  @apply mt-2 text-sm font-medium text-amber-200;
+}
+
 .auth-input-error {
   border-color: rgba(251, 113, 133, 0.75) !important;
   box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.16) !important;

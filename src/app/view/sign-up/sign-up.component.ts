@@ -18,6 +18,8 @@ export class SignUpComponent {
   submitted = false;
   showPassword = false;
   showConfirmPassword = false;
+  capsLockPassword = false;
+  capsLockConfirm = false;
 
   constructor(private router: Router) {}
 

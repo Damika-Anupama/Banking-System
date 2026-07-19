@@ -22,13 +22,14 @@
         <div>
           <label for="signin-password" class="auth-field-label"><i class="fas fa-lock mr-2"></i>Password</label>
           <div class="password-field-wrap">
-            <input id="signin-password" [type]="showPassword ? 'text' : 'password'" name="password" #passwordModel="ngModel" [(ngModel)]="password" required minlength="6" autocomplete="current-password" placeholder="Minimum 6 characters" class="glass-input w-full password-input" [class.auth-input-error]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted)"
+            <input id="signin-password" [type]="showPassword ? 'text' : 'password'" name="password" #passwordModel="ngModel" [(ngModel)]="password" (appCapsLock)="capsLockOn = $event" required minlength="6" autocomplete="current-password" placeholder="Minimum 6 characters" class="glass-input w-full password-input" [class.auth-input-error]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted)"
               [attr.aria-invalid]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted) ? 'true' : null"
               [attr.aria-describedby]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted) ? 'signin-password-error' : null" />
             <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword" tabindex="0" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword">
               <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
             </button>
           </div>
+          <p *ngIf="capsLockOn" role="status" class="auth-warning-text"><i class="fas fa-exclamation-triangle mr-1"></i>Caps Lock is on.</p>
           <p id="signin-password-error" role="alert" *ngIf="passwordModel.errors?.['required'] && (passwordModel.dirty || passwordModel.touched || submitted)" class="auth-error-text">Password is required.</p>
           <p id="signin-password-error" role="alert" *ngIf="passwordModel.errors?.['minlength'] && (passwordModel.dirty || passwordModel.touched || submitted)" class="auth-error-text">Password must be at least 6 characters.</p>
         </div>

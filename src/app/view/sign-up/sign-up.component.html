@@ -29,13 +29,14 @@
           <div>
             <label for="signup-password" class="auth-field-label"><i class="fas fa-lock mr-2"></i>Password</label>
             <div class="password-field-wrap">
-              <input id="signup-password" name="password" [type]="showPassword ? 'text' : 'password'" #passwordModel="ngModel" [(ngModel)]="password" required minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters" class="glass-input w-full password-input" [class.auth-input-error]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted)"
+              <input id="signup-password" name="password" [type]="showPassword ? 'text' : 'password'" #passwordModel="ngModel" [(ngModel)]="password" (appCapsLock)="capsLockPassword = $event" required minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters" class="glass-input w-full password-input" [class.auth-input-error]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted)"
               [attr.aria-invalid]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted) ? 'true' : null"
               [attr.aria-describedby]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted) ? 'signup-password-error' : null" />
               <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword">
                 <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
               </button>
             </div>
+            <p *ngIf="capsLockPassword" role="status" class="auth-warning-text"><i class="fas fa-exclamation-triangle mr-1"></i>Caps Lock is on.</p>
             <p id="signup-password-error" role="alert" *ngIf="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted)" class="auth-error-text">Use at least 8 characters.</p>
             <div *ngIf="password" class="mt-2">
               <div class="flex items-center justify-between text-xs mb-1">
@@ -50,13 +51,14 @@
           <div>
             <label for="signup-confirm-password" class="auth-field-label"><i class="fas fa-lock mr-2"></i>Confirm password</label>
             <div class="password-field-wrap">
-              <input id="signup-confirm-password" name="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" #confirmPasswordModel="ngModel" [(ngModel)]="confirmPassword" required autocomplete="new-password" placeholder="Retype password" class="glass-input w-full password-input" [class.auth-input-error]="(confirmPasswordModel.invalid || passwordsDoNotMatch()) && (confirmPasswordModel.dirty || confirmPasswordModel.touched || submitted)"
+              <input id="signup-confirm-password" name="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" #confirmPasswordModel="ngModel" [(ngModel)]="confirmPassword" (appCapsLock)="capsLockConfirm = $event" required autocomplete="new-password" placeholder="Retype password" class="glass-input w-full password-input" [class.auth-input-error]="(confirmPasswordModel.invalid || passwordsDoNotMatch()) && (confirmPasswordModel.dirty || confirmPasswordModel.touched || submitted)"
                 [attr.aria-invalid]="(confirmPasswordModel.invalid || passwordsDoNotMatch()) && (confirmPasswordModel.dirty || confirmPasswordModel.touched || submitted) ? 'true' : null"
                 [attr.aria-describedby]="(confirmPasswordModel.invalid || passwordsDoNotMatch()) && (confirmPasswordModel.dirty || confirmPasswordModel.touched || submitted) ? 'signup-confirm-error signup-mismatch-error' : null" />
               <button type="button" class="password-toggle-btn" (click)="toggleConfirmPasswordVisibility()" [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showConfirmPassword">
                 <i class="fas" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
               </button>
             </div>
+            <p *ngIf="capsLockConfirm" role="status" class="auth-warning-text"><i class="fas fa-exclamation-triangle mr-1"></i>Caps Lock is on.</p>
             <p id="signup-confirm-error" role="alert" *ngIf="confirmPasswordModel.invalid && (confirmPasswordModel.dirty || confirmPasswordModel.touched || submitted)" class="auth-error-text">Confirm your password.</p>
             <p id="signup-mismatch-error" role="alert" *ngIf="passwordsDoNotMatch() && (confirmPasswordModel.dirty || confirmPasswordModel.touched || submitted)" class="auth-error-text">Passwords must match.</p>
           </div>
