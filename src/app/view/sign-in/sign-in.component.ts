@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
-import { demoStore } from 'src/app/shared/demo-store';
+import { seedDemoSession, DemoRole } from 'src/app/shared/demo-session';
 import { ToastService } from 'src/app/service/toast.service';
 
 @Component({
@@ -51,22 +51,16 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
     this.openCustomerDashboard(this.email);
   }
 
-  launchDemo(type: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER'): void {
+  launchDemo(type: DemoRole): void {
     // Ignore repeat clicks while a workspace is already opening.
     if (this.loadingDemo) {
       return;
     }
-    const demoProfiles = {
-      CUSTOMER: { email: 'customer@banking-system.app', route: '/dashboard/home' },
-      EMPLOYEE: { email: 'employee@banking-system.app', route: '/employee-dashboard/employee-home' },
-      MANAGER: { email: 'manager@banking-system.app', route: '/manager-dashboard/manager-home' }
-    };
-    const profile = demoProfiles[type];
     this.loadingDemo = type;
-    this.seedDemoSession(type, profile.email);
+    const route = seedDemoSession(type);
     // Brief delay so the "opening workspace" feedback is visible before routing.
     this.subscriptions.push(
-      timer(450).subscribe(() => this.router.navigate([profile.route]))
+      timer(450).subscribe(() => this.router.navigate([route]))
     );
   }
 
@@ -115,8 +109,7 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
 
   private openCustomerDashboard(email: string): void {
     try {
-      this.seedDemoSession('CUSTOMER', email);
-      localStorage.setItem('demoMode', 'true');
+      seedDemoSession('CUSTOMER', email);
     } catch (error) {
       console.error('Error storing authentication data:', error);
       this.isLoading = false;
@@ -158,33 +151,6 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
       default:
         return null;
     }
-  }
-
-  private seedDemoSession(type: 'CUSTOMER' | 'EMPLOYEE' | 'MANAGER', email: string): void {
-    localStorage.setItem('demoMode', 'true');
-    localStorage.setItem('token', this.createDemoToken(type));
-    localStorage.setItem('email', email);
-    localStorage.setItem('userType', type);
-    // Start each demo walkthrough from fresh seed data.
-    demoStore.reset();
-  }
-
-  private createDemoToken(type: string): string {
-    const header = this.base64UrlEncode({ alg: 'HS256', typ: 'JWT' });
-    const payload = this.base64UrlEncode({
-      sub: `demo-${type.toLowerCase()}`,
-      role: type,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
-    });
-
-    return `${header}.${payload}.ZGVtby1zaWduYXR1cmU`;
-  }
-
-  private base64UrlEncode(value: object): string {
-    return btoa(JSON.stringify(value))
-      .replace(/=/g, '')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_');
   }
 
   ngOnDestroy(): void {

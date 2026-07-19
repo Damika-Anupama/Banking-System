@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { seedDemoSession, DemoRole } from 'src/app/shared/demo-session';
 
 interface WelcomeStat {
   prefix: string;
@@ -25,8 +26,21 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   ];
 
   private rafId: number | null = null;
+  private navigationTimer: ReturnType<typeof setTimeout> | null = null;
+  loadingDemo: DemoRole | null = null;
 
   constructor(private router: Router, private cdr: ChangeDetectorRef) {}
+
+  /** One-click role demo, identical to the launchers on the sign-in screen. */
+  launchDemo(type: DemoRole): void {
+    if (this.loadingDemo) {
+      return;
+    }
+    this.loadingDemo = type;
+    const route = seedDemoSession(type);
+    // Brief delay so the "opening workspace" feedback is visible before routing.
+    this.navigationTimer = setTimeout(() => this.router.navigate([route]), 450);
+  }
 
   ngOnInit(): void {
     const prefersReducedMotion =
@@ -81,6 +95,12 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   // Let users press Enter to continue
   @HostListener('window:keydown.enter', ['$event'])
   onEnterPress(event: Event): void {
+    // Enter on a focused button or link must activate that control, not
+    // hijack the keypress into the sign-in redirect.
+    const target = event.target as HTMLElement | null;
+    if (target && target.closest('button, a, input, select, textarea')) {
+      return;
+    }
     event.preventDefault();
     this.gotoSignin();
   }
@@ -88,6 +108,9 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.rafId !== null) {
       window.cancelAnimationFrame(this.rafId);
+    }
+    if (this.navigationTimer !== null) {
+      clearTimeout(this.navigationTimer);
     }
   }
 }
