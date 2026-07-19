@@ -90,11 +90,19 @@
         <thead>
           <tr>
             <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Account</th>
-            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Product</th>
-            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Ownership</th>
-            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Branch</th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="accountSort.stateFor('product')">
+              <button type="button" class="th-sort" (click)="accountSort.toggle('product')">Product <i class="fas" [ngClass]="accountSort.iconFor('product')" aria-hidden="true"></i></button>
+            </th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="accountSort.stateFor('ownership')">
+              <button type="button" class="th-sort" (click)="accountSort.toggle('ownership')">Ownership <i class="fas" [ngClass]="accountSort.iconFor('ownership')" aria-hidden="true"></i></button>
+            </th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="accountSort.stateFor('branch')">
+              <button type="button" class="th-sort" (click)="accountSort.toggle('branch')">Branch <i class="fas" [ngClass]="accountSort.iconFor('branch')" aria-hidden="true"></i></button>
+            </th>
             <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Status</th>
-            <th scope="col" class="text-right px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Balance</th>
+            <th scope="col" class="text-right px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="accountSort.stateFor('balance')">
+              <button type="button" class="th-sort th-sort--right" (click)="accountSort.toggle('balance')">Balance <i class="fas" [ngClass]="accountSort.iconFor('balance')" aria-hidden="true"></i></button>
+            </th>
           </tr>
         </thead>
         <tbody>

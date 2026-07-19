@@ -71,6 +71,36 @@ test.describe("Customer — transaction ledger", () => {
   });
 });
 
+test.describe("Customer — linked accounts table", () => {
+  test.beforeEach(async ({ page }) => {
+    await openCustomerDemo(page);
+  });
+
+  test("sorting by balance reorders the accounts and announces the state", async ({
+    page,
+  }) => {
+    const table = page.getByRole("table", { name: /your accounts/i });
+    const balanceHeader = table.getByRole("columnheader", { name: /balance/i });
+
+    await expect(balanceHeader).toHaveAttribute("aria-sort", "none");
+
+    await balanceHeader.getByRole("button").click();
+    await expect(balanceHeader).toHaveAttribute("aria-sort", "descending");
+
+    const balances = await table
+      .locator("tbody tr td:nth-child(6)")
+      .allInnerTexts();
+    const numeric = balances.map((t) => Number(t.replace(/\D/g, "")));
+    expect(numeric).toEqual([...numeric].sort((a, b) => b - a));
+
+    // Third click returns to the account list's own order.
+    await balanceHeader.getByRole("button").click();
+    await expect(balanceHeader).toHaveAttribute("aria-sort", "ascending");
+    await balanceHeader.getByRole("button").click();
+    await expect(balanceHeader).toHaveAttribute("aria-sort", "none");
+  });
+});
+
 test.describe("Customer — transfer form", () => {
   test.beforeEach(async ({ page }) => {
     await openCustomerDemo(page);

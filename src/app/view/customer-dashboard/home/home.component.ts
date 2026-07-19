@@ -7,6 +7,7 @@ import { ThemeService } from 'src/app/service/theme.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
+import { TableSort } from 'src/app/shared/table-sort';
 import { DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
 Chart.register(...registerables);
 
@@ -61,21 +62,29 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return (this.accounts || []).reduce((sum, account) => sum + this.amountOf(account), 0);
   }
 
+  /** Column sorting for the linked-accounts table, same cycle as the ledger. */
+  readonly accountSort = new TableSort<any>({
+    product: account => String(account?.saving_type || '').toLowerCase(),
+    ownership: account => String(account?.account_type || '').toLowerCase(),
+    branch: account => String(account?.branch_name || '').toLowerCase(),
+    balance: account => this.amountOf(account),
+  });
+
   get filteredAccounts(): any[] {
     const accounts = this.accounts || [];
     const query = this.searchTerm.trim().toLowerCase();
 
     if (!query) {
-      return accounts;
+      return this.accountSort.apply(accounts);
     }
 
-    return accounts.filter(account => [
+    return this.accountSort.apply(accounts.filter(account => [
       account.account_id,
       account.account_type,
       account.saving_type,
       account.branch_name,
       account.amount
-    ].some(value => String(value || '').toLowerCase().includes(query)));
+    ].some(value => String(value || '').toLowerCase().includes(query))));
   }
 
   get selectedSavingLabel(): string {
