@@ -293,10 +293,30 @@ export class LoanComponent implements OnInit, OnDestroy {
 
   downloadLoanAgreement(loan: any): void {
     Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
       icon: 'info',
-      title: 'Agreement ready',
-      html: `Loan agreement <strong>${loan.loan_basic_detail_id}</strong> is ready for the client demo.`,
-      confirmButtonText: 'Close'
+      title: 'Loan agreement',
+      html: `
+        <div class="demo-detail-grid">
+          <div class="demo-detail-row"><span>Agreement</span><strong>${loan.loan_basic_detail_id}</strong></div>
+          <div class="demo-detail-row"><span>Borrower</span><strong>${localStorage.getItem('displayName') || 'Customer'}</strong></div>
+          <div class="demo-detail-row"><span>Loan type</span><strong>${loan.loan_type || 'Personal'}</strong></div>
+          <div class="demo-detail-row"><span>Principal</span><strong>Rs. ${Number(loan.amount || 0).toLocaleString()}</strong></div>
+          <div class="demo-detail-row"><span>Interest</span><strong>${loan.interest || 0}% p.a.</strong></div>
+          <div class="demo-detail-row"><span>Outstanding</span><strong>Rs. ${this.loanOutstanding(loan).toLocaleString()}</strong></div>
+          <div class="demo-detail-row"><span>Remaining tenure</span><strong>${this.remainingTenure(loan)}</strong></div>
+          <div class="demo-detail-row"><span>Next due</span><strong>${this.loanNextDueDate(loan).toLocaleDateString()}</strong></div>
+          <div class="demo-detail-row"><span>Generated</span><strong>${new Date().toLocaleString()}</strong></div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: '<i class="fas fa-print mr-1" aria-hidden="true"></i> Print agreement',
+      cancelButtonText: 'Close',
+      preConfirm: () => {
+        // The print stylesheet prints only the open dialog; it must stay open.
+        window.print();
+        return false;
+      }
     });
   }
 

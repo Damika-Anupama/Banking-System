@@ -286,10 +286,29 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
 
   viewFDCertificate(fdItem: any): void {
     Swal.fire({
+      customClass: { popup: 'demo-detail-modal' },
       icon: 'info',
-      title: `FD certificate ${fdItem.fd_id}`,
-      html: `Maturity: <strong>${this.fdMaturityDate(fdItem).toLocaleDateString()}</strong><br>Maturity value: <strong>Rs. ${this.fdMaturityAmount(fdItem).toLocaleString()}</strong><br>Renewal instruction: Credit principal and interest`,
-      confirmButtonText: 'Close'
+      title: 'Fixed deposit certificate',
+      html: `
+        <div class="demo-detail-grid">
+          <div class="demo-detail-row"><span>Certificate</span><strong>${fdItem.fd_id}</strong></div>
+          <div class="demo-detail-row"><span>Holder</span><strong>${localStorage.getItem('displayName') || 'Customer'}</strong></div>
+          <div class="demo-detail-row"><span>Principal</span><strong>Rs. ${Number(fdItem.amount || 0).toLocaleString()}</strong></div>
+          <div class="demo-detail-row"><span>Rate</span><strong>${fdItem.rate_per_annum || 0}% p.a.</strong></div>
+          <div class="demo-detail-row"><span>Maturity date</span><strong>${this.fdMaturityDate(fdItem).toLocaleDateString()}</strong></div>
+          <div class="demo-detail-row"><span>Maturity value</span><strong>Rs. ${this.fdMaturityAmount(fdItem).toLocaleString()}</strong></div>
+          <div class="demo-detail-row"><span>Renewal instruction</span><strong>Credit principal and interest</strong></div>
+          <div class="demo-detail-row"><span>Generated</span><strong>${new Date().toLocaleString()}</strong></div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: '<i class="fas fa-print mr-1" aria-hidden="true"></i> Print certificate',
+      cancelButtonText: 'Close',
+      preConfirm: () => {
+        // The print stylesheet prints only the open dialog; it must stay open.
+        window.print();
+        return false;
+      }
     });
   }
 

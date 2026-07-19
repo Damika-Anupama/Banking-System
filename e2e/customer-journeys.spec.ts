@@ -141,6 +141,51 @@ test.describe("Customer — print output", () => {
   });
 });
 
+test.describe("Customer — printable documents", () => {
+  test("the FD certificate dialog prints and stays open", async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/fixed-deposit");
+    await page.evaluate(() => {
+      (window as any).__printCalls = 0;
+      window.print = () => {
+        (window as any).__printCalls++;
+      };
+    });
+
+    await page.getByRole("button", { name: /certificate/i }).first().click();
+    const dialog = page.locator(".swal2-popup");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(/maturity value/i)).toBeVisible();
+
+    await page.getByRole("button", { name: /print certificate/i }).click();
+    expect(await page.evaluate(() => (window as any).__printCalls)).toBe(1);
+    await expect(dialog).toBeVisible();
+  });
+
+  test("the loan agreement dialog prints and stays open", async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/loan");
+    await page.evaluate(() => {
+      (window as any).__printCalls = 0;
+      window.print = () => {
+        (window as any).__printCalls++;
+      };
+    });
+
+    await page
+      .getByRole("button", { name: /view loan agreement/i })
+      .first()
+      .click();
+    const dialog = page.locator(".swal2-popup");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(/principal/i)).toBeVisible();
+
+    await page.getByRole("button", { name: /print agreement/i }).click();
+    expect(await page.evaluate(() => (window as any).__printCalls)).toBe(1);
+    await expect(dialog).toBeVisible();
+  });
+});
+
 test.describe("Customer — standing order form", () => {
   test.beforeEach(async ({ page }) => {
     await openCustomerDemo(page);
