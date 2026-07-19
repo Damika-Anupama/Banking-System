@@ -1,6 +1,15 @@
 import { Component, HostListener, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { seedDemoSession, DemoRole } from 'src/app/shared/demo-session';
+import { ToastService } from 'src/app/service/toast.service';
+
+/** Why the dashboard guard sent the user here, in words a person can act on. */
+const SESSION_ERROR_MESSAGES: Record<string, { title: string; detail: string }> = {
+  token_expired: { title: 'Session expired', detail: 'Your session timed out. Sign in again to continue.' },
+  no_token: { title: 'Sign-in required', detail: 'That page needs a signed-in session.' },
+  invalid_token: { title: 'Session ended', detail: 'Your session was no longer valid. Sign in again to continue.' },
+  auth_error: { title: 'Session ended', detail: 'Something went wrong while checking your session. Sign in again.' },
+};
 
 interface WelcomeStat {
   prefix: string;
@@ -29,7 +38,26 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   private navigationTimer: ReturnType<typeof setTimeout> | null = null;
   loadingDemo: DemoRole | null = null;
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
+  ) {}
+
+  /**
+   * The guard redirects here with ?error=… when it rejects a session; without
+   * this, the user lands on the marketing page with no explanation.
+   */
+  private surfaceSessionError(): void {
+    const code = this.route.snapshot.queryParamMap.get('error');
+    const message = code ? SESSION_ERROR_MESSAGES[code] : undefined;
+    if (!message) return;
+
+    this.toastService.warning(message.title, message.detail);
+    // Strip the param so a refresh or bookmark does not re-announce it.
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+  }
 
   /** One-click role demo, identical to the launchers on the sign-in screen. */
   launchDemo(type: DemoRole): void {
@@ -43,6 +71,8 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.surfaceSessionError();
+
     const prefersReducedMotion =
       typeof window !== 'undefined' &&
       window.matchMedia &&

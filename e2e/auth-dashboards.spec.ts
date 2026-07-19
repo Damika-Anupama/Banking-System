@@ -72,6 +72,16 @@ test.describe("Banking System — auth & demo dashboards", () => {
     await expect(page).toHaveURL(/\/manager-dashboard\/manager-home/);
   });
 
+  test("an expired-session redirect explains itself on the welcome page", async ({
+    page,
+  }) => {
+    await page.goto("/welcome?error=token_expired");
+
+    await expect(page.getByText(/session expired/i)).toBeVisible();
+    // The param is stripped so refreshing does not re-announce it.
+    await expect(page).not.toHaveURL(/error=/);
+  });
+
   test("signing up carries the typed name into the dashboard shell", async ({
     page,
   }) => {
