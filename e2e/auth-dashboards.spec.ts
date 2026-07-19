@@ -130,6 +130,13 @@ test.describe("Banking System — auth & demo dashboards", () => {
     await expect(page.locator("#signin-email")).toBeFocused();
   });
 
+  test("sign-up autofocuses the name field, same as sign-in", async ({
+    page,
+  }) => {
+    await page.goto("/sign-up");
+    await expect(page.locator("#signup-name")).toBeFocused();
+  });
+
   test("typing with Caps Lock on warns under the password field, and blur clears it", async ({
     page,
   }) => {

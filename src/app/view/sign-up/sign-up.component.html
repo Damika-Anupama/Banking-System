@@ -11,7 +11,7 @@
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label for="signup-name" class="auth-field-label"><i class="fas fa-user mr-2"></i>Full name</label>
-            <input id="signup-name" name="fullName" type="text" #fullNameModel="ngModel" [(ngModel)]="fullName" required minlength="3" autocomplete="name" placeholder="Amara Perera" class="glass-input w-full" [class.auth-input-error]="fullNameModel.invalid && (fullNameModel.dirty || fullNameModel.touched || submitted)"
+            <input id="signup-name" name="fullName" type="text" #fullNameInput #fullNameModel="ngModel" [(ngModel)]="fullName" required minlength="3" autocomplete="name" placeholder="Amara Perera" class="glass-input w-full" [class.auth-input-error]="fullNameModel.invalid && (fullNameModel.dirty || fullNameModel.touched || submitted)"
               [attr.aria-invalid]="fullNameModel.invalid && (fullNameModel.dirty || fullNameModel.touched || submitted) ? 'true' : null"
               [attr.aria-describedby]="fullNameModel.invalid && (fullNameModel.dirty || fullNameModel.touched || submitted) ? 'signup-name-error' : null" />
             <p id="signup-name-error" role="alert" *ngIf="fullNameModel.invalid && (fullNameModel.dirty || fullNameModel.touched || submitted)" class="auth-error-text">Enter your full name.</p>

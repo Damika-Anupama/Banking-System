@@ -1,5 +1,7 @@
 # Banking System
 
+[![CI](https://github.com/Damika-Anupama/Banking-System/actions/workflows/ci.yml/badge.svg?branch=frontend-demo)](https://github.com/Damika-Anupama/Banking-System/actions/workflows/ci.yml)
+
 Frontend-only Angular demo for a banking operations platform covering transactions, accounts, customer service, branch management, and loan approvals.
 
 **Live demo:** [banking-system-nine-sooty.vercel.app](https://banking-system-nine-sooty.vercel.app/)

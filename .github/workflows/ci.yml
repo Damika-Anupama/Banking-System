@@ -35,6 +35,15 @@ jobs:
       - name: Lint
         run: npx ng lint
 
+      # The icon font is subsetted from the icons the source actually names.
+      # A template can reference a glyph the font does not carry and nothing
+      # fails — the icon just silently does not render (this shipped five
+      # sprints in a row once). Regenerate and require a clean diff.
+      - name: Icon subset is current
+        run: |
+          npm run icons
+          git diff --exit-code src/assets/icons
+
       - name: Unit tests
         run: npx ng test --watch=false --browsers=ChromeHeadless
 

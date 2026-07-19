@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { getPasswordStrength, PasswordStrength } from 'src/app/shared/password-strength';
@@ -10,7 +10,8 @@ import { seedDemoSession } from 'src/app/shared/demo-session';
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss']
 })
-export class SignUpComponent {
+export class SignUpComponent implements AfterViewInit {
+  @ViewChild('fullNameInput') fullNameInput?: ElementRef<HTMLInputElement>;
   fullName = '';
   email = '';
   password = '';
@@ -23,6 +24,12 @@ export class SignUpComponent {
   capsLockConfirm = false;
 
   constructor(private router: Router) {}
+
+  ngAfterViewInit(): void {
+    // Same treatment as sign-in: native autofocus does not fire on router
+    // navigation, and the first field should be ready to type into.
+    this.fullNameInput?.nativeElement.focus();
+  }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
