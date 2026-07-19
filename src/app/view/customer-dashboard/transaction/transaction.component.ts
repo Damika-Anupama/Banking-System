@@ -8,6 +8,7 @@ import { createDemoBeneficiary } from 'src/app/shared/demo-banking-fixtures';
 import { ToastService } from 'src/app/service/toast.service';
 import { TableSort } from 'src/app/shared/table-sort';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { localIsoToday } from 'src/app/shared/local-date';
 
 @Component({
   selector: 'app-transaction',
@@ -34,7 +35,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   beneficiaries: any[] = [];
   payment_category = 'Supplier / invoice';
   transfer_priority: 'Standard' | 'Instant' = 'Standard';
-  schedule_date = new Date().toISOString().slice(0, 10);
+  schedule_date = localIsoToday();
 
   isLoading = false;
   isLoadingTransactions = false;
@@ -74,9 +75,14 @@ export class TransactionComponent implements OnInit, OnDestroy {
   private readonly validatedFields = [
     'to_account',
     'transfer_amount',
+    'schedule_date',
     'sender_remarks',
     'beneficiary_remarks',
   ];
+
+  get todayIso(): string {
+    return localIsoToday();
+  }
 
   /**
    * The single source of truth for transfer validity: the form, the step gates
@@ -106,6 +112,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
             : amount > this.dailyTransferLimit
               ? `Single demo transfers are limited to Rs. ${this.dailyTransferLimit.toLocaleString()}.`
               : null,
+
+      schedule_date: this.schedule_date && this.schedule_date < this.todayIso
+        ? 'The execution date cannot be in the past.'
+        : null,
 
       sender_remarks: this.sender_remarks.trim() ? null : 'Add a payment purpose.',
 
@@ -157,6 +167,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   get step2Valid(): boolean {
     return Boolean(
       this.transfer_amount && Number(this.transfer_amount) > 0 &&
+      !this.fieldErrors['schedule_date'] &&
       this.sender_remarks.trim() && this.beneficiary_remarks.trim()
     );
   }
@@ -169,7 +180,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.transferStep === 2 && !this.step2Valid) {
-      ['transfer_amount', 'sender_remarks', 'beneficiary_remarks'].forEach((field) =>
+      ['transfer_amount', 'schedule_date', 'sender_remarks', 'beneficiary_remarks'].forEach((field) =>
         this.markTouched(field)
       );
       this.toastService.info('Complete the amount step', 'Enter an amount, payment purpose, and beneficiary note.');
@@ -599,7 +610,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
           this.beneficiary_name = '';
           this.payment_category = 'Supplier / invoice';
           this.transfer_priority = 'Standard';
-          this.schedule_date = new Date().toISOString().slice(0, 10);
+          this.schedule_date = localIsoToday();
           this.transactionPage = 1;
           this.transferStep = 1;
 

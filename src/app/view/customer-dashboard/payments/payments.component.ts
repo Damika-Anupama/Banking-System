@@ -3,6 +3,8 @@ import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { demoStore } from 'src/app/shared/demo-store';
 import { createDemoStandingOrder } from 'src/app/shared/demo-banking-fixtures';
+import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { localIsoToday } from 'src/app/shared/local-date';
 
 @Component({
   selector: 'app-payments',
@@ -23,9 +25,15 @@ export class PaymentsComponent implements OnInit {
   frequency: 'Monthly' | 'Weekly' | 'Quarterly' = 'Monthly';
   nextDate = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
   isSaving = false;
+  touched: Record<string, boolean> = {};
 
   readonly categories = ['Utilities', 'Rent / lease', 'Insurance', 'Subscription', 'Tax / government', 'Other'];
   readonly frequencies: ('Monthly' | 'Weekly' | 'Quarterly')[] = ['Monthly', 'Weekly', 'Quarterly'];
+  private readonly validatedFields = ['payee', 'accountId', 'amount', 'nextDate'];
+
+  get todayIso(): string {
+    return localIsoToday();
+  }
 
   ngOnInit(): void {
     this.orders = demoStore.getStandingOrders();
@@ -47,8 +55,52 @@ export class PaymentsComponent implements OnInit {
       .sort((a, b) => new Date(a.next_date).getTime() - new Date(b.next_date).getTime())[0] || null;
   }
 
+  get fieldErrors(): Record<string, string | null> {
+    const amount = Number(this.amount);
+    const account = this.accountId.trim().toUpperCase();
+
+    return {
+      payee: this.payee.trim() ? null : 'Enter the payee name.',
+
+      accountId: !account
+        ? 'Enter the payee account number.'
+        : !/^ACC-?\d{6,}$/.test(account)
+          ? 'Use a valid account format, such as ACC-880021.'
+          : null,
+
+      amount: !this.amount
+        ? 'Enter an amount.'
+        : !Number.isFinite(amount) || amount <= 0
+          ? 'Enter a valid positive amount.'
+          : null,
+
+      nextDate: !this.nextDate
+        ? 'Choose the first payment date.'
+        : this.nextDate < this.todayIso
+          ? 'The first payment cannot be in the past.'
+          : null,
+    };
+  }
+
   get isValid(): boolean {
-    return Boolean(this.payee.trim() && this.accountId.trim() && this.amount && this.amount > 0 && this.nextDate);
+    return this.validatedFields.every(field => !this.fieldErrors[field]);
+  }
+
+  /** The first field the form rejected, so focus can be sent straight to it. */
+  get firstErrorField(): string | null {
+    for (const field of this.validatedFields) {
+      if (this.fieldErrors[field]) return field;
+    }
+    return null;
+  }
+
+  /** An error is only shown once the user has left the field, to avoid nagging mid-type. */
+  errorFor(field: string): string | null {
+    return this.touched[field] ? this.fieldErrors[field] : null;
+  }
+
+  markTouched(field: string): void {
+    this.touched[field] = true;
   }
 
   /** Whole days from today until the order's next payment date (negative = overdue). */
@@ -83,7 +135,9 @@ export class PaymentsComponent implements OnInit {
 
   setUpOrder(): void {
     if (!this.isValid) {
-      this.toastService.error('Check the order details', 'Fill payee, account, amount, and next date.');
+      this.validatedFields.forEach(field => (this.touched[field] = true));
+      focusFirstError(this.firstErrorField);
+      this.toastService.error('Check the order details', 'Fix the highlighted fields to schedule the payment.');
       return;
     }
     this.isSaving = true;
@@ -138,5 +192,7 @@ export class PaymentsComponent implements OnInit {
     this.amount = null;
     this.frequency = 'Monthly';
     this.nextDate = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+    // A fresh form should not open covered in last submission's error marks.
+    this.touched = {};
   }
 }

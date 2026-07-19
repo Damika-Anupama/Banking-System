@@ -101,6 +101,49 @@ test.describe("Customer — linked accounts table", () => {
   });
 });
 
+test.describe("Customer — standing order form", () => {
+  test.beforeEach(async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/payments");
+  });
+
+  test("an empty submission marks each missing field inline, not just a toast", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /create standing order/i }).click();
+
+    for (const field of ["#payee", "#accountId", "#amount"]) {
+      await expect(page.locator(field)).toHaveAttribute("aria-invalid", "true");
+    }
+    await expect(page.locator("#payee-error")).toBeVisible();
+
+    // Focus lands on the first offending field, so keyboard and screen-reader
+    // users are taken to the problem instead of being left on the button.
+    await expect(page.locator("#payee")).toBeFocused();
+  });
+
+  test("a past first-payment date is rejected inline", async ({ page }) => {
+    await page.locator("#payee").fill("Ceylon Electricity Board");
+    await page.locator("#accountId").fill("ACC-880021");
+    await page.locator("#amount").fill("4500");
+    await page.locator("#nextDate").fill("2020-01-01");
+    await page.getByRole("button", { name: /create standing order/i }).click();
+
+    await expect(page.locator("#nextDate-error")).toBeVisible();
+    await expect(page.locator("#nextDate-error")).toHaveText(/cannot be in the past/i);
+  });
+
+  test("a valid order is created and appears in the list", async ({ page }) => {
+    await page.locator("#payee").fill("Dialog Broadband");
+    await page.locator("#accountId").fill("ACC-771234");
+    await page.locator("#amount").fill("3200");
+    await page.getByRole("button", { name: /create standing order/i }).click();
+
+    const table = page.getByRole("table", { name: /standing orders/i });
+    await expect(table.getByText("Dialog Broadband")).toBeVisible();
+  });
+});
+
 test.describe("Customer — transfer form", () => {
   test.beforeEach(async ({ page }) => {
     await openCustomerDemo(page);

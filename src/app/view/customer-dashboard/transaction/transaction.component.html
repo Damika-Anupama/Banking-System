@@ -168,8 +168,15 @@
 
             <div class="min-w-0">
               <label class="auth-field-label" for="schedule_date"><i class="far fa-calendar mr-2"></i>Execution date</label>
-              <input type="date" class="glass-input w-full" [(ngModel)]="schedule_date" id="schedule_date" name="schedule_date" />
-              <p class="mt-2 text-xs text-white/50">Use today for immediate posting.</p>
+              <input type="date" class="glass-input w-full" [min]="todayIso" [(ngModel)]="schedule_date" id="schedule_date" name="schedule_date"
+                (blur)="markTouched('schedule_date')"
+                [class.field-invalid]="errorFor('schedule_date')"
+                [attr.aria-invalid]="errorFor('schedule_date') ? 'true' : null"
+                [attr.aria-describedby]="errorFor('schedule_date') ? 'schedule_date-error' : null" />
+              <p *ngIf="errorFor('schedule_date')" id="schedule_date-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('schedule_date') }}
+              </p>
+              <p *ngIf="!errorFor('schedule_date')" class="mt-2 text-xs text-white/50">Use today for immediate posting.</p>
             </div>
 
             <div class="min-w-0">
