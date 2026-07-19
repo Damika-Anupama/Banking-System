@@ -91,7 +91,7 @@
           <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ transaction.amount | number }}</td>
           <td class="hidden lg:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ transaction.from_account }}</td>
           <td class="hidden lg:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ transaction.to_account }}</td>
-          <td class="hidden md:table-cell px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ transaction.transferd_time | date: 'yyyy-MM-dd' }}</td>
+          <td class="hidden md:table-cell px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ transaction.transferd_time | date: 'MMM d, y' }}</td>
           <td class="px-5 py-3">
             <span *ngIf="transaction.direction == 'up'" class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80"><i class="fas fa-arrow-down mr-1"></i>In</span>
             <span *ngIf="transaction.direction == 'down'" class="glass-badge bg-gradient-to-r from-glass-orange/80 to-glass-pink/80"><i class="fas fa-arrow-up mr-1"></i>Out</span>
@@ -134,7 +134,7 @@
           </td>
           <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ withdrawal.amount | number }}</td>
           <td class="hidden md:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ withdrawal.account_id }}</td>
-          <td class="hidden md:table-cell px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'yyyy-MM-dd' }}</td>
+          <td class="hidden md:table-cell px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'MMM d, y' }}</td>
         </tr>
       </tbody>
     </table>
@@ -168,7 +168,7 @@
             <span class="glass-badge bg-gradient-to-r from-glass-pink/80 to-glass-orange/80">{{ loan.installment_id }}</span>
           </td>
           <td class="hidden md:table-cell px-5 py-3 text-white/90">{{ loan.installment_number }}</td>
-          <td class="px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2 text-red-400"></i>{{ loan.due_date | date: 'yyyy-MM-dd' }}</td>
+          <td class="px-5 py-3 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2 text-red-400"></i>{{ loan.due_date | date: 'MMM d, y' }}</td>
           <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">Rs. {{ loan.amount | number }}</td>
           <td class="hidden lg:table-cell px-5 py-3 text-white/90 font-mono truncate">{{ loan.loan_basic_detail_id }}</td>
         </tr>

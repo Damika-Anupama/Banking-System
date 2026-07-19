@@ -256,12 +256,10 @@
     </table>
 
     <!-- Empty State -->
-    <div *ngIf="!isLoadingLoans && (!loans || loans.length === 0)" class="text-center py-12">
-      <div class="text-6xl text-white/20 mb-4">
-        <i class="fas fa-hand-holding-usd"></i>
-      </div>
-      <p class="text-white/60">No loans found</p>
-      <p class="text-white/40 text-sm mt-2">Apply for your first loan to get started</p>
+    <div *ngIf="!isLoadingLoans && (!loans || loans.length === 0)" class="demo-state-card">
+      <i class="fas fa-hand-holding-usd"></i>
+      <h3>No loans yet</h3>
+      <p>Apply for your first loan to get started.</p>
     </div>
 
     <!-- Pagination -->

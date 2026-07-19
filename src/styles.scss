@@ -175,6 +175,35 @@ body {
     }
   }
 
+  /* Destructive actions: same shape as the secondary button, but the tint
+     says "this one removes something" before the copy does. */
+  .glass-button-danger {
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.45);
+    color: #fecdd3;
+    @apply backdrop-blur-sm font-semibold px-6 py-3 rounded-xl no-underline transition-all duration-300 hover:scale-105 active:scale-95;
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(244, 63, 94, 0.22);
+      outline: 2px solid rgba(244, 63, 94, 0.68);
+      outline-offset: 3px;
+      text-decoration: none;
+    }
+
+    &:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  html:not(.dark) .glass-button-danger {
+    background: rgba(244, 63, 94, 0.08);
+    border-color: rgba(225, 29, 72, 0.4);
+    color: #be123c;
+  }
+
   .glass-button-secondary {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);

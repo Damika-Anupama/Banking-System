@@ -8,7 +8,7 @@
       </div>
       <div class="transaction-header-meta">
         <span class="demo-status-pill demo-status-success"><i class="fas fa-lock"></i> 2-step review enabled</span>
-        <span class="demo-status-pill demo-status-info"><i class="far fa-clock"></i> Last activity {{ latestTransactionDate ? (latestTransactionDate | date: 'MMM d, h:mm a') : 'N/A' }}</span>
+        <span class="demo-status-pill demo-status-info"><i class="far fa-clock"></i> Last activity {{ latestTransactionDate ? (latestTransactionDate | date: 'MMM d, h:mm a') : '—' }}</span>
       </div>
     </div>
   </section>
@@ -365,9 +365,10 @@
         </tbody>
       </table>
 
-      <div *ngIf="filteredTransactions.length === 0" class="text-center py-12">
-        <div class="text-6xl text-white/20 mb-4"><i class="fas fa-receipt"></i></div>
-        <p class="text-white/60">No transactions match the selected filters.</p>
+      <div *ngIf="filteredTransactions.length === 0" class="demo-state-card m-4">
+        <i class="fas fa-receipt"></i>
+        <h3>No matching transactions</h3>
+        <p>Loosen the filters or pick a wider date range to see more activity.</p>
       </div>
 
       <div *ngIf="filteredTransactions.length > 0" class="transaction-pagination">

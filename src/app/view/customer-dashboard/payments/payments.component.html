@@ -152,17 +152,17 @@
                 <button type="button" class="glass-button-secondary text-xs" (click)="toggleOrder(order)">
                   <i class="fas mr-1" [ngClass]="order.status === 'Active' ? 'fa-pause' : 'fa-play'"></i>{{ order.status === 'Active' ? 'Pause' : 'Resume' }}
                 </button>
-                <button type="button" class="glass-button-secondary text-xs" (click)="cancelOrder(order)"><i class="fas fa-trash mr-1"></i>Cancel</button>
+                <button type="button" class="glass-button-danger text-xs" (click)="cancelOrder(order)"><i class="fas fa-times mr-1"></i>Cancel</button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <div *ngIf="orders.length === 0" class="text-center py-12">
-        <div class="text-6xl text-white/20 mb-4"><i class="fas fa-file-invoice-dollar"></i></div>
-        <p class="text-white/60">No standing orders yet</p>
-        <p class="text-white/40 text-sm mt-2">Set one up to automate a recurring payment.</p>
+      <div *ngIf="orders.length === 0" class="demo-state-card m-4">
+        <i class="fas fa-file-invoice-dollar"></i>
+        <h3>No standing orders yet</h3>
+        <p>Set one up to automate a recurring payment.</p>
       </div>
     </div>
   </section>
