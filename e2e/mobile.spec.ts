@@ -1,4 +1,7 @@
 import { test, expect, Page } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
 /**
  * Mobile-viewport coverage (runs under the mobile-chromium project only).
@@ -62,6 +65,30 @@ test.describe("Mobile — dashboard shell", () => {
     // The hamburger must stay operable while the toast is up.
     await page.getByRole("button", { name: /open navigation menu/i }).click();
     await expect(page.locator("#mobile-sidebar")).toBeVisible();
+  });
+});
+
+test.describe("Mobile — accessibility", () => {
+  // The desktop project runs the full axe sweep, but the drawer, mobile
+  // navbar, and stacked layouts only exist below lg — scan them here.
+  test("the customer home page passes axe on a phone viewport", async ({
+    page,
+  }) => {
+    await openCustomerDemo(page);
+    const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test("the open mobile drawer passes axe", async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.getByRole("button", { name: /open navigation menu/i }).click();
+    await expect(page.locator("#mobile-sidebar")).toBeVisible();
+
+    const results = await new AxeBuilder({ page })
+      .withTags(AXE_TAGS)
+      .include("#mobile-sidebar")
+      .analyze();
+    expect(results.violations).toEqual([]);
   });
 });
 
