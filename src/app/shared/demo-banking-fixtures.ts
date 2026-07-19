@@ -1,3 +1,5 @@
+import { isoDaysFromNow } from './local-date';
+
 export interface DemoAccount {
   account_id: string;
   account_type: string;
@@ -212,11 +214,14 @@ export interface DemoStandingOrder {
   status: 'Active' | 'Paused';
 }
 
+// Relative, not absolute: absolute seed dates rot — a "due soon" order
+// written in May reads as "overdue by 45 days" by July. The spread is
+// deliberate: one order lands tomorrow so the amber urgency state shows.
 export const DEMO_STANDING_ORDERS: DemoStandingOrder[] = [
-  { id: 'SO-3001', payee: 'Ceylon Electricity Board', account_id: 'ACC-880021', category: 'Utilities', amount: 18500, frequency: 'Monthly', next_date: '2026-06-05', status: 'Active' },
-  { id: 'SO-3002', payee: 'Apartment Lease', account_id: 'ACC-770814', category: 'Rent / lease', amount: 95000, frequency: 'Monthly', next_date: '2026-06-01', status: 'Active' },
-  { id: 'SO-3003', payee: 'Life Insurance Premium', account_id: 'ACC-560010', category: 'Insurance', amount: 14500, frequency: 'Monthly', next_date: '2026-06-15', status: 'Active' },
-  { id: 'SO-3004', payee: 'Cloud Subscription', account_id: 'ACC-335500', category: 'Subscription', amount: 4800, frequency: 'Monthly', next_date: '2026-06-20', status: 'Paused' }
+  { id: 'SO-3001', payee: 'Ceylon Electricity Board', account_id: 'ACC-880021', category: 'Utilities', amount: 18500, frequency: 'Monthly', next_date: isoDaysFromNow(5), status: 'Active' },
+  { id: 'SO-3002', payee: 'Apartment Lease', account_id: 'ACC-770814', category: 'Rent / lease', amount: 95000, frequency: 'Monthly', next_date: isoDaysFromNow(1), status: 'Active' },
+  { id: 'SO-3003', payee: 'Life Insurance Premium', account_id: 'ACC-560010', category: 'Insurance', amount: 14500, frequency: 'Monthly', next_date: isoDaysFromNow(14), status: 'Active' },
+  { id: 'SO-3004', payee: 'Cloud Subscription', account_id: 'ACC-335500', category: 'Subscription', amount: 4800, frequency: 'Monthly', next_date: isoDaysFromNow(20), status: 'Paused' }
 ];
 
 export const createDemoStandingOrder = (payload: {

@@ -80,7 +80,9 @@ export class EmployeeCustomer360Component {
       { type: 'ATM Withdrawal', direction: 'out' as const }
     ];
     return templates.map((t, i) => ({
-      date: new Date(2026, 4, 24 - i * 3).toISOString(),
+      // "Recent activity" must stay recent: offset from today, not pinned
+      // to the month the fixture was written in.
+      date: (() => { const d = new Date(); d.setDate(d.getDate() - (2 + i * 3)); return d.toISOString(); })(),
       type: t.type,
       amount: 5000 + ((base * (i + 2) * 631) % 180000),
       direction: t.direction

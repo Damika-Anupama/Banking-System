@@ -218,6 +218,15 @@ test.describe("Customer — standing order form", () => {
     await expect(page.locator("#nextDate-error")).toHaveText(/cannot be in the past/i);
   });
 
+  test("seeded orders are upcoming, never overdue", async ({ page }) => {
+    // Fixture dates were once absolute and rotted into "Overdue by 45d";
+    // they are relative now, and this pins that.
+    const table = page.getByRole("table", { name: /standing orders/i });
+    await expect(table.locator("tbody tr").first()).toBeVisible();
+    await expect(table.getByText(/overdue/i)).toHaveCount(0);
+    await expect(table.getByText(/due tomorrow/i)).toBeVisible();
+  });
+
   test("a known payee chip prefills the form and moves focus to the amount", async ({
     page,
   }) => {

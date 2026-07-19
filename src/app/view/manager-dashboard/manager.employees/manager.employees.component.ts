@@ -178,6 +178,11 @@ export class ManagerEmployeesComponent implements AfterViewInit, OnDestroy {
     }).then(result => {
       if (!result.isConfirmed) return;
       employee.status = turningOff ? 'Inactive' : 'Active';
+      // The leaderboard only charts active staff; without a rebuild, a
+      // deactivated employee's bar lingers while every counter says otherwise.
+      this.performanceChart?.destroy();
+      this.performanceChart = null;
+      this.renderPerformanceChart();
       this.toastService.success(
         turningOff ? 'Employee deactivated' : 'Employee reactivated',
         `${employee.fullname} (${employee.employee_id})`

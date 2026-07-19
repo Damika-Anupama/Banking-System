@@ -1,4 +1,4 @@
-import { localIsoToday } from './local-date';
+import { isoDaysFromNow, localIsoToday } from './local-date';
 
 describe('localIsoToday', () => {
   it('renders local date parts, zero-padded', () => {
@@ -20,5 +20,25 @@ describe('localIsoToday', () => {
     // The whole point: "past date" checks are plain string comparisons.
     expect('2026-01-04' < localIsoToday(new Date(2026, 0, 5))).toBeTrue();
     expect('2026-01-06' > localIsoToday(new Date(2026, 0, 5))).toBeTrue();
+  });
+});
+
+describe('isoDaysFromNow', () => {
+  it('offsets forward from the given day', () => {
+    expect(isoDaysFromNow(5, new Date(2026, 0, 5))).toBe('2026-01-10');
+  });
+
+  it('offsets into the past with negative days', () => {
+    expect(isoDaysFromNow(-3, new Date(2026, 0, 5))).toBe('2026-01-02');
+  });
+
+  it('rolls across month and year boundaries', () => {
+    expect(isoDaysFromNow(3, new Date(2026, 11, 30))).toBe('2027-01-02');
+  });
+
+  it('leaves the passed-in date untouched', () => {
+    const now = new Date(2026, 0, 5);
+    isoDaysFromNow(10, now);
+    expect(now.getDate()).toBe(5);
   });
 });

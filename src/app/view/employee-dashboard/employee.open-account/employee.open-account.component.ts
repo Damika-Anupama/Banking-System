@@ -1,3 +1,4 @@
+import { isoDaysFromNow } from 'src/app/shared/local-date';
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
@@ -34,10 +35,12 @@ export class EmployeeOpenAccountComponent {
   readonly branches = ['Colombo Main Branch', 'Kandy City Branch', 'Galle Branch', 'Negombo Branch'];
   readonly minimums: Record<string, number> = { 'Savings': 1000, 'Current': 5000, 'Fixed Deposit': 25000 };
 
+  // Seed rows stick to branches the selector actually offers, and to dates
+  // near today for the same reason as the deposit/withdrawal desks.
   recentlyOpened: OpenedAccount[] = [
-    { account_id: 'ACC-493187', customer: 'Tharushi Silva',  product: 'Savings',       holder_type: 'Personal',     opening_balance: 15000,  branch: 'Nuwara Eliya Branch', opened: '2026-05-24T10:05:00' },
-    { account_id: 'ACC-493152', customer: 'Sanjaya Fernando', product: 'Current',       holder_type: 'Organization', opening_balance: 120000, branch: 'Chilaw Branch',       opened: '2026-05-23T13:40:00' },
-    { account_id: 'ACC-493118', customer: 'Amaya Kumari',     product: 'Fixed Deposit', holder_type: 'Personal',     opening_balance: 250000, branch: 'Colombo Main Branch', opened: '2026-05-22T09:15:00' }
+    { account_id: 'ACC-493187', customer: 'Tharushi Silva',  product: 'Savings',       holder_type: 'Personal',     opening_balance: 15000,  branch: 'Kandy City Branch',   opened: `${isoDaysFromNow(-1)}T10:05:00` },
+    { account_id: 'ACC-493152', customer: 'Sanjaya Fernando', product: 'Current',       holder_type: 'Organization', opening_balance: 120000, branch: 'Galle Branch',        opened: `${isoDaysFromNow(-2)}T13:40:00` },
+    { account_id: 'ACC-493118', customer: 'Amaya Kumari',     product: 'Fixed Deposit', holder_type: 'Personal',     opening_balance: 250000, branch: 'Colombo Main Branch', opened: `${isoDaysFromNow(-3)}T09:15:00` }
   ];
 
   get selectedCustomer(): any | null {

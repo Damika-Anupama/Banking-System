@@ -5,6 +5,25 @@ import Swal from 'sweetalert2';
 import { ThemeService } from '../../../service/theme.service';
 import { DashboardConfig, NavigationItem } from '../../models/navigation-config.model';
 import { trapTabKey } from '../../focus-trap';
+import { DEMO_STANDING_ORDERS } from '../../demo-banking-fixtures';
+
+/**
+ * The bell's "standing order due soon" line, read from the same fixtures the
+ * Payments page renders — a hardcoded copy once drifted seven weeks apart
+ * from the table it was summarizing.
+ */
+function nextStandingOrderDetail(): string {
+  const next = DEMO_STANDING_ORDERS
+    .filter(order => order.status === 'Active')
+    .sort((a, b) => a.next_date.localeCompare(b.next_date))[0];
+  if (!next) return 'No upcoming payments';
+
+  // Parse as local date parts; new Date('YYYY-MM-DD') is UTC midnight and
+  // shifts the shown day in negative-UTC timezones.
+  const [y, m, d] = next.next_date.split('-').map(Number);
+  const when = new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return `${next.payee} · Rs. ${next.amount.toLocaleString()} on ${when}`;
+}
 
 @Component({
   selector: 'app-unified-dashboard',
@@ -46,7 +65,7 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
   private notificationsByRole: Record<string, any[]> = {
     customer: [
       { icon: 'fa-arrow-down', tone: 'emerald', title: 'Salary credited', detail: 'Rs. 185,000 received into ****2810', time: '2h ago' },
-      { icon: 'fa-calendar-day', tone: 'amber', title: 'Standing order due soon', detail: 'Apartment Lease · Rs. 95,000 on Jun 1', time: '1d ago' },
+      { icon: 'fa-calendar-day', tone: 'amber', title: 'Standing order due soon', detail: nextStandingOrderDetail(), time: '1d ago' },
       { icon: 'fa-shield-halved', tone: 'cyan', title: 'New device sign-in', detail: 'Login alert from Colombo, LK', time: '2d ago' },
     ],
     employee: [

@@ -1,3 +1,4 @@
+import { isoDaysFromNow } from 'src/app/shared/local-date';
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { DEMO_ACCOUNTS } from 'src/app/shared/demo-banking-fixtures';
@@ -30,11 +31,13 @@ export class EmployeeDepositComponent {
   // Local clone of branch accounts so deposits adjust the looked-up balance.
   accounts = DEMO_ACCOUNTS.map(a => ({ ...a }));
 
+  // Relative dates: new in-session deposits stamp the real today, and a wall
+  // of months-old seed rows next to them reads as a broken branch.
   deposits: DepositRecord[] = [
-    { deposit_id: 'DEP-55021', account_id: 'ACC-492812', amount: 240000, method: 'Cash',     deposit_time: '2026-05-24T11:05:00', status: 'Completed' },
-    { deposit_id: 'DEP-55014', account_id: 'ACC-492810', amount: 128000, method: 'Cheque',   deposit_time: '2026-05-23T14:20:00', status: 'Completed' },
-    { deposit_id: 'DEP-55008', account_id: 'ACC-118209', amount: 64000,  method: 'Transfer', deposit_time: '2026-05-22T09:35:00', status: 'Completed' },
-    { deposit_id: 'DEP-54996', account_id: 'ACC-492811', amount: 18500,  method: 'Cash',     deposit_time: '2026-05-21T16:40:00', status: 'Completed' }
+    { deposit_id: 'DEP-55021', account_id: 'ACC-492812', amount: 240000, method: 'Cash',     deposit_time: `${isoDaysFromNow(-1)}T11:05:00`, status: 'Completed' },
+    { deposit_id: 'DEP-55014', account_id: 'ACC-492810', amount: 128000, method: 'Cheque',   deposit_time: `${isoDaysFromNow(-2)}T14:20:00`, status: 'Completed' },
+    { deposit_id: 'DEP-55008', account_id: 'ACC-118209', amount: 64000,  method: 'Transfer', deposit_time: `${isoDaysFromNow(-3)}T09:35:00`, status: 'Completed' },
+    { deposit_id: 'DEP-54996', account_id: 'ACC-492811', amount: 18500,  method: 'Cash',     deposit_time: `${isoDaysFromNow(-4)}T16:40:00`, status: 'Completed' }
   ];
 
   get totalDeposited(): number {

@@ -1,3 +1,4 @@
+import { isoDaysFromNow } from 'src/app/shared/local-date';
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { DEMO_ACCOUNTS } from 'src/app/shared/demo-banking-fixtures';
@@ -27,11 +28,13 @@ export class EmployeeWithdrawalComponent {
   // Local clone of branch accounts so withdrawals adjust the looked-up balance.
   accounts = DEMO_ACCOUNTS.map(a => ({ ...a }));
 
+  // Relative dates: new in-session withdrawals stamp the real today, and a
+  // wall of months-old seed rows next to them reads as a broken branch.
   withdrawals: WithdrawalRecord[] = [
-    { withdrawal_id: 'WDR-33014', account_id: 'ACC-492810', amount: 25000,  withdrawal_time: '2026-05-24T10:15:00', status: 'Completed' },
-    { withdrawal_id: 'WDR-33009', account_id: 'ACC-118209', amount: 80000,  withdrawal_time: '2026-05-23T15:45:00', status: 'Completed' },
-    { withdrawal_id: 'WDR-32998', account_id: 'ACC-772901', amount: 12000,  withdrawal_time: '2026-05-22T11:10:00', status: 'Completed' },
-    { withdrawal_id: 'WDR-32985', account_id: 'ACC-492812', amount: 50000,  withdrawal_time: '2026-05-21T14:30:00', status: 'Completed' }
+    { withdrawal_id: 'WDR-33014', account_id: 'ACC-492810', amount: 25000,  withdrawal_time: `${isoDaysFromNow(-1)}T10:15:00`, status: 'Completed' },
+    { withdrawal_id: 'WDR-33009', account_id: 'ACC-118209', amount: 80000,  withdrawal_time: `${isoDaysFromNow(-2)}T15:45:00`, status: 'Completed' },
+    { withdrawal_id: 'WDR-32998', account_id: 'ACC-772901', amount: 12000,  withdrawal_time: `${isoDaysFromNow(-3)}T11:10:00`, status: 'Completed' },
+    { withdrawal_id: 'WDR-32985', account_id: 'ACC-492812', amount: 50000,  withdrawal_time: `${isoDaysFromNow(-4)}T14:30:00`, status: 'Completed' }
   ];
 
   get totalWithdrawn(): number {

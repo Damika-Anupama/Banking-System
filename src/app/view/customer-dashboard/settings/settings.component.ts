@@ -41,11 +41,21 @@ export class SettingsComponent implements OnInit, OnDestroy {
   toggleTwoStep(): void {
     this.twoStepEnabled = !this.twoStepEnabled;
     localStorage.setItem('demo-2fa', String(this.twoStepEnabled));
+    // Every other action in the app confirms itself; a silent security
+    // toggle reads as "did that save?"
+    this.toastService.success(
+      this.twoStepEnabled ? 'Two-step verification on' : 'Two-step verification off',
+      this.twoStepEnabled ? 'A code will be required at each sign-in.' : 'Sign-in no longer asks for a code.'
+    );
   }
 
   toggleLoginAlerts(): void {
     this.loginAlertsEnabled = !this.loginAlertsEnabled;
     localStorage.setItem('demo-login-alerts', String(this.loginAlertsEnabled));
+    this.toastService.success(
+      this.loginAlertsEnabled ? 'Login alerts on' : 'Login alerts off',
+      this.loginAlertsEnabled ? 'New device sign-ins will be flagged.' : 'New device sign-ins will not be flagged.'
+    );
   }
 
   constructor(private userService: UserService, private toastService: ToastService) {}
