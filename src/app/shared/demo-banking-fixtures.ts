@@ -1,4 +1,38 @@
-import { isoDaysFromNow } from './local-date';
+import { isoDaysFromNow, localIsoToday } from './local-date';
+
+/**
+ * The "now" this file's absolute dates were authored against.
+ *
+ * Every dated fixture below is shifted by the drift between this and the real
+ * today, so a transaction written as "yesterday" is still yesterday when
+ * rendered, an FD that had four months to maturity still does, and the ledger
+ * never turns into a two-month-old wall the way the standing orders once did.
+ */
+const AUTHORED_NOW = new Date(2026, 4, 25);
+
+const DRIFT_DAYS = (() => {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((startOfToday.getTime() - AUTHORED_NOW.getTime()) / 86400000);
+})();
+
+/** Shifts an authored `YYYY-MM-DD[Thh:mm:ss]` stamp by the drift, keeping the time. */
+function rebaseDate(authored: string): string {
+  const [datePart, timePart] = authored.split('T');
+  const [y, m, d] = datePart.split('-').map(Number);
+  const shifted = new Date(y, m - 1, d + DRIFT_DAYS);
+  return timePart ? `${localIsoToday(shifted)}T${timePart}` : localIsoToday(shifted);
+}
+
+/** Rebases the `date` field of every transaction row in a ledger map. */
+function rebaseLedger(ledger: Record<string, any[]>): Record<string, any[]> {
+  return Object.fromEntries(
+    Object.entries(ledger).map(([account, rows]) => [
+      account,
+      rows.map(row => ({ ...row, date: rebaseDate(row.date) })),
+    ])
+  );
+}
 
 export interface DemoAccount {
   account_id: string;
@@ -55,7 +89,7 @@ export const DEMO_PROFILE: DemoProfile = {
   email: 'amara@banking.demo',
   contact_no: '+94 77 123 4567',
   kyc_status: 'Verified',
-  last_login: '2026-05-25T08:45:00'
+  last_login: rebaseDate('2026-05-25T08:45:00')
 };
 
 export const DEMO_ACCOUNTS: DemoAccount[] = [
@@ -81,15 +115,15 @@ export const DEMO_CUSTOMERS: DemoCustomer[] = [
   { user_id: 'CUS-1014', username: 'chamath.alwis', fullname: 'Chamath Alwis', gender: 'Male', dob: '1987-10-12', address: 'Galle Road, Dehiwala', email: 'chamath@banking.demo', contact_no: '+94 71 990 5544', account_count: 4, status: 'Priority customer' }
 ];
 
-export const DEMO_TRANSACTIONS: Record<string, any[]> = {
+const RAW_DEMO_TRANSACTIONS: Record<string, any[]> = {
   'ACC-492810': [
-    { date: '2026-05-24T09:40:00', type: 'Salary Credit', sender_remarks: 'Monthly payroll received', beneficiary_remarks: 'May salary', amount: 185000, status: 'up', audit_status: 'Posted', channel: 'Payroll' },
+    { date: '2026-05-24T09:40:00', type: 'Salary Credit', sender_remarks: 'Monthly payroll received', beneficiary_remarks: 'Monthly salary', amount: 185000, status: 'up', audit_status: 'Posted', channel: 'Payroll' },
     { date: '2026-05-23T14:20:00', type: 'Utility Payment', sender_remarks: 'Electricity and water bill', beneficiary_remarks: 'CEB and NWSDB monthly bills', amount: 18500, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-22T11:05:00', type: 'Card Settlement', sender_remarks: 'Supermarket purchase', beneficiary_remarks: 'Debit card settlement', amount: 9450, status: 'down', audit_status: 'Posted', channel: 'Card' },
     { date: '2026-05-21T10:18:00', type: 'Internal Transfer', sender_remarks: 'Moved surplus to current account', beneficiary_remarks: 'Working capital top-up', amount: 75000, status: 'down', audit_status: 'Posted', channel: 'Mobile app', to_account: 'ACC-492811' },
     { date: '2026-05-20T17:42:00', type: 'ATM Withdrawal', sender_remarks: 'Cash withdrawal - Colombo 03 ATM', beneficiary_remarks: 'ATM cash', amount: 20000, status: 'down', audit_status: 'Posted', channel: 'ATM' },
     { date: '2026-05-19T15:30:00', type: 'Interest Credit', sender_remarks: 'Monthly savings interest', beneficiary_remarks: 'Interest posting', amount: 8200, status: 'up', audit_status: 'Posted', channel: 'Core banking' },
-    { date: '2026-05-18T08:55:00', type: 'Standing Order', sender_remarks: 'Apartment rent payment', beneficiary_remarks: 'May rent', amount: 95000, status: 'down', audit_status: 'Posted', channel: 'Standing order' },
+    { date: '2026-05-18T08:55:00', type: 'Standing Order', sender_remarks: 'Apartment rent payment', beneficiary_remarks: 'Monthly rent', amount: 95000, status: 'down', audit_status: 'Posted', channel: 'Standing order' },
     { date: '2026-05-17T12:12:00', type: 'QR Merchant Payment', sender_remarks: 'Restaurant payment', beneficiary_remarks: 'Merchant QR payment', amount: 6800, status: 'down', audit_status: 'Posted', channel: 'QR Pay' },
     { date: '2026-05-16T09:10:00', type: 'Refund Credit', sender_remarks: 'Card refund - travel booking', beneficiary_remarks: 'Merchant refund', amount: 27500, status: 'up', audit_status: 'Posted', channel: 'Card' },
     { date: '2026-05-15T13:26:00', type: 'Insurance Premium', sender_remarks: 'Life insurance monthly premium', beneficiary_remarks: 'Policy premium', amount: 14500, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
@@ -109,7 +143,7 @@ export const DEMO_TRANSACTIONS: Record<string, any[]> = {
     { date: '2026-05-19T10:35:00', type: 'Subscription Payment', sender_remarks: 'Cloud service monthly invoice', beneficiary_remarks: 'SaaS subscription', amount: 18500, status: 'down', audit_status: 'Posted', channel: 'Card' },
     { date: '2026-05-18T15:15:00', type: 'Tax Payment', sender_remarks: 'Quarterly PAYE settlement', beneficiary_remarks: 'Tax reference Q2', amount: 38000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-17T09:20:00', type: 'Client Transfer', sender_remarks: 'Invoice BS-1018 paid', beneficiary_remarks: 'Project milestone', amount: 93000, status: 'up', audit_status: 'Posted', channel: 'Online banking' },
-    { date: '2026-05-16T14:50:00', type: 'Payroll Disbursement', sender_remarks: 'Part-time contractor payment', beneficiary_remarks: 'May contractor payout', amount: 56000, status: 'down', audit_status: 'Posted', channel: 'Bulk payment' },
+    { date: '2026-05-16T14:50:00', type: 'Payroll Disbursement', sender_remarks: 'Part-time contractor payment', beneficiary_remarks: 'Contractor payout', amount: 56000, status: 'down', audit_status: 'Posted', channel: 'Bulk payment' },
     { date: '2026-05-15T16:44:00', type: 'Bank Charge', sender_remarks: 'Account service fee', beneficiary_remarks: 'Monthly service fee', amount: 1250, status: 'down', audit_status: 'Posted', channel: 'Core banking' },
     { date: '2026-05-14T11:30:00', type: 'Client Transfer', sender_remarks: 'Invoice BS-1015 paid', beneficiary_remarks: 'Retainer fee', amount: 72000, status: 'up', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-13T14:05:00', type: 'Vendor Payment', sender_remarks: 'Marketing agency retainer', beneficiary_remarks: 'Campaign settlement', amount: 48000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
@@ -126,8 +160,8 @@ export const DEMO_TRANSACTIONS: Record<string, any[]> = {
     { date: '2026-05-16T10:30:00', type: 'Corporate Deposit', sender_remarks: 'Branch cash deposit', beneficiary_remarks: 'Daily collection', amount: 240000, status: 'up', audit_status: 'Posted', channel: 'Branch' },
     { date: '2026-05-14T12:05:00', type: 'Supplier Payment', sender_remarks: 'Inventory purchase order', beneficiary_remarks: 'PO-8891 settlement', amount: 185000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-12T09:35:00', type: 'Standing Order', sender_remarks: 'Warehouse lease payment', beneficiary_remarks: 'Monthly lease', amount: 125000, status: 'down', audit_status: 'Posted', channel: 'Standing order' },
-    { date: '2026-05-10T15:45:00', type: 'Client Settlement', sender_remarks: 'Distributor settlement received', beneficiary_remarks: 'May distributor settlement', amount: 310000, status: 'up', audit_status: 'Posted', channel: 'Clearing' },
-    { date: '2026-05-09T11:20:00', type: 'Payroll Disbursement', sender_remarks: 'Staff salary run', beneficiary_remarks: 'May payroll batch', amount: 420000, status: 'down', audit_status: 'Posted', channel: 'Bulk payment' },
+    { date: '2026-05-10T15:45:00', type: 'Client Settlement', sender_remarks: 'Distributor settlement received', beneficiary_remarks: 'Distributor settlement', amount: 310000, status: 'up', audit_status: 'Posted', channel: 'Clearing' },
+    { date: '2026-05-09T11:20:00', type: 'Payroll Disbursement', sender_remarks: 'Staff salary run', beneficiary_remarks: 'Payroll batch', amount: 420000, status: 'down', audit_status: 'Posted', channel: 'Bulk payment' },
     { date: '2026-05-08T14:55:00', type: 'Corporate Deposit', sender_remarks: 'Branch cash deposit', beneficiary_remarks: 'Daily collection', amount: 175000, status: 'up', audit_status: 'Posted', channel: 'Branch' },
     { date: '2026-05-07T10:10:00', type: 'Tax Payment', sender_remarks: 'VAT remittance Q2', beneficiary_remarks: 'Tax reference VAT-Q2', amount: 96000, status: 'down', audit_status: 'Posted', channel: 'Online banking' },
     { date: '2026-05-06T16:30:00', type: 'Client Settlement', sender_remarks: 'Wholesale order received', beneficiary_remarks: 'Order WS-2210', amount: 268000, status: 'up', audit_status: 'Posted', channel: 'Clearing' },
@@ -137,6 +171,8 @@ export const DEMO_TRANSACTIONS: Record<string, any[]> = {
     { date: '2026-05-02T15:15:00', type: 'Insurance Premium', sender_remarks: 'Commercial property insurance', beneficiary_remarks: 'Policy premium', amount: 45000, status: 'down', audit_status: 'Posted', channel: 'Online banking' }
   ]
 };
+
+export const DEMO_TRANSACTIONS: Record<string, any[]> = rebaseLedger(RAW_DEMO_TRANSACTIONS);
 
 export const DEMO_LOAN_APPLICATIONS: DemoLoanApplication[] = [
   { loan_basic_detail_id: 'LN-50210', amount: 750000, customer_id: 'CUS-1002', duration_days: 730, interest: 12.5, loan_type: 'Personal', status: 'Pending review', purpose: 'Home renovation' },
@@ -150,8 +186,8 @@ export const DEMO_SAVING_ACCOUNTS = [
 ];
 
 export const DEMO_FIXED_DEPOSITS = [
-  { fd_id: 7001, saving_account_id: 492810, duration: 'SIX_MONTHS', rate_per_annum: 13, fd_opening_date: '2026-02-12', amount: 350000 },
-  { fd_id: 7002, saving_account_id: 492812, duration: 'ONE_YEAR', rate_per_annum: 14, fd_opening_date: '2026-04-04', amount: 900000 }
+  { fd_id: 7001, saving_account_id: 492810, duration: 'SIX_MONTHS', rate_per_annum: 13, fd_opening_date: rebaseDate('2026-02-12'), amount: 350000 },
+  { fd_id: 7002, saving_account_id: 492812, duration: 'ONE_YEAR', rate_per_annum: 14, fd_opening_date: rebaseDate('2026-04-04'), amount: 900000 }
 ];
 
 export const createDemoFixedDeposit = (payload: { saving_account_id: number | string; duration: string; rate_per_annum: string | number; amount: number }) => ({
@@ -165,12 +201,12 @@ export const createDemoFixedDeposit = (payload: { saving_account_id: number | st
 });
 
 export const DEMO_CUSTOMER_LOANS = [
-  { loan_basic_detail_id: 'LN-49201', amount: 210000, starting_date: '2026-05-12', duration_days: 180, interest: 13, loan_type: 'Personal' },
-  { loan_basic_detail_id: 'LN-49202', amount: 480000, starting_date: '2026-03-20', duration_days: 365, interest: 14, loan_type: 'Business' },
-  { loan_basic_detail_id: 'LN-49188', amount: 150000, starting_date: '2026-02-05', duration_days: 180, interest: 13, loan_type: 'Personal' },
-  { loan_basic_detail_id: 'LN-49170', amount: 920000, starting_date: '2025-12-18', duration_days: 1080, interest: 15, loan_type: 'Business' },
-  { loan_basic_detail_id: 'LN-49152', amount: 65000, starting_date: '2026-04-28', duration_days: 180, interest: 13, loan_type: 'Personal' },
-  { loan_basic_detail_id: 'LN-49133', amount: 340000, starting_date: '2026-01-15', duration_days: 365, interest: 14, loan_type: 'Business' }
+  { loan_basic_detail_id: 'LN-49201', amount: 210000, starting_date: rebaseDate('2026-05-12'), duration_days: 180, interest: 13, loan_type: 'Personal' },
+  { loan_basic_detail_id: 'LN-49202', amount: 480000, starting_date: rebaseDate('2026-03-20'), duration_days: 365, interest: 14, loan_type: 'Business' },
+  { loan_basic_detail_id: 'LN-49188', amount: 150000, starting_date: rebaseDate('2026-02-05'), duration_days: 180, interest: 13, loan_type: 'Personal' },
+  { loan_basic_detail_id: 'LN-49170', amount: 920000, starting_date: rebaseDate('2025-12-18'), duration_days: 1080, interest: 15, loan_type: 'Business' },
+  { loan_basic_detail_id: 'LN-49152', amount: 65000, starting_date: rebaseDate('2026-04-28'), duration_days: 180, interest: 13, loan_type: 'Personal' },
+  { loan_basic_detail_id: 'LN-49133', amount: 340000, starting_date: rebaseDate('2026-01-15'), duration_days: 365, interest: 14, loan_type: 'Business' }
 ];
 
 export const createDemoLoan = (payload: { amount: number; duration_days: string | number; interest: string | number; loan_type: string }) => ({
