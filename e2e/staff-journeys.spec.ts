@@ -92,12 +92,19 @@ test.describe("Manager — loan approval queue", () => {
   });
 
   test("approving a loan asks for confirmation first", async ({ page }) => {
-    const approve = page.getByRole("button", { name: /approve/i }).first();
+    // Wait for the queue rows to land before deciding anything: count() does
+    // not wait, so checking it early could silently skip the test — or click
+    // a button node the in-flight render was about to replace.
+    await expect(
+      page.getByRole("table").locator("tbody tr").first()
+    ).toBeVisible();
 
+    const approve = page.getByRole("button", { name: /approve/i }).first();
     if ((await approve.count()) === 0) {
       test.skip(true, "No pending loans seeded in this demo run");
     }
 
+    await expect(approve).toBeVisible();
     await approve.click();
 
     // Approving a loan is irreversible, so it must stay modal.

@@ -37,6 +37,10 @@ test.describe("Customer — transaction ledger", () => {
     const table = page.getByRole("table", { name: /transaction history/i });
     const amountHeader = table.getByRole("columnheader", { name: /amount/i });
 
+    // The ledger renders in two passes (accounts, then that account's rows);
+    // clicking a header before the rows land can hit a node the re-render
+    // replaces, and the click dies with it.
+    await expect(table.locator("tbody tr").first()).toBeVisible();
     await expect(amountHeader).toHaveAttribute("aria-sort", "none");
 
     await amountHeader.getByRole("button").click();

@@ -8,18 +8,20 @@ Frontend-only Angular demo for a banking operations platform covering transactio
 
 ![Banking System demo overview](docs/demo-overview.svg)
 
-No credentials required — use the role buttons on the sign-in page to explore all three dashboards instantly.
+No credentials required — use the role buttons on the welcome or sign-in page to explore all three dashboards instantly.
 
 ## Highlights
 
 A polished, accessible single-page banking experience:
 
-- **Command palette** — press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>K</kbd> to jump to any page or run quick actions (toggle theme, sign out).
-- **Light / dark theme** — instant theme switch, persisted across sessions.
-- **Data visualisation** — Chart.js doughnut, line, and bar charts across the manager reports, home, and employee-performance views.
-- **Considered UX details** — animated count-up stats, password strength meters, show/hide password toggles, an NProgress-style route loading bar, a floating back-to-top button, and credit-utilization / payment-due health indicators.
-- **Accessibility** — a keyboard "skip to main content" link, visible focus rings, `aria` states on interactive controls, and full `prefers-reduced-motion` support.
-- **Robust empty / error states** — searchable tables with clear actions, plus redesigned 404 and 500 pages.
+- **Command palette** — press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>K</kbd> to jump to any page or run quick actions; press <kbd>?</kbd> anywhere for the keyboard-shortcuts sheet. Both are reachable by touch on mobile.
+- **Light / dark theme** — applied before first paint (no flash), persisted, honoured by every chart, and by the boot splash itself.
+- **Printable documents** — transaction receipts, loan agreements, and FD certificates print as clean documents; a real print stylesheet strips the app chrome from any page.
+- **Forms that explain themselves** — every form in the app validates inline on blur, marks the offending field with `aria` wiring, and moves focus to the first problem on submit. Caps-lock warnings on password fields; past dates blocked on schedulers; known payees offered as one-tap quick-fill chips.
+- **Sortable, searchable tables** — consistent three-state column sorting with `aria-sort` announcements across customer, employee, and manager screens; skeleton loaders hold the layout while data lands.
+- **Data visualisation** — Chart.js doughnut, line, and bar charts that rebuild on theme change.
+- **Resilient by design** — the demo works even where the browser blocks `localStorage` (in-memory session fallback), seed data is date-rebased so it always reads as current, and session expiry explains itself instead of silently redirecting.
+- **Accessibility** — axe-verified on every route in both themes, on desktop and mobile viewports; focus-trapped dialogs that return focus to their opener; full `prefers-reduced-motion` support.
 
 ## Branches
 
@@ -51,7 +53,7 @@ Open `http://localhost:4200`. No backend needed — all data is seeded mock data
 
 ### Unit tests (Karma + Jasmine)
 
-1,300+ unit tests cover component logic, form validation, transaction/loan/FD
+1,500+ unit tests cover component logic, form validation, transaction/loan/FD
 flows, and shared utilities.
 
 ```bash
@@ -61,11 +63,12 @@ npm test -- --watch=false --browsers=ChromeHeadless   # single CI run
 
 ### End-to-end tests (Playwright)
 
-End-to-end tests use **Playwright**, driving a real Chromium browser against
-the demo build. Because the demo authenticates client-side (a demo store seeds
-the session in `localStorage`), the suite covers the sign-in screen and all
-three role dashboards (customer, employee, manager) with no backend — and runs
-green against the Vercel preview too.
+110+ end-to-end tests use **Playwright**, driving a real Chromium browser
+against the demo build in two projects — Desktop Chrome and a Pixel 7 mobile
+viewport. Because the demo authenticates client-side, the suite covers the
+sign-in screen, all three role dashboards, printing, accessibility (axe-core),
+performance guards, and even a browser that blocks storage entirely — with no
+backend, and it runs green against the Vercel preview too.
 
 ```bash
 npm install
@@ -91,4 +94,4 @@ Root Directory:    (leave blank — project root)
 
 ## Tech stack
 
-Angular 21 · TypeScript · Tailwind CSS · Bootstrap · Chart.js · SweetAlert2 · Karma/Jasmine · Playwright
+Angular 21 · TypeScript · Tailwind CSS · Chart.js · SweetAlert2 · Karma/Jasmine · Playwright · axe-core
