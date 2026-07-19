@@ -46,7 +46,23 @@
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap">
 
-<!-- Initial loading splash shown until Angular boots and replaces <app-root>.
+<!-- Apply the saved theme before ANY paint. Angular's ThemeService applies
+       the same logic, but only after the bundles load — without this, a
+       light-theme user watches the app boot dark and then flash to light. -->
+  <script>
+    (function () {
+      var dark;
+      try {
+        var stored = localStorage.getItem('theme');
+        dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      } catch (e) {
+        try { dark = matchMedia('(prefers-color-scheme: dark)').matches; } catch (e2) { dark = true; }
+      }
+      if (dark) document.documentElement.classList.add('dark');
+    })();
+  </script>
+
+  <!-- Initial loading splash shown until Angular boots and replaces <app-root>.
        Pure inline CSS so it paints instantly, before any bundle loads. -->
   <style>
     .app-boot-splash {
@@ -68,6 +84,18 @@
       letter-spacing: 0.02em;
     }
     .app-boot-splash__brand span { color: #67e8f9; }
+    /* The splash honours the pre-paint theme class too: a light-theme
+       visitor should never see a dark flash while Angular boots. */
+    html:not(.dark) .app-boot-splash {
+      background: linear-gradient(135deg, #eef2f7 0%, #e2e8f0 50%, #f8fafc 100%);
+    }
+    html:not(.dark) .app-boot-splash__brand { color: #0f172a; }
+    html:not(.dark) .app-boot-splash__brand span { color: #0e7490; }
+    html:not(.dark) .app-boot-splash__hint { color: rgba(15, 23, 42, 0.55); }
+    html:not(.dark) .app-boot-splash__spinner {
+      border-color: rgba(14, 116, 144, 0.2);
+      border-top-color: #0e7490;
+    }
     .app-boot-splash__spinner {
       width: 44px;
       height: 44px;

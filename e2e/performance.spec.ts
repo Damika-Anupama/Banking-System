@@ -1,5 +1,27 @@
 import { test, expect } from "@playwright/test";
 
+test.describe("theme applies before first paint", () => {
+  test("a saved dark theme sets the class from the inline script", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "dark"));
+    await page.goto("/welcome");
+    await expect(page.locator("html")).toHaveClass(/dark/);
+  });
+
+  test("a saved light theme never gets the dark class", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("theme", "light"));
+    await page.goto("/welcome");
+    await expect(page.locator("html")).not.toHaveClass(/dark/);
+  });
+
+  test("with no saved theme, the OS preference decides", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.goto("/welcome");
+    await expect(page.locator("html")).toHaveClass(/dark/);
+  });
+});
+
 test("the social share card is a real, correctly-typed image", async ({
   page,
   request,
