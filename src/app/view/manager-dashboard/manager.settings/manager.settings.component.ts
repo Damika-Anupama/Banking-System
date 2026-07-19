@@ -3,6 +3,7 @@ import { UserService } from 'src/app/service/customer/user.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/service/toast.service';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { readStorage, writeStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-manager.settings',
@@ -100,8 +101,8 @@ export class ManagerSettingsComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('userId') || '';
-    this.email = localStorage.getItem('email') || '';
+    this.userId = readStorage('userId') || '';
+    this.email = readStorage('email') || '';
 
     if (!this.userId) {
       this.toastService.error('Session expired', 'User session not found. Please log in again.');
@@ -220,8 +221,8 @@ export class ManagerSettingsComponent implements OnInit, OnDestroy {
         this.password = '';
 
         // Update email in localStorage if changed
-        if (this.email !== localStorage.getItem('email')) {
-          localStorage.setItem('email', this.email);
+        if (this.email !== readStorage('email')) {
+          writeStorage('email', this.email);
         }
       },
       error: (err) => {

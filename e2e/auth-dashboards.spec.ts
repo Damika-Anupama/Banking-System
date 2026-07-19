@@ -72,6 +72,28 @@ test.describe("Banking System — auth & demo dashboards", () => {
     await expect(page).toHaveURL(/\/manager-dashboard\/manager-home/);
   });
 
+  test("the demo still launches when the browser blocks storage entirely", async ({
+    page,
+  }) => {
+    // Strict privacy modes throw on any localStorage access. The app must
+    // fall back to in-memory session state, not crash at sign-in.
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "localStorage", {
+        get() {
+          throw new Error("Storage disabled by browser settings");
+        },
+      });
+    });
+
+    await page.goto("/sign-in");
+    await page
+      .getByRole("button", { name: /Open customer dashboard without sign in/i })
+      .click();
+
+    await expect(page).toHaveURL(/\/dashboard\/home/);
+    await expect(page.getByRole("table", { name: /your accounts/i })).toBeVisible();
+  });
+
   test("an expired-session redirect explains itself on the welcome page", async ({
     page,
   }) => {

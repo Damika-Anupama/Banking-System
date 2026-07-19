@@ -6,6 +6,7 @@ import { ThemeService } from '../../../service/theme.service';
 import { DashboardConfig, NavigationItem } from '../../models/navigation-config.model';
 import { trapTabKey } from '../../focus-trap';
 import { DEMO_STANDING_ORDERS } from '../../demo-banking-fixtures';
+import { readStorage, writeStorage, clearStorage } from 'src/app/shared/safe-storage';
 
 /**
  * The bell's "standing order due soon" line, read from the same fixtures the
@@ -261,14 +262,14 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
 
   exit() {
     // Save theme preference before clearing localStorage
-    const currentTheme = localStorage.getItem('theme');
+    const currentTheme = readStorage('theme');
 
     // Clear all localStorage except theme
-    localStorage.clear();
+    clearStorage();
 
     // Restore theme preference
     if (currentTheme) {
-      localStorage.setItem('theme', currentTheme);
+      writeStorage('theme', currentTheme);
     }
 
     this.router.navigate(['/welcome']);
@@ -305,9 +306,9 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
     // Whoever actually signed in — a sign-up stores the typed name, the role
     // launchers store the seeded persona — so the shell never contradicts the
     // identity shown on the Settings page.
-    const name = localStorage.getItem('displayName') || fallbackNames[role] || 'User';
+    const name = readStorage('displayName') || fallbackNames[role] || 'User';
     const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
-    const email = localStorage.getItem('email') || '';
+    const email = readStorage('email') || '';
     const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
     return { name, roleLabel, email, initials };
   }

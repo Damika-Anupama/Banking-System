@@ -4,6 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { demoStore } from 'src/app/shared/demo-store';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class ManagerHomeService {
    * @returns Observable with dashboard block data
    */
   getDashboardBlockDetails(): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of({
         data: [{
           user_id: 'MGR-1001',
@@ -29,7 +30,7 @@ export class ManagerHomeService {
       });
     }
 
-    const email = localStorage.getItem('email');
+    const email = readStorage('email');
     if (!email) {
       return throwError(() => new Error('Manager email not found in local storage'));
     }
@@ -48,7 +49,7 @@ export class ManagerHomeService {
    * @returns Observable with total transactions data
    */
   getTotalTransactions(branch_id: any): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of({
         result: [
           { transfer_id: 'TRX-90821', amount: 185000, from_account: 'ACC-492810', to_account: 'ACC-772901', transferd_time: '2026-05-24T09:40:00', direction: 'up' },
@@ -83,7 +84,7 @@ export class ManagerHomeService {
    * @returns Observable with total withdrawals data
    */
   getTotalWithdrawals(branch_id: any): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of([
         { withdrawal_id: 'WDR-33014', amount: 25000,  account_id: 'ACC-492810', withdrawal_time: '2026-05-24T10:15:00' },
         { withdrawal_id: 'WDR-33009', amount: 80000,  account_id: 'ACC-118209', withdrawal_time: '2026-05-23T15:45:00' },
@@ -113,7 +114,7 @@ export class ManagerHomeService {
    * @returns Observable with late loans data
    */
   getLateLoans(branch_id: any): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of([
         { installment_id: 'INS-7102', installment_number: 7,  due_date: '2026-05-12', amount: 38000, loan_basic_detail_id: 'LN-40012' },
         { installment_id: 'INS-7091', installment_number: 4,  due_date: '2026-05-15', amount: 62500, loan_basic_detail_id: 'LN-40008' },

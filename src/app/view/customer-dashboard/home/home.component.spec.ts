@@ -360,8 +360,9 @@ describe('HomeComponent', () => {
       expect(component.isLoading).toBe(false);
     });
 
-    it('should handle localStorage error', () => {
-      spyOn(console, 'error');
+    it('keeps the dashboard working when localStorage writes fail', () => {
+      // Blocked storage falls back to safe-storage's in-memory map; the
+      // dashboard must load normally, not surface an error.
       spyOn(localStorage, 'setItem').and.throwError('Storage unavailable');
 
       const mockData = [{
@@ -375,9 +376,9 @@ describe('HomeComponent', () => {
 
       component.loadDashboardData();
 
-      expect(component.errorMessage).toBe('Failed to process user data');
+      expect(component.errorMessage).toBe('');
       expect(component.isLoading).toBe(false);
-      expect(console.error).toHaveBeenCalledWith('Error processing dashboard data:', jasmine.any(Error));
+      expect(component.username).toBe('John Doe');
     });
   });
 

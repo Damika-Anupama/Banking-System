@@ -5,6 +5,7 @@ import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { DEMO_SAVING_ACCOUNTS, createDemoFixedDeposit } from 'src/app/shared/demo-banking-fixtures';
 import { skipGlobalLoader } from '../../interceptors/http-context';
+import { readStorage, writeStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root',
@@ -17,11 +18,11 @@ export class FixedDepositService {
    * @returns Observable with savings account data
    */
   getSavingAccountsDetails(): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of({ result: DEMO_SAVING_ACCOUNTS });
     }
 
-    const userId = localStorage.getItem('userId');
+    const userId = readStorage('userId');
     if (!userId) {
       return throwError(() => new Error('User ID not found in local storage'));
     }
@@ -71,10 +72,10 @@ export class FixedDepositService {
       amount: amount,
     };
 
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       const created = createDemoFixedDeposit(body);
-      const existing = JSON.parse(localStorage.getItem('demoFixedDeposits') || '[]');
-      localStorage.setItem('demoFixedDeposits', JSON.stringify([...existing, created]));
+      const existing = JSON.parse(readStorage('demoFixedDeposits') || '[]');
+      writeStorage('demoFixedDeposits', JSON.stringify([...existing, created]));
       return of({ message: 'Fixed deposit created successfully!', data: created });
     }
 

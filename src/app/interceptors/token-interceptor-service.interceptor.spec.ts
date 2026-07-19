@@ -364,9 +364,10 @@ describe('TokenInterceptorService', () => {
         done();
       });
 
+      // safe-storage absorbs the throw; the request simply goes out without
+      // an Authorization header instead of logging an error.
       const req = httpMock.expectOne(TEST_URL);
       expect(req.request.headers.has('Authorization')).toBe(false);
-      expect(console.error).toHaveBeenCalledWith('Error accessing localStorage in token interceptor:', jasmine.any(Error));
       req.flush({});
     });
 

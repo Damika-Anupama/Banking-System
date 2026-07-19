@@ -4,6 +4,7 @@ import { RegisterCustomerService } from 'src/app/service/employee/register.custo
 import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/service/toast.service';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-employee.register.customer',
@@ -155,7 +156,7 @@ export class EmployeeRegisterCustomerComponent implements OnDestroy {
             return;
           }
 
-          const isDemo = localStorage.getItem('demoMode') === 'true';
+          const isDemo = readStorage('demoMode') === 'true';
           this.toastService.success(
             'Customer registered',
             res.message || 'Customer registered successfully'

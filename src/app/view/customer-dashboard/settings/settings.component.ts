@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { getPasswordStrength, PasswordStrength } from 'src/app/shared/password-strength';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { readStorage, writeStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-settings',
@@ -34,13 +35,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
   showPassword = false;
   isEditingProfile = false;
   lastSavedAt = '';
-  twoStepEnabled = localStorage.getItem('demo-2fa') !== 'false';
-  loginAlertsEnabled = localStorage.getItem('demo-login-alerts') !== 'false';
+  twoStepEnabled = readStorage('demo-2fa') !== 'false';
+  loginAlertsEnabled = readStorage('demo-login-alerts') !== 'false';
   private subscriptions: Subscription[] = [];
 
   toggleTwoStep(): void {
     this.twoStepEnabled = !this.twoStepEnabled;
-    localStorage.setItem('demo-2fa', String(this.twoStepEnabled));
+    writeStorage('demo-2fa', String(this.twoStepEnabled));
     // Every other action in the app confirms itself; a silent security
     // toggle reads as "did that save?"
     this.toastService.success(
@@ -51,7 +52,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   toggleLoginAlerts(): void {
     this.loginAlertsEnabled = !this.loginAlertsEnabled;
-    localStorage.setItem('demo-login-alerts', String(this.loginAlertsEnabled));
+    writeStorage('demo-login-alerts', String(this.loginAlertsEnabled));
     this.toastService.success(
       this.loginAlertsEnabled ? 'Login alerts on' : 'Login alerts off',
       this.loginAlertsEnabled ? 'New device sign-ins will be flagged.' : 'New device sign-ins will not be flagged.'
@@ -124,8 +125,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('userId') || (localStorage.getItem('demoMode') === 'true' ? 'CUS-1001' : '');
-    this.email = localStorage.getItem('email') || '';
+    this.userId = readStorage('userId') || (readStorage('demoMode') === 'true' ? 'CUS-1001' : '');
+    this.email = readStorage('email') || '';
 
     if (!this.userId) {
       this.toastService.error('Session expired', 'User session not found. Please log in again.');
@@ -271,8 +272,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.password = '';
 
         // Update email in localStorage if changed
-        if (this.email !== localStorage.getItem('email')) {
-          localStorage.setItem('email', this.email);
+        if (this.email !== readStorage('email')) {
+          writeStorage('email', this.email);
         }
       },
       error: (err) => {

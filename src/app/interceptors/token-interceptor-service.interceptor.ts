@@ -9,6 +9,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { readStorage, removeStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root',
@@ -23,14 +24,9 @@ export class TokenInterceptorService implements HttpInterceptor {
     let tokenizedReq: HttpRequest<any>;
 
     try {
-      // Check if localStorage is accessible
-      if (typeof localStorage === 'undefined') {
-        console.error('localStorage is not available in token interceptor');
-        tokenizedReq = req.clone();
-        return next.handle(tokenizedReq);
-      }
-
-      const token = localStorage.getItem('token');
+      // readStorage absorbs blocked-storage throws; no availability probe
+      // needed (even `typeof localStorage` evaluates a throwing getter).
+      const token = readStorage('token');
 
       // If token exists, validate and add to request
       if (token) {
@@ -45,12 +41,12 @@ export class TokenInterceptorService implements HttpInterceptor {
             });
           } else {
             console.warn('Token expired, removing from storage');
-            localStorage.removeItem('token');
+            removeStorage('token');
             tokenizedReq = req.clone();
           }
         } else {
           console.error('Invalid token format, removing from storage');
-          localStorage.removeItem('token');
+          removeStorage('token');
           tokenizedReq = req.clone();
         }
       } else {
@@ -148,9 +144,7 @@ export class TokenInterceptorService implements HttpInterceptor {
   private handleUnauthorized(): void {
     try {
       // Clear token from storage
-      if (typeof localStorage !== 'undefined') {
-        localStorage.removeItem('token');
-      }
+      removeStorage('token');
 
       // Redirect to login/welcome page
       this.router.navigate(['/welcome'], {

@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { TableSort } from 'src/app/shared/table-sort';
 import { DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
+import { readStorage, writeStorage } from 'src/app/shared/safe-storage';
 Chart.register(...registerables);
 
 const SPENDING_COLORS = ['#22d3ee', '#3b82f6', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#fb7185', '#94a3b8'];
@@ -218,7 +219,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         try {
-          localStorage.setItem('userId', user[0]['user_id']);
+          writeStorage('userId', user[0]['user_id']);
           this.username = user[0]['username'] || 'Unknown User';
 
           // Check if accounts exist
@@ -381,7 +382,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Remember this choice so the dashboard reopens on the same account.
     try {
-      localStorage.setItem('lastSelectedAccountId', String(account.account_id));
+      writeStorage('lastSelectedAccountId', String(account.account_id));
     } catch {
       // Ignore storage failures (private mode / quota).
     }
@@ -392,7 +393,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Restore the customer's last-viewed account when it is still in the list. */
   private restoreSelectedAccount(): void {
-    const savedId = localStorage.getItem('lastSelectedAccountId');
+    const savedId = readStorage('lastSelectedAccountId');
     if (!savedId) return;
     const match = (this.accounts || []).find(a => String(a?.account_id) === savedId);
     if (match) {

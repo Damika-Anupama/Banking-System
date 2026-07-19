@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { readStorage, writeStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ export class ThemeService {
   public isDarkMode$: Observable<boolean> = this.isDarkModeSubject.asObservable();
 
   constructor() {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = readStorage('theme');
 
     let isDark: boolean;
     if (savedTheme === 'dark' || savedTheme === 'light') {
@@ -18,7 +19,7 @@ export class ThemeService {
     } else {
       // First visit (or invalid value): follow the OS colour-scheme preference.
       isDark = this.prefersDarkScheme();
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      writeStorage('theme', isDark ? 'dark' : 'light');
     }
 
     this.isDarkModeSubject.next(isDark);
@@ -37,13 +38,13 @@ export class ThemeService {
     const newTheme = !this.isDarkModeSubject.value;
     this.isDarkModeSubject.next(newTheme);
     this.applyTheme(newTheme);
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    writeStorage('theme', newTheme ? 'dark' : 'light');
   }
 
   setTheme(isDark: boolean): void {
     this.isDarkModeSubject.next(isDark);
     this.applyTheme(isDark);
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    writeStorage('theme', isDark ? 'dark' : 'light');
   }
 
   private applyTheme(isDark: boolean): void {

@@ -4,6 +4,7 @@ import { AddEmployeeService } from 'src/app/service/manager/add.employee.service
 import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/service/toast.service';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-manager.add.employee',
@@ -120,8 +121,8 @@ export class ManagerAddEmployeeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Load and validate branch_id
-    const isDemo = localStorage.getItem('demoMode') === 'true';
-    this.branch_id = localStorage.getItem('branchId') || (isDemo ? 'BR-001' : null);
+    const isDemo = readStorage('demoMode') === 'true';
+    this.branch_id = readStorage('branchId') || (isDemo ? 'BR-001' : null);
     if (!this.branch_id) {
       this.toastService.error('Branch not found', 'Branch ID not found. Please log in again.');
     }
@@ -173,7 +174,7 @@ export class ManagerAddEmployeeComponent implements OnInit, OnDestroy {
             return;
           }
 
-          const isDemo = localStorage.getItem('demoMode') === 'true';
+          const isDemo = readStorage('demoMode') === 'true';
           this.toastService.success(
             'Employee added',
             res.message || 'Employee added successfully'

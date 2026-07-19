@@ -1,4 +1,5 @@
 import { demoStore } from './demo-store';
+import { writeStorage } from 'src/app/shared/safe-storage';
 
 /**
  * Seeding for the no-sign-in demo sessions.
@@ -28,11 +29,11 @@ export function seedDemoSession(
   email: string = DEMO_PROFILES[role].email,
   displayName: string = DEMO_PROFILES[role].name
 ): string {
-  localStorage.setItem('demoMode', 'true');
-  localStorage.setItem('token', createDemoToken(role));
-  localStorage.setItem('email', email);
-  localStorage.setItem('userType', role);
-  localStorage.setItem('displayName', displayName);
+  writeStorage('demoMode', 'true');
+  writeStorage('token', createDemoToken(role));
+  writeStorage('email', email);
+  writeStorage('userType', role);
+  writeStorage('displayName', displayName);
   // Start each demo walkthrough from fresh seed data.
   demoStore.reset();
   return DEMO_PROFILES[role].route;

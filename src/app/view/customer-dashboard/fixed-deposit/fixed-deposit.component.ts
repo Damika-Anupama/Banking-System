@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { Subscription } from 'rxjs';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-fixed-deposit',
@@ -292,7 +293,7 @@ export class FixedDepositComponent implements OnInit, OnDestroy {
       html: `
         <div class="demo-detail-grid">
           <div class="demo-detail-row"><span>Certificate</span><strong>${fdItem.fd_id}</strong></div>
-          <div class="demo-detail-row"><span>Holder</span><strong>${localStorage.getItem('displayName') || 'Customer'}</strong></div>
+          <div class="demo-detail-row"><span>Holder</span><strong>${readStorage('displayName') || 'Customer'}</strong></div>
           <div class="demo-detail-row"><span>Principal</span><strong>Rs. ${Number(fdItem.amount || 0).toLocaleString()}</strong></div>
           <div class="demo-detail-row"><span>Rate</span><strong>${fdItem.rate_per_annum || 0}% p.a.</strong></div>
           <div class="demo-detail-row"><span>Maturity date</span><strong>${this.fdMaturityDate(fdItem).toLocaleDateString()}</strong></div>

@@ -457,14 +457,14 @@ describe('ThemeService', () => {
   });
 
   describe('Edge cases', () => {
-    it('should throw error when localStorage is unavailable', () => {
-      // This test verifies the service throws error if localStorage fails
+    it('keeps working when localStorage is unavailable', () => {
       service = TestBed.inject(ThemeService);
 
       spyOn(localStorage, 'setItem').and.throwError('Storage unavailable');
 
-      // Should throw error when trying to set theme
-      expect(() => service.setTheme(true)).toThrowError('Storage unavailable');
+      // The theme applies for the session via the in-memory fallback; it
+      // simply will not survive a refresh — never a crash.
+      expect(() => service.setTheme(true)).not.toThrow();
     });
 
     it('should handle invalid theme value in localStorage', () => {

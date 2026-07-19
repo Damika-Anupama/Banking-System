@@ -3,6 +3,7 @@ import { UserService } from 'src/app/service/customer/user.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/service/toast.service';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { readStorage, writeStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-employee.settings',
@@ -32,18 +33,18 @@ export class EmployeeSettingsComponent implements OnInit, OnDestroy {
   showPassword = false;
   isEditingProfile = false;
   lastSavedAt = '';
-  twoStepEnabled = localStorage.getItem('demo-2fa') !== 'false';
-  loginAlertsEnabled = localStorage.getItem('demo-login-alerts') !== 'false';
+  twoStepEnabled = readStorage('demo-2fa') !== 'false';
+  loginAlertsEnabled = readStorage('demo-login-alerts') !== 'false';
   private subscriptions: Subscription[] = [];
 
   toggleTwoStep(): void {
     this.twoStepEnabled = !this.twoStepEnabled;
-    localStorage.setItem('demo-2fa', String(this.twoStepEnabled));
+    writeStorage('demo-2fa', String(this.twoStepEnabled));
   }
 
   toggleLoginAlerts(): void {
     this.loginAlertsEnabled = !this.loginAlertsEnabled;
-    localStorage.setItem('demo-login-alerts', String(this.loginAlertsEnabled));
+    writeStorage('demo-login-alerts', String(this.loginAlertsEnabled));
   }
 
   constructor(private userService: UserService,
@@ -133,8 +134,8 @@ export class EmployeeSettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('userId') || (localStorage.getItem('demoMode') === 'true' ? 'EMP-2001' : '');
-    this.email = localStorage.getItem('email') || '';
+    this.userId = readStorage('userId') || (readStorage('demoMode') === 'true' ? 'EMP-2001' : '');
+    this.email = readStorage('email') || '';
 
     if (!this.userId) {
       this.toastService.error('Session expired', 'User session not found. Please log in again.');
@@ -256,8 +257,8 @@ export class EmployeeSettingsComponent implements OnInit, OnDestroy {
         this.password = '';
 
         // Update email in localStorage if changed
-        if (this.email !== localStorage.getItem('email')) {
-          localStorage.setItem('email', this.email);
+        if (this.email !== readStorage('email')) {
+          writeStorage('email', this.email);
         }
       },
       error: (err) => {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
+import { readStorage, removeStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root',
@@ -17,16 +18,11 @@ export class DashboardGuard  {
     | boolean
     | UrlTree {
     try {
-      // Check if localStorage is accessible
-      if (typeof localStorage === 'undefined') {
-        console.error('localStorage is not available');
-        return this.router.createUrlTree(['/welcome'], {
-          queryParams: { error: 'storage_unavailable' }
-        });
-      }
-
-      const token = localStorage.getItem('token');
-      const isDemoMode = localStorage.getItem('demoMode') === 'true';
+      // No availability probe here: even `typeof localStorage` evaluates the
+      // getter and throws in blocked-storage browsers. readStorage absorbs
+      // all of that and reports null, which the checks below handle.
+      const token = readStorage('token');
+      const isDemoMode = readStorage('demoMode') === 'true';
 
       if (isDemoMode) {
         return true;
@@ -43,7 +39,7 @@ export class DashboardGuard  {
       // Validate JWT token format (basic validation)
       if (!this.isValidJWTFormat(token)) {
         console.error('Invalid token format detected');
-        localStorage.removeItem('token');
+        removeStorage('token');
         return this.router.createUrlTree(['/welcome'], {
           queryParams: { error: 'invalid_token' }
         });
@@ -52,7 +48,7 @@ export class DashboardGuard  {
       // Check if token is expired
       if (this.isTokenExpired(token)) {
         console.warn('Token has expired');
-        localStorage.removeItem('token');
+        removeStorage('token');
         return this.router.createUrlTree(['/welcome'], {
           queryParams: { error: 'token_expired' }
         });

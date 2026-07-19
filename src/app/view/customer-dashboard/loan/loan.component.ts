@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { Subscription } from 'rxjs';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-loan',
@@ -299,7 +300,7 @@ export class LoanComponent implements OnInit, OnDestroy {
       html: `
         <div class="demo-detail-grid">
           <div class="demo-detail-row"><span>Agreement</span><strong>${loan.loan_basic_detail_id}</strong></div>
-          <div class="demo-detail-row"><span>Borrower</span><strong>${localStorage.getItem('displayName') || 'Customer'}</strong></div>
+          <div class="demo-detail-row"><span>Borrower</span><strong>${readStorage('displayName') || 'Customer'}</strong></div>
           <div class="demo-detail-row"><span>Loan type</span><strong>${loan.loan_type || 'Personal'}</strong></div>
           <div class="demo-detail-row"><span>Principal</span><strong>Rs. ${Number(loan.amount || 0).toLocaleString()}</strong></div>
           <div class="demo-detail-row"><span>Interest</span><strong>${loan.interest || 0}% p.a.</strong></div>
@@ -393,7 +394,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     }
 
     // Validate user ID exists
-    const userId = localStorage.getItem("userId") || (localStorage.getItem('demoMode') === 'true' ? 'CUS-1001' : null);
+    const userId = readStorage("userId") || (readStorage('demoMode') === 'true' ? 'CUS-1001' : null);
     if (!userId) {
       this.toastService.error('Session expired', 'User ID not found. Please log in again.');
       return;

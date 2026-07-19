@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../../service/theme.service';
 import { trapTabKey } from '../../focus-trap';
+import { readStorage, removeStorage } from 'src/app/shared/safe-storage';
 
 type PaletteAction = 'toggle-theme' | 'sign-out';
 
@@ -64,8 +65,8 @@ export class CommandPaletteComponent {
   constructor(private router: Router, private themeService: ThemeService) {}
 
   private get userRole(): string {
-    const type = localStorage.getItem('userType');
-    const demo = localStorage.getItem('demoMode');
+    const type = readStorage('userType');
+    const demo = readStorage('demoMode');
     if (type) return type;
     if (demo) return 'DEMO';
     return '*';
@@ -175,7 +176,7 @@ export class CommandPaletteComponent {
         break;
       case 'sign-out':
         ['token', 'email', 'userType', 'userId', 'demoMode', 'displayName'].forEach(key =>
-          localStorage.removeItem(key)
+          removeStorage(key)
         );
         this.router.navigate(['/sign-in']);
         break;

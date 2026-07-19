@@ -5,6 +5,7 @@ import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { DEMO_ACCOUNTS, DEMO_TRANSACTIONS } from 'src/app/shared/demo-banking-fixtures';
 import { skipGlobalLoader } from '../../interceptors/http-context';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +19,13 @@ export class TransactionService {
    * @returns Observable with account details
    */
   getAccountDetails(): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of({
         data: DEMO_ACCOUNTS
       });
     }
 
-    const userId = localStorage.getItem('userId');
+    const userId = readStorage('userId');
     if (!userId) {
       return throwError(() => new Error('User ID not found in local storage'));
     }
@@ -74,7 +75,7 @@ export class TransactionService {
       beneficiary_remarks: beneficiaryRemarks || ''
     };
 
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of({
         message: 'Transfer created successfully!',
         reference: 'TRX-DEMO-' + Date.now(),
@@ -103,7 +104,7 @@ export class TransactionService {
       return throwError(() => new Error('Account ID is required'));
     }
 
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       const demoTransactions = DEMO_TRANSACTIONS;
 
       return of({ data: demoTransactions[accountIdStr] || [] });

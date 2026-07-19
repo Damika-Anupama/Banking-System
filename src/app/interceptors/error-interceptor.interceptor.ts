@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { AlertService } from '../shared/lazy-swal';
 import { ErrorHandlerService } from '../service/error-handler.service';
 import { ToastService } from '../service/toast.service';
+import { removeStorage } from 'src/app/shared/safe-storage';
 
 /**
  * Global HTTP Error Interceptor
@@ -202,9 +203,13 @@ export class ErrorInterceptor implements HttpInterceptor {
     });
 
     // Clear any stored authentication data
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    sessionStorage.clear();
+    removeStorage('token');
+    removeStorage('user');
+    try {
+      sessionStorage.clear();
+    } catch {
+      // Blocked-storage browsers throw on access; there is nothing to clear.
+    }
 
     // Show session expired message
     this.alertService.fire({

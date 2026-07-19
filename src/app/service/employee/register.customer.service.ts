@@ -5,6 +5,7 @@ import {catchError, delay, retry, timeout} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { createDemoCustomer } from 'src/app/shared/demo-banking-fixtures';
 import { demoStore } from 'src/app/shared/demo-store';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,7 @@ export class RegisterCustomerService {
       return throwError(() => new Error('Password must be at least 6 characters'));
     }
 
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       const customer = createDemoCustomer(body);
       demoStore.addCustomer(customer);
       return of({

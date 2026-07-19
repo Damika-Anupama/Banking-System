@@ -8,6 +8,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { DashboardGuard } from './dashboard.guard';
+import { resetSafeStorageForTests } from 'src/app/shared/safe-storage';
 
 describe('DashboardGuard', () => {
   let guard: DashboardGuard;
@@ -25,6 +26,10 @@ describe('DashboardGuard', () => {
   };
 
   beforeEach(() => {
+    // Earlier specs may have seeded safe-storage's in-memory fallback (e.g.
+    // sign-in with blocked storage writes demoMode there); start clean.
+    resetSafeStorageForTests();
+
     // Create router spy
     const routerSpy = jasmine.createSpyObj('Router', ['createUrlTree']);
 
@@ -91,7 +96,9 @@ describe('DashboardGuard', () => {
 
       guard.canActivate(mockRoute, mockState);
 
-      expect(localStorage.removeItem).not.toHaveBeenCalled();
+      // safe-storage's availability probe removes its own probe key; the
+      // claim under test is only that the TOKEN survives validation.
+      expect(localStorage.removeItem).not.toHaveBeenCalledWith('token');
     });
   });
 
@@ -228,29 +235,28 @@ describe('DashboardGuard', () => {
   });
 
   describe('canActivate - LocalStorage Unavailable', () => {
-    it('should handle localStorage access errors', () => {
-      // Simulate localStorage throwing an error when accessed
+    it('treats blocked storage as a signed-out visitor, not a crash', () => {
+      // safe-storage absorbs the throw and reports no stored token, so the
+      // guard redirects for sign-in rather than surfacing an auth error.
       localStorageSpy.and.throwError('localStorage not available');
 
-      const result = guard.canActivate(mockRoute, mockState);
+      guard.canActivate(mockRoute, mockState);
 
       expect(router.createUrlTree).toHaveBeenCalledWith(['/welcome'], {
-        queryParams: { error: 'auth_error' }
+        queryParams: { error: 'no_token' }
       });
-      expect(console.error).toHaveBeenCalledWith('Error in dashboard guard:', jasmine.any(Error));
     });
   });
 
   describe('canActivate - Error Handling', () => {
-    it('should handle errors in token validation', () => {
+    it('redirects for sign-in when storage reads fail mid-validation', () => {
       localStorageSpy.and.throwError('Storage error');
 
-      const result = guard.canActivate(mockRoute, mockState);
+      guard.canActivate(mockRoute, mockState);
 
       expect(router.createUrlTree).toHaveBeenCalledWith(['/welcome'], {
-        queryParams: { error: 'auth_error' }
+        queryParams: { error: 'no_token' }
       });
-      expect(console.error).toHaveBeenCalledWith('Error in dashboard guard:', jasmine.any(Error));
     });
 
     it('should handle JSON parse errors in token payload', () => {

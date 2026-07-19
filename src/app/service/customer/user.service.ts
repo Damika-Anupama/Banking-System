@@ -4,6 +4,7 @@ import {Observable, of, throwError} from 'rxjs';
 import {catchError, retry, timeout} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { DEMO_ACCOUNTS, DEMO_PROFILE } from 'src/app/shared/demo-banking-fixtures';
+import { readStorage, writeStorage } from 'src/app/shared/safe-storage';
 
 
 @Injectable({
@@ -170,7 +171,7 @@ export class UserService {
    * @returns Observable with dashboard data
    */
   getDashboardDetails(): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of([
         {
           user_id: 'CUS-1001',
@@ -181,7 +182,7 @@ export class UserService {
       ]);
     }
 
-    const email = localStorage.getItem('email');
+    const email = readStorage('email');
     if (!email) {
       return throwError(() => new Error('User email not found in local storage'));
     }
@@ -238,14 +239,14 @@ export class UserService {
       return throwError(() => new Error('User ID is required'));
     }
 
-    if (localStorage.getItem('demoMode') === 'true') {
-      const storedProfile = localStorage.getItem('demoProfile');
+    if (readStorage('demoMode') === 'true') {
+      const storedProfile = readStorage('demoProfile');
       // Until the profile is edited, reflect whoever actually signed in
       // (sign-up stores the typed name) so Settings agrees with the shell.
       const profile = storedProfile ? JSON.parse(storedProfile) : {
         ...DEMO_PROFILE,
-        fullname: localStorage.getItem('displayName') || DEMO_PROFILE.fullname,
-        email: localStorage.getItem('email') || DEMO_PROFILE.email,
+        fullname: readStorage('displayName') || DEMO_PROFILE.fullname,
+        email: readStorage('email') || DEMO_PROFILE.email,
       };
       return of({ data: [profile] });
     }
@@ -287,18 +288,18 @@ export class UserService {
       password: userData.password || '' // Optional - only if changing password
     };
 
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       const updatedProfile = {
         ...DEMO_PROFILE,
         user_id: userIdStr,
         ...body,
         contact_no: body.contact_no
       };
-      localStorage.setItem('demoProfile', JSON.stringify(updatedProfile));
+      writeStorage('demoProfile', JSON.stringify(updatedProfile));
       // The shell's profile card reads displayName; keep it in step with a
       // profile edit so the sidebar never contradicts Settings.
       if (updatedProfile.fullname) {
-        localStorage.setItem('displayName', updatedProfile.fullname);
+        writeStorage('displayName', updatedProfile.fullname);
       }
       return of({ message: 'Demo profile updated successfully', data: [updatedProfile] });
     }

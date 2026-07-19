@@ -4,6 +4,7 @@ import {Observable, of, throwError} from 'rxjs';
 import {catchError, retry, timeout} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { demoStore } from 'src/app/shared/demo-store';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class EmployeeHomeService {
    * @returns Observable with employee home data
    */
   getEmployeeHome(): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       return of({
         data: demoStore.getCustomers()
       });

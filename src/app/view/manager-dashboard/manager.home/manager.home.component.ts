@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { demoStore } from 'src/app/shared/demo-store';
 import { Chart, registerables } from 'chart.js';
+import { writeStorage } from 'src/app/shared/safe-storage';
 Chart.register(...registerables);
 
 @Component({
@@ -178,8 +179,8 @@ export class ManagerHomeComponent implements OnInit, AfterViewInit, OnDestroy {
           }
 
           // Store user data with null checks
-          localStorage.setItem('userId', user[0]['user_id']);
-          localStorage.setItem('branchId', user[0]['branch_id']);
+          writeStorage('userId', user[0]['user_id']);
+          writeStorage('branchId', user[0]['branch_id']);
           this.branch_id = user[0]['branch_id'];
           this.branch_name = user[0]['branch_name'] || 'Unknown Branch';
           this.manager_id = user[0]['manager_id'] || null;

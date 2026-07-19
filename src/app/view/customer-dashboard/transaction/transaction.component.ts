@@ -9,6 +9,7 @@ import { ToastService } from 'src/app/service/toast.service';
 import { TableSort } from 'src/app/shared/table-sort';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
 import { localIsoToday } from 'src/app/shared/local-date';
+import { readStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-transaction',
@@ -622,7 +623,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
             confirmButtonText: 'Done'
           });
 
-          if (this.account_id && localStorage.getItem('demoMode') !== 'true') {
+          if (this.account_id && readStorage('demoMode') !== 'true') {
             this.loadDataToTable(this.account_id);
           }
         } catch (error) {

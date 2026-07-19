@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { resetSafeStorageForTests } from 'src/app/shared/safe-storage';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -12,6 +13,10 @@ describe('SignInComponent', () => {
   let component: SignInComponent;
   let fixture: ComponentFixture<SignInComponent>;
   let router: Router;
+
+  // Blocked-storage tests here seed safe-storage's in-memory fallback
+  // (demoMode, token, …); leaving it populated pollutes later spec files.
+  afterEach(() => resetSafeStorageForTests());
   let toastService: ToastService;
 
   beforeEach(async () => {
@@ -125,22 +130,18 @@ describe('SignInComponent', () => {
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should handle localStorage failure without navigating', () => {
-    spyOn(console, 'error');
+  it('still signs in when localStorage writes fail, via the in-memory fallback', () => {
     spyOn(localStorage, 'setItem').and.throwError('Storage unavailable');
     component.email = 'customer@example.com';
     component.password = 'password123';
 
     component.authenticate(true);
 
-    expect(component.errorMessage).toBe('Failed to store authentication data');
+    // Blocked storage must not lock a visitor out of the demo: the session
+    // seeds into safe-storage's memory fallback and navigation proceeds.
+    expect(component.errorMessage).toBe('');
     expect(component.isLoading).toBe(false);
-    expect(console.error).toHaveBeenCalledWith('Error storing authentication data:', jasmine.any(Error));
-    expect(toastService.error).toHaveBeenCalledWith(
-      'Sign-in failed',
-      'Failed to store authentication data'
-    );
-    expect(Swal.fire).not.toHaveBeenCalled();
-    expect(router.navigate).not.toHaveBeenCalled();
+    expect(toastService.error).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard/home']);
   });
 });

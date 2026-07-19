@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
 import { seedDemoSession, DemoRole } from 'src/app/shared/demo-session';
 import { ToastService } from 'src/app/service/toast.service';
+import { writeStorage } from 'src/app/shared/safe-storage';
 
 @Component({
   selector: 'app-sign-in',
@@ -82,10 +83,10 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
     }
 
     try {
-      localStorage.setItem('token', user.token);
-      localStorage.setItem('email', this.email);
-      localStorage.setItem('userType', user.type);
-      localStorage.setItem('demoMode', 'false');
+      writeStorage('token', user.token);
+      writeStorage('email', this.email);
+      writeStorage('userType', user.type);
+      writeStorage('demoMode', 'false');
     } catch (error) {
       console.error('Error storing authentication data:', error);
       this.isLoading = false;

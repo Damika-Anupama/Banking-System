@@ -5,6 +5,7 @@ import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { DEMO_CUSTOMER_LOANS, DEMO_FIXED_DEPOSITS, createDemoLoan } from 'src/app/shared/demo-banking-fixtures';
 import { skipGlobalLoader } from '../../interceptors/http-context';
+import { readStorage, writeStorage } from 'src/app/shared/safe-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +19,12 @@ export class LoanService {
    * @returns Observable with fixed deposit data
    */
   getFDs(): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
-      const created = JSON.parse(localStorage.getItem('demoFixedDeposits') || '[]');
+    if (readStorage('demoMode') === 'true') {
+      const created = JSON.parse(readStorage('demoFixedDeposits') || '[]');
       return of({ data: [...DEMO_FIXED_DEPOSITS, ...created] });
     }
 
-    const userId = localStorage.getItem('userId');
+    const userId = readStorage('userId');
     if (!userId) {
       return throwError(() => new Error('User ID not found in local storage'));
     }
@@ -41,12 +42,12 @@ export class LoanService {
    * @returns Observable with loan data
    */
   getLoans(): Observable<any> {
-    if (localStorage.getItem('demoMode') === 'true') {
-      const created = JSON.parse(localStorage.getItem('demoLoans') || '[]');
+    if (readStorage('demoMode') === 'true') {
+      const created = JSON.parse(readStorage('demoLoans') || '[]');
       return of({ data: [...DEMO_CUSTOMER_LOANS, ...created] });
     }
 
-    const userId = localStorage.getItem('userId');
+    const userId = readStorage('userId');
     if (!userId) {
       return throwError(() => new Error('User ID not found in local storage'));
     }
@@ -99,10 +100,10 @@ export class LoanService {
       loan_type: selectedLoanType
     };
 
-    if (localStorage.getItem('demoMode') === 'true') {
+    if (readStorage('demoMode') === 'true') {
       const created = createDemoLoan(body);
-      const existing = JSON.parse(localStorage.getItem('demoLoans') || '[]');
-      localStorage.setItem('demoLoans', JSON.stringify([...existing, created]));
+      const existing = JSON.parse(readStorage('demoLoans') || '[]');
+      writeStorage('demoLoans', JSON.stringify([...existing, created]));
       return of({ message: 'Loan applied successfully', data: created });
     }
 
