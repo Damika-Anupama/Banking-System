@@ -21,6 +21,7 @@ import { PreloaderComponent } from './shared/preloader/preloader.component';
 // Global UI — available on every page
 import { CommonModule } from '@angular/common';
 import { CommandPaletteComponent } from './shared/components/command-palette/command-palette.component';
+import { ShortcutHelpComponent } from './shared/components/shortcut-help/shortcut-help.component';
 import { RouteProgressComponent } from './shared/components/route-progress/route-progress.component';
 import { ToastHostComponent } from './shared/components/toast-host/toast-host.component';
 
@@ -50,6 +51,7 @@ import { ToastHostComponent } from './shared/components/toast-host/toast-host.co
     // Global components used in app.component.html
     PreloaderComponent,
     CommandPaletteComponent,
+    ShortcutHelpComponent,
     RouteProgressComponent,
     ToastHostComponent,
     // Global error pages

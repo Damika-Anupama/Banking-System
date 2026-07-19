@@ -88,13 +88,17 @@
           <div *ngIf="beneficiaries.length">
             <p class="auth-field-label mb-2"><i class="fas fa-address-book mr-2"></i>Saved beneficiaries</p>
             <div class="flex flex-wrap gap-2">
+              <!-- Two real buttons per chip: a span with (click) is invisible to
+                   the keyboard, and the old markup nested the remove button
+                   inside the clickable area — invalid HTML. -->
               <span *ngFor="let b of beneficiaries"
-                    class="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-xs text-white/85 transition hover:border-cyan-300/40 hover:bg-cyan-300/10 cursor-pointer"
-                    (click)="selectBeneficiary(b)" [title]="b.account_id">
-                <i class="fas fa-user-circle text-cyan-200"></i>
-                <span class="font-medium">{{ b.name }}</span>
-                <span class="text-white/45">{{ b.account_id }}</span>
-                <button type="button" class="text-white/40 hover:text-rose-300" (click)="removeBeneficiary(b, $event)" aria-label="Remove beneficiary"><i class="fas fa-times"></i></button>
+                    class="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-xs text-white/85 transition hover:border-cyan-300/40 hover:bg-cyan-300/10">
+                <button type="button" class="inline-flex items-center gap-2" (click)="selectBeneficiary(b)" [title]="b.account_id" [attr.aria-label]="'Use beneficiary ' + b.name">
+                  <i class="fas fa-user-circle text-cyan-200" aria-hidden="true"></i>
+                  <span class="font-medium">{{ b.name }}</span>
+                  <span class="text-white/45">{{ b.account_id }}</span>
+                </button>
+                <button type="button" class="text-white/40 hover:text-rose-300" (click)="removeBeneficiary(b, $event)" [attr.aria-label]="'Remove beneficiary ' + b.name"><i class="fas fa-times" aria-hidden="true"></i></button>
               </span>
             </div>
           </div>

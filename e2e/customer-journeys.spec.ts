@@ -224,6 +224,28 @@ test.describe("Customer — navigation and shell", () => {
     );
   });
 
+  test("pressing ? opens the shortcut sheet, and Esc closes only the sheet", async ({
+    page,
+  }) => {
+    await page.keyboard.press("Shift+Slash");
+    const sheet = page.getByRole("dialog", { name: /keyboard shortcuts/i });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByText(/command palette/i)).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+  });
+
+  test("typing ? into a search field does not open the shortcut sheet", async ({
+    page,
+  }) => {
+    await page.locator("#table_search").click();
+    await page.keyboard.press("Shift+Slash");
+
+    await expect(page.getByRole("dialog", { name: /keyboard shortcuts/i })).toBeHidden();
+    await expect(page.locator("#table_search")).toHaveValue("?");
+  });
+
   test("the command palette opens, traps focus, and closes on Escape", async ({
     page,
   }) => {
