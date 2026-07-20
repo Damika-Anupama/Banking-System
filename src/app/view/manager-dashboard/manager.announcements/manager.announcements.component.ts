@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { demoStore } from 'src/app/shared/demo-store';
 
 interface Announcement {
   id: string;
@@ -31,12 +32,7 @@ export class ManagerAnnouncementsComponent {
 
   readonly audiences: Announcement['audience'][] = ['All staff', 'Tellers', 'Loan officers', 'Customer service'];
 
-  announcements: Announcement[] = [
-    { id: 'ANN-410', title: 'New FD rates effective Monday', message: 'Updated fixed deposit rates take effect from Monday. Please refer to Product Configuration for the latest tiers before advising customers.', audience: 'All staff', priority: 'Important', posted: '2026-05-24T08:30:00', pinned: true },
-    { id: 'ANN-408', title: 'System maintenance window', message: 'Core banking maintenance is scheduled this Saturday 10 PM–12 AM. Online services may be briefly unavailable.', audience: 'All staff', priority: 'Urgent', posted: '2026-05-23T17:10:00', pinned: false },
-    { id: 'ANN-405', title: 'KYC re-verification drive', message: 'Please prompt customers with pending KYC to complete re-verification this month. Target: 95% branch compliance.', audience: 'Customer service', priority: 'Normal', posted: '2026-05-22T09:45:00', pinned: false },
-    { id: 'ANN-401', title: 'Cash handling refresher', message: 'A short refresher on large-cash dual-authorisation will be held Friday at 4 PM in the branch meeting room.', audience: 'Tellers', priority: 'Normal', posted: '2026-05-21T13:20:00', pinned: false }
-  ];
+  announcements: Announcement[] = demoStore.getAnnouncements();
 
   get sortedAnnouncements(): Announcement[] {
     return [...this.announcements].sort((a, b) => {
@@ -103,7 +99,8 @@ export class ManagerAnnouncementsComponent {
       pinned: false
     };
     setTimeout(() => {
-      this.announcements = [item, ...this.announcements];
+      demoStore.addAnnouncement(item);
+      this.announcements = [...demoStore.getAnnouncements()];
       this.title = '';
       this.message = '';
       this.audience = 'All staff';
@@ -115,7 +112,8 @@ export class ManagerAnnouncementsComponent {
   }
 
   togglePin(item: Announcement): void {
-    item.pinned = !item.pinned;
+    demoStore.toggleAnnouncementPin(item.id);
+    this.announcements = [...demoStore.getAnnouncements()];
   }
 
   remove(item: Announcement): void {
@@ -129,7 +127,8 @@ export class ManagerAnnouncementsComponent {
       cancelButtonText: 'Cancel'
     }).then(result => {
       if (!result.isConfirmed) return;
-      this.announcements = this.announcements.filter(a => a.id !== item.id);
+      demoStore.removeAnnouncement(item.id);
+      this.announcements = [...demoStore.getAnnouncements()];
       this.toastService.success('Announcement deleted');
     });
   }

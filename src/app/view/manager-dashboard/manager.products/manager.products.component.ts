@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
+import { demoStore } from 'src/app/shared/demo-store';
 
 interface FdTier {
   term: string;
@@ -26,20 +27,8 @@ interface LoanPackage {
 export class ManagerProductsComponent {
   constructor(private toastService: ToastService) {}
 
-  fdTiers: FdTier[] = [
-    { term: '3 months',  rate: 11.5, min_amount: 25000 },
-    { term: '6 months',  rate: 13.0, min_amount: 25000 },
-    { term: '1 year',    rate: 14.0, min_amount: 50000 },
-    { term: '2 years',   rate: 14.75, min_amount: 100000 },
-    { term: '5 years',   rate: 15.5, min_amount: 250000 }
-  ];
-
-  loanPackages: LoanPackage[] = [
-    { name: 'Personal Flexi',   type: 'Personal', rate: 13.0, max_term_months: 60,  max_amount: 2000000,  active: true },
-    { name: 'Business Growth',  type: 'Business', rate: 14.2, max_term_months: 84,  max_amount: 10000000, active: true },
-    { name: 'Home Advantage',   type: 'Mortgage', rate: 11.8, max_term_months: 240, max_amount: 25000000, active: true },
-    { name: 'Auto Drive',       type: 'Vehicle',  rate: 12.5, max_term_months: 72,  max_amount: 6000000,  active: false }
-  ];
+  fdTiers: FdTier[] = demoStore.getFdTiers();
+  loanPackages: LoanPackage[] = demoStore.getLoanPackages();
 
   get activePackages(): number { return this.loanPackages.filter(p => p.active).length; }
   get avgFdRate(): number {
@@ -80,7 +69,8 @@ export class ManagerProductsComponent {
       }
     });
     if (result.isConfirmed && result.value) {
-      tier.rate = Math.round(Number(result.value) * 100) / 100;
+      demoStore.setFdRate(tier.term, Math.round(Number(result.value) * 100) / 100);
+      this.fdTiers = [...demoStore.getFdTiers()];
       this.toastService.success('Rate updated');
     }
   }
@@ -102,13 +92,16 @@ export class ManagerProductsComponent {
       }
     });
     if (result.isConfirmed && result.value) {
-      pkg.rate = Math.round(Number(result.value) * 100) / 100;
+      demoStore.setLoanRate(pkg.name, Math.round(Number(result.value) * 100) / 100);
+      this.loanPackages = [...demoStore.getLoanPackages()];
       this.toastService.success('Rate updated');
     }
   }
 
   togglePackage(pkg: LoanPackage): void {
-    pkg.active = !pkg.active;
-    this.toastService.success(pkg.active ? 'Package enabled' : 'Package disabled');
+    demoStore.toggleLoanPackage(pkg.name);
+    this.loanPackages = [...demoStore.getLoanPackages()];
+    const updated = this.loanPackages.find(p => p.name === pkg.name);
+    this.toastService.success(updated?.active ? 'Package enabled' : 'Package disabled');
   }
 }

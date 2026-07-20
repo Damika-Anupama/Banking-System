@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { TableSort } from 'src/app/shared/table-sort';
+import { demoStore } from 'src/app/shared/demo-store';
 
 type ChequeStatus = 'Received' | 'In clearing' | 'Cleared' | 'Returned';
 
@@ -28,14 +29,7 @@ export class EmployeeChequeClearingComponent {
   searchTerm = '';
   statusFilter = 'all';
 
-  cheques: Cheque[] = [
-    { cheque_id: 'CHQ-8801', cheque_no: '884201', account_id: 'ACC-492810', drawer_bank: 'Commercial Bank',   amount: 128000, deposited: '2026-05-23T14:20:00', expected_clear: '2026-05-26', status: 'In clearing' },
-    { cheque_id: 'CHQ-8799', cheque_no: '551093', account_id: 'ACC-492812', drawer_bank: 'Sampath Bank',      amount: 240000, deposited: '2026-05-23T10:05:00', expected_clear: '2026-05-26', status: 'In clearing' },
-    { cheque_id: 'CHQ-8795', cheque_no: '770418', account_id: 'ACC-118209', drawer_bank: 'HNB',               amount: 64000,  deposited: '2026-05-24T09:35:00', expected_clear: '2026-05-27', status: 'Received' },
-    { cheque_id: 'CHQ-8790', cheque_no: '330275', account_id: 'ACC-492811', drawer_bank: 'Bank of Ceylon',    amount: 18500,  deposited: '2026-05-22T16:40:00', expected_clear: '2026-05-25', status: 'Cleared' },
-    { cheque_id: 'CHQ-8786', cheque_no: '992140', account_id: 'ACC-772901', drawer_bank: "People's Bank",     amount: 95000,  deposited: '2026-05-22T11:15:00', expected_clear: '2026-05-25', status: 'Cleared' },
-    { cheque_id: 'CHQ-8781', cheque_no: '447821', account_id: 'ACC-660412', drawer_bank: 'Seylan Bank',       amount: 52000,  deposited: '2026-05-21T13:50:00', expected_clear: '2026-05-24', status: 'Returned' }
-  ];
+  cheques: Cheque[] = demoStore.getCheques();
 
   readonly sort = new TableSort<Cheque>({
     amount: (c) => Number(c.amount || 0),
@@ -77,11 +71,13 @@ export class EmployeeChequeClearingComponent {
   }
 
   advance(cheque: Cheque): void {
-    if (cheque.status === 'Received') {
-      cheque.status = 'In clearing';
+    const previous = cheque.status;
+    if (previous !== 'Received' && previous !== 'In clearing') return;
+    demoStore.advanceCheque(cheque.cheque_id);
+    this.cheques = [...demoStore.getCheques()];
+    if (previous === 'Received') {
       this.toastService.success('Sent to clearing');
-    } else if (cheque.status === 'In clearing') {
-      cheque.status = 'Cleared';
+    } else {
       this.toastService.success(
         'Cheque cleared',
         `Rs. ${cheque.amount.toLocaleString()} credited to ${cheque.account_id}.`
@@ -103,7 +99,8 @@ export class EmployeeChequeClearingComponent {
       inputValidator: (v) => (!v ? 'Select a reason' : null)
     }).then(result => {
       if (!result.isConfirmed) return;
-      cheque.status = 'Returned';
+      demoStore.returnCheque(cheque.cheque_id);
+      this.cheques = [...demoStore.getCheques()];
       this.toastService.success('Marked returned', `Reason: ${result.value}`);
     });
   }

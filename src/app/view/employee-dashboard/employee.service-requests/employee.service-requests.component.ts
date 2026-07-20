@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ToastService } from 'src/app/service/toast.service';
 import { focusFirstError } from 'src/app/shared/focus-first-error';
+import { demoStore } from 'src/app/shared/demo-store';
 
 interface ServiceRequest {
   ticket_id: string;
@@ -35,14 +36,7 @@ export class EmployeeServiceRequestsComponent {
 
   readonly categories = ['Card replacement', 'Dispute / chargeback', 'Address change', 'Statement request', 'Cheque book', 'Account closure', 'Other'];
 
-  requests: ServiceRequest[] = [
-    { ticket_id: 'SR-7042', customer: 'Nuwan Silva',        customer_id: 'CUS-1002', category: 'Dispute / chargeback', priority: 'High',   status: 'Open',        opened: '2026-05-24T09:10:00', summary: 'Disputed card transaction of Rs. 18,500 at online merchant.' },
-    { ticket_id: 'SR-7039', customer: 'Sofia Fernando',     customer_id: 'CUS-1003', category: 'Card replacement',    priority: 'Medium', status: 'In progress', opened: '2026-05-23T14:35:00', summary: 'Lost debit card, requested replacement and PIN reset.' },
-    { ticket_id: 'SR-7035', customer: 'Ishan Jayawardena',  customer_id: 'CUS-1004', category: 'Address change',      priority: 'Low',    status: 'Open',        opened: '2026-05-23T11:05:00', summary: 'Update residential address after relocation to Wattala.' },
-    { ticket_id: 'SR-7028', customer: 'Dilani Rajapaksa',   customer_id: 'CUS-1005', category: 'Statement request',   priority: 'Low',    status: 'Resolved',    opened: '2026-05-22T16:20:00', summary: 'Requested 6-month account statement for visa application.' },
-    { ticket_id: 'SR-7021', customer: 'Kasun Mendis',       customer_id: 'CUS-1006', category: 'Cheque book',         priority: 'Medium', status: 'In progress', opened: '2026-05-21T10:45:00', summary: 'New cheque book request (50 leaves).' },
-    { ticket_id: 'SR-7014', customer: 'Roshan Peiris',      customer_id: 'CUS-1008', category: 'Dispute / chargeback', priority: 'High',   status: 'Resolved',    opened: '2026-05-20T13:15:00', summary: 'Duplicate ATM withdrawal charge reversed.' }
-  ];
+  requests: ServiceRequest[] = demoStore.getServiceRequests();
 
   get filteredRequests(): ServiceRequest[] {
     const q = this.searchTerm.trim().toLowerCase();
@@ -120,7 +114,8 @@ export class EmployeeServiceRequestsComponent {
       summary: this.newSummary.trim()
     };
     setTimeout(() => {
-      this.requests = [ticket, ...this.requests];
+      demoStore.addServiceRequest(ticket);
+      this.requests = [...demoStore.getServiceRequests()];
       this.newCustomer = '';
       this.newSummary = '';
       this.touched = {};
@@ -132,13 +127,11 @@ export class EmployeeServiceRequestsComponent {
   }
 
   advance(request: ServiceRequest): void {
-    if (request.status === 'Open') {
-      request.status = 'In progress';
-      this.toastService.success('Marked in progress');
-    } else if (request.status === 'In progress') {
-      request.status = 'Resolved';
-      this.toastService.success('Ticket resolved');
-    }
+    const previous = request.status;
+    if (previous !== 'Open' && previous !== 'In progress') return;
+    demoStore.advanceServiceRequest(request.ticket_id);
+    this.requests = [...demoStore.getServiceRequests()];
+    this.toastService.success(previous === 'Open' ? 'Marked in progress' : 'Ticket resolved');
   }
 
   view(request: ServiceRequest): void {

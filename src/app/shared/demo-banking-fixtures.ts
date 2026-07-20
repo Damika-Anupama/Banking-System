@@ -369,3 +369,90 @@ export const DEMO_EMPLOYEES: DemoEmployee[] = [
   { employee_id: 'EMP-2007', username: 'sahan.weerasinghe', fullname: 'Sahan Weerasinghe', role: 'Loan Officer', email: 'sahan@banking.demo', contact_no: '+94 76 332 1108', branch_id: 'BR-001', joined_date: '2018-02-07', transactions_handled: 2890, status: 'Inactive' },
   { employee_id: 'EMP-2008', username: 'piumi.dissanayake', fullname: 'Piumi Dissanayake', role: 'Teller', email: 'piumi@banking.demo', contact_no: '+94 70 558 9931', branch_id: 'BR-001', joined_date: '2023-07-18', transactions_handled: 640, status: 'Active' }
 ];
+
+export interface DemoAnnouncement {
+  id: string;
+  title: string;
+  message: string;
+  audience: 'All staff' | 'Tellers' | 'Loan officers' | 'Customer service';
+  priority: 'Normal' | 'Important' | 'Urgent';
+  posted: string;
+  pinned: boolean;
+}
+
+export const DEMO_ANNOUNCEMENTS: DemoAnnouncement[] = [
+  { id: 'ANN-410', title: 'New FD rates effective Monday', message: 'Updated fixed deposit rates take effect from Monday. Please refer to Product Configuration for the latest tiers before advising customers.', audience: 'All staff', priority: 'Important', posted: rebaseDate('2026-05-24T08:30:00'), pinned: true },
+  { id: 'ANN-408', title: 'System maintenance window', message: 'Core banking maintenance is scheduled this Saturday 10 PM–12 AM. Online services may be briefly unavailable.', audience: 'All staff', priority: 'Urgent', posted: rebaseDate('2026-05-23T17:10:00'), pinned: false },
+  { id: 'ANN-405', title: 'KYC re-verification drive', message: 'Please prompt customers with pending KYC to complete re-verification this month. Target: 95% branch compliance.', audience: 'Customer service', priority: 'Normal', posted: rebaseDate('2026-05-22T09:45:00'), pinned: false },
+  { id: 'ANN-401', title: 'Cash handling refresher', message: 'A short refresher on large-cash dual-authorisation will be held Friday at 4 PM in the branch meeting room.', audience: 'Tellers', priority: 'Normal', posted: rebaseDate('2026-05-21T13:20:00'), pinned: false }
+];
+
+export interface DemoFdTier {
+  term: string;
+  rate: number;
+  min_amount: number;
+}
+
+export const DEMO_FD_TIERS: DemoFdTier[] = [
+  { term: '3 months',  rate: 11.5,  min_amount: 25000 },
+  { term: '6 months',  rate: 13.0,  min_amount: 25000 },
+  { term: '1 year',    rate: 14.0,  min_amount: 50000 },
+  { term: '2 years',   rate: 14.75, min_amount: 100000 },
+  { term: '5 years',   rate: 15.5,  min_amount: 250000 }
+];
+
+export interface DemoLoanPackage {
+  name: string;
+  type: 'Personal' | 'Business' | 'Mortgage' | 'Vehicle';
+  rate: number;
+  max_term_months: number;
+  max_amount: number;
+  active: boolean;
+}
+
+export const DEMO_LOAN_PACKAGES: DemoLoanPackage[] = [
+  { name: 'Personal Flexi',  type: 'Personal', rate: 13.0, max_term_months: 60,  max_amount: 2000000,  active: true },
+  { name: 'Business Growth', type: 'Business', rate: 14.2, max_term_months: 84,  max_amount: 10000000, active: true },
+  { name: 'Home Advantage',  type: 'Mortgage', rate: 11.8, max_term_months: 240, max_amount: 25000000, active: true },
+  { name: 'Auto Drive',      type: 'Vehicle',  rate: 12.5, max_term_months: 72,  max_amount: 6000000,  active: false }
+];
+
+export interface DemoServiceRequest {
+  ticket_id: string;
+  customer: string;
+  customer_id: string;
+  category: string;
+  priority: 'Low' | 'Medium' | 'High';
+  status: 'Open' | 'In progress' | 'Resolved';
+  opened: string;
+  summary: string;
+}
+
+export const DEMO_SERVICE_REQUESTS: DemoServiceRequest[] = [
+  { ticket_id: 'SR-7042', customer: 'Nuwan Silva',       customer_id: 'CUS-1002', category: 'Dispute / chargeback', priority: 'High',   status: 'Open',        opened: rebaseDate('2026-05-24T09:10:00'), summary: 'Disputed card transaction of Rs. 18,500 at online merchant.' },
+  { ticket_id: 'SR-7039', customer: 'Sofia Fernando',    customer_id: 'CUS-1003', category: 'Card replacement',    priority: 'Medium', status: 'In progress', opened: rebaseDate('2026-05-23T14:35:00'), summary: 'Lost debit card, requested replacement and PIN reset.' },
+  { ticket_id: 'SR-7035', customer: 'Ishan Jayawardena', customer_id: 'CUS-1004', category: 'Address change',      priority: 'Low',    status: 'Open',        opened: rebaseDate('2026-05-23T11:05:00'), summary: 'Update residential address after relocation to Wattala.' },
+  { ticket_id: 'SR-7028', customer: 'Dilani Rajapaksa',  customer_id: 'CUS-1005', category: 'Statement request',   priority: 'Low',    status: 'Resolved',    opened: rebaseDate('2026-05-22T16:20:00'), summary: 'Requested 6-month account statement for visa application.' },
+  { ticket_id: 'SR-7021', customer: 'Kasun Mendis',      customer_id: 'CUS-1006', category: 'Cheque book',         priority: 'Medium', status: 'In progress', opened: rebaseDate('2026-05-21T10:45:00'), summary: 'New cheque book request (50 leaves).' },
+  { ticket_id: 'SR-7014', customer: 'Roshan Peiris',     customer_id: 'CUS-1008', category: 'Dispute / chargeback', priority: 'High',   status: 'Resolved',    opened: rebaseDate('2026-05-20T13:15:00'), summary: 'Duplicate ATM withdrawal charge reversed.' }
+];
+
+export interface DemoCheque {
+  cheque_id: string;
+  cheque_no: string;
+  account_id: string;
+  drawer_bank: string;
+  amount: number;
+  deposited: string;
+  expected_clear: string;
+  status: 'Received' | 'In clearing' | 'Cleared' | 'Returned';
+}
+
+export const DEMO_CHEQUES: DemoCheque[] = [
+  { cheque_id: 'CHQ-8801', cheque_no: '884201', account_id: 'ACC-492810', drawer_bank: 'Commercial Bank', amount: 128000, deposited: rebaseDate('2026-05-23T14:20:00'), expected_clear: rebaseDate('2026-05-26'), status: 'In clearing' },
+  { cheque_id: 'CHQ-8799', cheque_no: '551093', account_id: 'ACC-492812', drawer_bank: 'Sampath Bank',    amount: 240000, deposited: rebaseDate('2026-05-23T10:05:00'), expected_clear: rebaseDate('2026-05-26'), status: 'In clearing' },
+  { cheque_id: 'CHQ-8795', cheque_no: '770418', account_id: 'ACC-118209', drawer_bank: 'HNB',             amount: 64000,  deposited: rebaseDate('2026-05-24T09:35:00'), expected_clear: rebaseDate('2026-05-27'), status: 'Received' },
+  { cheque_id: 'CHQ-8790', cheque_no: '330275', account_id: 'ACC-492811', drawer_bank: 'Bank of Ceylon',  amount: 18500,  deposited: rebaseDate('2026-05-22T16:40:00'), expected_clear: rebaseDate('2026-05-25'), status: 'Cleared' },
+  { cheque_id: 'CHQ-8786', cheque_no: '992140', account_id: 'ACC-772901', drawer_bank: "People's Bank",   amount: 95000,  deposited: rebaseDate('2026-05-22T11:15:00'), expected_clear: rebaseDate('2026-05-25'), status: 'Cleared' },
+  { cheque_id: 'CHQ-8781', cheque_no: '447821', account_id: 'ACC-660412', drawer_bank: 'Seylan Bank',     amount: 52000,  deposited: rebaseDate('2026-05-21T13:50:00'), expected_clear: rebaseDate('2026-05-24'), status: 'Returned' }
+];

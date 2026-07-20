@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 
 import { EmployeeChequeClearingComponent } from './employee.cheque-clearing.component';
 import { ToastService } from 'src/app/service/toast.service';
+import { demoStore } from 'src/app/shared/demo-store';
 
 describe('EmployeeChequeClearingComponent', () => {
   let component: EmployeeChequeClearingComponent;
@@ -14,6 +15,10 @@ describe('EmployeeChequeClearingComponent', () => {
 
   const chequeWith = (status: string): any =>
     component.cheques.find((c) => c.status === status);
+
+  // The queue is now backed by the shared demo store; reset it so each test
+  // starts from the same fresh seed instead of inheriting a prior test's writes.
+  beforeEach(() => demoStore.reset());
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -40,7 +45,7 @@ describe('EmployeeChequeClearingComponent', () => {
 
   describe('clearing lifecycle', () => {
     it('advances a received cheque into clearing, without a dialog', () => {
-      const cheque = { ...chequeWith('Received'), status: 'Received' } as any;
+      const cheque = chequeWith('Received');
 
       component.advance(cheque);
 
@@ -50,14 +55,14 @@ describe('EmployeeChequeClearingComponent', () => {
     });
 
     it('clears a cheque already in clearing, naming the credited account', () => {
-      const cheque = { cheque_id: 'CHQ-1', account_id: 'ACC-492810', amount: 5000, status: 'In clearing' } as any;
+      const cheque = chequeWith('In clearing');
 
       component.advance(cheque);
 
       expect(cheque.status).toBe('Cleared');
       expect(toastService.success).toHaveBeenCalledWith(
         'Cheque cleared',
-        jasmine.stringMatching('ACC-492810')
+        jasmine.stringMatching(cheque.account_id)
       );
       expect(Swal.fire).not.toHaveBeenCalled();
     });
@@ -74,7 +79,7 @@ describe('EmployeeChequeClearingComponent', () => {
 
   describe('marking a cheque returned', () => {
     it('asks for confirmation and a reason before marking it unpaid', fakeAsync(() => {
-      const cheque = { cheque_no: '000123', amount: 5000, status: 'In clearing' } as any;
+      const cheque = chequeWith('In clearing');
 
       component.markReturned(cheque);
       tick();

@@ -9,7 +9,10 @@
  * State is seeded from the fixtures, persisted to localStorage for the session,
  * and reset on each demo login so every walkthrough starts clean.
  */
-import { DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES, DEMO_STANDING_ORDERS, DEMO_CARDS } from './demo-banking-fixtures';
+import {
+  DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES, DEMO_STANDING_ORDERS, DEMO_CARDS,
+  DEMO_ANNOUNCEMENTS, DEMO_FD_TIERS, DEMO_LOAN_PACKAGES, DEMO_SERVICE_REQUESTS, DEMO_CHEQUES,
+} from './demo-banking-fixtures';
 
 const STORAGE_KEY = 'bank-demo-store';
 const BASE_EMPLOYEE_COUNT = 24;
@@ -21,6 +24,11 @@ interface DemoStoreState {
   beneficiaries: any[];
   standingOrders: any[];
   cards: any[];
+  announcements: any[];
+  fdTiers: any[];
+  loanPackages: any[];
+  serviceRequests: any[];
+  cheques: any[];
 }
 
 function clone<T>(value: T): T {
@@ -35,6 +43,11 @@ function seed(): DemoStoreState {
     beneficiaries: clone(DEMO_BENEFICIARIES),
     standingOrders: clone(DEMO_STANDING_ORDERS),
     cards: clone(DEMO_CARDS),
+    announcements: clone(DEMO_ANNOUNCEMENTS),
+    fdTiers: clone(DEMO_FD_TIERS),
+    loanPackages: clone(DEMO_LOAN_PACKAGES),
+    serviceRequests: clone(DEMO_SERVICE_REQUESTS),
+    cheques: clone(DEMO_CHEQUES),
   };
 }
 
@@ -54,7 +67,10 @@ function load(): DemoStoreState {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        state = JSON.parse(raw) as DemoStoreState;
+        // Merge over a fresh seed so collections added since this blob was
+        // written (a new demo release) are backfilled instead of arriving as
+        // undefined; the persisted values still win for keys they contain.
+        state = { ...seed(), ...(JSON.parse(raw) as Partial<DemoStoreState>) } as DemoStoreState;
         return state;
       }
     } catch {
@@ -161,6 +177,93 @@ export const demoStore = {
     const card = load().cards.find((c) => String(c.id) === String(id));
     if (card) {
       card.status = card.status === 'Active' ? 'Frozen' : 'Active';
+      persist();
+    }
+  },
+
+  // ----- Announcements (manager staff board) -----
+  getAnnouncements(): any[] {
+    return load().announcements;
+  },
+  addAnnouncement(announcement: any): void {
+    load().announcements.unshift(announcement);
+    persist();
+  },
+  removeAnnouncement(id: string | number): void {
+    const s = load();
+    s.announcements = s.announcements.filter((a) => String(a.id) !== String(id));
+    persist();
+  },
+  toggleAnnouncementPin(id: string | number): void {
+    const a = load().announcements.find((x) => String(x.id) === String(id));
+    if (a) {
+      a.pinned = !a.pinned;
+      persist();
+    }
+  },
+
+  // ----- Product configuration (FD tiers + loan packages) -----
+  getFdTiers(): any[] {
+    return load().fdTiers;
+  },
+  setFdRate(term: string, rate: number): void {
+    const tier = load().fdTiers.find((t) => t.term === term);
+    if (tier) {
+      tier.rate = rate;
+      persist();
+    }
+  },
+  getLoanPackages(): any[] {
+    return load().loanPackages;
+  },
+  setLoanRate(name: string, rate: number): void {
+    const pkg = load().loanPackages.find((p) => p.name === name);
+    if (pkg) {
+      pkg.rate = rate;
+      persist();
+    }
+  },
+  toggleLoanPackage(name: string): void {
+    const pkg = load().loanPackages.find((p) => p.name === name);
+    if (pkg) {
+      pkg.active = !pkg.active;
+      persist();
+    }
+  },
+
+  // ----- Service requests (employee ticket queue) -----
+  getServiceRequests(): any[] {
+    return load().serviceRequests;
+  },
+  addServiceRequest(request: any): void {
+    load().serviceRequests.unshift(request);
+    persist();
+  },
+  advanceServiceRequest(ticketId: string | number): void {
+    const r = load().serviceRequests.find((x) => String(x.ticket_id) === String(ticketId));
+    if (r) {
+      if (r.status === 'Open') r.status = 'In progress';
+      else if (r.status === 'In progress') r.status = 'Resolved';
+      persist();
+    }
+  },
+
+  // ----- Cheque clearing (employee clearing queue) -----
+  getCheques(): any[] {
+    return load().cheques;
+  },
+  advanceCheque(chequeId: string | number): void {
+    const c = load().cheques.find((x) => String(x.cheque_id) === String(chequeId));
+    if (c) {
+      if (c.status === 'Received') c.status = 'In clearing';
+      else if (c.status === 'In clearing') c.status = 'Cleared';
+      persist();
+    }
+  },
+  returnCheque(chequeId: string | number): void {
+    const c = load().cheques.find((x) => String(x.cheque_id) === String(chequeId));
+    if (c) {
+      c.status = 'Returned';
       persist();
     }
   },
