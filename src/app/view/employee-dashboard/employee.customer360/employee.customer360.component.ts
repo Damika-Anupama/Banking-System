@@ -47,56 +47,35 @@ export class EmployeeCustomer360Component {
       .toUpperCase();
   }
 
-  /** Deterministic pseudo-random seed from a customer id so figures stay stable. */
-  private seed(id: string): number {
-    return String(id).split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-  }
-
   accounts(customer: any | null): Customer360Account[] {
     if (!customer) return [];
-    const base = this.seed(customer.user_id);
-    const count = Math.max(1, Number(customer.account_count) || 1);
-    const types = ['Savings · Personal', 'Current · Personal', 'Savings · Organization', 'Fixed Deposit'];
-    return Array.from({ length: count }).map((_, i) => ({
-      account_id: 'ACC-' + (480000 + base + i * 137),
-      type: types[(base + i) % types.length],
-      balance: 50000 + ((base * (i + 3) * 911) % 1950000),
-      status: 'Active'
-    }));
+    return demoStore.getCustomerAccounts(customer.user_id);
   }
 
   totalBalance(customer: any | null): number {
-    return this.accounts(customer).reduce((sum, a) => sum + a.balance, 0);
+    return this.accounts(customer).reduce((sum, a) => sum + Number(a.balance || 0), 0);
   }
 
   recentActivity(customer: any | null): Customer360Activity[] {
     if (!customer) return [];
-    const base = this.seed(customer.user_id);
-    const templates = [
-      { type: 'Salary Credit', direction: 'in' as const },
-      { type: 'Card Settlement', direction: 'out' as const },
-      { type: 'Utility Payment', direction: 'out' as const },
-      { type: 'Fund Transfer', direction: 'in' as const },
-      { type: 'ATM Withdrawal', direction: 'out' as const }
-    ];
-    return templates.map((t, i) => ({
-      // "Recent activity" must stay recent: offset from today, not pinned
-      // to the month the fixture was written in.
-      date: (() => { const d = new Date(); d.setDate(d.getDate() - (2 + i * 3)); return d.toISOString(); })(),
-      type: t.type,
-      amount: 5000 + ((base * (i + 2) * 631) % 180000),
-      direction: t.direction
-    }));
+    return demoStore.getCustomerActivity(customer.user_id);
   }
 
+  /**
+   * Active lending is read live from the loan-approval queue, not invented —
+   * so a customer with an application in review shows it here, and it clears
+   * the moment a manager approves or rejects that application.
+   */
   activeLoan(customer: any | null): { id: string; outstanding: number; type: string } | null {
     if (!customer) return null;
-    if (customer.status !== 'Loan review' && this.seed(customer.user_id) % 3 !== 0) return null;
-    const base = this.seed(customer.user_id);
+    const loan = demoStore
+      .getLoanApplications()
+      .find((l) => String(l.customer_id) === String(customer.user_id));
+    if (!loan) return null;
     return {
-      id: 'LN-' + (49000 + (base % 900)),
-      outstanding: 80000 + ((base * 523) % 900000),
-      type: base % 2 === 0 ? 'Personal' : 'Business'
+      id: loan.loan_basic_detail_id,
+      outstanding: Number(loan.amount || 0),
+      type: loan.loan_type || 'Loan'
     };
   }
 

@@ -12,7 +12,7 @@
 import {
   DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES, DEMO_STANDING_ORDERS, DEMO_CARDS,
   DEMO_ANNOUNCEMENTS, DEMO_FD_TIERS, DEMO_LOAN_PACKAGES, DEMO_SERVICE_REQUESTS, DEMO_CHEQUES,
-  DEMO_AUDIT_ENTRIES,
+  DEMO_AUDIT_ENTRIES, DEMO_CUSTOMER_ACCOUNTS, DEMO_CUSTOMER_ACTIVITY,
 } from './demo-banking-fixtures';
 
 const STORAGE_KEY = 'bank-demo-store';
@@ -31,6 +31,8 @@ interface DemoStoreState {
   serviceRequests: any[];
   cheques: any[];
   audit: any[];
+  customerAccounts: any[];
+  customerActivity: any[];
 }
 
 function clone<T>(value: T): T {
@@ -51,6 +53,8 @@ function seed(): DemoStoreState {
     serviceRequests: clone(DEMO_SERVICE_REQUESTS),
     cheques: clone(DEMO_CHEQUES),
     audit: clone(DEMO_AUDIT_ENTRIES),
+    customerAccounts: clone(DEMO_CUSTOMER_ACCOUNTS),
+    customerActivity: clone(DEMO_CUSTOMER_ACTIVITY),
   };
 }
 
@@ -331,6 +335,16 @@ export const demoStore = {
       });
       persist();
     }
+  },
+
+  // ----- Customer 360 (employee lookup) -----
+  getCustomerAccounts(customerId: string | number): any[] {
+    return load().customerAccounts.filter((a) => String(a.customer_id) === String(customerId));
+  },
+  getCustomerActivity(customerId: string | number): any[] {
+    return load()
+      .customerActivity.filter((a) => String(a.customer_id) === String(customerId))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   },
 
   // ----- Audit stream (manager audit log) -----

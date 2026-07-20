@@ -479,3 +479,108 @@ export const DEMO_AUDIT_ENTRIES: DemoAuditEntry[] = [
   { id: 'AUD-9007', timestamp: rebaseDate('2026-05-21T09:00:00'), actor: 'SYSTEM · Compliance',      category: 'Security',    action: 'KYC re-verification',      detail: 'CUS-1002 documents re-validated',                      outcome: 'Updated' },
   { id: 'AUD-9001', timestamp: rebaseDate('2026-05-20T16:55:00'), actor: 'EMP-2003 · T. Fernando',   category: 'Transaction', action: 'Cheque cleared',           detail: 'DEP-55014 · Rs. 128,000 cheque marked cleared',        outcome: 'Updated' }
 ];
+
+/**
+ * Real per-customer accounts for the employee "Customer 360" lookup, keyed by
+ * customer_id. Replaces the previous hash-of-id placeholders so every figure is
+ * curated and consistent: account counts match DEMO_CUSTOMERS.account_count,
+ * and CUS-1001's accounts line up with the logged-in customer's own DEMO_ACCOUNTS
+ * and the cheques drawn on them. Active loans are NOT seeded here — Customer 360
+ * derives those live from the loan-approval queue (DEMO_LOAN_APPLICATIONS), so a
+ * manager's decision ripples straight into the profile.
+ */
+export interface DemoCustomerAccount {
+  customer_id: string;
+  account_id: string;
+  type: string;
+  balance: number;
+  status: string;
+}
+
+export const DEMO_CUSTOMER_ACCOUNTS: DemoCustomerAccount[] = [
+  { customer_id: 'CUS-1001', account_id: 'ACC-492810', type: 'Savings · Personal',     balance: 1245800, status: 'Active' },
+  { customer_id: 'CUS-1001', account_id: 'ACC-492811', type: 'Current · Personal',     balance: 485250,  status: 'Active' },
+  { customer_id: 'CUS-1001', account_id: 'ACC-492812', type: 'Savings · Organization', balance: 2000000, status: 'Active' },
+  { customer_id: 'CUS-1002', account_id: 'ACC-660412', type: 'Savings · Personal',     balance: 342600,  status: 'Active' },
+  { customer_id: 'CUS-1002', account_id: 'ACC-118209', type: 'Current · Personal',     balance: 88450,   status: 'Active' },
+  { customer_id: 'CUS-1003', account_id: 'ACC-772901', type: 'Savings · Personal',     balance: 1880300, status: 'Active' },
+  { customer_id: 'CUS-1003', account_id: 'ACC-772902', type: 'Current · Personal',     balance: 640100,  status: 'Active' },
+  { customer_id: 'CUS-1003', account_id: 'ACC-772903', type: 'Fixed Deposit',          balance: 3500000, status: 'Active' },
+  { customer_id: 'CUS-1003', account_id: 'ACC-772904', type: 'Savings · Organization', balance: 920000,  status: 'Active' },
+  { customer_id: 'CUS-1004', account_id: 'ACC-503117', type: 'Savings · Personal',     balance: 62400,   status: 'Active' },
+  { customer_id: 'CUS-1005', account_id: 'ACC-514220', type: 'Savings · Personal',     balance: 458900,  status: 'Active' },
+  { customer_id: 'CUS-1005', account_id: 'ACC-514221', type: 'Fixed Deposit',          balance: 1200000, status: 'Active' },
+  { customer_id: 'CUS-1006', account_id: 'ACC-526034', type: 'Savings · Personal',     balance: 734500,  status: 'Active' },
+  { customer_id: 'CUS-1006', account_id: 'ACC-526035', type: 'Current · Personal',     balance: 210750,  status: 'Active' },
+  { customer_id: 'CUS-1006', account_id: 'ACC-526036', type: 'Salary Account',         balance: 96300,   status: 'Active' },
+  { customer_id: 'CUS-1007', account_id: 'ACC-537740', type: 'Savings · Personal',     balance: 41200,   status: 'Active' },
+  { customer_id: 'CUS-1008', account_id: 'ACC-548810', type: 'Savings · Personal',     balance: 2640000, status: 'Active' },
+  { customer_id: 'CUS-1008', account_id: 'ACC-548811', type: 'Current · Personal',     balance: 1180400, status: 'Active' },
+  { customer_id: 'CUS-1008', account_id: 'ACC-548812', type: 'Fixed Deposit',          balance: 5000000, status: 'Active' },
+  { customer_id: 'CUS-1008', account_id: 'ACC-548813', type: 'Savings · Organization', balance: 1450900, status: 'Active' },
+  { customer_id: 'CUS-1008', account_id: 'ACC-548814', type: 'Salary Account',         balance: 312600,  status: 'Active' },
+  { customer_id: 'CUS-1009', account_id: 'ACC-559120', type: 'Savings · Personal',     balance: 512300,  status: 'Active' },
+  { customer_id: 'CUS-1009', account_id: 'ACC-559121', type: 'Current · Personal',     balance: 143800,  status: 'Active' },
+  { customer_id: 'CUS-1010', account_id: 'ACC-560431', type: 'Savings · Personal',     balance: 187650,  status: 'Active' },
+  { customer_id: 'CUS-1011', account_id: 'ACC-571210', type: 'Savings · Personal',     balance: 623400,  status: 'Active' },
+  { customer_id: 'CUS-1011', account_id: 'ACC-571211', type: 'Current · Personal',     balance: 289100,  status: 'Active' },
+  { customer_id: 'CUS-1011', account_id: 'ACC-571212', type: 'Fixed Deposit',          balance: 900000,  status: 'Active' },
+  { customer_id: 'CUS-1012', account_id: 'ACC-582055', type: 'Savings · Personal',     balance: 74900,   status: 'Active' },
+  { customer_id: 'CUS-1012', account_id: 'ACC-582056', type: 'Current · Personal',     balance: 33250,   status: 'Active' },
+  { customer_id: 'CUS-1013', account_id: 'ACC-593300', type: 'Savings · Personal',     balance: 356700,  status: 'Active' },
+  { customer_id: 'CUS-1014', account_id: 'ACC-604410', type: 'Savings · Personal',     balance: 1920500, status: 'Active' },
+  { customer_id: 'CUS-1014', account_id: 'ACC-604411', type: 'Current · Personal',     balance: 815200,  status: 'Active' },
+  { customer_id: 'CUS-1014', account_id: 'ACC-604412', type: 'Fixed Deposit',          balance: 2750000, status: 'Active' },
+  { customer_id: 'CUS-1014', account_id: 'ACC-604413', type: 'Savings · Organization', balance: 1100000, status: 'Active' },
+];
+
+/**
+ * Real recent transactions per customer for the Customer 360 activity table,
+ * keyed by customer_id. Dates go through rebaseDate() so "recent" stays recent.
+ */
+export interface DemoCustomerActivity {
+  customer_id: string;
+  date: string;
+  type: string;
+  amount: number;
+  direction: 'in' | 'out';
+}
+
+export const DEMO_CUSTOMER_ACTIVITY: DemoCustomerActivity[] = [
+  { customer_id: 'CUS-1001', date: rebaseDate('2026-05-24T09:40:00'), type: 'Salary Credit',    amount: 185000, direction: 'in' },
+  { customer_id: 'CUS-1001', date: rebaseDate('2026-05-22T11:05:00'), type: 'Card Settlement',  amount: 9450,   direction: 'out' },
+  { customer_id: 'CUS-1001', date: rebaseDate('2026-05-20T14:20:00'), type: 'Utility Payment',  amount: 18500,  direction: 'out' },
+  { customer_id: 'CUS-1002', date: rebaseDate('2026-05-23T16:10:00'), type: 'Cheque Deposit',   amount: 76000,  direction: 'in' },
+  { customer_id: 'CUS-1002', date: rebaseDate('2026-05-21T10:00:00'), type: 'Loan Installment', amount: 24500,  direction: 'out' },
+  { customer_id: 'CUS-1002', date: rebaseDate('2026-05-19T09:15:00'), type: 'ATM Withdrawal',   amount: 15000,  direction: 'out' },
+  { customer_id: 'CUS-1003', date: rebaseDate('2026-05-24T13:30:00'), type: 'Fund Transfer',    amount: 250000, direction: 'in' },
+  { customer_id: 'CUS-1003', date: rebaseDate('2026-05-22T17:45:00'), type: 'Interest Credit',  amount: 38200,  direction: 'in' },
+  { customer_id: 'CUS-1003', date: rebaseDate('2026-05-20T12:05:00'), type: 'Card Settlement',  amount: 42600,  direction: 'out' },
+  { customer_id: 'CUS-1004', date: rebaseDate('2026-05-23T09:00:00'), type: 'Salary Credit',    amount: 68000,  direction: 'in' },
+  { customer_id: 'CUS-1004', date: rebaseDate('2026-05-21T15:20:00'), type: 'ATM Withdrawal',   amount: 12000,  direction: 'out' },
+  { customer_id: 'CUS-1005', date: rebaseDate('2026-05-24T10:30:00'), type: 'Fund Transfer',    amount: 95000,  direction: 'in' },
+  { customer_id: 'CUS-1005', date: rebaseDate('2026-05-22T08:50:00'), type: 'Utility Payment',  amount: 14300,  direction: 'out' },
+  { customer_id: 'CUS-1005', date: rebaseDate('2026-05-19T18:00:00'), type: 'Interest Credit',  amount: 21500,  direction: 'in' },
+  { customer_id: 'CUS-1006', date: rebaseDate('2026-05-23T11:40:00'), type: 'Salary Credit',    amount: 142000, direction: 'in' },
+  { customer_id: 'CUS-1006', date: rebaseDate('2026-05-21T13:15:00'), type: 'Card Settlement',  amount: 18900,  direction: 'out' },
+  { customer_id: 'CUS-1006', date: rebaseDate('2026-05-18T16:30:00'), type: 'Fund Transfer',    amount: 55000,  direction: 'out' },
+  { customer_id: 'CUS-1007', date: rebaseDate('2026-05-22T09:25:00'), type: 'Fund Transfer',    amount: 30000,  direction: 'in' },
+  { customer_id: 'CUS-1007', date: rebaseDate('2026-05-20T14:50:00'), type: 'ATM Withdrawal',   amount: 8000,   direction: 'out' },
+  { customer_id: 'CUS-1008', date: rebaseDate('2026-05-24T15:10:00'), type: 'Fund Transfer',    amount: 780000, direction: 'in' },
+  { customer_id: 'CUS-1008', date: rebaseDate('2026-05-23T10:20:00'), type: 'Interest Credit',  amount: 96500,  direction: 'in' },
+  { customer_id: 'CUS-1008', date: rebaseDate('2026-05-21T19:05:00'), type: 'Card Settlement',  amount: 128400, direction: 'out' },
+  { customer_id: 'CUS-1009', date: rebaseDate('2026-05-23T12:00:00'), type: 'Salary Credit',    amount: 98000,  direction: 'in' },
+  { customer_id: 'CUS-1009', date: rebaseDate('2026-05-21T09:40:00'), type: 'Utility Payment',  amount: 11200,  direction: 'out' },
+  { customer_id: 'CUS-1010', date: rebaseDate('2026-05-22T14:15:00'), type: 'Cheque Deposit',   amount: 45000,  direction: 'in' },
+  { customer_id: 'CUS-1010', date: rebaseDate('2026-05-20T10:35:00'), type: 'Loan Installment', amount: 18700,  direction: 'out' },
+  { customer_id: 'CUS-1011', date: rebaseDate('2026-05-24T08:30:00'), type: 'Salary Credit',    amount: 156000, direction: 'in' },
+  { customer_id: 'CUS-1011', date: rebaseDate('2026-05-22T16:20:00'), type: 'Card Settlement',  amount: 27300,  direction: 'out' },
+  { customer_id: 'CUS-1011', date: rebaseDate('2026-05-19T11:10:00'), type: 'Fund Transfer',    amount: 60000,  direction: 'in' },
+  { customer_id: 'CUS-1012', date: rebaseDate('2026-05-21T13:45:00'), type: 'Fund Transfer',    amount: 25000,  direction: 'in' },
+  { customer_id: 'CUS-1012', date: rebaseDate('2026-05-19T15:00:00'), type: 'ATM Withdrawal',   amount: 6500,   direction: 'out' },
+  { customer_id: 'CUS-1013', date: rebaseDate('2026-05-23T10:05:00'), type: 'Salary Credit',    amount: 88000,  direction: 'in' },
+  { customer_id: 'CUS-1013', date: rebaseDate('2026-05-20T17:25:00'), type: 'Utility Payment',  amount: 9800,   direction: 'out' },
+  { customer_id: 'CUS-1014', date: rebaseDate('2026-05-24T14:40:00'), type: 'Interest Credit',  amount: 72000,  direction: 'in' },
+  { customer_id: 'CUS-1014', date: rebaseDate('2026-05-22T12:30:00'), type: 'Fund Transfer',    amount: 340000, direction: 'in' },
+  { customer_id: 'CUS-1014', date: rebaseDate('2026-05-20T18:15:00'), type: 'Card Settlement',  amount: 58600,  direction: 'out' },
+];
