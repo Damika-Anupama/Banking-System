@@ -1,9 +1,10 @@
 :host {
   display: block;
   width: 100%;
-  min-height: 100vh;
   position: relative;
-  overflow: hidden;
+  // Only clip horizontally (the reveal animation slides cards up); clipping
+  // vertically would hide content on short viewports instead of fitting it.
+  overflow-x: hidden;
 }
 
 .welcome-stats-strip {
