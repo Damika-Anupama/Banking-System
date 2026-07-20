@@ -7,6 +7,8 @@ import { DashboardConfig, NavigationItem } from '../../models/navigation-config.
 import { trapTabKey } from '../../focus-trap';
 import { DEMO_STANDING_ORDERS } from '../../demo-banking-fixtures';
 import { readStorage, writeStorage, clearStorage } from 'src/app/shared/safe-storage';
+import { demoStore } from 'src/app/shared/demo-store';
+import { relativeTime } from 'src/app/shared/local-date';
 
 /**
  * The bell's "standing order due soon" line, read from the same fixtures the
@@ -79,6 +81,42 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
     ],
   };
 
+  private readonly auditIconByCategory: Record<string, string> = {
+    Loan: 'fa-file-signature', Employee: 'fa-user-plus', Account: 'fa-user-check',
+    Security: 'fa-shield-halved', Transaction: 'fa-money-check-dollar',
+  };
+  private readonly auditToneByOutcome: Record<string, string> = {
+    Approved: 'emerald', Created: 'cyan', Updated: 'blue', Rejected: 'rose', Flagged: 'amber',
+  };
+
+  /** Render one audit entry as a notification-feed item. */
+  private auditToNotification(e: any): any {
+    return {
+      icon: this.auditIconByCategory[e.category] || 'fa-circle-info',
+      tone: this.auditToneByOutcome[e.outcome] || 'cyan',
+      title: e.action,
+      detail: e.detail,
+      time: relativeTime(e.timestamp),
+    };
+  }
+
+  /**
+   * Populate the notification feed for the current dashboard. The manager bell
+   * is a live activity feed off the shared audit stream, so every write action
+   * performed anywhere in the demo surfaces here; customer and employee keep
+   * their own role-appropriate personal alerts. Re-run on open so the feed and
+   * badge reflect actions taken since the dashboard loaded.
+   */
+  private loadNotifications(): void {
+    const type = this.config?.dashboardType;
+    this.notifications = type === 'manager'
+      ? demoStore.getAuditLog().slice(0, 8).map((e) => this.auditToNotification(e))
+      : (this.notificationsByRole[type] || []);
+    if (!this.notificationsRead) {
+      this.unreadCount = this.notifications.length;
+    }
+  }
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -93,8 +131,7 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
     this.route.data.subscribe(data => {
       this.config = data['config'] as DashboardConfig;
       this.navigationItems = this.config.navigationItems;
-      this.notifications = this.notificationsByRole[this.config.dashboardType] || [];
-      this.unreadCount = this.notifications.length;
+      this.loadNotifications();
     });
 
     this.clockDisplay = this.formatClock();
@@ -157,6 +194,10 @@ export class UnifiedDashboardComponent implements OnInit, OnDestroy {
   }
 
   openNotifications(): void {
+    // Pull the latest activity so actions taken since load (or since the last
+    // open) show up — the manager feed is live off the audit stream.
+    this.loadNotifications();
+
     const toneColor: Record<string, string> = {
       emerald: '#34d399', amber: '#fbbf24', cyan: '#22d3ee', rose: '#fb7185', blue: '#60a5fa',
     };
