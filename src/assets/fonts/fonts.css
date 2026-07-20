@@ -1,0 +1,49 @@
+/* Self-hosted Inter (latin subset), weights 300–800 — the only web font the
+   app actually renders. Previously pulled from fonts.gstatic.com, which put a
+   third party in the critical path of every page load (the same reason the
+   Font Awesome icons in ./icons.css are self-hosted). Source files come from
+   the @fontsource/inter package; copy with weights 300,400,500,600,700,800:
+     node_modules/@fontsource/inter/files/inter-latin-<w>-normal.woff2
+   font-display: swap mirrors the &display=swap the Google link used. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/assets/fonts/inter-300.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/inter-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/inter-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/inter-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/inter-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/assets/fonts/inter-800.woff2") format("woff2");
+}

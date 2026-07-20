@@ -33,6 +33,7 @@
             ],
             "styles": [
               "src/styles.scss",
+              "src/assets/fonts/fonts.css",
               "src/assets/icons/icons.css",
               "node_modules/sweetalert2/dist/sweetalert2.min.css",
               "node_modules/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css"
@@ -47,6 +48,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",

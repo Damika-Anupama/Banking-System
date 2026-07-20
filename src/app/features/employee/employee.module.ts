@@ -24,9 +24,7 @@ import { EmployeeSettingsComponent } from '../../view/employee-dashboard/employe
 
 // Services
 import { EmployeeHomeService } from '../../service/employee/employee.home.service';
-import { ManualLoanService } from '../../service/employee/manual.loan.service';
 import { RegisterCustomerService } from '../../service/employee/register.customer.service';
-import { WithdrawalService } from '../../service/employee/withdrawal.service';
 
 /**
  * Employee Feature Module
@@ -63,9 +61,7 @@ import { WithdrawalService } from '../../service/employee/withdrawal.service';
   ],
   providers: [
     EmployeeHomeService,
-    ManualLoanService,
-    RegisterCustomerService,
-    WithdrawalService
+    RegisterCustomerService
   ]
 })
 export class EmployeeModule { }

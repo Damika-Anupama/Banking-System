@@ -36,9 +36,6 @@ export class PreloaderComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error in loading observable:', error);
           this.handleError('Loading service error occurred');
-        },
-        complete: () => {
-          console.log('Loading observable completed');
         }
       });
     } catch (error) {

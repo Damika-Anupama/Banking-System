@@ -3,6 +3,7 @@ import { finalize, tap, catchError } from 'rxjs/operators';
 import { MessageService } from '../service/message.service';
 import { HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse, HttpEvent } from "@angular/common/http";
 import { Observable, throwError } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -10,6 +11,17 @@ import { Observable, throwError } from 'rxjs';
 })
 export class LoggingInterceptorService {
   constructor(protected messenger: MessageService) {}
+
+  // Verbose request/response tracing is useful while developing but is noise —
+  // and needless metadata exposure — in a shipped build, so it is silenced in
+  // production. The messenger notifications below still fire in every environment.
+  private devLog(...args: unknown[]): void {
+    if (!environment.production) { console.log(...args); }
+  }
+
+  private devError(...args: unknown[]): void {
+    if (!environment.production) { console.error(...args); }
+  }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const started = Date.now();
@@ -25,7 +37,7 @@ export class LoggingInterceptorService {
       requestHeaders: this.sanitizeHeaders(req.headers),
     };
 
-    console.log('HTTP Request:', {
+    this.devLog('HTTP Request:', {
       ...logEntry,
       body: this.sanitizeBody(req.body)
     });
@@ -41,7 +53,7 @@ export class LoggingInterceptorService {
               statusCode = event.status;
 
               // Log successful response with details
-              console.log('HTTP Response Success:', {
+              this.devLog('HTTP Response Success:', {
                 ...logEntry,
                 status: statusCode,
                 statusText: event.statusText,
@@ -57,7 +69,7 @@ export class LoggingInterceptorService {
             errorDetails = this.getErrorDetails(error);
 
             // Log error with comprehensive details
-            console.error('HTTP Response Error:', {
+            this.devError('HTTP Response Error:', {
               ...logEntry,
               status: statusCode,
               statusText: error.statusText,
@@ -81,7 +93,7 @@ export class LoggingInterceptorService {
             statusCode = error.status;
             errorDetails = this.getErrorDetails(error);
 
-            console.error('HTTP Error (catchError):', {
+            this.devError('HTTP Error (catchError):', {
               ...logEntry,
               error: error.message,
               status: statusCode
@@ -100,7 +112,7 @@ export class LoggingInterceptorService {
           try {
             this.messenger.add(logMessage);
           } catch (error) {
-            console.error('Error adding message to messenger service:', error);
+            this.devError('Error adding message to messenger service:', error);
           }
 
           // Console log with structured format
@@ -113,9 +125,9 @@ export class LoggingInterceptorService {
           };
 
           if (status === 'failed') {
-            console.error('HTTP Request Completed (Failed):', finalLog);
+            this.devError('HTTP Request Completed (Failed):', finalLog);
           } else {
-            console.log('HTTP Request Completed (Success):', finalLog);
+            this.devLog('HTTP Request Completed (Success):', finalLog);
           }
         })
       );

@@ -35,16 +35,12 @@
   </script>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-  <!-- Resource hints: warm up TLS to the font + icon CDNs before the
-       render-blocking stylesheets request them, shaving first-paint latency. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- Fonts: linked here rather than @imported from the stylesheet, so the
-       request starts during the initial HTML parse instead of after the CSS
-       has downloaded and been parsed. -->
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap">
+  <!-- Fonts are self-hosted (src/assets/fonts/fonts.css, wired via angular.json)
+       rather than fetched from Google Fonts: a third party in the critical path
+       of every page load is exactly what the self-hosted icons already avoid,
+       and it made the "no third-party requests" e2e guard flaky whenever
+       fonts.gstatic.com was slow. The @font-face rules ship in the app's own
+       stylesheet, so no external preconnect or blocking CDN request is needed. -->
 
 <!-- Apply the saved theme before ANY paint. Angular's ThemeService applies
        the same logic, but only after the bundles load — without this, a
