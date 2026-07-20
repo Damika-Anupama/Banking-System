@@ -12,6 +12,7 @@
 import {
   DEMO_CUSTOMERS, DEMO_LOAN_APPLICATIONS, DEMO_BENEFICIARIES, DEMO_STANDING_ORDERS, DEMO_CARDS,
   DEMO_ANNOUNCEMENTS, DEMO_FD_TIERS, DEMO_LOAN_PACKAGES, DEMO_SERVICE_REQUESTS, DEMO_CHEQUES,
+  DEMO_AUDIT_ENTRIES,
 } from './demo-banking-fixtures';
 
 const STORAGE_KEY = 'bank-demo-store';
@@ -29,6 +30,7 @@ interface DemoStoreState {
   loanPackages: any[];
   serviceRequests: any[];
   cheques: any[];
+  audit: any[];
 }
 
 function clone<T>(value: T): T {
@@ -48,7 +50,26 @@ function seed(): DemoStoreState {
     loanPackages: clone(DEMO_LOAN_PACKAGES),
     serviceRequests: clone(DEMO_SERVICE_REQUESTS),
     cheques: clone(DEMO_CHEQUES),
+    audit: clone(DEMO_AUDIT_ENTRIES),
   };
+}
+
+/**
+ * Append an entry to the live audit stream. Every consequential write in this
+ * store funnels through here so the manager audit log (and, downstream, the
+ * activity feed) fills in as the demo is driven. Callers persist afterwards;
+ * the public recordAudit() below persists on their behalf.
+ */
+function appendAudit(entry: { actor?: string; category: string; action: string; detail: string; outcome: string }): void {
+  load().audit.unshift({
+    id: 'AUD-' + Math.floor(9100 + Math.random() * 8899),
+    timestamp: new Date().toISOString(),
+    actor: entry.actor ?? 'MAN-502 · Branch Manager',
+    category: entry.category,
+    action: entry.action,
+    detail: entry.detail,
+    outcome: entry.outcome,
+  });
 }
 
 let state: DemoStoreState | null = null;
@@ -98,6 +119,13 @@ export const demoStore = {
   },
   addCustomer(customer: any): void {
     load().customers.unshift(customer);
+    appendAudit({
+      actor: 'EMP · Registration desk',
+      category: 'Account',
+      action: 'Customer registered',
+      detail: `${customer.user_id ?? customer.username ?? 'New customer'} · ${customer.fullname ?? ''}`.trim(),
+      outcome: 'Created',
+    });
     persist();
   },
 
@@ -123,6 +151,12 @@ export const demoStore = {
   },
   addEmployee(employee: any): void {
     load().employees.unshift(employee);
+    appendAudit({
+      category: 'Employee',
+      action: 'Employee onboarded',
+      detail: `${employee.employee_id ?? ''} · ${employee.fullname ?? employee.username ?? 'New employee'} as ${employee.role ?? 'staff'}`.trim(),
+      outcome: 'Created',
+    });
     persist();
   },
   get employeeCount(): number {
@@ -210,6 +244,7 @@ export const demoStore = {
     const tier = load().fdTiers.find((t) => t.term === term);
     if (tier) {
       tier.rate = rate;
+      appendAudit({ category: 'Loan', action: 'FD rate updated', detail: `${term} fixed deposit → ${rate}% p.a.`, outcome: 'Updated' });
       persist();
     }
   },
@@ -220,6 +255,7 @@ export const demoStore = {
     const pkg = load().loanPackages.find((p) => p.name === name);
     if (pkg) {
       pkg.rate = rate;
+      appendAudit({ category: 'Loan', action: 'Loan rate updated', detail: `${name} → ${rate}% p.a.`, outcome: 'Updated' });
       persist();
     }
   },
@@ -227,6 +263,7 @@ export const demoStore = {
     const pkg = load().loanPackages.find((p) => p.name === name);
     if (pkg) {
       pkg.active = !pkg.active;
+      appendAudit({ category: 'Loan', action: `Loan package ${pkg.active ? 'enabled' : 'disabled'}`, detail: `${name} (${pkg.type})`, outcome: 'Updated' });
       persist();
     }
   },
@@ -237,15 +274,29 @@ export const demoStore = {
   },
   addServiceRequest(request: any): void {
     load().serviceRequests.unshift(request);
+    appendAudit({
+      actor: 'EMP · Customer service',
+      category: 'Account',
+      action: 'Service request opened',
+      detail: `${request.ticket_id} · ${request.category}`,
+      outcome: 'Created',
+    });
     persist();
   },
   advanceServiceRequest(ticketId: string | number): void {
     const r = load().serviceRequests.find((x) => String(x.ticket_id) === String(ticketId));
-    if (r) {
-      if (r.status === 'Open') r.status = 'In progress';
-      else if (r.status === 'In progress') r.status = 'Resolved';
-      persist();
-    }
+    if (!r) return;
+    if (r.status === 'Open') r.status = 'In progress';
+    else if (r.status === 'In progress') r.status = 'Resolved';
+    else return;
+    appendAudit({
+      actor: 'EMP · Customer service',
+      category: 'Account',
+      action: r.status === 'Resolved' ? 'Service request resolved' : 'Service request updated',
+      detail: `${r.ticket_id} · ${r.category} → ${r.status}`,
+      outcome: 'Updated',
+    });
+    persist();
   },
 
   // ----- Cheque clearing (employee clearing queue) -----
@@ -254,18 +305,46 @@ export const demoStore = {
   },
   advanceCheque(chequeId: string | number): void {
     const c = load().cheques.find((x) => String(x.cheque_id) === String(chequeId));
-    if (c) {
-      if (c.status === 'Received') c.status = 'In clearing';
-      else if (c.status === 'In clearing') c.status = 'Cleared';
-      persist();
-    }
+    if (!c) return;
+    if (c.status === 'Received') c.status = 'In clearing';
+    else if (c.status === 'In clearing') c.status = 'Cleared';
+    else return;
+    appendAudit({
+      actor: 'EMP · Clearing desk',
+      category: 'Transaction',
+      action: c.status === 'Cleared' ? 'Cheque cleared' : 'Cheque sent to clearing',
+      detail: `${c.cheque_id} · Rs. ${Number(c.amount).toLocaleString()} · ${c.drawer_bank}`,
+      outcome: 'Updated',
+    });
+    persist();
   },
   returnCheque(chequeId: string | number): void {
     const c = load().cheques.find((x) => String(x.cheque_id) === String(chequeId));
     if (c) {
       c.status = 'Returned';
+      appendAudit({
+        actor: 'EMP · Clearing desk',
+        category: 'Transaction',
+        action: 'Cheque returned',
+        detail: `${c.cheque_id} · Rs. ${Number(c.amount).toLocaleString()} marked unpaid`,
+        outcome: 'Flagged',
+      });
       persist();
     }
+  },
+
+  // ----- Audit stream (manager audit log) -----
+  getAuditLog(): any[] {
+    return load().audit;
+  },
+  /**
+   * Record an audit entry from a call site that owns semantic context the store
+   * cannot infer — e.g. a loan decision, where approve and reject both remove
+   * the application but mean very different things.
+   */
+  recordAudit(entry: { actor?: string; category: string; action: string; detail: string; outcome: string }): void {
+    appendAudit(entry);
+    persist();
   },
 
   /** Reset to fresh seed data — call on each demo login. */

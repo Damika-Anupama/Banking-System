@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { demoStore } from 'src/app/shared/demo-store';
 
 interface AuditEntry {
   id: string;
@@ -22,18 +23,7 @@ export class ManagerAuditLogComponent {
 
   readonly categories = ['Loan', 'Employee', 'Account', 'Security', 'Transaction'];
 
-  entries: AuditEntry[] = [
-    { id: 'AUD-9041', timestamp: '2026-05-24T09:42:00', actor: 'MAN-502 · Branch Manager', category: 'Loan',        action: 'Loan approved',        detail: 'LN-50208 · Rs. 1,850,000 business loan for CUS-1003', outcome: 'Approved' },
-    { id: 'AUD-9038', timestamp: '2026-05-24T09:15:00', actor: 'MAN-502 · Branch Manager', category: 'Loan',        action: 'Loan rejected',        detail: 'LN-50210 · insufficient income documentation',         outcome: 'Rejected' },
-    { id: 'AUD-9034', timestamp: '2026-05-23T16:30:00', actor: 'EMP-2002 · N. Silva',      category: 'Account',     action: 'Account opened',       detail: 'ACC-493152 current account for CUS-1012',              outcome: 'Created' },
-    { id: 'AUD-9030', timestamp: '2026-05-23T14:05:00', actor: 'MAN-502 · Branch Manager', category: 'Employee',    action: 'Employee deactivated', detail: 'EMP-2007 · S. Weerasinghe access suspended',           outcome: 'Updated' },
-    { id: 'AUD-9027', timestamp: '2026-05-23T11:20:00', actor: 'SYSTEM · Fraud engine',    category: 'Security',    action: 'Suspicious login flagged', detail: 'Multiple failed attempts on CUS-1008 from new device', outcome: 'Flagged' },
-    { id: 'AUD-9021', timestamp: '2026-05-22T15:48:00', actor: 'EMP-2005 · D. Perera',     category: 'Transaction', action: 'Large withdrawal reviewed', detail: 'WDR-32960 · Rs. 150,000 dual-authorised',          outcome: 'Approved' },
-    { id: 'AUD-9018', timestamp: '2026-05-22T10:10:00', actor: 'MAN-502 · Branch Manager', category: 'Employee',    action: 'Employee added',       detail: 'EMP-2008 · P. Dissanayake onboarded as Teller',        outcome: 'Created' },
-    { id: 'AUD-9012', timestamp: '2026-05-21T13:35:00', actor: 'MAN-502 · Branch Manager', category: 'Loan',        action: 'Loan approved',        detail: 'LN-50201 · Rs. 420,000 personal loan for CUS-1004',    outcome: 'Approved' },
-    { id: 'AUD-9007', timestamp: '2026-05-21T09:00:00', actor: 'SYSTEM · Compliance',      category: 'Security',    action: 'KYC re-verification', detail: 'CUS-1002 documents re-validated',                       outcome: 'Updated' },
-    { id: 'AUD-9001', timestamp: '2026-05-20T16:55:00', actor: 'EMP-2003 · T. Fernando',   category: 'Transaction', action: 'Cheque cleared',       detail: 'DEP-55014 · Rs. 128,000 cheque marked cleared',        outcome: 'Updated' }
-  ];
+  entries: AuditEntry[] = demoStore.getAuditLog();
 
   get filteredEntries(): AuditEntry[] {
     const q = this.searchTerm.trim().toLowerCase();

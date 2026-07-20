@@ -203,8 +203,20 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** Human-readable audit detail for a loan decision, e.g. the seed format. */
+  private loanAuditDetail(loanId: any): string {
+    const loan = (this.loans || []).find(
+      (l) => String(l.loan_basic_detail_id) === String(loanId)
+    );
+    if (!loan) return String(loanId);
+    const amount = Number(loan.amount || 0).toLocaleString();
+    return `${loanId} · Rs. ${amount} ${loan.loan_type || ''} loan for ${loan.customer_id || 'customer'}`.replace(/\s+/g, ' ').trim();
+  }
+
   private processApproval(loanId: any): void {
+    const detail = this.loanAuditDetail(loanId);
     demoStore.removeLoanApplication(loanId);
+    demoStore.recordAudit({ category: 'Loan', action: 'Loan approved', detail, outcome: 'Approved' });
     this.removeFromList(loanId);
     this.approvedCount++;
     // The row leaving the queue is the real feedback; the toast just names it.
@@ -249,7 +261,9 @@ export class ManagerLoanApprovalComponent implements OnInit, OnDestroy {
   }
 
   private processRejection(loanId: any, reason: string): void {
+    const detail = `${this.loanAuditDetail(loanId)} — ${reason}`;
     demoStore.removeLoanApplication(loanId);
+    demoStore.recordAudit({ category: 'Loan', action: 'Loan rejected', detail, outcome: 'Rejected' });
     this.removeFromList(loanId);
     this.rejectedCount++;
     this.toastService.success('Loan rejected', `Loan ${loanId} has been rejected. Reason: ${reason}`);
