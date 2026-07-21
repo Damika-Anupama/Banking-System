@@ -62,8 +62,10 @@ jobs:
           npm run icons
           git diff --exit-code src/assets/icons/icons.css
 
+      # ChromeHeadlessCI (see karma.conf.js) adds --no-sandbox and generous
+      # timeouts so the browser is not killed mid-run on a contended runner.
       - name: Unit tests
-        run: npx ng test --watch=false --browsers=ChromeHeadless
+        run: npx ng test --watch=false --browsers=ChromeHeadlessCI
 
       - name: Production build
         run: npx ng build --configuration production
