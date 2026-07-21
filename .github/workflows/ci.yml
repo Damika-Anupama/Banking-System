@@ -32,6 +32,16 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      # The icon subset step shells out to `pyftsubset` (fonttools) to rebuild
+      # the .woff2 files. The runner does not ship it, so `npm run icons` would
+      # die with ENOENT before it could check anything. brotli is what lets
+      # fonttools emit the woff2 flavour.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install font subsetting tool
+        run: pip install fonttools brotli
+
       - name: Lint
         run: npx ng lint
 
@@ -39,10 +49,18 @@ jobs:
       # A template can reference a glyph the font does not carry and nothing
       # fails — the icon just silently does not render (this shipped five
       # sprints in a row once). Regenerate and require a clean diff.
+      #
+      # We diff only icons.css — the generated manifest of which glyphs made it
+      # into the subset — not the .woff2 binaries. woff2/brotli output is not
+      # byte-reproducible across fonttools versions and platforms, so diffing
+      # the font itself is a false-positive machine; icons.css is deterministic
+      # (a sorted glyph list from a source scan) and fully captures the "did you
+      # regenerate after adding an icon" intent. A missing glyph at runtime is
+      # separately caught by the "every visible icon renders a glyph" e2e test.
       - name: Icon subset is current
         run: |
           npm run icons
-          git diff --exit-code src/assets/icons
+          git diff --exit-code src/assets/icons/icons.css
 
       - name: Unit tests
         run: npx ng test --watch=false --browsers=ChromeHeadless
