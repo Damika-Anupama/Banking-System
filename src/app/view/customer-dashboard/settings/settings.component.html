@@ -1,0 +1,163 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-user-shield"></i> Account settings</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Profile &amp; Security</h1>
+      <p class="demo-subtitle">Manage your customer profile, contact details, and account security.</p>
+    </div>
+    <div class="demo-tile px-4 py-3 text-sm text-white/70">
+      <i class="fas fa-shield-alt mr-2 text-glass-emerald"></i>
+      Verified online banking profile
+    </div>
+  </div>
+</section>
+
+<!-- Loading skeletons mirror the profile/security two-column layout -->
+<div *ngIf="isLoading" class="grid grid-cols-1 gap-6 xl:grid-cols-[1.6fr_1fr]">
+  <app-skeleton-table class="block" [columns]="profileSkeletonColumns" [rows]="4" label="Loading your profile"></app-skeleton-table>
+  <app-skeleton-table class="block" [columns]="securitySkeletonColumns" [rows]="4" label="Loading security settings"></app-skeleton-table>
+</div>
+
+<div *ngIf="errorMessage && !isLoading" class="demo-state-card mb-6">
+  <i class="fas fa-triangle-exclamation"></i>
+  <h3>Profile unavailable</h3>
+  <p>{{ errorMessage }}</p>
+  <button type="button" class="glass-button-secondary mt-4" (click)="loadUserData()">Retry</button>
+</div>
+
+<div *ngIf="!isLoading" class="grid grid-cols-1 gap-6 xl:grid-cols-[1.6fr_1fr]">
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="demo-section-title"><i class="fas fa-user-circle mr-2 text-glass-purple"></i>Customer profile</h2>
+        <p class="demo-section-helper">{{ isEditingProfile ? 'Edit verified contact details.' : 'Review your verified customer information.' }}</p>
+      </div>
+      <button *ngIf="!isEditingProfile" type="button" class="glass-button-secondary justify-center" (click)="enableProfileEdit()">
+        <i class="fas fa-pen mr-2"></i>Edit profile
+      </button>
+    </div>
+
+    <div *ngIf="!isEditingProfile" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="settings-readonly-card"><span>Full name</span><strong>{{ fullname || 'Not provided' }}</strong></div>
+      <div class="settings-readonly-card"><span>Username</span><strong>{{ username || 'Not provided' }}</strong></div>
+      <div class="settings-readonly-card"><span>Email</span><strong>{{ maskedEmail }}</strong></div>
+      <div class="settings-readonly-card"><span>Mobile</span><strong>{{ maskedContactNo }}</strong></div>
+      <div class="settings-readonly-card"><span>Date of birth</span><strong>{{ dob || 'Not provided' }}</strong></div>
+      <div class="settings-readonly-card"><span>Gender</span><strong>{{ gender || 'Not provided' }}</strong></div>
+      <div class="settings-readonly-card md:col-span-2"><span>Address</span><strong>{{ address || 'Not provided' }}</strong></div>
+    </div>
+
+    <form *ngIf="isEditingProfile" (ngSubmit)="saveSettings()" #settingsForm="ngForm" class="space-y-5">
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div>
+          <label class="auth-field-label" for="username">Username <span class="text-red-300">*</span></label>
+          <input type="text" [(ngModel)]="username" id="username" name="username"
+          (blur)="markTouched('username')"
+          [class.field-invalid]="errorFor('username')"
+          [attr.aria-invalid]="errorFor('username') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('username') ? 'username-error' : null" class="glass-input" required minlength="3" />
+        <p *ngIf="errorFor('username')" id="username-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('username') }}</p>
+        </div>
+        <div>
+          <label class="auth-field-label" for="fullname">Full name <span class="text-red-300">*</span></label>
+          <input type="text" [(ngModel)]="fullname" id="fullname" name="fullname"
+          (blur)="markTouched('fullname')"
+          [class.field-invalid]="errorFor('fullname')"
+          [attr.aria-invalid]="errorFor('fullname') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('fullname') ? 'fullname-error' : null" class="glass-input" required />
+        <p *ngIf="errorFor('fullname')" id="fullname-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('fullname') }}</p>
+        </div>
+        <div>
+          <label class="auth-field-label" for="email">Email address <span class="text-red-300">*</span></label>
+          <input type="email" [(ngModel)]="email" id="email" name="email"
+          (blur)="markTouched('email')"
+          [class.field-invalid]="errorFor('email')"
+          [attr.aria-invalid]="errorFor('email') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('email') ? 'email-error' : null" class="glass-input" required email />
+        <p *ngIf="errorFor('email')" id="email-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('email') }}</p>
+        </div>
+        <div>
+          <label class="auth-field-label" for="contactNo">Contact number</label>
+          <input type="tel" [(ngModel)]="contactNo" id="contactNo" name="contactNo" class="glass-input" pattern="[0-9]{10}" />
+        </div>
+        <div>
+          <label class="auth-field-label" for="dob">Date of birth</label>
+          <input type="date" [(ngModel)]="dob" id="dob" name="dob" class="glass-input" />
+        </div>
+        <div>
+          <label class="auth-field-label" for="gender">Gender</label>
+          <select [(ngModel)]="gender" id="gender" name="gender" class="glass-input">
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="auth-field-label" for="address">Address</label>
+        <textarea [(ngModel)]="address" id="address" name="address" class="glass-input resize-none" rows="3"></textarea>
+      </div>
+
+      <div class="flex flex-wrap gap-3 pt-2">
+        <button type="submit" [disabled]="isSaving" class="glass-button justify-center" [class.opacity-50]="isSaving">
+          <i *ngIf="!isSaving" class="fas fa-save mr-2"></i>
+          <i *ngIf="isSaving" class="fas fa-spinner fa-spin mr-2"></i>
+          {{ isSaving ? 'Saving...' : 'Save profile' }}
+        </button>
+        <button type="button" (click)="cancelProfileEdit()" [disabled]="isSaving" class="glass-button-secondary justify-center">
+          <i class="fas fa-times mr-2"></i>Cancel
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <aside class="space-y-6">
+    <section class="demo-section-card animate-slide-up">
+      <h2 class="demo-section-title mb-4"><i class="fas fa-lock mr-2 text-glass-cyan"></i>Security center</h2>
+      <div class="space-y-3 text-sm">
+        <div class="settings-security-row"><span>Password</span><strong>Protected</strong></div>
+        <div class="settings-security-row">
+          <span>Two-step verification</span>
+          <button type="button" role="switch" [attr.aria-checked]="twoStepEnabled" aria-label="Toggle two-step verification" class="settings-toggle" [class.is-on]="twoStepEnabled" (click)="toggleTwoStep()"></button>
+        </div>
+        <div class="settings-security-row">
+          <span>Login alerts</span>
+          <button type="button" role="switch" [attr.aria-checked]="loginAlertsEnabled" aria-label="Toggle login alerts" class="settings-toggle" [class.is-on]="loginAlertsEnabled" (click)="toggleLoginAlerts()"></button>
+        </div>
+        <div class="settings-security-row"><span>Last profile sync</span><strong>{{ lastSavedAt || 'Not synced yet' }}</strong></div>
+      </div>
+    </section>
+
+    <section class="demo-section-card animate-slide-up">
+      <h2 class="demo-section-title mb-4"><i class="fas fa-key mr-2 text-glass-orange"></i>Password update</h2>
+      <form (ngSubmit)="saveSettings()" class="space-y-4">
+        <p class="text-white/60 text-sm">Change only the password while keeping your verified profile details unchanged.</p>
+        <div class="relative">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password"
+          (blur)="markTouched('password')"
+          [class.field-invalid]="errorFor('password')"
+          [attr.aria-invalid]="errorFor('password') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('password') ? 'password-error' : null" class="glass-input pr-12" placeholder="New password"  id="password"/>
+        <p *ngIf="errorFor('password')" id="password-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('password') }}</p>
+          <button type="button" (click)="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword">
+            <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        <div *ngIf="password">
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-white/50">Password strength</span>
+            <span [ngClass]="passwordStrength.textClass" class="font-semibold">{{ passwordStrength.label }}</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-white/10">
+            <div class="h-1.5 rounded-full transition-all duration-300" [ngClass]="passwordStrength.barClass" [style.width.%]="passwordStrength.width"></div>
+          </div>
+        </div>
+        <button type="submit" [disabled]="isSaving || !password" class="glass-button-secondary w-full justify-center" [class.opacity-50]="isSaving || !password">
+          <i class="fas fa-shield-alt mr-2"></i>Update password
+        </button>
+      </form>
+    </section>
+  </aside>
+</div>

@@ -1,0 +1,92 @@
+<div *ngIf="isOpen" class="palette-overlay" (click)="close()">
+  <div class="palette-modal" (click)="$event.stopPropagation()" role="dialog" aria-label="Command palette" aria-modal="true">
+
+    <!-- Search input row -->
+    <div class="palette-search-row">
+      <i class="fas fa-search palette-search-icon"></i>
+      <input
+        id="palette-search-input"
+        type="text"
+        class="palette-input"
+        placeholder="Search pages, actions, features..."
+        [value]="query"
+        (input)="onSearchInput($event)"
+        autocomplete="off"
+        spellcheck="false"
+        role="combobox"
+        aria-label="Search"
+        aria-autocomplete="list"
+        [attr.aria-expanded]="hasResults"
+        [attr.aria-controls]="hasResults ? 'palette-results-list' : null"
+        [attr.aria-activedescendant]="hasResults ? ('palette-option-' + selectedIndex) : null"
+      />
+      <span class="palette-esc-hint">Esc</span>
+    </div>
+
+    <div class="palette-divider"></div>
+
+    <!-- Results list -->
+    <ul
+      *ngIf="hasResults"
+      id="palette-results-list"
+      class="palette-list"
+      role="listbox"
+      aria-label="Search results"
+      tabindex="0"
+    >
+      <ng-container *ngFor="let group of groups">
+        <li
+          *ngIf="group.header"
+          class="palette-group-header"
+          role="presentation"
+          aria-hidden="true"
+        >{{ group.header }}</li>
+
+        <li
+          *ngFor="let row of group.rows"
+          class="palette-item"
+          [class.palette-item--active]="selectedIndex === row.index"
+          [id]="'palette-option-' + row.index"
+          role="option"
+          [attr.aria-selected]="selectedIndex === row.index"
+          (click)="navigate(row.item)"
+          (mouseenter)="selectedIndex = row.index"
+        >
+          <span class="palette-item-icon">
+            <i [class]="'fas ' + row.item.icon"></i>
+          </span>
+          <span class="palette-item-text">
+            <span class="palette-item-label"><ng-container
+              *ngFor="let seg of row.segments"
+            ><span [class.palette-match]="seg.matched">{{ seg.text }}</span></ng-container></span>
+            <span class="palette-item-desc">{{ row.item.description }}</span>
+          </span>
+          <span
+            *ngIf="selectedIndex === row.index"
+            class="palette-item-affordance"
+            aria-hidden="true"
+          >
+            <span class="palette-item-return">Enter</span>
+            <i class="fas fa-arrow-right palette-item-arrow"></i>
+          </span>
+        </li>
+      </ng-container>
+    </ul>
+
+    <!-- Empty state -->
+    <div *ngIf="!hasResults" class="palette-empty">
+      <i class="fas fa-magnifying-glass"></i>
+      <p class="palette-empty-title">No matches for <strong>"{{ query }}"</strong></p>
+      <p class="palette-empty-hint">Try a page name, an action, or a shorter term.</p>
+    </div>
+
+    <!-- Footer hints -->
+    <div class="palette-footer">
+      <span><kbd>↑↓</kbd> Navigate</span>
+      <span><kbd>↵</kbd> Open</span>
+      <span><kbd>Esc</kbd> Close</span>
+      <span class="palette-footer-brand">Banking System</span>
+    </div>
+
+  </div>
+</div>

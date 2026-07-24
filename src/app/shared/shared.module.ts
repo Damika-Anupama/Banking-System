@@ -1,0 +1,68 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
+// Third-party modules
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
+// Shared Components
+import { UnifiedDashboardComponent } from './components/unified-dashboard/unified-dashboard.component';
+import { SkeletonTableComponent } from './components/skeleton-table/skeleton-table.component';
+
+// Shared Directives
+import { CapsLockDirective } from './directives/caps-lock.directive';
+
+// Shared Pipes
+import { FilterPipe } from '../pipes/filter.pipe';
+
+/**
+ * Shared Module
+ *
+ * This module contains reusable components, directives, and pipes that are used
+ * across multiple feature modules. It should be imported by any feature module
+ * that needs access to these shared resources.
+ *
+ * Contents:
+ * - Reusable UI components (UnifiedDashboard, Preloader)
+ * - Custom pipes (FilterPipe)
+ * - Common Angular modules (Forms, Router, etc.)
+ * - Third-party UI libraries (FontAwesome)
+ */
+@NgModule({
+  declarations: [
+    // Shared Components
+    UnifiedDashboardComponent,
+    SkeletonTableComponent,
+    // Shared Directives
+    CapsLockDirective,
+    // Shared Pipes
+    FilterPipe
+  ],
+  imports: [
+    // Angular modules
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    // Third-party modules
+    FontAwesomeModule
+  ],
+  exports: [
+    // Re-export Angular modules for convenience
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    // Re-export third-party modules
+    FontAwesomeModule,
+    // Export shared components
+    UnifiedDashboardComponent,
+    SkeletonTableComponent,
+    // Export shared directives
+    CapsLockDirective,
+    // Export shared pipes
+    FilterPipe
+  ]
+})
+export class SharedModule { }

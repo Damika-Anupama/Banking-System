@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Banking System | Client Demo</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore a client-ready Angular banking dashboard demo for customer transfers, employee servicing, manager analytics, and loan approvals.">
+  <meta name="theme-color" content="#0f172a">
+  <meta property="og:title" content="Banking System | Client Demo">
+  <meta property="og:description" content="A polished role-based banking dashboard demo for transactions, customers, employees, managers, and loan approvals.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://banking-system-nine-sooty.vercel.app/">
+  <meta property="og:image" content="https://banking-system-nine-sooty.vercel.app/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta name="twitter:image" content="https://banking-system-nine-sooty.vercel.app/assets/og-card.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://banking-system-nine-sooty.vercel.app/">
+
+  <!-- Structured data for richer search results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Banking System",
+    "url": "https://banking-system-nine-sooty.vercel.app/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "description": "A polished role-based banking dashboard demo for transactions, customers, employees, managers, and loan approvals.",
+    "image": "https://banking-system-nine-sooty.vercel.app/assets/logo.png",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Fonts are self-hosted (src/assets/fonts/fonts.css, wired via angular.json)
+       rather than fetched from Google Fonts: a third party in the critical path
+       of every page load is exactly what the self-hosted icons already avoid,
+       and it made the "no third-party requests" e2e guard flaky whenever
+       fonts.gstatic.com was slow. The @font-face rules ship in the app's own
+       stylesheet, so no external preconnect or blocking CDN request is needed. -->
+
+<!-- Apply the saved theme before ANY paint. Angular's ThemeService applies
+       the same logic, but only after the bundles load — without this, a
+       light-theme user watches the app boot dark and then flash to light. -->
+  <script>
+    (function () {
+      var dark;
+      try {
+        var stored = localStorage.getItem('theme');
+        dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      } catch (e) {
+        try { dark = matchMedia('(prefers-color-scheme: dark)').matches; } catch (e2) { dark = true; }
+      }
+      if (dark) document.documentElement.classList.add('dark');
+    })();
+  </script>
+
+  <!-- Initial loading splash shown until Angular boots and replaces <app-root>.
+       Pure inline CSS so it paints instantly, before any bundle loads. -->
+  <style>
+    .app-boot-splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      z-index: 2147483647;
+    }
+    .app-boot-splash__brand {
+      color: #e2e8f0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .app-boot-splash__brand span { color: #67e8f9; }
+    /* The splash honours the pre-paint theme class too: a light-theme
+       visitor should never see a dark flash while Angular boots. */
+    html:not(.dark) .app-boot-splash {
+      background: linear-gradient(135deg, #eef2f7 0%, #e2e8f0 50%, #f8fafc 100%);
+    }
+    html:not(.dark) .app-boot-splash__brand { color: #0f172a; }
+    html:not(.dark) .app-boot-splash__brand span { color: #0e7490; }
+    html:not(.dark) .app-boot-splash__hint { color: rgba(15, 23, 42, 0.55); }
+    html:not(.dark) .app-boot-splash__spinner {
+      border-color: rgba(14, 116, 144, 0.2);
+      border-top-color: #0e7490;
+    }
+    .app-boot-splash__spinner {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 3px solid rgba(103, 232, 249, 0.25);
+      border-top-color: #22d3ee;
+      animation: app-boot-spin 0.9s linear infinite;
+    }
+    .app-boot-splash__hint {
+      color: rgba(226, 232, 240, 0.55);
+      font-size: 0.8rem;
+    }
+    @keyframes app-boot-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .app-boot-splash__spinner { animation-duration: 2s; }
+    }
+  </style>
+</head>
+<body>
+  <app-root>
+    <!-- Replaced by the Angular app once it bootstraps -->
+    <div class="app-boot-splash">
+      <div class="app-boot-splash__spinner" role="status" aria-label="Loading"></div>
+      <p class="app-boot-splash__brand">Banking<span>System</span></p>
+      <p class="app-boot-splash__hint">Preparing your secure workspace…</p>
+    </div>
+  </app-root>
+  <noscript>
+    <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;background:#0f1419;color:#e2e8f0;font-family:sans-serif;">
+      <div>
+        <h1 style="font-size:1.4rem;margin-bottom:0.75rem;">JavaScript is required</h1>
+        <p style="color:rgba(226,232,240,0.7);max-width:28rem;">
+          Banking System is an interactive app. Please enable JavaScript in your browser to continue.
+        </p>
+      </div>
+    </div>
+  </noscript>
+</body>
+</html>

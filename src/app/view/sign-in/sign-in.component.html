@@ -1,0 +1,69 @@
+<main class="auth-shell">
+  <section class="auth-panel">
+    <div class="auth-card animate-scale-in">
+      <div class="text-center">
+        <img src="assets/logo-dark.png" alt="Banking System logo" class="auth-logo logo-dark-static auth-entry-logo" />
+        <h1 class="auth-title">Sign in securely</h1>
+        <p class="auth-subtitle">
+          Enter account credentials, or open the customer dashboard instantly using the no-sign-in preview below.
+        </p>
+      </div>
+
+      <form #frm="ngForm" (ngSubmit)="authenticate(frm.valid)" class="mt-7 space-y-5" novalidate>
+        <div>
+          <label for="signin-email" class="auth-field-label">Email address</label>
+          <div class="auth-input-wrap">
+            <i class="fas fa-envelope auth-input-icon" aria-hidden="true"></i>
+            <input id="signin-email" type="email" name="email" #emailInput #emailModel="ngModel" [(ngModel)]="email" required email autocomplete="email" placeholder="amara.perera@example.com" class="glass-input w-full has-leading-icon" [class.auth-input-error]="emailModel.invalid && (emailModel.dirty || emailModel.touched || submitted)"
+              [attr.aria-invalid]="emailModel.invalid && (emailModel.dirty || emailModel.touched || submitted) ? 'true' : null"
+              [attr.aria-describedby]="emailModel.invalid && (emailModel.dirty || emailModel.touched || submitted) ? 'signin-email-error' : null" />
+          </div>
+          <p id="signin-email-error" role="alert" *ngIf="emailModel.errors?.['required'] && (emailModel.dirty || emailModel.touched || submitted)" class="auth-error-text">Email address is required.</p>
+          <p id="signin-email-error" role="alert" *ngIf="emailModel.errors?.['email'] && (emailModel.dirty || emailModel.touched || submitted)" class="auth-error-text">Enter a valid email address.</p>
+        </div>
+
+        <div>
+          <label for="signin-password" class="auth-field-label">Password</label>
+          <div class="password-field-wrap auth-input-wrap">
+            <i class="fas fa-lock auth-input-icon" aria-hidden="true"></i>
+            <input id="signin-password" [type]="showPassword ? 'text' : 'password'" name="password" #passwordModel="ngModel" [(ngModel)]="password" (appCapsLock)="capsLockOn = $event" required minlength="6" autocomplete="current-password" placeholder="Minimum 6 characters" class="glass-input w-full password-input has-leading-icon" [class.auth-input-error]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted)"
+              [attr.aria-invalid]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted) ? 'true' : null"
+              [attr.aria-describedby]="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched || submitted) ? 'signin-password-error' : null" />
+            <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword">
+              <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
+          <p *ngIf="capsLockOn" role="status" class="auth-warning-text"><i class="fas fa-exclamation-triangle mr-1"></i>Caps Lock is on.</p>
+          <p id="signin-password-error" role="alert" *ngIf="passwordModel.errors?.['required'] && (passwordModel.dirty || passwordModel.touched || submitted)" class="auth-error-text">Password is required.</p>
+          <p id="signin-password-error" role="alert" *ngIf="passwordModel.errors?.['minlength'] && (passwordModel.dirty || passwordModel.touched || submitted)" class="auth-error-text">Password must be at least 6 characters.</p>
+        </div>
+
+        <button type="submit" class="glass-button w-full justify-center py-4" [disabled]="isLoading" [class.opacity-50]="isLoading">
+          <span class="flex items-center justify-center gap-3">
+            {{ isLoading ? 'Opening workspace...' : 'Sign in to customer workspace' }}
+            <i class="fas fa-arrow-right"></i>
+          </span>
+        </button>
+      </form>
+
+      <div class="auth-divider">No sign-in required</div>
+
+      <div class="auth-demo-grid" aria-label="Open a dashboard without signing in">
+        <button type="button" class="auth-demo-btn" [class.is-loading]="loadingDemo === 'CUSTOMER'" [disabled]="loadingDemo !== null" aria-label="Open customer dashboard without sign in" (click)="launchDemo('CUSTOMER')">
+          <i class="fas" [ngClass]="loadingDemo === 'CUSTOMER' ? 'fa-spinner fa-spin' : 'fa-user'"></i>{{ loadingDemo === 'CUSTOMER' ? 'Opening…' : 'Customer' }}
+        </button>
+        <button type="button" class="auth-demo-btn" [class.is-loading]="loadingDemo === 'EMPLOYEE'" [disabled]="loadingDemo !== null" aria-label="Open employee dashboard without sign in" (click)="launchDemo('EMPLOYEE')">
+          <i class="fas" [ngClass]="loadingDemo === 'EMPLOYEE' ? 'fa-spinner fa-spin' : 'fa-user-tie'"></i>{{ loadingDemo === 'EMPLOYEE' ? 'Opening…' : 'Employee' }}
+        </button>
+        <button type="button" class="auth-demo-btn" [class.is-loading]="loadingDemo === 'MANAGER'" [disabled]="loadingDemo !== null" aria-label="Open manager dashboard without sign in" (click)="launchDemo('MANAGER')">
+          <i class="fas" [ngClass]="loadingDemo === 'MANAGER' ? 'fa-spinner fa-spin' : 'fa-chart-line'"></i>{{ loadingDemo === 'MANAGER' ? 'Opening…' : 'Manager' }}
+        </button>
+      </div>
+
+      <p class="mt-6 text-center text-sm text-slate-300">
+        New customer?
+        <a routerLink="/sign-up" class="auth-link ml-1">Create an account</a>
+      </p>
+    </div>
+  </section>
+</main>

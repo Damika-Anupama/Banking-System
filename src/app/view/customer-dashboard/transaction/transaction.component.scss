@@ -1,0 +1,91 @@
+/* Everything else on this page is styled by the shared demo design system
+   (demo-page-header, demo-kpi-card, demo-section-card, demo-table-shell,
+   demo-table-toolbar, th-sort, loan-action-btn) plus Tailwind utilities.
+   Only the page-unique 3-step transfer stepper widget lives here
+   (sanctioned exception). */
+
+.transfer-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.transfer-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0.25rem 0.25rem;
+}
+
+.transfer-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 180ms ease;
+}
+
+.transfer-step-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 180ms ease;
+}
+
+/* Brand gradient + white-on-gradient are theme-independent constants (sanctioned). */
+.transfer-step.is-active .transfer-step-badge {
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+.transfer-step.is-active .transfer-step-label { color: #fff; }
+
+.transfer-step.is-done .transfer-step-badge {
+  background: rgba(16, 185, 129, 0.9);
+  border-color: transparent;
+  color: #fff;
+}
+.transfer-step.is-done .transfer-step-label { color: rgba(255, 255, 255, 0.85); }
+
+.transfer-step-divider {
+  flex: 1;
+  height: 2px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 180ms ease;
+}
+.transfer-step-divider.is-done { background: rgba(16, 185, 129, 0.6); }
+
+@media (max-width: 480px) {
+  .transfer-step-label { display: none; }
+
+  /* With the labels hidden, the badges are the only step-jump controls;
+     32px is under the ~44px touch-target guideline. */
+  .transfer-step-badge {
+    height: 2.75rem;
+    width: 2.75rem;
+  }
+}
+
+/* Light-mode stepper, expressed with the shared theme tokens. */
+:host-context(html:not(.dark)) .transfer-step-badge {
+  border-color: rgba(15, 23, 42, 0.18);
+  background: rgba(15, 23, 42, 0.04);
+  color: var(--text-secondary);
+}
+:host-context(html:not(.dark)) .transfer-step-label { color: var(--text-secondary); }
+:host-context(html:not(.dark)) .transfer-step.is-active .transfer-step-label { color: var(--text-primary); }
+:host-context(html:not(.dark)) .transfer-step.is-done .transfer-step-label { color: var(--text-secondary); }
+:host-context(html:not(.dark)) .transfer-step-divider { background: rgba(15, 23, 42, 0.12); }

@@ -1,0 +1,89 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-credit-card"></i> Card services</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">My cards</h1>
+      <p class="demo-subtitle">View your debit and credit cards, balances and limits, and freeze a card instantly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KPI summary -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total cards</p><h2 class="mt-2 text-3xl font-black text-white">{{ cards.length }}</h2><p class="mt-1 text-xs text-blue-100">Debit &amp; credit</p></div><div class="demo-kpi-icon"><i class="fas fa-credit-card"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Active</p><h2 class="mt-2 text-3xl font-black text-white">{{ activeCount }}</h2><p class="mt-1 text-xs text-emerald-100">Ready to use</p></div><div class="demo-kpi-icon"><i class="fas fa-check-circle"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Frozen</p><h2 class="mt-2 text-3xl font-black text-white">{{ frozenCount }}</h2><p class="mt-1 text-xs text-amber-100">Temporarily blocked</p></div><div class="demo-kpi-icon"><i class="fas fa-snowflake"></i></div></div></article>
+</section>
+
+<!-- Loading skeleton stands in for the card grid while cards are read. -->
+<app-skeleton-table
+  *ngIf="isLoading"
+  class="block"
+  [columns]="cardSkeletonColumns"
+  [rows]="3"
+  label="Loading your cards"
+></app-skeleton-table>
+
+<!-- Empty state: a profile with no issued cards would otherwise see "0 cards" above a blank page. -->
+<section *ngIf="!isLoading && cards.length === 0" class="demo-state-card animate-fade-in">
+  <i class="fas fa-credit-card"></i>
+  <h3>No cards yet</h3>
+  <p>Ask your branch to issue a debit or credit card and it will appear here.</p>
+</section>
+
+<!-- Card grid -->
+<section *ngIf="!isLoading" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+  <article *ngFor="let card of cards" class="demo-section-card animate-slide-up">
+    <!-- Visual card -->
+    <div class="card-tile relative overflow-hidden rounded-2xl bg-gradient-to-br p-5 text-white shadow-lg" [ngClass]="cardGradient(card)">
+      <div class="flex items-start justify-between">
+        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">{{ card.type }}</span>
+        <span class="text-lg font-black italic">{{ card.network }}</span>
+      </div>
+      <i class="fas fa-microchip mt-5 text-2xl text-white/70"></i>
+      <p class="mt-3 font-mono text-lg tracking-[0.2em]">•••• •••• •••• {{ card.number_last4 }}</p>
+      <div class="mt-4 flex items-end justify-between text-xs">
+        <div>
+          <p class="text-white/60">Card holder</p>
+          <p class="font-semibold">{{ card.holder }}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-white/60">Expires</p>
+          <p class="font-semibold">{{ card.expiry }}</p>
+        </div>
+      </div>
+      <span *ngIf="card.status === 'Frozen'" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/40 px-3 py-1 text-xs font-bold"><i class="fas fa-snowflake mr-1"></i>Frozen</span>
+    </div>
+
+    <!-- Card meta -->
+    <div class="mt-4 space-y-3 text-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-slate-400">Linked account</span>
+        <strong class="font-mono text-white/90">{{ card.linked_account }}</strong>
+      </div>
+
+      <div *ngIf="card.type === 'Debit'" class="flex items-center justify-between">
+        <span class="text-slate-400">Available balance</span>
+        <strong class="text-emerald-100">Rs. {{ card.balance | number }}</strong>
+      </div>
+
+      <div *ngIf="card.type === 'Credit'">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Available credit</span>
+          <strong class="text-emerald-100">Rs. {{ availableCredit(card) | number }}</strong>
+        </div>
+        <div class="mt-2 h-2 rounded-full bg-white/10"><div class="h-2 rounded-full transition-all duration-500" [ngClass]="creditBarClass(card)" [style.width.%]="creditUsedPct(card)"></div></div>
+        <div class="mt-1 flex items-center justify-between text-xs">
+          <span class="text-white/50">Rs. {{ card.credit_used | number }} used of Rs. {{ card.credit_limit | number }}</span>
+          <span class="font-semibold" [ngClass]="creditLabelClass(card)">{{ creditUsedPct(card) }}% · {{ creditUtilizationLabel(card) }}</span>
+        </div>
+      </div>
+
+      <button type="button" class="glass-button-secondary w-full justify-center" (click)="toggleFreeze(card)">
+        <i class="fas mr-2" [ngClass]="card.status === 'Active' ? 'fa-snowflake' : 'fa-play'"></i>
+        {{ card.status === 'Active' ? 'Freeze card' : 'Unfreeze card' }}
+      </button>
+    </div>
+  </article>
+</section>

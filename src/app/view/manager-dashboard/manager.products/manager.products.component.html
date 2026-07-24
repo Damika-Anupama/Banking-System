@@ -1,0 +1,76 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-sliders"></i> Product administration</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Product configuration</h1>
+      <p class="demo-subtitle">Manage fixed deposit rate tiers and loan packages offered at the branch.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Top FD rate</p><h2 class="mt-2 text-3xl font-black text-white">{{ topFdRate }}%</h2><p class="mt-1 text-xs text-emerald-100">Best fixed deposit</p></div><div class="demo-kpi-icon"><i class="fas fa-piggy-bank"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Average FD rate</p><h2 class="mt-2 text-3xl font-black text-white">{{ avgFdRate }}%</h2><p class="mt-1 text-xs text-cyan-100">Across all tiers</p></div><div class="demo-kpi-icon"><i class="fas fa-percent"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Lowest loan rate</p><h2 class="mt-2 text-3xl font-black text-white">{{ lowestLoanRate }}%</h2><p class="mt-1 text-xs text-amber-100">Active packages</p></div><div class="demo-kpi-icon"><i class="fas fa-hand-holding-dollar"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Active packages</p><h2 class="mt-2 text-3xl font-black text-white">{{ activePackages }} / {{ loanPackages.length }}</h2><p class="mt-1 text-xs text-blue-100">Loan products live</p></div><div class="demo-kpi-icon"><i class="fas fa-box-open"></i></div></div></article>
+</section>
+
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+  <!-- FD rate tiers -->
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-piggy-bank mr-2 text-glass-emerald"></i>Fixed deposit rates</h2>
+      <p class="demo-section-helper">Tap a rate to adjust the published annual rate.</p>
+    </div>
+    <div class="space-y-3">
+      <div *ngFor="let tier of fdTiers" class="demo-tile flex items-center justify-between">
+        <div class="min-w-0">
+          <p class="font-semibold text-white">{{ tier.term }}</p>
+          <p class="text-xs text-white/50">Min. Rs. {{ tier.min_amount | number }}</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl font-black text-emerald-100">{{ tier.rate }}%</span>
+          <button type="button" class="loan-action-btn loan-action-btn--primary" title="Edit rate" (click)="editFdRate(tier)">
+            <i class="fas fa-pen"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loan packages -->
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-hand-holding-dollar mr-2 text-glass-orange"></i>Loan packages</h2>
+      <p class="demo-section-helper">Adjust rates and enable or disable products.</p>
+    </div>
+    <div class="space-y-3">
+      <div *ngFor="let pkg of loanPackages" class="demo-tile">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <!-- Wrap instead of truncate: long package names take a second line
+                 and the category badge drops below the title on narrow widths. -->
+            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <p class="font-semibold text-white">{{ pkg.name }}</p>
+              <span class="glass-badge" [ngClass]="typeTone(pkg.type)">{{ pkg.type }}</span>
+            </div>
+            <p class="mt-1 text-xs text-white/50">Up to Rs. {{ pkg.max_amount | number }} · {{ pkg.max_term_months }} months</p>
+          </div>
+          <span class="demo-status-pill shrink-0" [ngClass]="pkg.active ? 'demo-status-success' : 'demo-status-danger'">{{ pkg.active ? 'Active' : 'Disabled' }}</span>
+        </div>
+        <!-- Footer wraps intentionally: rate stays left, actions move right or to the next line. -->
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xl font-black text-amber-100 whitespace-nowrap">{{ pkg.rate }}% <span class="text-xs font-normal text-white/50">p.a.</span></span>
+          <div class="flex items-center gap-2">
+            <button type="button" class="glass-button-secondary text-xs" (click)="editLoanRate(pkg)"><i class="fas fa-pen mr-1.5"></i>Rate</button>
+            <button type="button" class="glass-button-secondary text-xs" (click)="togglePackage(pkg)">
+              <i class="fas mr-1.5" [ngClass]="pkg.active ? 'fa-toggle-off' : 'fa-toggle-on'"></i>{{ pkg.active ? 'Disable' : 'Enable' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

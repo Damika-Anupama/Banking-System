@@ -1,0 +1,88 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-clipboard-list"></i> Governance</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Audit log</h1>
+      <p class="demo-subtitle">Branch activity trail — approvals, staff changes, account events, and security alerts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Logged events</p><h2 class="mt-2 text-3xl font-black text-white">{{ entries.length }}</h2><p class="mt-1 text-xs text-blue-100">This period</p></div><div class="demo-kpi-icon"><i class="fas fa-list"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Approvals</p><h2 class="mt-2 text-3xl font-black text-white">{{ approvalCount }}</h2><p class="mt-1 text-xs text-emerald-100">Decisions granted</p></div><div class="demo-kpi-icon"><i class="fas fa-check-circle"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Rejections</p><h2 class="mt-2 text-3xl font-black text-white">{{ rejectionCount }}</h2><p class="mt-1 text-xs text-rose-100">Decisions declined</p></div><div class="demo-kpi-icon"><i class="fas fa-circle-xmark"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Security events</p><h2 class="mt-2 text-3xl font-black text-white">{{ securityCount }}</h2><p class="mt-1 text-xs text-amber-100">Flags & checks</p></div><div class="demo-kpi-icon"><i class="fas fa-shield-halved"></i></div></div></article>
+</section>
+
+<!-- Audit table -->
+<section class="demo-section-card animate-slide-up">
+  <div class="mb-5">
+    <h2 class="demo-section-title"><i class="fas fa-timeline mr-2 text-glass-cyan"></i>Activity trail</h2>
+    <p class="demo-section-helper">Chronological record of branch actions.</p>
+  </div>
+
+  <app-skeleton-table
+    *ngIf="isLoading"
+    class="block"
+    [columns]="auditSkeletonColumns"
+    [rows]="auditPageSize"
+    label="Loading audit trail"
+  ></app-skeleton-table>
+
+  <div *ngIf="!isLoading" class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Branch audit trail">
+    <div class="demo-table-toolbar">
+      <div class="relative w-full md:max-w-xs">
+        <input class="glass-input pl-9 w-full" placeholder="Search actor, action, detail…" [(ngModel)]="searchTerm" (ngModelChange)="onFilterChange()" name="auditSearch" id="auditSearch" aria-label="Search audit trail"/>
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+      </div>
+      <select class="glass-input w-full sm:w-auto" [(ngModel)]="categoryFilter" (ngModelChange)="onFilterChange()" name="categoryFilter" aria-label="Category filter" id="categoryFilter">
+        <option value="all">All categories</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+    <table class="w-full table-fixed">
+        <caption class="sr-only">Audit log</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="hidden md:table-cell md:w-40 text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('time')">
+            <button type="button" class="th-sort" (click)="toggleSort('time')">Time<i class="fas ml-1" [ngClass]="sort.iconFor('time')" aria-hidden="true"></i></button>
+          </th>
+          <th scope="col" class="hidden lg:table-cell lg:w-[18%] text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Actor</th>
+          <th scope="col" class="hidden sm:table-cell sm:w-36 text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Category</th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Action</th>
+          <th scope="col" class="w-28 sm:w-32 text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Outcome</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of pagedEntries" class="transition-all duration-300 hover:bg-white/5">
+          <td class="hidden md:table-cell px-5 py-4 text-white/90 whitespace-nowrap">{{ e.timestamp | date: 'MMM d, HH:mm' }}</td>
+          <td class="hidden lg:table-cell px-5 py-4 text-white/90 break-words">{{ e.actor }}</td>
+          <td class="hidden sm:table-cell px-5 py-4"><span class="glass-badge" [ngClass]="categoryTone(e.category)">{{ e.category }}</span></td>
+          <td class="px-5 py-4">
+            <p class="font-semibold text-white break-words">{{ e.action }}</p>
+            <p class="text-xs text-white/50 break-words">{{ e.detail }}</p>
+          </td>
+          <td class="px-5 py-4"><span class="demo-status-pill" [ngClass]="outcomeTone(e.outcome)">{{ e.outcome }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredEntries.length === 0" class="demo-state-card m-5">
+      <i class="fas fa-clipboard-list"></i>
+      <h3>No matching audit entries</h3>
+      <p>No audit entries match your filters. Try a different search or category.</p>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && auditCount > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+    <p class="text-xs text-white/60">Showing {{ auditRangeStart }}–{{ auditRangeEnd }} of {{ auditCount }} entries</p>
+    <div class="flex items-center gap-2">
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="auditPage === 1" [class.opacity-40]="auditPage === 1" (click)="setAuditPage(auditPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+      <span class="text-xs text-white/70">Page {{ auditPage }} of {{ totalAuditPages }}</span>
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="auditPage === totalAuditPages" [class.opacity-40]="auditPage === totalAuditPages" (click)="setAuditPage(auditPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+</section>

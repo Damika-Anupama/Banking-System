@@ -1,0 +1,417 @@
+<div class="transaction-workspace">
+  <section class="demo-page-header animate-fade-in">
+    <span class="demo-eyebrow"><i class="fas fa-shield-alt"></i> Secure money movement</span>
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="demo-title">Payments & transaction history</h1>
+        <p class="demo-subtitle">Send funds from linked accounts, review controls, and audit posted ledger activity.</p>
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <span class="demo-status-pill demo-status-success"><i class="fas fa-lock"></i> 2-step review enabled</span>
+        <span class="demo-status-pill demo-status-info"><i class="far fa-clock"></i> Last activity {{ latestTransactionDate ? (latestTransactionDate | date: 'MMM d, h:mm a') : '—' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 gap-5 mb-8 xl:grid-cols-3">
+    <article class="demo-section-card xl:col-span-2">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-glass-cyan">Selected source account</p>
+          <h2 class="mt-1 text-3xl font-black text-white md:text-4xl">Rs. {{ availableBalance | number }}</h2>
+          <p class="mt-1 text-sm text-slate-300">{{ selectedSavingLabel }} • {{ maskedAccountNumber }} • {{ selectedBranch }}</p>
+        </div>
+        <span class="demo-status-pill demo-status-success"><i class="fas fa-check-circle"></i> {{ selectedAccountTypeLabel }} account active</span>
+      </div>
+
+      <div class="mt-4 grid gap-3 md:grid-cols-3">
+        <article class="demo-kpi-card demo-tone-emerald">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm text-slate-300">Money in</p>
+              <h3 class="mt-2 text-xl font-black text-white">Rs. {{ totalIncoming | number }}</h3>
+              <p class="mt-1 text-xs text-slate-300">Selected account period</p>
+            </div>
+            <div class="demo-kpi-icon"><i class="fas fa-arrow-down"></i></div>
+          </div>
+        </article>
+        <article class="demo-kpi-card demo-tone-rose">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm text-slate-300">Money out</p>
+              <h3 class="mt-2 text-xl font-black text-white">Rs. {{ totalOutgoing | number }}</h3>
+              <p class="mt-1 text-xs text-slate-300">Posted debits</p>
+            </div>
+            <div class="demo-kpi-icon"><i class="fas fa-arrow-up"></i></div>
+          </div>
+        </article>
+        <article class="demo-kpi-card demo-tone-cyan">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm text-slate-300">Net movement</p>
+              <h3 class="mt-2 text-xl font-black text-white">Rs. {{ netMovement | number }}</h3>
+              <p class="mt-1 text-xs text-slate-300">Credits less debits</p>
+            </div>
+            <div class="demo-kpi-icon"><i class="fas fa-scale-balanced"></i></div>
+          </div>
+        </article>
+      </div>
+    </article>
+
+    <article class="demo-section-card">
+      <h2 class="demo-section-title">Transfer controls</h2>
+      <p class="demo-section-helper">Limits are validated before the review step.</p>
+      <div class="mt-5 space-y-4">
+        <div>
+          <div class="flex items-center justify-between text-sm"><span class="text-slate-300">Daily transfer limit</span><strong class="text-white">Rs. {{ dailyTransferLimit | number }}</strong></div>
+          <div class="mt-2 h-2 rounded-full bg-white/[0.12]"><div class="h-2 rounded-full bg-cyan-300" [style.width.%]="100 - (remainingLimit / dailyTransferLimit * 100)"></div></div>
+        </div>
+        <div class="demo-tile flex items-center justify-between gap-4 px-4 py-3"><span class="text-xs text-slate-300">Available today</span><strong class="text-sm font-extrabold text-white">Rs. {{ remainingLimit | number }}</strong></div>
+        <div class="demo-tile flex items-center justify-between gap-4 px-4 py-3"><span class="text-xs text-slate-300">Transfer fee</span><strong class="text-sm font-extrabold text-white">Rs. {{ transferFee | number }}</strong></div>
+        <div class="demo-tile flex items-center justify-between gap-4 px-4 py-3"><span class="text-xs text-slate-300">Beneficiary format</span><strong class="text-sm font-extrabold text-white">ACC-######</strong></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="grid grid-cols-1 gap-5 mb-8 lg:grid-cols-3 lg:items-start">
+    <article class="demo-section-card lg:col-span-2 lg:order-2">
+      <div class="mb-5">
+        <h2 class="demo-section-title"><i class="fas fa-paper-plane text-glass-cyan"></i> New transfer instruction</h2>
+        <p class="demo-section-helper">Capture the payment purpose, beneficiary note, and source account before final authorization.</p>
+      </div>
+
+      <!-- Horizontal stepper -->
+      <div class="transfer-stepper" role="group" aria-label="Transfer steps">
+        <ng-container *ngFor="let step of transferSteps; let last = last">
+          <button type="button" class="transfer-step"
+                  [class.is-active]="transferStep === step.num"
+                  [class.is-done]="transferStep > step.num"
+                  (click)="goToTransferStep(step.num)">
+            <span class="transfer-step-badge">
+              <i *ngIf="transferStep > step.num" class="fas fa-check"></i>
+              <span *ngIf="transferStep <= step.num">{{ step.num }}</span>
+            </span>
+            <span class="transfer-step-label">{{ step.label }}</span>
+          </button>
+          <span *ngIf="!last" class="transfer-step-divider" [class.is-done]="transferStep > step.num"></span>
+        </ng-container>
+      </div>
+
+      <form class="mt-6 space-y-5">
+        <!-- Step 1: Source & beneficiary -->
+        <div *ngIf="transferStep === 1" class="space-y-4 animate-fade-in">
+          <div *ngIf="beneficiaries.length">
+            <p class="auth-field-label mb-2"><i class="fas fa-address-book mr-2"></i>Saved beneficiaries</p>
+            <div class="flex flex-wrap gap-2">
+              <!-- Two real buttons per chip: a span with (click) is invisible to
+                   the keyboard, and the old markup nested the remove button
+                   inside the clickable area — invalid HTML. -->
+              <span *ngFor="let b of beneficiaries"
+                    class="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-xs text-white/80 transition hover:border-cyan-300/40 hover:bg-cyan-300/10">
+                <button type="button" class="inline-flex items-center gap-2" (click)="selectBeneficiary(b)" [title]="b.account_id" [attr.aria-label]="'Use beneficiary ' + b.name">
+                  <i class="fas fa-user-circle text-cyan-300" aria-hidden="true"></i>
+                  <span class="font-medium">{{ b.name }}</span>
+                  <span class="text-white/50">{{ b.account_id }}</span>
+                </button>
+                <button type="button" class="text-white/50 hover:text-rose-300" (click)="removeBeneficiary(b, $event)" [attr.aria-label]="'Remove beneficiary ' + b.name"><i class="fas fa-times" aria-hidden="true"></i></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div class="min-w-0">
+              <label class="auth-field-label" for="source_account"><i class="fas fa-university mr-2"></i>From account</label>
+              <select class="glass-input w-full" [(ngModel)]="account_id" id="source_account" name="source_account" (ngModelChange)="updateSmallBox((accounts || []).find(account => account.account_id === $event))">
+                <option *ngFor="let account of accounts; trackBy: trackByAccountId" [value]="account.account_id">
+                  {{ maskAccountId(account.account_id) }} — {{ formatSavingType(account.saving_type) }} — Rs. {{ amountOf(account) | number }}
+                </option>
+              </select>
+              <p class="mt-2 text-xs text-white/50">Same linked account set as the customer home page.</p>
+            </div>
+
+            <div class="min-w-0">
+              <label class="auth-field-label" for="beneficiary_name"><i class="fas fa-user mr-2"></i>Beneficiary name</label>
+              <input type="text" class="glass-input w-full" placeholder="e.g. Nuwan Silva / ABC Suppliers" [(ngModel)]="beneficiary_name" id="beneficiary_name" name="beneficiary_name" />
+              <p class="mt-2 text-xs text-white/50">Displayed in the final review and receipt.</p>
+            </div>
+
+            <div class="min-w-0">
+              <label class="auth-field-label" for="to_account"><i class="fas fa-user-check mr-2"></i>Beneficiary account <span class="text-red-300">*</span></label>
+              <div class="flex gap-2">
+                <div class="relative flex-1 min-w-0">
+                  <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
+                  <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492811" [(ngModel)]="to_account" id="to_account" name="to_account"
+                    (blur)="markTouched('to_account')"
+                    [class.field-invalid]="errorFor('to_account')"
+                    [attr.aria-invalid]="errorFor('to_account') ? 'true' : null"
+                    [attr.aria-describedby]="errorFor('to_account') ? 'to_account-error' : null" />
+                </div>
+                <button type="button" class="glass-button-secondary shrink-0" [disabled]="false" [class.opacity-50]="false" (click)="saveBeneficiary()" title="Save as beneficiary">
+                  <i class="fas fa-bookmark"></i>
+                </button>
+              </div>
+              <p *ngIf="errorFor('to_account')" id="to_account-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('to_account') }}
+              </p>
+              <p *ngIf="!errorFor('to_account')" class="mt-2 text-xs" [ngClass]="beneficiaryRiskLabel === 'Format verified' ? 'text-emerald-200' : 'text-amber-200'">{{ beneficiaryRiskLabel }}</p>
+            </div>
+
+            <div class="min-w-0">
+              <label class="auth-field-label" for="payment_category"><i class="fas fa-tags mr-2"></i>Payment category</label>
+              <select class="glass-input w-full" [(ngModel)]="payment_category" id="payment_category" name="payment_category">
+                <option *ngFor="let category of paymentCategories" [value]="category">{{ category }}</option>
+              </select>
+              <p class="mt-2 text-xs text-white/50">Useful for reconciliation and statement filtering.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Amount & execution -->
+        <div *ngIf="transferStep === 2" class="space-y-4 animate-fade-in">
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div class="min-w-0">
+              <label class="auth-field-label" for="transfer_amount"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
+                <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" [(ngModel)]="transfer_amount" id="transfer_amount" name="transfer_amount" min="1"
+                  (blur)="markTouched('transfer_amount')"
+                  [class.field-invalid]="errorFor('transfer_amount')"
+                  [attr.aria-invalid]="errorFor('transfer_amount') ? 'true' : null"
+                  [attr.aria-describedby]="errorFor('transfer_amount') ? 'transfer_amount-error' : null" />
+              </div>
+              <p *ngIf="errorFor('transfer_amount')" id="transfer_amount-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('transfer_amount') }}
+              </p>
+              <p *ngIf="!errorFor('transfer_amount')" class="mt-2 text-xs text-white/50">Available: Rs. {{ availableBalance | number }}</p>
+            </div>
+
+            <div class="min-w-0">
+              <label class="auth-field-label" for="schedule_date"><i class="far fa-calendar mr-2"></i>Execution date</label>
+              <input type="date" class="glass-input w-full" [min]="todayIso" [(ngModel)]="schedule_date" id="schedule_date" name="schedule_date"
+                (blur)="markTouched('schedule_date')"
+                [class.field-invalid]="errorFor('schedule_date')"
+                [attr.aria-invalid]="errorFor('schedule_date') ? 'true' : null"
+                [attr.aria-describedby]="errorFor('schedule_date') ? 'schedule_date-error' : null" />
+              <p *ngIf="errorFor('schedule_date')" id="schedule_date-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('schedule_date') }}
+              </p>
+              <p *ngIf="!errorFor('schedule_date')" class="mt-2 text-xs text-white/50">Use today for immediate posting.</p>
+            </div>
+
+            <div class="min-w-0">
+              <label class="auth-field-label" for="transfer_priority"><i class="fas fa-bolt mr-2"></i>Priority</label>
+              <select class="glass-input w-full" [(ngModel)]="transfer_priority" id="transfer_priority" name="transfer_priority">
+                <option value="Standard">Standard</option>
+                <option value="Instant">Instant</option>
+              </select>
+              <p class="mt-2 text-xs text-white/50">Remaining limit: Rs. {{ remainingLimit | number }}</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div class="min-w-0">
+              <label class="auth-field-label" for="sender_remarks"><i class="fas fa-clipboard-list mr-2"></i>Payment purpose <span class="text-red-300">*</span></label>
+              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="e.g. Supplier invoice INV-1042 for May services" [(ngModel)]="sender_remarks" id="sender_remarks" name="sender_remarks"
+                (blur)="markTouched('sender_remarks')"
+                [class.field-invalid]="errorFor('sender_remarks')"
+                [attr.aria-invalid]="errorFor('sender_remarks') ? 'true' : null"
+                [attr.aria-describedby]="errorFor('sender_remarks') ? 'sender_remarks-error' : null"></textarea>
+              <p *ngIf="errorFor('sender_remarks')" id="sender_remarks-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('sender_remarks') }}
+              </p>
+            </div>
+            <div class="min-w-0">
+              <label class="auth-field-label" for="beneficiary_remarks"><i class="fas fa-message mr-2"></i>Beneficiary note <span class="text-red-300">*</span></label>
+              <textarea class="glass-input min-h-[96px] w-full resize-none" rows="3" placeholder="Narration shown to beneficiary" [(ngModel)]="beneficiary_remarks" id="beneficiary_remarks" name="beneficiary_remarks"
+                (blur)="markTouched('beneficiary_remarks')"
+                [class.field-invalid]="errorFor('beneficiary_remarks')"
+                [attr.aria-invalid]="errorFor('beneficiary_remarks') ? 'true' : null"
+                [attr.aria-describedby]="errorFor('beneficiary_remarks') ? 'beneficiary_remarks-error' : null"></textarea>
+              <p *ngIf="errorFor('beneficiary_remarks')" id="beneficiary_remarks-error" class="field-error">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('beneficiary_remarks') }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Review -->
+        <div *ngIf="transferStep === 3" class="space-y-4 animate-fade-in">
+          <div class="demo-tile grid gap-4">
+            <div>
+              <span class="text-xs text-slate-300">Review total</span>
+              <strong class="mt-1 block text-xl font-extrabold text-white">Rs. {{ transferAmountNumber + transferFee | number }}</strong>
+              <p class="mt-1 text-xs text-slate-400">Amount plus fees. Final reference is generated at authorization.</p>
+            </div>
+            <div class="grid gap-2">
+              <div *ngFor="let item of transferReviewItems" class="flex items-center justify-between gap-4 border-t border-white/10 pt-2">
+                <span class="text-xs text-slate-300">{{ item.label }}</span>
+                <strong class="text-right text-sm font-bold text-white">{{ item.value }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stepper nav -->
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <button type="button" class="glass-button-secondary" *ngIf="transferStep > 1" (click)="prevTransferStep()">
+            <i class="fas fa-chevron-left mr-2"></i>Back
+          </button>
+          <button type="button" class="glass-button ml-auto justify-center" *ngIf="transferStep < 3" (click)="nextTransferStep()">
+            Next<i class="fas fa-chevron-right ml-2"></i>
+          </button>
+          <button type="button" class="glass-button ml-auto justify-center" *ngIf="transferStep === 3" [disabled]="isProcessingTransaction" [class.opacity-50]="isProcessingTransaction" [class.cursor-not-allowed]="isProcessingTransaction" (click)="proceedTransaction()">
+            <i class="fas fa-shield-halved mr-2"></i>Authorize transfer
+          </button>
+        </div>
+      </form>
+    </article>
+
+    <aside class="demo-section-card lg:col-span-1 lg:order-1">
+      <div class="mb-5">
+        <h3 class="demo-section-title"><i class="fas fa-link text-glass-purple"></i> Linked source accounts</h3>
+        <p class="demo-section-helper">Select the same customer accounts shown on Home.</p>
+      </div>
+      <div class="space-y-3 max-h-[560px] overflow-y-auto custom-scrollbar pr-1">
+        <button type="button" *ngFor="let account of accounts; trackBy: trackByAccountId" (click)="updateSmallBox(account)"
+                class="flex w-full items-start gap-3 rounded-2xl border p-3.5 text-left transition duration-200 hover:-translate-y-px"
+                [ngClass]="selectedAccount === account ? 'border-cyan-300/45 bg-cyan-300/10' : 'demo-tile hover:border-cyan-300/40 hover:bg-cyan-300/10'">
+          <span class="flex-none pt-0.5 text-cyan-300"><i [ngClass]="selectedAccount === account ? 'fas fa-check-circle' : 'far fa-circle'"></i></span>
+          <span class="min-w-0 flex-1 text-left">
+            <strong class="block truncate text-white">{{ maskAccountId(account.account_id) }}</strong>
+            <small class="mt-0.5 block truncate text-xs text-slate-300">{{ formatSavingType(account.saving_type) }} • {{ formatAccountType(account.account_type) }}</small>
+            <small class="mt-0.5 block truncate text-xs text-slate-300"><i class="fas fa-map-marker-alt"></i> {{ account.branch_name }}</small>
+          </span>
+          <span class="flex-none whitespace-nowrap text-xs font-extrabold text-emerald-100">Rs. {{ amountOf(account) | number }}</span>
+        </button>
+      </div>
+    </aside>
+  </section>
+
+  <section class="demo-section-card animate-slide-up">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-history text-glass-pink"></i> Transaction history</h2>
+      <p class="demo-section-helper">Search ledger narration, filter by direction/status, and open receipt-level details.</p>
+    </div>
+
+    <div class="mt-5 grid gap-3 md:grid-cols-3">
+      <div class="demo-tile"><span class="text-xs text-slate-300">Rows shown</span><strong class="mt-1 block text-lg font-extrabold text-white">{{ paginationStart }}-{{ paginationEnd }} / {{ filteredTransactions.length }}</strong></div>
+      <div class="demo-tile"><span class="text-xs text-slate-300">Incoming</span><strong class="mt-1 block text-lg font-extrabold text-white">Rs. {{ totalIncoming | number }}</strong></div>
+      <div class="demo-tile"><span class="text-xs text-slate-300">Outgoing</span><strong class="mt-1 block text-lg font-extrabold text-white">Rs. {{ totalOutgoing | number }}</strong></div>
+    </div>
+
+    <app-skeleton-table
+      *ngIf="isLoadingTransactions"
+      class="mt-5 block"
+      [columns]="transactionSkeletonColumns"
+      [rows]="transactionPageSize"
+      label="Loading transaction ledger"
+    ></app-skeleton-table>
+
+    <div *ngIf="!isLoadingTransactions" class="demo-table-shell is-fluid mt-5 overflow-x-auto" tabindex="0" role="region" aria-label="Transaction history">
+      <div class="demo-table-toolbar">
+        <div class="relative w-full md:max-w-xs">
+          <input type="text" name="transaction_search" placeholder="Search reference, purpose, type…" aria-label="Search transactions" class="glass-input w-full pl-10" [(ngModel)]="transactionSearchTerm" (ngModelChange)="onTransactionFilterChange()" id="transaction_search" />
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50"></i>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <select class="glass-input w-full sm:w-auto" [(ngModel)]="transactionDirectionFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_direction_filter" aria-label="Transaction direction filter" id="transaction_direction_filter">
+            <option value="all">All directions</option>
+            <option value="in">Incoming only</option>
+            <option value="out">Outgoing only</option>
+          </select>
+          <select class="glass-input w-full sm:w-auto" [(ngModel)]="transactionStatusFilter" (ngModelChange)="onTransactionFilterChange()" name="transaction_status_filter" aria-label="Transaction status filter" id="transaction_status_filter">
+            <option value="all">All statuses</option>
+            <option value="posted">Posted</option>
+            <option value="review">Review</option>
+          </select>
+          <button type="button" class="glass-button-secondary" (click)="downloadStatement()" title="Download filtered statement as CSV">
+            <i class="fas fa-file-csv mr-2"></i>Statement
+          </button>
+        </div>
+      </div>
+
+      <table class="w-full">
+        <caption class="sr-only">Transaction history</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="hidden lg:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Reference</th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="txSort.stateFor('date')">
+              <button type="button" class="th-sort" (click)="txSort.toggle('date'); transactionPage = 1">
+                Value date
+                <i class="fas" [ngClass]="txSort.iconFor('date')" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="txSort.stateFor('type')">
+              <button type="button" class="th-sort" (click)="txSort.toggle('type'); transactionPage = 1">
+                Type &amp; narration
+                <i class="fas" [ngClass]="txSort.iconFor('type')" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th scope="col" class="hidden md:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Direction</th>
+            <th scope="col" class="text-right px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="txSort.stateFor('amount')">
+              <button type="button" class="th-sort th-sort--right" (click)="txSort.toggle('amount'); transactionPage = 1">
+                Amount
+                <i class="fas" [ngClass]="txSort.iconFor('amount')" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th scope="col" class="hidden md:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="txSort.stateFor('status')">
+              <button type="button" class="th-sort" (click)="txSort.toggle('status'); transactionPage = 1">
+                Status
+                <i class="fas" [ngClass]="txSort.iconFor('status')" aria-hidden="true"></i>
+              </button>
+            </th>
+            <th scope="col" class="text-right px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of paginatedTransactions; trackBy: trackByEntry" class="border-t border-white/5 transition-all duration-300" (click)="showTransactionDetails(entry.row, entry.index)" (keydown.enter)="showTransactionDetails(entry.row, entry.index)" (keydown.space)="$event.preventDefault(); showTransactionDetails(entry.row, entry.index)" tabindex="0" title="View transaction details">
+            <td class="hidden lg:table-cell font-mono text-xs">{{ transactionReference(entry.row, entry.index) }}</td>
+            <td>
+              <span class="inline-flex items-center gap-1.5 font-semibold"><i class="far fa-calendar text-cyan-300" aria-hidden="true"></i>{{ entry.row.date | date: 'MMM d, y' }}</span>
+              <small class="mt-1 block text-xs text-white/50">{{ entry.row.date | date: 'h:mm a' }}</small>
+            </td>
+            <td>
+              <strong class="block font-semibold">{{ entry.row.type }}</strong>
+              <small class="mt-1 block text-xs text-white/50">{{ entry.row.sender_remarks || 'No narration captured' }}</small>
+              <small class="mt-0.5 block text-xs font-semibold text-cyan-300">{{ entry.row.channel || 'Online banking' }}</small>
+            </td>
+            <td class="hidden md:table-cell">
+              <span class="glass-badge" [ngClass]="transactionDirection(entry.row) === 'Incoming' ? 'bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80' : 'bg-gradient-to-r from-glass-pink/80 to-glass-orange/80'">
+                <i [ngClass]="transactionDirection(entry.row) === 'Incoming' ? 'fas fa-arrow-down' : 'fas fa-arrow-up'"></i>
+                {{ transactionDirection(entry.row) }}
+              </span>
+            </td>
+            <td class="whitespace-nowrap text-right font-bold">Rs. {{ entry.row.amount | number }}</td>
+            <td class="hidden md:table-cell"><span class="demo-status-pill demo-status-success">{{ transactionAuditState(entry.row) }}</span></td>
+            <td class="text-right">
+              <button type="button" class="loan-action-btn" title="View receipt" aria-label="View receipt" (click)="downloadReceipt(entry.row, entry.index); $event.stopPropagation()"><i class="fas fa-receipt"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="filteredTransactions.length === 0" class="demo-state-card m-4">
+        <i class="fas fa-receipt"></i>
+        <h3>No matching transactions</h3>
+        <p>Loosen the filters or pick a wider date range to see more activity.</p>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoadingTransactions && filteredTransactions.length > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+      <div class="flex flex-wrap items-center gap-3">
+        <p class="text-xs text-white/60">Showing {{ paginationStart }}–{{ paginationEnd }} of {{ filteredTransactions.length }} transactions</p>
+        <label class="flex items-center gap-2 text-xs text-white/60" for="transaction_page_size">
+          Rows per page
+          <select class="glass-input w-20 px-3 py-1.5 text-xs" [(ngModel)]="transactionPageSize" (ngModelChange)="onPageSizeChange()" name="transaction_page_size" aria-label="Transaction page size" id="transaction_page_size">
+            <option *ngFor="let size of transactionPageSizes" [ngValue]="size">{{ size }}</option>
+          </select>
+        </label>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="transactionPage === 1" [class.opacity-40]="transactionPage === 1" (click)="setTransactionPage(transactionPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+        <span class="text-xs text-white/70">Page {{ transactionPage }} of {{ totalTransactionPages }}</span>
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="transactionPage === totalTransactionPages" [class.opacity-40]="transactionPage === totalTransactionPages" (click)="setTransactionPage(transactionPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </section>
+</div>

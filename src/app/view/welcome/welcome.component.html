@@ -1,0 +1,78 @@
+<main class="auth-shell">
+  <section class="auth-panel max-w-6xl">
+    <div class="auth-brand-card welcome-bank-card">
+      <img src="assets/logo-dark.png" alt="Banking System logo" class="auth-logo logo-dark-static welcome-logo" />
+
+      <span class="demo-status-pill demo-status-info">Trusted digital banking</span>
+
+      <h1 class="auth-title">Modern banking experience for modern financial institutions.</h1>
+
+      <p class="auth-subtitle">
+        Welcome customers with a secure, intuitive, and organized way to manage accounts,
+        transfers, deposits, and loan services from one trusted place.
+      </p>
+
+      <!-- On narrow phones the value cards lay icon beside label (flex-row) so
+           two-line labels don't stack under the icon — this keeps the whole
+           landing card within short portrait viewports (e.g. 360x740). -->
+      <div class="welcome-value-grid" aria-label="Banking service highlights">
+        <div class="welcome-value-card reveal max-[480px]:flex-row" style="--reveal-delay: 0.05s">
+          <i class="fas fa-wallet"></i>
+          <span>Clear account visibility</span>
+        </div>
+        <div class="welcome-value-card reveal max-[480px]:flex-row" style="--reveal-delay: 0.12s">
+          <i class="fas fa-paper-plane"></i>
+          <span>Smooth fund transfers</span>
+        </div>
+        <div class="welcome-value-card reveal max-[480px]:flex-row" style="--reveal-delay: 0.19s">
+          <i class="fas fa-piggy-bank"></i>
+          <span>Deposit growth planning</span>
+        </div>
+        <div class="welcome-value-card reveal max-[480px]:flex-row" style="--reveal-delay: 0.26s">
+          <i class="fas fa-hand-holding-usd"></i>
+          <span>Loan application support</span>
+        </div>
+      </div>
+
+      <div class="welcome-stats-strip" aria-label="Platform statistics">
+        <ng-container *ngFor="let stat of stats; let last = last">
+          <div class="welcome-stat-item">
+            <span class="welcome-stat-number">{{ stat.display }}</span>
+            <span class="welcome-stat-label">{{ stat.label }}</span>
+          </div>
+          <div class="welcome-stat-divider" *ngIf="!last"></div>
+        </ng-container>
+      </div>
+
+      <div class="auth-actions">
+        <button type="button" class="glass-button" (click)="gotoSignin()" aria-label="Continue to online banking">
+          Continue to online banking
+          <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+
+      <div class="auth-divider">Or explore instantly — no sign-in required</div>
+
+      <!-- On narrow phones the buttons collapse to icon-over-label (like the
+           sign-in card's stacked launchers) and the grid gains a little top
+           margin so the wrapped divider label above has breathing room (mt-2,
+           not more — the taller stacked buttons must still fit 360x740). -->
+      <div class="auth-demo-grid max-[480px]:mt-2" aria-label="Open a dashboard without signing in">
+        <button type="button" class="auth-demo-btn max-[480px]:flex-col max-[480px]:gap-1.5 max-[480px]:px-2" [class.is-loading]="loadingDemo === 'CUSTOMER'" [disabled]="loadingDemo !== null" aria-label="Open customer dashboard without sign in" (click)="launchDemo('CUSTOMER')">
+          <i class="fas" [ngClass]="loadingDemo === 'CUSTOMER' ? 'fa-spinner fa-spin' : 'fa-user'"></i>{{ loadingDemo === 'CUSTOMER' ? 'Opening…' : 'Customer' }}
+        </button>
+        <button type="button" class="auth-demo-btn max-[480px]:flex-col max-[480px]:gap-1.5 max-[480px]:px-2" [class.is-loading]="loadingDemo === 'EMPLOYEE'" [disabled]="loadingDemo !== null" aria-label="Open employee dashboard without sign in" (click)="launchDemo('EMPLOYEE')">
+          <i class="fas" [ngClass]="loadingDemo === 'EMPLOYEE' ? 'fa-spinner fa-spin' : 'fa-user-tie'"></i>{{ loadingDemo === 'EMPLOYEE' ? 'Opening…' : 'Employee' }}
+        </button>
+        <button type="button" class="auth-demo-btn max-[480px]:flex-col max-[480px]:gap-1.5 max-[480px]:px-2" [class.is-loading]="loadingDemo === 'MANAGER'" [disabled]="loadingDemo !== null" aria-label="Open manager dashboard without sign in" (click)="launchDemo('MANAGER')">
+          <i class="fas" [ngClass]="loadingDemo === 'MANAGER' ? 'fa-spinner fa-spin' : 'fa-chart-line'"></i>{{ loadingDemo === 'MANAGER' ? 'Opening…' : 'Manager' }}
+        </button>
+      </div>
+
+      <p class="mt-6 text-center text-sm text-slate-300">
+        New customer?
+        <a routerLink="/sign-up" class="auth-link ml-1">Create an account</a>
+      </p>
+    </div>
+  </section>
+</main>

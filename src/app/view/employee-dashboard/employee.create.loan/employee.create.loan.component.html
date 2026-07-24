@@ -1,0 +1,169 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-file-signature"></i> Branch lending</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Manual Loan Application</h1>
+      <p class="demo-subtitle">Create a loan application on behalf of a customer and route it to the manager for approval.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Create Loan: the form and a live summary sit side by side so the page fills
+     its width instead of a lone card stuck to the left. -->
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-[1.55fr_1fr]">
+<section class="demo-section-card animate-slide-up">
+  <div class="mb-6">
+    <h2 class="demo-section-title"><i class="fas fa-hand-holding-usd mr-2 text-glass-cyan"></i>Create loan application</h2>
+    <p class="demo-section-helper">All fields are required. The application is submitted to the manager's approval queue.</p>
+  </div>
+
+  <form class="space-y-6" (ngSubmit)="proceed()">
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <!-- Customer lookup -->
+      <div class="min-w-0">
+        <label class="auth-field-label" for="customerID"><i class="fas fa-user mr-2"></i>Customer <span class="text-red-300">*</span></label>
+        <div class="relative">
+          <i class="fas fa-user absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/50"></i>
+          <!-- w-full is load-bearing: glass-input sets no width, so the select
+               otherwise sizes to its widest option and escapes the column. The
+               chevron comes from select.glass-input's background — no extra icon. -->
+          <select class="glass-input w-full pl-12" [(ngModel)]="customerID" id="customerID" name="customerID"
+            (blur)="markTouched('customerID')"
+            [class.field-invalid]="errorFor('customerID')"
+            [attr.aria-invalid]="errorFor('customerID') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('customerID') ? 'customerID-error' : null">
+            <option value="" disabled selected>Select a customer</option>
+            <option *ngFor="let c of customers" [value]="c.user_id">{{ c.fullname }} — {{ c.user_id }}</option>
+          </select>
+        </div>
+        <p *ngIf="errorFor('customerID')" id="customerID-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('customerID') }}
+        </p>
+        <p class="mt-2 text-xs text-white/50" *ngIf="selectedCustomer">
+          <i class="fas fa-circle-info mr-1"></i>{{ selectedCustomer.status }} · {{ selectedCustomer.account_count }} linked account(s)
+        </p>
+      </div>
+
+      <!-- Loan Amount -->
+      <div class="min-w-0">
+        <label class="auth-field-label" for="loanAmount"><i class="fas fa-money-bill-wave mr-2"></i>Loan amount <span class="text-red-300">*</span></label>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
+          <input type="number" class="glass-input w-full pl-14" placeholder="Enter loan amount" min="1" [(ngModel)]="loanAmount" id="loanAmount" name="loanAmount"
+            (blur)="markTouched('loanAmount')"
+            [class.field-invalid]="errorFor('loanAmount')"
+            [attr.aria-invalid]="errorFor('loanAmount') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('loanAmount') ? 'loanAmount-error' : null" />
+        </div>
+        <p *ngIf="errorFor('loanAmount')" id="loanAmount-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('loanAmount') }}
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <!-- Loan Package -->
+      <div class="min-w-0">
+        <label class="auth-field-label" for="selectedPackage"><i class="fas fa-calendar-alt mr-2"></i>Payment plan <span class="text-red-300">*</span></label>
+        <div class="relative">
+          <i class="fas fa-calendar-alt absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/50"></i>
+          <select class="glass-input w-full pl-12" [(ngModel)]="selectedLoan" (ngModelChange)="onLoanSelected()" id="selectedPackage" name="selectedPackage"
+            (blur)="markTouched('selectedPackage')"
+            [class.field-invalid]="errorFor('selectedPackage')"
+            [attr.aria-invalid]="errorFor('selectedPackage') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('selectedPackage') ? 'selectedPackage-error' : null">
+            <option [ngValue]="undefined" disabled selected>Select a payment plan</option>
+            <option *ngFor="let package of packageArray" [ngValue]="package.index">
+              Package {{ package.index }} | {{ package.period }} | {{ package.interest }} p.a.
+            </option>
+          </select>
+        </div>
+        <p *ngIf="errorFor('selectedPackage')" id="selectedPackage-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedPackage') }}
+        </p>
+      </div>
+
+      <!-- Loan Type -->
+      <div class="min-w-0">
+        <label class="auth-field-label" for="loanType"><i class="fas fa-tags mr-2"></i>Loan type <span class="text-red-300">*</span></label>
+        <div class="grid grid-cols-2 gap-4">
+          <label for="loanType" class="cursor-pointer">
+            <input type="radio" [(ngModel)]="selectedLoanType" id="loanType" name="loanType" value="Personal" class="hidden peer" />
+            <div class="demo-tile border-2 transition-all duration-300 peer-checked:border-glass-purple peer-checked:bg-white/[0.12]">
+              <div class="flex items-center gap-3">
+                <i class="fas fa-user text-glass-purple text-2xl"></i>
+                <div><div class="text-white font-semibold">Personal</div><div class="text-white/60 text-xs">For personal use</div></div>
+              </div>
+            </div>
+          </label>
+          <label for="loanType-Business" class="cursor-pointer">
+            <input type="radio" [(ngModel)]="selectedLoanType" name="loanType" value="Business" class="hidden peer"  id="loanType-Business"/>
+            <div class="demo-tile border-2 transition-all duration-300 peer-checked:border-glass-cyan peer-checked:bg-white/[0.12]">
+              <div class="flex items-center gap-3">
+                <i class="fas fa-briefcase text-glass-cyan text-2xl"></i>
+                <div><div class="text-white font-semibold">Business</div><div class="text-white/60 text-xs">For business use</div></div>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Purpose -->
+    <div>
+      <label class="auth-field-label" for="purpose"><i class="fas fa-clipboard-list mr-2"></i>Purpose</label>
+      <textarea class="glass-input w-full min-h-[90px] resize-none" rows="2" placeholder="e.g. Home renovation, working capital" [(ngModel)]="purpose" id="purpose" name="purpose"></textarea>
+    </div>
+
+    <button
+      type="submit"
+      class="glass-button w-full md:w-auto justify-center"
+      [disabled]="isProcessing"
+      [class.opacity-50]="isProcessing"
+      [class.cursor-not-allowed]="isProcessing"
+    >
+      <i *ngIf="!isProcessing" class="fas fa-paper-plane mr-2"></i>
+      <i *ngIf="isProcessing" class="fas fa-spinner fa-spin mr-2"></i>
+      {{ isProcessing ? 'Submitting...' : 'Send to manager' }}
+    </button>
+  </form>
+</section>
+
+  <!-- Live application summary — updates as the form is filled -->
+  <aside class="demo-section-card animate-slide-up xl:self-start">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-receipt mr-2 text-glass-emerald"></i>Application summary</h2>
+      <p class="demo-section-helper">Updates live as you fill the form.</p>
+    </div>
+
+    <!-- Customer -->
+    <div class="demo-tile flex items-center gap-3 p-3">
+      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white"><i class="fas fa-user"></i></span>
+      <div class="min-w-0">
+        <p class="truncate text-sm font-semibold text-white">{{ selectedCustomer?.fullname || 'No customer selected' }}</p>
+        <p class="truncate text-xs text-white/50">{{ selectedCustomer ? (selectedCustomer.user_id + ' · ' + selectedCustomer.account_count + ' account(s)') : 'Choose a customer to begin' }}</p>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    <dl class="mt-4 space-y-3 text-sm">
+      <div class="flex items-center justify-between"><dt class="text-white/60">Amount</dt><dd class="font-semibold text-white">{{ loanAmount ? ('Rs. ' + (loanAmount | number)) : '—' }}</dd></div>
+      <div class="flex items-center justify-between"><dt class="text-white/60">Term</dt><dd class="font-semibold text-white">{{ duration || '—' }}</dd></div>
+      <div class="flex items-center justify-between"><dt class="text-white/60">Interest</dt><dd class="font-semibold text-white">{{ interest ? (interest + ' p.a.') : '—' }}</dd></div>
+      <div class="flex items-center justify-between"><dt class="text-white/60">Type</dt><dd class="font-semibold text-white">{{ selectedLoanType || '—' }}</dd></div>
+    </dl>
+
+    <!-- Estimated monthly payment -->
+    <div class="demo-tile mt-4 border-emerald-300/20 bg-emerald-300/[0.08] text-center">
+      <p class="text-xs uppercase tracking-wider text-emerald-200/80">Estimated monthly payment</p>
+      <p class="mt-1 text-3xl font-black text-emerald-100">{{ (selectedLoan && loanAmount) ? ('Rs. ' + (estimatedMonthlyPayment | number)) : '—' }}</p>
+      <p class="mt-1 text-[11px] text-white/50">Simple interest, indicative only.</p>
+    </div>
+
+    <p class="mt-4 flex items-start gap-2 text-xs text-white/50">
+      <i class="fas fa-circle-info mt-0.5 text-cyan-300"></i>
+      <span>Submitting routes this application to the branch manager's approval queue.</span>
+    </p>
+  </aside>
+</div>

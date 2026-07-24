@@ -1,0 +1,17 @@
+.top-logo{
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-item-edit{
+    margin: 10px 0;
+    font-size: 20px;
+}
+
+@media (min-width: 992px) {
+    .additional-button-bar {
+      display: none;
+    }
+  }

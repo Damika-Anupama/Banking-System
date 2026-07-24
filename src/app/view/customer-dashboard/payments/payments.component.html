@@ -1,0 +1,191 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-file-invoice-dollar"></i> Recurring payments</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Bill payments &amp; standing orders</h1>
+      <p class="demo-subtitle">Automate recurring payments — utilities, rent, insurance, and subscriptions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KPI summary -->
+<section class="demo-kpi-grid mb-8">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Active orders</p><h2 class="mt-2 text-3xl font-black text-white">{{ activeOrders.length }}</h2><p class="mt-1 text-xs text-blue-100">Currently scheduled</p></div><div class="demo-kpi-icon"><i class="fas fa-repeat"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Committed / month</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ monthlyCommitted | number }}</h2><p class="mt-1 text-xs text-amber-100">Across active orders</p></div><div class="demo-kpi-icon"><i class="fas fa-calendar-day"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next payment</p><h2 class="mt-2 text-2xl font-black text-white">{{ nextPayment ? (nextPayment.next_date | date: 'MMM d') : '—' }}</h2><p class="mt-1 text-xs text-emerald-100">{{ nextPayment ? nextPayment.payee : 'No active orders' }}</p></div><div class="demo-kpi-icon"><i class="far fa-calendar-check"></i></div></div></article>
+</section>
+
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1.4fr]">
+  <!-- Set up form -->
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-plus-circle mr-2 text-glass-cyan"></i>Set up standing order</h2>
+      <p class="demo-section-helper">Schedule a recurring payment to a payee.</p>
+    </div>
+
+    <form class="space-y-5" (ngSubmit)="setUpOrder()">
+      <div *ngIf="payeeSuggestions.length">
+        <p class="auth-field-label mb-2"><i class="fas fa-address-book mr-2"></i>Quick fill from known payees</p>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" *ngFor="let s of payeeSuggestions"
+                  class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-xs text-white/85 transition hover:border-cyan-300/40 hover:bg-cyan-300/10"
+                  (click)="applySuggestion(s)" [title]="s.account_id">
+            <i class="fas fa-user-circle text-cyan-200" aria-hidden="true"></i>
+            <span class="font-medium">{{ s.name }}</span>
+            <span class="text-white/45">{{ s.account_id }}</span>
+          </button>
+        </div>
+      </div>
+      <div>
+        <label class="auth-field-label" for="payee"><i class="fas fa-building mr-2"></i>Payee <span class="text-red-300">*</span></label>
+        <input type="text" class="glass-input w-full" placeholder="e.g. Ceylon Electricity Board" [(ngModel)]="payee" id="payee" name="payee"
+          (blur)="markTouched('payee')"
+          [class.field-invalid]="errorFor('payee')"
+          [attr.aria-invalid]="errorFor('payee') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('payee') ? 'payee-error' : null" />
+        <p *ngIf="errorFor('payee')" id="payee-error" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('payee') }}
+        </p>
+      </div>
+      <div>
+        <label class="auth-field-label" for="accountId"><i class="fas fa-hashtag mr-2"></i>Payee account <span class="text-red-300">*</span></label>
+        <input type="text" class="glass-input uppercase w-full" placeholder="ACC-880021" [(ngModel)]="accountId" id="accountId" name="accountId"
+          (blur)="markTouched('accountId')"
+          [class.field-invalid]="errorFor('accountId')"
+          [attr.aria-invalid]="errorFor('accountId') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('accountId') ? 'accountId-error' : null" />
+        <p *ngIf="errorFor('accountId')" id="accountId-error" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('accountId') }}
+        </p>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="min-w-0">
+          <label class="auth-field-label" for="category"><i class="fas fa-tags mr-2"></i>Category</label>
+          <select class="glass-input w-full" [(ngModel)]="category" id="category" name="category">
+            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+        <div class="min-w-0">
+          <label class="auth-field-label" for="frequency"><i class="fas fa-repeat mr-2"></i>Frequency</label>
+          <select class="glass-input w-full" [(ngModel)]="frequency" id="frequency" name="frequency">
+            <option *ngFor="let f of frequencies" [value]="f">{{ f }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="min-w-0">
+          <label class="auth-field-label" for="amount"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
+            <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" min="1" [(ngModel)]="amount" id="amount" name="amount"
+              (blur)="markTouched('amount')"
+              [class.field-invalid]="errorFor('amount')"
+              [attr.aria-invalid]="errorFor('amount') ? 'true' : null"
+              [attr.aria-describedby]="errorFor('amount') ? 'amount-error' : null" />
+          </div>
+          <p *ngIf="errorFor('amount')" id="amount-error" class="field-error">
+            <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('amount') }}
+          </p>
+        </div>
+        <div class="min-w-0">
+          <label class="auth-field-label" for="nextDate"><i class="far fa-calendar mr-2"></i>Next date <span class="text-red-300">*</span></label>
+          <input type="date" class="glass-input w-full" [min]="todayIso" [(ngModel)]="nextDate" id="nextDate" name="nextDate"
+            (blur)="markTouched('nextDate')"
+            [class.field-invalid]="errorFor('nextDate')"
+            [attr.aria-invalid]="errorFor('nextDate') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('nextDate') ? 'nextDate-error' : null" />
+          <p *ngIf="errorFor('nextDate')" id="nextDate-error" class="field-error">
+            <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('nextDate') }}
+          </p>
+        </div>
+      </div>
+
+      <button type="submit" class="glass-button w-full justify-center" [disabled]="isSaving" [class.opacity-50]="isSaving">
+        <i *ngIf="!isSaving" class="fas fa-check-circle mr-2"></i>
+        <i *ngIf="isSaving" class="fas fa-spinner fa-spin mr-2"></i>
+        {{ isSaving ? 'Saving...' : 'Create standing order' }}
+      </button>
+    </form>
+  </section>
+
+  <!-- Orders list -->
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-list-check mr-2 text-glass-pink"></i>Your standing orders</h2>
+      <p class="demo-section-helper">Pause, resume, or cancel recurring payments.</p>
+    </div>
+
+    <app-skeleton-table
+      *ngIf="isLoading"
+      class="block"
+      [columns]="orderSkeletonColumns"
+      [rows]="4"
+      label="Loading standing orders"
+    ></app-skeleton-table>
+
+    <div *ngIf="!isLoading" class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Standing orders">
+      <table class="w-full">
+        <caption class="sr-only">Standing orders</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Payee</th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Amount</th>
+            <th scope="col" class="hidden sm:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Next date</th>
+            <th scope="col" class="hidden md:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Status</th>
+            <th scope="col" class="text-right px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of pagedOrders" class="transition-all duration-300 hover:bg-white/5">
+            <td class="px-5 py-4">
+              <p class="font-semibold">{{ order.payee }}</p>
+              <small class="text-xs text-white/50">{{ order.category }} · {{ order.account_id }}</small>
+            </td>
+            <td class="px-5 py-4">
+              <p class="whitespace-nowrap font-semibold">Rs. {{ order.amount | number }}</p>
+              <small class="block text-xs text-white/50">{{ order.frequency }}</small>
+              <!-- The Next date column is hidden below sm; keep the due signal visible on phones. -->
+              <small class="block whitespace-nowrap text-xs font-semibold sm:hidden" [ngClass]="dueClass(order)">
+                <i class="fas fa-clock mr-1"></i>{{ dueLabel(order) }}
+              </small>
+            </td>
+            <td class="hidden sm:table-cell px-5 py-4">
+              <p class="whitespace-nowrap text-white/90">{{ order.next_date | date: 'MMM d, y' }}</p>
+              <small class="block whitespace-nowrap text-xs font-semibold" [ngClass]="dueClass(order)">
+                <i class="fas fa-clock mr-1"></i>{{ dueLabel(order) }}
+              </small>
+            </td>
+            <td class="hidden md:table-cell px-5 py-4">
+              <span class="demo-status-pill" [ngClass]="order.status === 'Active' ? 'demo-status-success' : 'demo-status-warning'">{{ order.status }}</span>
+            </td>
+            <td class="px-5 py-4 text-right">
+              <div class="flex flex-wrap justify-end gap-2">
+                <button type="button" class="glass-button-secondary text-xs" (click)="toggleOrder(order)">
+                  <i class="fas mr-1" [ngClass]="order.status === 'Active' ? 'fa-pause' : 'fa-play'"></i>{{ order.status === 'Active' ? 'Pause' : 'Resume' }}
+                </button>
+                <button type="button" class="glass-button-danger text-xs" (click)="cancelOrder(order)"><i class="fas fa-times mr-1"></i>Cancel</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="orders.length === 0" class="demo-state-card m-4">
+        <i class="fas fa-file-invoice-dollar"></i>
+        <h3>No standing orders yet</h3>
+        <p>Set one up to automate a recurring payment.</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!isLoading && orderCount > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+      <p class="text-xs text-white/60">Showing {{ orderRangeStart }}–{{ orderRangeEnd }} of {{ orderCount }} standing orders</p>
+      <div class="flex items-center gap-2">
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="orderPage === 1" [class.opacity-40]="orderPage === 1" (click)="setOrderPage(orderPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+        <span class="text-xs text-white/70">Page {{ orderPage }} of {{ totalOrderPages }}</span>
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="orderPage === totalOrderPages" [class.opacity-40]="orderPage === totalOrderPages" (click)="setOrderPage(orderPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </section>
+</div>

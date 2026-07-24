@@ -1,0 +1,41 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111f"/>
+      <stop offset="0.52" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#12356d"/>
+    </linearGradient>
+    <linearGradient id="card" x1="140" y1="135" x2="1060" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563eb" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#06b6d4" stop-opacity="0.18"/>
+    </linearGradient>
+    <filter id="shadow" x="70" y="80" width="1060" height="560" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="30" stdDeviation="32" flood-color="#020617" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="160" cy="90" r="220" fill="#2563eb" opacity="0.25"/>
+  <circle cx="1010" cy="120" r="180" fill="#06b6d4" opacity="0.18"/>
+  <rect x="100" y="92" width="1000" height="500" rx="36" fill="url(#card)" stroke="white" stroke-opacity="0.16" filter="url(#shadow)"/>
+  <text x="150" y="165" fill="#e0f2fe" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="4">BANKING SYSTEM CLIENT DEMO</text>
+  <text x="150" y="225" fill="white" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="800">Transactions, accounts and loans</text>
+  <text x="150" y="270" fill="#cbd5e1" font-family="Inter, Arial, sans-serif" font-size="22">Role-based Angular demo with no backend required.</text>
+  <g transform="translate(150 330)">
+    <rect width="275" height="165" rx="24" fill="#020617" fill-opacity="0.48" stroke="white" stroke-opacity="0.12"/>
+    <text x="28" y="50" fill="#93c5fd" font-family="Inter, Arial" font-size="22" font-weight="800">Customer</text>
+    <text x="28" y="88" fill="white" font-family="Inter, Arial" font-size="17">Accounts, transfers</text>
+    <text x="28" y="118" fill="#cbd5e1" font-family="Inter, Arial" font-size="16">Recent activity + balances</text>
+  </g>
+  <g transform="translate(462 330)">
+    <rect width="275" height="165" rx="24" fill="#020617" fill-opacity="0.48" stroke="white" stroke-opacity="0.12"/>
+    <text x="28" y="50" fill="#67e8f9" font-family="Inter, Arial" font-size="22" font-weight="800">Employee</text>
+    <text x="28" y="88" fill="white" font-family="Inter, Arial" font-size="17">Customer support</text>
+    <text x="28" y="118" fill="#cbd5e1" font-family="Inter, Arial" font-size="16">Onboarding + branch flows</text>
+  </g>
+  <g transform="translate(775 330)">
+    <rect width="275" height="165" rx="24" fill="#020617" fill-opacity="0.48" stroke="white" stroke-opacity="0.12"/>
+    <text x="28" y="50" fill="#fbbf24" font-family="Inter, Arial" font-size="22" font-weight="800">Manager</text>
+    <text x="28" y="88" fill="white" font-family="Inter, Arial" font-size="17">Branch KPIs</text>
+    <text x="28" y="118" fill="#cbd5e1" font-family="Inter, Arial" font-size="16">Loan review + approvals</text>
+  </g>
+</svg>

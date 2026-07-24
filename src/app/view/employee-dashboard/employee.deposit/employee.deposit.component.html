@@ -1,0 +1,159 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-money-bill-trend-up"></i> Cash operations</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Cash Deposit</h1>
+      <p class="demo-subtitle">Record customer cash, cheque, and transfer deposits and review recent branch activity.</p>
+    </div>
+    <div class="demo-tile text-sm text-white/70">
+      <i class="fas fa-coins mr-2 text-glass-emerald"></i>
+      Total deposited (recent): <strong class="text-white">Rs. {{ totalDeposited | number }}</strong>
+    </div>
+  </div>
+</section>
+
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_1.6fr]">
+  <!-- Deposit Form -->
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-money-bill-wave mr-2 text-glass-emerald"></i>Process deposit</h2>
+      <p class="demo-section-helper">Enter the customer account, method, and amount.</p>
+    </div>
+
+    <form class="space-y-5" (ngSubmit)="processDeposit()">
+      <div>
+        <label class="auth-field-label" for="accountNumber"><i class="fas fa-university mr-2"></i>Account number <span class="text-red-300">*</span></label>
+        <div class="relative">
+          <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-white/50"></i>
+          <input type="text" class="glass-input pl-12 uppercase w-full" placeholder="ACC-492810" [(ngModel)]="accountNumber" id="accountNumber" name="accountNumber" list="branch-accounts" />
+          <datalist id="branch-accounts">
+            <option *ngFor="let a of accounts" [value]="a.account_id"></option>
+          </datalist>
+        </div>
+        <p *ngIf="accountNotFound" class="mt-2 text-xs text-amber-200"><i class="fas fa-triangle-exclamation mr-1"></i>No branch account matches that number.</p>
+      </div>
+
+      <!-- Account lookup result -->
+      <div *ngIf="matchedAccount" class="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.07] p-4">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-slate-300"><i class="fas fa-check-circle mr-2 text-emerald-300"></i>Account verified</span>
+          <span class="text-white/60">{{ formatSavingType(matchedAccount.saving_type) }} · {{ matchedAccount.branch_name }}</span>
+        </div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="text-slate-400 text-sm">Current balance</span>
+          <strong class="text-emerald-100 text-lg">Rs. {{ accountBalance | number }}</strong>
+        </div>
+      </div>
+
+      <div>
+        <label class="auth-field-label" for="method"><i class="fas fa-layer-group mr-2"></i>Deposit method</label>
+        <div class="grid grid-cols-3 gap-3">
+          <label for="method" class="cursor-pointer">
+            <input type="radio" [(ngModel)]="method" id="method" name="method" value="Cash" class="hidden peer" />
+            <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-3 text-center transition-all peer-checked:border-glass-emerald peer-checked:bg-white/[0.12]">
+              <i class="fas fa-money-bill-wave text-glass-emerald text-lg"></i><div class="mt-1 text-xs font-semibold">Cash</div>
+            </div>
+          </label>
+          <label for="method-Cheque" class="cursor-pointer">
+            <input type="radio" [(ngModel)]="method" name="method" value="Cheque" class="hidden peer"  id="method-Cheque"/>
+            <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-3 text-center transition-all peer-checked:border-glass-cyan peer-checked:bg-white/[0.12]">
+              <i class="fas fa-money-check-dollar text-glass-cyan text-lg"></i><div class="mt-1 text-xs font-semibold">Cheque</div>
+            </div>
+          </label>
+          <label for="method-Transfer" class="cursor-pointer">
+            <input type="radio" [(ngModel)]="method" name="method" value="Transfer" class="hidden peer"  id="method-Transfer"/>
+            <div class="rounded-2xl border-2 border-white/10 bg-white/[0.06] p-3 text-center transition-all peer-checked:border-glass-purple peer-checked:bg-white/[0.12]">
+              <i class="fas fa-right-left text-glass-purple text-lg"></i><div class="mt-1 text-xs font-semibold">Transfer</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div *ngIf="method === 'Cheque'">
+        <label class="auth-field-label" for="reference"><i class="fas fa-hashtag mr-2"></i>Cheque number <span class="text-red-300">*</span></label>
+        <input type="text" class="glass-input w-full" placeholder="e.g. 884201" [(ngModel)]="reference" id="reference" name="reference" />
+        <p class="mt-2 text-xs text-white/50">Cheque deposits are credited after clearing.</p>
+      </div>
+
+      <div>
+        <label class="auth-field-label" for="amount"><i class="fas fa-money-bill-wave mr-2"></i>Amount <span class="text-red-300">*</span></label>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
+          <input type="number" class="glass-input pl-14 w-full" placeholder="0.00" min="1" [(ngModel)]="amount" id="amount" name="amount" />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="glass-button w-full justify-center"
+        [disabled]="isProcessing"
+        [class.opacity-50]="isProcessing"
+        [class.cursor-not-allowed]="isProcessing"
+      >
+        <i *ngIf="!isProcessing" class="fas fa-circle-plus mr-2"></i>
+        <i *ngIf="isProcessing" class="fas fa-spinner fa-spin mr-2"></i>
+        {{ isProcessing ? 'Processing...' : 'Process deposit' }}
+      </button>
+    </form>
+  </section>
+
+  <!-- Deposit History -->
+  <section class="demo-section-card animate-slide-up">
+    <div class="mb-5">
+      <h2 class="demo-section-title"><i class="fas fa-history mr-2 text-glass-cyan"></i>Recent deposits</h2>
+      <p class="demo-section-helper">Latest deposits processed at this branch.</p>
+    </div>
+
+    <app-skeleton-table
+      *ngIf="isLoading"
+      class="block"
+      [columns]="depositSkeletonColumns"
+      [rows]="depositPageSize"
+      label="Loading recent deposits"
+    ></app-skeleton-table>
+
+    <div *ngIf="!isLoading" class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Recent deposits">
+      <table class="w-full table-fixed">
+        <caption class="sr-only">Recent deposits</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="hidden sm:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Deposit ID</th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Account</th>
+            <th scope="col" class="hidden xl:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Method</th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Amount</th>
+            <th scope="col" class="hidden lg:table-cell xl:w-[22%] text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Time</th>
+            <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let deposit of pagedDeposits" class="transition-all duration-300 hover:bg-white/5 border-t border-white/5">
+            <td class="hidden sm:table-cell px-5 py-4">
+              <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">{{ deposit.deposit_id }}</span>
+            </td>
+            <td class="px-5 py-4 text-white/90 font-mono truncate">{{ deposit.account_id }}</td>
+            <td class="hidden xl:table-cell px-5 py-4 text-white/90 whitespace-nowrap"><i class="fas mr-2 text-glass-cyan" [ngClass]="methodIcon(deposit.method)"></i>{{ deposit.method }}</td>
+            <td class="px-5 py-4 text-white font-semibold whitespace-nowrap">Rs. {{ deposit.amount | number }}</td>
+            <td class="hidden lg:table-cell px-5 py-4 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ deposit.deposit_time | date: 'MMM d, h:mm a' }}</td>
+            <td class="px-5 py-4"><span class="demo-status-pill" [ngClass]="deposit.status === 'Completed' ? 'demo-status-success' : 'demo-status-warning'">{{ deposit.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="deposits.length === 0" class="demo-state-card m-4">
+        <i class="fas fa-money-bill-wave"></i>
+        <h3>No deposits yet</h3>
+        <p>Deposits processed at this branch will appear here.</p>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && deposits.length > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+      <p class="text-xs text-white/60">Showing {{ depositRangeStart }}–{{ depositRangeEnd }} of {{ deposits.length }} deposits</p>
+      <div class="flex items-center gap-2">
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="depositPage === 1" [class.opacity-40]="depositPage === 1" (click)="setDepositPage(depositPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+        <span class="text-xs text-white/70">Page {{ depositPage }} of {{ totalDepositPages }}</span>
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="depositPage === totalDepositPages" [class.opacity-40]="depositPage === totalDepositPages" (click)="setDepositPage(depositPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,271 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-hand-holding-dollar"></i> Lending services</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Loans</h1>
+      <p class="demo-subtitle">Apply for FD-backed loans and track your active borrowing position.</p>
+    </div>
+    <a routerLink="/dashboard/fixed-deposit" class="glass-button w-fit"><i class="fas fa-vault mr-2"></i>Manage fixed deposits</a>
+  </div>
+</section>
+
+<!-- KPI summary bar -->
+<section class="demo-kpi-grid mb-8" *ngIf="loans && loans.length">
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Active loans</p><h2 class="mt-2 text-3xl font-black text-white">{{ activeLoanCount }}</h2><p class="mt-1 text-xs text-blue-100">Current applications</p></div><div class="demo-kpi-icon"><i class="fas fa-file-invoice-dollar"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total borrowed</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalBorrowed | number }}</h2><p class="mt-1 text-xs text-emerald-100">Principal across loans</p></div><div class="demo-kpi-icon"><i class="fas fa-sack-dollar"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Outstanding</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalOutstanding | number }}</h2><p class="mt-1 text-xs text-amber-100">Principal + interest</p></div><div class="demo-kpi-icon"><i class="fas fa-scale-balanced"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-rose"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Next due</p><h2 class="mt-2 text-2xl font-black text-white">{{ nearestDueDate ? (nearestDueDate | date: 'MMM d') : '—' }}</h2><p class="mt-1 text-xs text-rose-100">Earliest installment</p></div><div class="demo-kpi-icon"><i class="far fa-calendar-check"></i></div></div></article>
+</section>
+
+<!-- Alert for no fixed deposits -->
+<div *ngIf="!fds || fds.length === 0" class="demo-state-card mb-8 animate-slide-up">
+  <i class="fas fa-circle-exclamation"></i>
+  <h3>No fixed deposit found</h3>
+  <p>You can't apply for an online loan without a fixed deposit. Open a fixed deposit first to use it as collateral.</p>
+  <a routerLink="/dashboard/fixed-deposit" class="glass-button-secondary mt-4 w-fit mx-auto"><i class="fas fa-vault mr-2"></i>Open a fixed deposit</a>
+</div>
+
+<app-skeleton-table
+  *ngIf="isLoadingFDs || isLoadingLoans"
+  class="mb-6 block"
+  [columns]="loanSkeletonColumns"
+  [rows]="4"
+  label="Loading loan workspace"
+></app-skeleton-table>
+<div *ngIf="errorMessage && !isLoadingFDs" class="demo-state-card mb-6">
+  <i class="fas fa-triangle-exclamation"></i>
+  <h3>Loans unavailable</h3>
+  <p>{{ errorMessage }}</p>
+  <button type="button" class="glass-button-secondary mt-4" (click)="loadFDs(); loadLoans()">Retry</button>
+</div>
+
+<!-- Main Content -->
+<div *ngIf="fds && fds.length != 0">
+  <!-- Apply for Loan Form -->
+  <div class="demo-section-card mb-8 animate-slide-up">
+    <div class="mb-6">
+      <h2 class="demo-section-title flex items-center">
+        <i class="fas fa-hand-holding-usd mr-3 text-glass-cyan"></i>
+        Apply for a Loan
+      </h2>
+      <p class="demo-section-helper">Fill out the form to request a loan</p>
+    </div>
+
+    <form class="space-y-5">
+      <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div class="min-w-0">
+          <label class="auth-field-label" for="selectedFD">
+            <i class="fas fa-piggy-bank mr-2"></i>Fixed deposit <span class="text-red-300">*</span>
+          </label>
+          <select
+            class="glass-input w-full appearance-none cursor-pointer pr-10"
+            [(ngModel)]="selectedFD"
+            (change)="onFDSelected(); markTouched('selectedFD')"
+            id="selectedFD" name="selectedFD"
+            [class.field-invalid]="errorFor('selectedFD')"
+            [attr.aria-invalid]="errorFor('selectedFD') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('selectedFD') ? 'selectedFD-error' : null"
+          >
+            <option [ngValue]="null" disabled selected>Select a fixed deposit</option>
+            <option *ngFor="let account of fds" [ngValue]="account">
+              FD {{ account.fd_id }} — Rs. {{ account.amount | number }}
+            </option>
+          </select>
+          <p *ngIf="errorFor('selectedFD')" id="selectedFD-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedFD') }}</p>
+        </div>
+
+        <div class="min-w-0">
+          <label class="auth-field-label" for="loanAmount">
+            <i class="fas fa-money-bill-wave mr-2"></i>Loan amount <span class="text-red-300">*</span>
+          </label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">Rs.</span>
+            <input
+              type="number"
+              class="glass-input pl-14 w-full"
+              placeholder="0.00"
+              [(ngModel)]="loanAmount"
+              id="loanAmount" name="loanAmount"
+              min="1"
+              (blur)="checkLoanAmount()"
+              [class.field-invalid]="errorFor('loanAmount')"
+              [attr.aria-invalid]="errorFor('loanAmount') ? 'true' : null"
+              [attr.aria-describedby]="errorFor('loanAmount') ? 'loanAmount-error' : null"
+            />
+          </div>
+          <p class="text-white/50 text-xs mt-2" *ngIf="maximumLoanAmount && !errorFor('loanAmount')">Max: Rs. {{ maximumLoanAmount | number }} · LTV {{ ltvPercent }}%</p>
+          <p *ngIf="errorFor('loanAmount')" id="loanAmount-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('loanAmount') }}</p>
+        </div>
+
+        <div class="min-w-0">
+          <label class="auth-field-label" for="selectedLoan">
+            <i class="fas fa-calendar-alt mr-2"></i>Payment plan <span class="text-red-300">*</span>
+          </label>
+          <select
+            class="glass-input w-full appearance-none cursor-pointer pr-10"
+            [(ngModel)]="selectedLoan"
+            (ngModelChange)="onLoanSelected(); markTouched('selectedLoan')"
+            id="selectedLoan" name="selectedLoan"
+            [class.field-invalid]="errorFor('selectedLoan')"
+            [attr.aria-invalid]="errorFor('selectedLoan') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('selectedLoan') ? 'selectedLoan-error' : null"
+          >
+            <option value="" disabled selected>Select a plan</option>
+            <option *ngFor="let package of packageArray" [value]="package.index">
+              {{ package.period }} · {{ package.interest }}
+            </option>
+          </select>
+          <p *ngIf="errorFor('selectedLoan')" id="selectedLoan-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedLoan') }}</p>
+        </div>
+      </div>
+
+      <div>
+        <label class="auth-field-label" for="selectedLoanType">
+          <i class="fas fa-tags mr-2"></i>Select Loan Type <span class="text-red-300">*</span>
+        </label>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label for="selectedLoanType" class="cursor-pointer">
+              <input
+                type="radio"
+                [(ngModel)]="selectedLoanType"
+                id="selectedLoanType" name="selectedLoanType"
+                value="Personal"
+                class="hidden peer"
+              />
+              <div class="demo-tile border-2 transition-all duration-300 peer-checked:border-glass-purple peer-checked:bg-white/[0.12]">
+                <div class="flex items-center gap-3">
+                  <i class="fas fa-user text-glass-purple text-2xl"></i>
+                  <div>
+                    <p class="font-semibold">Personal</p>
+                    <p class="text-slate-300 text-xs">For personal use</p>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+            <label for="selectedLoanType-Business" class="cursor-pointer">
+              <input
+                type="radio"
+                [(ngModel)]="selectedLoanType"
+                name="selectedLoanType"
+                value="Business"
+                class="hidden peer"
+               id="selectedLoanType-Business"/>
+              <div class="demo-tile border-2 transition-all duration-300 peer-checked:border-glass-cyan peer-checked:bg-white/[0.12]">
+                <div class="flex items-center gap-3">
+                  <i class="fas fa-briefcase text-glass-cyan text-2xl"></i>
+                  <div>
+                    <p class="font-semibold">Business</p>
+                    <p class="text-slate-300 text-xs">For business purposes</p>
+                  </div>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+      <div class="demo-tile">
+        <p class="auth-field-label mb-3">Repayment estimate</p>
+        <div class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+          <div><p class="text-xs text-slate-400">Est. monthly payment</p><p class="font-semibold text-emerald-100">Rs. {{ estimatedMonthlyPayment | number }}</p></div>
+          <div><p class="text-xs text-slate-400">Interest method</p><p class="font-semibold">Simple annual</p></div>
+          <div><p class="text-xs text-slate-400">Processing fee</p><p class="font-semibold">0.5% at approval</p></div>
+        </div>
+      </div>
+
+      <label for="acceptedLienConsent" class="demo-tile flex items-start gap-3 text-sm text-slate-300">
+        <input type="checkbox" class="mt-1" [(ngModel)]="acceptedLienConsent" name="acceptedLienConsent"
+          [attr.aria-invalid]="errorFor('acceptedLienConsent') ? 'true' : null"
+          [attr.aria-describedby]="errorFor('acceptedLienConsent') ? 'acceptedLienConsent-error' : null"  id="acceptedLienConsent"/>
+        <span>I consent to placing a lien on the selected fixed deposit until this loan is settled.</span>
+      </label>
+      <p *ngIf="errorFor('acceptedLienConsent')" id="acceptedLienConsent-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('acceptedLienConsent') }}</p>
+      <p *ngIf="errorFor('selectedLoanType')" id="selectedLoanType-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('selectedLoanType') }}</p>
+
+      <button
+        type="button"
+        class="glass-button w-full justify-center md:w-auto"
+        (click)="proceed()"
+        [disabled]="isProcessingLoan"
+        [class.opacity-50]="isProcessingLoan"
+        [class.cursor-not-allowed]="isProcessingLoan"
+      >
+        <i class="fas fa-check-circle mr-2"></i>
+        Submit Loan Application
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Previous Loans Table -->
+<div class="demo-section-card animate-slide-up">
+  <div class="mb-6">
+    <h2 class="demo-section-title flex items-center">
+      <i class="fas fa-history mr-3 text-glass-pink"></i>
+      Your Loans
+    </h2>
+    <p class="demo-section-helper">View all your loan applications and history</p>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!isLoadingLoans">
+    <div *ngIf="activeLoanCount > 0" class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Your loans">
+    <table class="w-full">
+        <caption class="sr-only">Your loans</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Loan</th>
+          <th scope="col" class="hidden md:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Status</th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Outstanding</th>
+          <th scope="col" class="hidden lg:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Next due</th>
+          <th scope="col" class="text-right px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let loan of pagedLoans; let i = index"
+          class="transition-all duration-300 hover:bg-white/5 border-t border-white/5"
+        >
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-2">
+              <i class="fas" [ngClass]="loan.loan_type === 'Business' ? 'fa-briefcase text-glass-cyan' : 'fa-user text-glass-purple'"></i>
+              <div class="min-w-0">
+                <p class="truncate font-semibold">Rs. {{ loan.amount | number }}</p>
+                <p class="truncate text-xs text-white/50">{{ loan.loan_basic_detail_id }} · {{ loan.loan_type }} · {{ loan.interest }}%</p>
+              </div>
+            </div>
+          </td>
+          <td class="hidden md:table-cell px-5 py-4"><span class="glass-badge bg-white/10">{{ loanStatus(loan) }}</span></td>
+          <td class="whitespace-nowrap px-5 py-4 font-semibold text-emerald-100">Rs. {{ loanOutstanding(loan) | number }}</td>
+          <td class="hidden lg:table-cell whitespace-nowrap px-5 py-4 text-white/90">{{ loanNextDueDate(loan) | date: 'MMM d, y' }}</td>
+          <td class="px-5 py-4">
+            <div class="flex items-center justify-end gap-1.5">
+              <button type="button" class="loan-action-btn" title="Repayment schedule" (click)="viewLoanSchedule(loan)"><i class="fas fa-calendar-days"></i></button>
+              <button type="button" class="loan-action-btn" title="View agreement" aria-label="View loan agreement" (click)="downloadLoanAgreement(loan)"><i class="fas fa-file-contract"></i></button>
+              <button type="button" class="loan-action-btn loan-action-btn--primary" title="Make a repayment" (click)="startRepayment(loan)"><i class="fas fa-hand-holding-dollar"></i></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoadingLoans && (!loans || loans.length === 0)" class="demo-state-card">
+      <i class="fas fa-hand-holding-usd"></i>
+      <h3>No loans yet</h3>
+      <p>Apply for your first loan to get started.</p>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="activeLoanCount > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+      <p class="text-xs text-white/60">Showing {{ loanRangeStart }}–{{ loanRangeEnd }} of {{ activeLoanCount }} loans</p>
+      <div class="flex items-center gap-2">
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="loanPage === 1" [class.opacity-40]="loanPage === 1" (click)="setLoanPage(loanPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+        <span class="text-xs text-white/70">Page {{ loanPage }} of {{ totalLoanPages }}</span>
+        <button type="button" class="glass-button-secondary text-xs" [disabled]="loanPage === totalLoanPages" [class.opacity-40]="loanPage === totalLoanPages" (click)="setLoanPage(loanPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>

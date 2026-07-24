@@ -1,0 +1,7 @@
+# The CI icon-subset gate diffs the generated icons.css on a Linux runner. If a
+# Windows developer commits it with CRLF, that diff would never come back clean.
+# Pin it (and the other generated web asset) to LF so the blob is identical no
+# matter who regenerated it. The font binaries are explicitly binary so git
+# never tries to "fix" their line endings.
+src/assets/icons/icons.css text eol=lf
+src/assets/icons/*.woff2 binary

@@ -1,0 +1,1109 @@
+/**
+ * Unit Tests for TransactionComponent
+ *
+ * Tests transaction processing, account management, form validation
+ * Target coverage: 90%+
+ */
+
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { TransactionComponent } from './transaction.component';
+import { TransactionService } from 'src/app/service/customer/transaction.service';
+import { of, throwError } from 'rxjs';
+import Swal from 'sweetalert2';
+import { ToastService } from 'src/app/service/toast.service';
+
+describe('TransactionComponent', () => {
+  let component: TransactionComponent;
+  let fixture: ComponentFixture<TransactionComponent>;
+  let mockRouter: jasmine.SpyObj<Router>;
+  let mockTransactionService: jasmine.SpyObj<TransactionService>;
+  let mockChangeDetectorRef: jasmine.SpyObj<ChangeDetectorRef>;
+  let toastService: ToastService;
+
+  beforeEach(async () => {
+    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    mockTransactionService = jasmine.createSpyObj('TransactionService', [
+      'getAccountDetails',
+      'getTransactions',
+      'proceedTransaction'
+    ]);
+    mockChangeDetectorRef = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
+
+    await TestBed.configureTestingModule({
+      declarations: [TransactionComponent],
+      imports: [CommonModule, FormsModule],
+      providers: [
+        { provide: Router, useValue: mockRouter },
+        { provide: TransactionService, useValue: mockTransactionService },
+        { provide: ChangeDetectorRef, useValue: mockChangeDetectorRef }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
+
+    // Spy on Swal
+    spyOn(Swal, 'fire');
+
+    // Recoverable feedback is expected to be non-blocking, so assert on toasts.
+    toastService = TestBed.inject(ToastService);
+    spyOn(toastService, 'success');
+    spyOn(toastService, 'error');
+    spyOn(toastService, 'warning');
+    spyOn(toastService, 'info');
+  });
+
+  describe('Component Initialization', () => {
+    it('should create', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of({
+        data: [{
+          account_id: 'ACC001',
+          amount: '5000',
+          account_type: 'SAVINGS',
+          saving_type: 'REGULAR',
+          branch_name: 'Main Branch'
+        }]
+      }));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+
+      expect(component).toBeTruthy();
+    });
+
+    it('should initialize with default values', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of({
+        data: [{
+          account_id: 'ACC001',
+          amount: '5000',
+          account_type: 'SAVINGS',
+          saving_type: 'REGULAR',
+          branch_name: 'Main Branch'
+        }]
+      }));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+
+      expect(component.account_id).toBe('');
+      expect(component.balance).toBe('');
+      expect(component.account_type).toBe('');
+      expect(component.saving_type).toBe('');
+      expect(component.branch).toBe('');
+      expect(component.accounts).toBeNull();
+      expect(component.selectedAccount).toBeNull();
+      expect(component.transactions).toBeNull();
+      expect(component.cumulativeBalance).toBeNull();
+      expect(component.transfer_amount).toBe('');
+      expect(component.sender_remarks).toBe('');
+      expect(component.beneficiary_remarks).toBe('');
+      expect(component.to_account).toBe('');
+      expect(component.isLoading).toBe(false);
+      expect(component.isLoadingTransactions).toBe(false);
+      expect(component.isProcessingTransaction).toBe(false);
+      expect(component.errorMessage).toBe('');
+    });
+
+    it('should call loadAccountDetails on ngOnInit', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of({
+        data: [{
+          account_id: 'ACC001',
+          amount: '5000',
+          account_type: 'SAVINGS',
+          saving_type: 'REGULAR',
+          branch_name: 'Main Branch'
+        }]
+      }));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+
+      spyOn(component, 'loadAccountDetails');
+      component.ngOnInit();
+
+      expect(component.loadAccountDetails).toHaveBeenCalled();
+    });
+  });
+
+  describe('loadAccountDetails() - Successful Loading', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('should load account data successfully', () => {
+      const mockData = {
+        data: [{
+          account_id: 'ACC001',
+          amount: '5000',
+          account_type: 'SAVINGS',
+          saving_type: 'REGULAR',
+          branch_name: 'Main Branch'
+        }]
+      };
+
+      mockTransactionService.getAccountDetails.and.returnValue(of(mockData));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.loadAccountDetails();
+
+      expect(component.isLoading).toBe(false);
+      expect(component.accounts).toEqual(mockData.data);
+      expect(component.account_id).toBe('ACC001');
+      expect(component.balance).toBe('5000');
+      expect(component.cumulativeBalance).toBe('5000');
+      expect(component.account_type).toBe('SAVINGS');
+      expect(component.saving_type).toBe('REGULAR');
+      expect(component.branch).toBe('Main Branch');
+      expect(component.selectedAccount).toEqual(mockData.data[0]);
+      expect(mockTransactionService.getTransactions).toHaveBeenCalledWith('ACC001');
+    });
+
+    it('should use default values for missing account fields', () => {
+      const mockData = {
+        data: [{
+          account_id: null,
+          amount: null,
+          account_type: null,
+          saving_type: null,
+          branch_name: null
+        }]
+      };
+
+      mockTransactionService.getAccountDetails.and.returnValue(of(mockData));
+
+      component.loadAccountDetails();
+
+      expect(component.account_id).toBe('');
+      expect(component.balance).toBe('0');
+      expect(component.account_type).toBe('N/A');
+      expect(component.saving_type).toBe('N/A');
+      expect(component.branch).toBe('N/A');
+    });
+
+    it('should handle multiple accounts', () => {
+      const mockData = {
+        data: [
+          { account_id: 'ACC001', amount: '5000', account_type: 'SAVINGS', saving_type: 'REGULAR', branch_name: 'Branch 1' },
+          { account_id: 'ACC002', amount: '10000', account_type: 'CHECKING', saving_type: 'N/A', branch_name: 'Branch 2' }
+        ]
+      };
+
+      mockTransactionService.getAccountDetails.and.returnValue(of(mockData));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.loadAccountDetails();
+
+      expect(component.accounts?.length).toBe(2);
+      expect(component.account_id).toBe('ACC001'); // First account selected
+    });
+  });
+
+  describe('loadAccountDetails() - Error Handling', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('should handle null response', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of(null));
+
+      component.loadAccountDetails();
+
+      expect(component.errorMessage).toBe('No account data available');
+      expect(component.isLoading).toBe(false);
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Could not load accounts',
+        'No account data available'
+      );
+      expect(Swal.fire).not.toHaveBeenCalled();
+    });
+
+    it('should handle missing data property', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of({} as any));
+
+      component.loadAccountDetails();
+
+      expect(component.errorMessage).toBe('No account data available');
+    });
+
+    it('should handle empty data array', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: [] }));
+
+      component.loadAccountDetails();
+
+      expect(component.errorMessage).toBe('No account data available');
+    });
+
+    it('should handle non-array data', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: {} } as any));
+
+      component.loadAccountDetails();
+
+      expect(component.errorMessage).toBe('No account data available');
+    });
+
+    it('should handle array with null first element', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: [null] }));
+
+      component.loadAccountDetails();
+
+      expect(component.errorMessage).toBe('No accounts found');
+      expect(component.isLoading).toBe(false);
+      expect(toastService.warning).toHaveBeenCalledWith(
+        'No accounts',
+        'You do not have any accounts yet.'
+      );
+      expect(Swal.fire).not.toHaveBeenCalled();
+    });
+
+    it('should handle array with undefined first element', () => {
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: [undefined] }));
+
+      component.loadAccountDetails();
+
+      expect(component.errorMessage).toBe('No accounts found');
+      expect(component.isLoading).toBe(false);
+      expect(toastService.warning).toHaveBeenCalledWith(
+        'No accounts',
+        'You do not have any accounts yet.'
+      );
+      expect(Swal.fire).not.toHaveBeenCalled();
+    });
+
+    it('should handle server error with message', () => {
+      spyOn(console, 'error');
+      const errorResponse = {
+        error: { message: 'Unauthorized access' }
+      };
+
+      mockTransactionService.getAccountDetails.and.returnValue(throwError(() => errorResponse));
+
+      component.loadAccountDetails();
+
+      expect(component.errorMessage).toBe('Unauthorized access');
+      expect(component.isLoading).toBe(false);
+      expect(console.error).toHaveBeenCalledWith('Error loading account details:', errorResponse);
+    });
+
+    it('should handle processing error', () => {
+      spyOn(console, 'error');
+      spyOn(component, 'loadDataToTable').and.throwError('Processing error');
+
+      const mockData = {
+        data: [{
+          account_id: 'ACC001',
+          amount: '5000',
+          account_type: 'SAVINGS',
+          saving_type: 'REGULAR',
+          branch_name: 'Main Branch'
+        }]
+      };
+
+      mockTransactionService.getAccountDetails.and.returnValue(of(mockData));
+
+      component.loadAccountDetails();
+
+      expect(component.errorMessage).toBe('Failed to process account data');
+      expect(console.error).toHaveBeenCalledWith('Error processing account data:', jasmine.any(Error));
+    });
+  });
+
+  describe('updateSmallBox()', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('should update balance and account_id', () => {
+      const mockAccount = {
+        account_id: 'ACC002',
+        amount: '15000',
+        account_type: 'CHECKING'
+      };
+
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.updateSmallBox(mockAccount);
+
+      expect(component.balance).toBe('15000');
+      expect(component.account_id).toBe('ACC002');
+      expect(component.selectedAccount).toEqual(mockAccount);
+      expect(mockTransactionService.getTransactions).toHaveBeenCalledWith('ACC002');
+    });
+
+    it('should handle account with missing amount', () => {
+      const mockAccount = {
+        account_id: 'ACC003',
+        amount: null
+      };
+
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.updateSmallBox(mockAccount);
+
+      expect(component.balance).toBe('0');
+    });
+
+    it('should handle account with missing account_id', () => {
+      const mockAccount = {
+        account_id: null,
+        amount: '5000'
+      };
+
+      component.updateSmallBox(mockAccount);
+
+      expect(component.account_id).toBe('');
+      expect(mockTransactionService.getTransactions).not.toHaveBeenCalled();
+    });
+
+    it('should handle null account gracefully', () => {
+      spyOn(console, 'error');
+
+      component.updateSmallBox(null);
+
+      expect(console.error).toHaveBeenCalledWith('Invalid account selected');
+    });
+  });
+
+  describe('proceedTransaction() - Validation', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+    });
+
+    /** A valid form, which each test then breaks in exactly one way. */
+    const fillValidForm = () => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Invoice INV-1042';
+      component.beneficiary_remarks = 'Thanks';
+    };
+
+    it('reports every problem at once rather than one error at a time', () => {
+      component.account_id = 'ACC000001';
+      component.to_account = '';
+      component.transfer_amount = '';
+      component.sender_remarks = '';
+      component.beneficiary_remarks = '';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('to_account')).toBe('Enter a beneficiary account number.');
+      expect(component.errorFor('transfer_amount')).toBe('Enter an amount.');
+      expect(component.errorFor('sender_remarks')).toBe('Add a payment purpose.');
+      expect(component.errorFor('beneficiary_remarks')).toBe('Add a note for the beneficiary.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
+    });
+
+    it('points the user at the fields rather than only toasting', () => {
+      fillValidForm();
+      component.transfer_amount = '';
+
+      component.proceedTransaction();
+
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Check the highlighted fields',
+        'Enter an amount.'
+      );
+    });
+
+    it('rejects a missing source account', () => {
+      fillValidForm();
+      component.account_id = '';
+
+      component.proceedTransaction();
+
+      expect(toastService.error).toHaveBeenCalledWith(
+        'No source account',
+        'Select the account to transfer from.'
+      );
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a non-numeric amount', () => {
+      fillValidForm();
+      component.transfer_amount = 'invalid';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('transfer_amount')).toBe('Enter a valid positive amount.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a negative amount', () => {
+      fillValidForm();
+      component.transfer_amount = '-100';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('transfer_amount')).toBe('Enter a valid positive amount.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a zero amount', () => {
+      fillValidForm();
+      component.transfer_amount = '0';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('transfer_amount')).toBe('Enter a valid positive amount.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a transfer that exceeds the available balance', () => {
+      fillValidForm();
+      component.balance = '500';
+      component.transfer_amount = '1000';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('transfer_amount')).toContain('exceeds your available balance');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a transfer above the daily limit', () => {
+      fillValidForm();
+      component.balance = '10000000';
+      component.transfer_amount = String(component.dailyTransferLimit + 1);
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('transfer_amount')).toContain('limited to');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a malformed beneficiary account', () => {
+      fillValidForm();
+      component.to_account = 'not-an-account';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('to_account')).toBe('Use a valid account format, such as ACC-492811.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('rejects a transfer to the same account', () => {
+      fillValidForm();
+      component.to_account = 'ACC000001';
+
+      component.proceedTransaction();
+
+      expect(component.errorFor('to_account')).toBe('You cannot transfer to the same account.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    });
+
+    it('hides an error until the user has left the field', () => {
+      component.to_account = '';
+
+      // Untouched: the form must not nag before the user has engaged with it.
+      expect(component.errorFor('to_account')).toBeNull();
+      expect(component.fieldErrors['to_account']).toBe('Enter a beneficiary account number.');
+
+      component.markTouched('to_account');
+      expect(component.errorFor('to_account')).toBe('Enter a beneficiary account number.');
+    });
+
+    it('clears the error once the field is corrected', () => {
+      fillValidForm();
+      component.to_account = '';
+      component.markTouched('to_account');
+      expect(component.errorFor('to_account')).not.toBeNull();
+
+      component.to_account = 'ACC000002';
+      expect(component.errorFor('to_account')).toBeNull();
+    });
+  });
+
+  describe('proceedTransaction() - Successful Transaction', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      // proceedTransaction now awaits a Swal confirmation before posting the transfer.
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
+    });
+
+    it('should process transaction successfully', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
+
+      const mockResponse = { message: 'Transfer created successfully!' };
+      mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.proceedTransaction();
+      tick();
+
+      expect(mockTransactionService.proceedTransaction).toHaveBeenCalledWith(
+        'ACC000001',
+        'ACC000002',
+        '1000',
+        'Test payment',
+        'Thank you'
+      );
+      expect(component.balance).toBe('4000');
+      expect(component.transfer_amount).toBe('');
+      expect(component.sender_remarks).toBe('');
+      expect(component.beneficiary_remarks).toBe('');
+      expect(component.to_account).toBe('');
+      expect(component.isProcessingTransaction).toBe(false);
+    }));
+
+    it('should update balance correctly', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '10000';
+      component.transfer_amount = '2500';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
+
+      const mockResponse = { message: 'Transfer created successfully!' };
+      mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.proceedTransaction();
+      tick();
+
+      expect(component.balance).toBe('7500');
+    }));
+
+    it('should reload transactions after successful transfer', fakeAsync(() => {
+      localStorage.removeItem('demoMode');
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
+
+      const mockResponse = { message: 'Transfer created successfully!' };
+      mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.proceedTransaction();
+      tick();
+
+      expect(mockTransactionService.getTransactions).toHaveBeenCalledWith('ACC000001');
+    }));
+  });
+
+  describe('proceedTransaction() - Error Handling', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      // Confirm the transfer dialog so the service call is actually made.
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
+    });
+
+    it('should handle server error', fakeAsync(() => {
+      spyOn(console, 'error');
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
+
+      const errorResponse = {
+        error: { message: 'Insufficient funds' }
+      };
+
+      mockTransactionService.proceedTransaction.and.returnValue(throwError(() => errorResponse));
+
+      component.proceedTransaction();
+      tick();
+
+      expect(component.errorMessage).toBe('Insufficient funds');
+      expect(component.isProcessingTransaction).toBe(false);
+      expect(console.error).toHaveBeenCalledWith('Error processing transaction:', errorResponse);
+    }));
+
+    it('should handle processing error', fakeAsync(() => {
+      spyOn(console, 'error');
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
+
+      mockTransactionService.proceedTransaction.and.returnValue(of(null));
+      // Force the success handler's post-processing to throw, hitting the catch block.
+      localStorage.removeItem('demoMode');
+      spyOn(component, 'loadDataToTable').and.throwError('Processing error');
+
+      component.proceedTransaction();
+      tick();
+
+      expect(component.isProcessingTransaction).toBe(false);
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Transfer failed',
+        'Failed to process transaction response.'
+      );
+    }));
+  });
+
+  describe('blocking vs non-blocking feedback', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('still asks the user to confirm a transfer before moving money', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Invoice';
+      component.beneficiary_remarks = 'Thanks';
+
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: false }) as any);
+
+      component.proceedTransaction();
+      tick();
+
+      // A transfer is irreversible, so this one must stay modal.
+      expect(Swal.fire).toHaveBeenCalledWith(
+        jasmine.objectContaining({ title: 'Review transfer details' })
+      );
+      // Declining the confirmation must not post the transfer.
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    }));
+
+    it('does not block on a validation failure', fakeAsync(() => {
+      component.account_id = '';
+      component.to_account = '';
+      component.transfer_amount = '';
+
+      component.proceedTransaction();
+      tick();
+
+      expect(toastService.error).toHaveBeenCalled();
+      expect(Swal.fire).not.toHaveBeenCalled();
+    }));
+  });
+
+  describe('sorting the ledger', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      component.account_id = 'ACC000001';
+      component.transactions = [
+        { type: 'Transfer', amount: 500,  date: '2026-03-01T10:00:00', status: 'up' },
+        { type: 'Deposit',  amount: 9000, date: '2026-01-15T10:00:00', status: 'up' },
+        { type: 'Payment',  amount: 100,  date: '2026-02-20T10:00:00', status: 'up' },
+      ];
+    });
+
+    const amounts = () => component.filteredTransactions.map((t: any) => t.amount);
+
+    it('starts unsorted, preserving the ledger order', () => {
+      expect(component.txSort.column).toBeNull();
+      expect(amounts()).toEqual([500, 9000, 100]);
+    });
+
+    it('sorts by amount, largest first', () => {
+      component.txSort.toggle('amount');
+
+      expect(component.txSort.direction).toBe('desc');
+      expect(amounts()).toEqual([9000, 500, 100]);
+    });
+
+    it('cycles descending, ascending, then back to unsorted', () => {
+      component.txSort.toggle('amount');
+      expect(amounts()).toEqual([9000, 500, 100]);
+
+      component.txSort.toggle('amount');
+      expect(component.txSort.direction).toBe('asc');
+      expect(amounts()).toEqual([100, 500, 9000]);
+
+      component.txSort.toggle('amount');
+      expect(component.txSort.column).toBeNull();
+      expect(amounts()).toEqual([500, 9000, 100]);
+    });
+
+    it('sorts by date rather than by its formatted string', () => {
+      component.txSort.toggle('date');
+      component.txSort.toggle('date'); // ascending
+
+      expect(component.filteredTransactions.map((t: any) => t.date)).toEqual([
+        '2026-01-15T10:00:00',
+        '2026-02-20T10:00:00',
+        '2026-03-01T10:00:00',
+      ]);
+    });
+
+    it('switching column starts that column descending', () => {
+      component.txSort.toggle('amount');
+      component.txSort.toggle('amount'); // amount is now ascending
+
+      component.txSort.toggle('date');
+
+      expect(component.txSort.column).toBe('date');
+      expect(component.txSort.direction).toBe('desc');
+    });
+
+    it('returns to page one when a header button changes the sort', () => {
+      // The page reset is wired in the template, so exercise the real button.
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: [] }));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+      component.transactionPage = 3;
+      fixture.detectChanges();
+
+      const sortButton: HTMLButtonElement | null =
+        fixture.nativeElement.querySelector('th button.th-sort');
+      expect(sortButton).not.toBeNull();
+      sortButton!.click();
+
+      // Staying on page 3 of a re-sorted list shows the user rows they did not ask for.
+      expect(component.transactionPage).toBe(1);
+    });
+
+    it('exposes the sort state for assistive tech', () => {
+      expect(component.txSort.stateFor('amount')).toBe('none');
+
+      component.txSort.toggle('amount');
+      expect(component.txSort.stateFor('amount')).toBe('descending');
+      expect(component.txSort.stateFor('date')).toBe('none');
+
+      component.txSort.toggle('amount');
+      expect(component.txSort.stateFor('amount')).toBe('ascending');
+    });
+  });
+
+  describe('transaction reference stability', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      component.account_id = 'ACC000001';
+      component.transactions = [
+        { type: 'Transfer', amount: 500,  date: '2026-03-01T10:00:00', status: 'up' },
+        { type: 'Deposit',  amount: 9000, date: '2026-01-15T10:00:00', status: 'up' },
+        { type: 'Payment',  amount: 100,  date: '2026-02-20T10:00:00', status: 'up' },
+      ];
+    });
+
+    const referenceOfPayment = (): string => {
+      const entry = component.paginatedTransactions.find(
+        (e: any) => e.row.type === 'Payment'
+      )!;
+      return component.transactionReference(entry.row, entry.index);
+    };
+
+    it('keeps a transaction reference stable when the list is filtered', () => {
+      const before = referenceOfPayment();
+
+      component.transactionSearchTerm = 'Payment';
+
+      // A reference derived from the *filtered* position changes the moment the
+      // user searches — the same payment would show a different reference.
+      expect(referenceOfPayment()).toBe(before);
+    });
+
+    it('keeps a transaction reference stable when the list is sorted', () => {
+      const before = referenceOfPayment();
+
+      component.txSort.toggle('amount');
+
+      expect(referenceOfPayment()).toBe(before);
+    });
+  });
+
+  describe('label association', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: [] }));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+      fixture.detectChanges();
+    });
+
+    it('points every field label at a control that exists', () => {
+      const host: HTMLElement = fixture.nativeElement;
+      const labels = Array.from(host.querySelectorAll<HTMLLabelElement>('label.auth-field-label'));
+
+      expect(labels.length).toBeGreaterThan(0);
+
+      labels.forEach((label) => {
+        const target = label.getAttribute('for');
+
+        // A label with no `for` that does not wrap its input names nothing: the
+        // field is announced as blank, and clicking the label does not focus it.
+        expect(target)
+          .withContext(`label "${label.textContent?.trim()}" has no for=`)
+          .toBeTruthy();
+
+        expect(host.querySelector(`#${target}`))
+          .withContext(`label points at #${target}, which does not exist`)
+          .not.toBeNull();
+      });
+    });
+  });
+
+  describe('table semantics', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      mockTransactionService.getAccountDetails.and.returnValue(of({ data: [] }));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+      component.transactions = [
+        { type: 'Transfer', amount: 500, date: '2026-03-01T10:00:00', status: 'up' },
+      ];
+      fixture.detectChanges();
+    });
+
+    it('names the table, so it is not announced as an unlabelled grid', () => {
+      const caption = fixture.nativeElement.querySelector('table caption');
+
+      expect(caption).not.toBeNull();
+      expect(caption.textContent.trim()).toBe('Transaction history');
+    });
+
+    it('scopes every header to its column, so cells are announced with their header', () => {
+      const host = fixture.nativeElement as HTMLElement;
+      const headers = Array.from(host.querySelectorAll<HTMLTableCellElement>('table th'));
+
+      expect(headers.length).toBeGreaterThan(0);
+      headers.forEach((th) => {
+        expect(th.getAttribute('scope'))
+          .withContext(`header "${th.textContent?.trim()}" has no scope`)
+          .toBe('col');
+      });
+    });
+  });
+
+  describe('showToast()', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('should show success toast for successful transfer', () => {
+      const data = { message: 'Transfer created successfully!' };
+
+      component.showToast(data);
+
+      expect(toastService.success).toHaveBeenCalledWith(
+        'Transfer created',
+        'Transfer created successfully!'
+      );
+      expect(toastService.error).not.toHaveBeenCalled();
+    });
+
+    it('should show error toast for failed transfer', () => {
+      const data = { message: 'Transfer failed' };
+
+      component.showToast(data);
+
+      expect(toastService.error).toHaveBeenCalledWith('Transaction failed', 'Transfer failed');
+    });
+
+    it('should handle null data', () => {
+      component.showToast(null);
+
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Transaction failed',
+        'Invalid response from server'
+      );
+    });
+
+    it('should use default message when message is missing', () => {
+      const data = {};
+
+      component.showToast(data);
+
+      expect(toastService.error).toHaveBeenCalledWith('Transaction failed', 'Transaction failed');
+    });
+
+    it('should not open a blocking modal for transfer feedback', () => {
+      component.showToast({ message: 'Transfer created successfully!' });
+
+      expect(Swal.fire).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('loadDataToTable()', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('should load transactions successfully', () => {
+      const mockTransactions = {
+        data: [
+          { id: '1', amount: '1000', date: '2024-01-01' },
+          { id: '2', amount: '500', date: '2024-01-02' }
+        ]
+      };
+
+      mockTransactionService.getTransactions.and.returnValue(of(mockTransactions));
+
+      component.loadDataToTable('ACC001');
+
+      expect(component.transactions).toEqual(mockTransactions.data);
+      expect(component.isLoadingTransactions).toBe(false);
+    });
+
+    it('should handle null response', () => {
+      mockTransactionService.getTransactions.and.returnValue(of(null));
+
+      component.loadDataToTable('ACC001');
+
+      expect(component.transactions).toEqual([]);
+      expect(component.isLoadingTransactions).toBe(false);
+    });
+
+    it('should handle missing data property', () => {
+      mockTransactionService.getTransactions.and.returnValue(of({} as any));
+
+      component.loadDataToTable('ACC001');
+
+      expect(component.transactions).toEqual([]);
+    });
+
+    it('should handle non-array data', () => {
+      mockTransactionService.getTransactions.and.returnValue(of({ data: {} } as any));
+
+      component.loadDataToTable('ACC001');
+
+      expect(component.transactions).toEqual([]);
+    });
+
+    it('should handle server error silently', () => {
+      spyOn(console, 'error');
+      const error = new Error('Network error');
+
+      mockTransactionService.getTransactions.and.returnValue(throwError(() => error));
+
+      component.loadDataToTable('ACC001');
+
+      expect(component.transactions).toEqual([]);
+      expect(component.isLoadingTransactions).toBe(false);
+      expect(console.error).toHaveBeenCalledWith('Error loading transactions:', error);
+      expect(Swal.fire).not.toHaveBeenCalled(); // Silent failure
+    });
+
+    it('should not load transactions with invalid account ID', () => {
+      spyOn(console, 'error');
+
+      component.loadDataToTable(null);
+
+      expect(console.error).toHaveBeenCalledWith('Invalid account ID');
+      expect(mockTransactionService.getTransactions).not.toHaveBeenCalled();
+    });
+
+    it('should not load transactions with empty account ID', () => {
+      spyOn(console, 'error');
+
+      component.loadDataToTable('');
+
+      expect(console.error).toHaveBeenCalledWith('Invalid account ID');
+      expect(mockTransactionService.getTransactions).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Subscription Management', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+    });
+
+    it('should unsubscribe all subscriptions on ngOnDestroy', () => {
+      const mockData = {
+        data: [{
+          account_id: 'ACC001',
+          amount: '5000',
+          account_type: 'SAVINGS',
+          saving_type: 'REGULAR',
+          branch_name: 'Main Branch'
+        }]
+      };
+
+      mockTransactionService.getAccountDetails.and.returnValue(of(mockData));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.loadAccountDetails();
+
+      const subscription = (component as any).subscriptions[0];
+      spyOn(subscription, 'unsubscribe');
+
+      component.ngOnDestroy();
+
+      expect(subscription.unsubscribe).toHaveBeenCalled();
+    });
+  });
+
+  describe('Edge Cases', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TransactionComponent);
+      component = fixture.componentInstance;
+      (Swal.fire as jasmine.Spy).and.returnValue(Promise.resolve({ isConfirmed: true }) as any);
+    });
+
+    it('should handle decimal transfer amounts', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '999.99';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
+
+      const mockResponse = { message: 'Transfer created successfully!' };
+      mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.proceedTransaction();
+      tick();
+
+      expect(component.balance).toBe('4000.01');
+    }));
+
+    it('should handle transfer of entire balance', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '1000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = 'Test payment';
+      component.beneficiary_remarks = 'Thank you';
+
+      const mockResponse = { message: 'Transfer created successfully!' };
+      mockTransactionService.proceedTransaction.and.returnValue(of(mockResponse));
+      mockTransactionService.getTransactions.and.returnValue(of({ data: [] }));
+
+      component.proceedTransaction();
+      tick();
+
+      expect(component.balance).toBe('0');
+    }));
+
+    it('requires the remarks fields, which the form marks as mandatory', fakeAsync(() => {
+      component.account_id = 'ACC000001';
+      component.to_account = 'ACC000002';
+      component.balance = '5000';
+      component.transfer_amount = '1000';
+      component.sender_remarks = '';
+      component.beneficiary_remarks = '';
+
+      component.proceedTransaction();
+      tick();
+
+      expect(component.errorFor('sender_remarks')).toBe('Add a payment purpose.');
+      expect(component.errorFor('beneficiary_remarks')).toBe('Add a note for the beneficiary.');
+      expect(mockTransactionService.proceedTransaction).not.toHaveBeenCalled();
+    }));
+  });
+});

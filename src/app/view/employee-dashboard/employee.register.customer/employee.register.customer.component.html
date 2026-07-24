@@ -1,0 +1,247 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-user-plus"></i> Customer onboarding</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Register Customer</h1>
+      <p class="demo-subtitle">Create a new customer account and link it to your branch.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Registration Form -->
+<section class="demo-section-card animate-slide-up">
+  <div class="mb-6">
+    <h2 class="demo-section-title"><i class="fas fa-user-plus mr-2 text-glass-emerald"></i>Customer Information</h2>
+    <p class="demo-section-helper">Fill in the customer details below. Fields marked <span class="text-red-300">*</span> are required.</p>
+  </div>
+
+  <form class="space-y-5" (ngSubmit)="submit()">
+    <!-- Two-column field grid so the form fills the page instead of a single
+         tall column. Address spans both columns. -->
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <!-- Full Name -->
+      <div>
+        <label for="fullname" class="auth-field-label">
+          Full Name <span class="text-red-300">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-id-card absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+          <input
+            type="text"
+            class="glass-input pl-12 w-full"
+            placeholder="Enter full name"
+            [(ngModel)]="fullname"
+            name="fullname"
+            (blur)="markTouched('fullname')"
+            [class.field-invalid]="errorFor('fullname')"
+            [attr.aria-invalid]="errorFor('fullname') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('fullname') ? 'fullname-error' : null"
+           id="fullname"/>
+        </div>
+        <p *ngIf="errorFor('fullname')" id="fullname-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('fullname') }}
+        </p>
+      </div>
+
+      <!-- Username -->
+      <div>
+        <label for="username" class="auth-field-label">
+          Username <span class="text-red-300">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+          <input
+            type="text"
+            class="glass-input pl-12 w-full"
+            placeholder="Enter username"
+            [(ngModel)]="username"
+            name="username"
+            (blur)="markTouched('username')"
+            [class.field-invalid]="errorFor('username')"
+            [attr.aria-invalid]="errorFor('username') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('username') ? 'username-error' : null"
+           id="username"/>
+        </div>
+        <p *ngIf="errorFor('username')" id="username-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('username') }}
+        </p>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="email" class="auth-field-label">
+          Email <span class="text-red-300">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+          <input
+            type="email"
+            class="glass-input pl-12 w-full"
+            placeholder="Enter email address"
+            [(ngModel)]="email"
+            name="email"
+            (blur)="markTouched('email')"
+            [class.field-invalid]="errorFor('email')"
+            [attr.aria-invalid]="errorFor('email') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('email') ? 'email-error' : null"
+           id="email"/>
+        </div>
+        <p *ngIf="errorFor('email')" id="email-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('email') }}
+        </p>
+      </div>
+
+      <!-- Contact Number -->
+      <div>
+        <label for="contact_no" class="auth-field-label">
+          Contact Number <span class="text-red-300">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-phone absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+          <input
+            type="tel"
+            class="glass-input pl-12 w-full"
+            placeholder="Enter contact number"
+            [(ngModel)]="contact_no"
+            name="contact_no"
+            (blur)="markTouched('contact_no')"
+            [class.field-invalid]="errorFor('contact_no')"
+            [attr.aria-invalid]="errorFor('contact_no') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('contact_no') ? 'contact_no-error' : null"
+           id="contact_no"/>
+        </div>
+        <p *ngIf="errorFor('contact_no')" id="contact_no-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('contact_no') }}
+        </p>
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="password" class="auth-field-label">
+          Password <span class="text-red-300">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+          <input
+            type="password"
+            class="glass-input pl-12 w-full"
+            placeholder="Enter password"
+            [(ngModel)]="password"
+            name="password"
+            (blur)="markTouched('password')"
+            [class.field-invalid]="errorFor('password')"
+            [attr.aria-invalid]="errorFor('password') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('password') ? 'password-error' : null"
+           id="password"/>
+        </div>
+        <p *ngIf="errorFor('password')" id="password-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('password') }}
+        </p>
+      </div>
+
+      <!-- User Type (Disabled) -->
+      <div>
+        <label class="auth-field-label">
+          User Type
+        </label>
+        <div class="relative">
+          <i class="fas fa-users absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+          <input
+            type="text"
+            class="glass-input pl-12 w-full cursor-not-allowed opacity-70"
+            value="Customer"
+            disabled
+           aria-label="Account type" readonly/>
+        </div>
+      </div>
+
+      <!-- Gender -->
+      <div>
+        <label for="gender" class="auth-field-label">
+          Gender <span class="text-red-300">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-venus-mars absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+          <select
+            class="glass-input pl-12 w-full appearance-none cursor-pointer"
+            [(ngModel)]="gender"
+            name="gender"
+            (blur)="markTouched('gender')"
+            [class.field-invalid]="errorFor('gender')"
+            [attr.aria-invalid]="errorFor('gender') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('gender') ? 'gender-error' : null"
+           aria-label="Gender" id="gender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <p *ngIf="errorFor('gender')" id="gender-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('gender') }}
+        </p>
+      </div>
+
+      <!-- Date of Birth -->
+      <div>
+        <label for="dob" class="auth-field-label">
+          Date of Birth <span class="text-red-300">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-calendar absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 z-10"></i>
+          <input
+            type="date"
+            class="glass-input pl-12 w-full appearance-none cursor-pointer"
+            [(ngModel)]="dob"
+            name="dob"
+            (blur)="markTouched('dob')"
+            [class.field-invalid]="errorFor('dob')"
+            [attr.aria-invalid]="errorFor('dob') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('dob') ? 'dob-error' : null"
+           id="dob"/>
+        </div>
+        <p *ngIf="errorFor('dob')" id="dob-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('dob') }}
+        </p>
+      </div>
+
+      <!-- Address (spans both columns) -->
+      <div class="md:col-span-2">
+        <label for="address" class="auth-field-label">
+          Address <span class="text-red-300">*</span>
+        </label>
+        <div class="relative">
+          <i class="fas fa-map-marker-alt absolute left-4 top-4 text-white/50"></i>
+          <textarea
+            class="glass-input pl-12 w-full resize-none"
+            rows="3"
+            placeholder="Enter address"
+            [(ngModel)]="address"
+            name="address"
+            (blur)="markTouched('address')"
+            [class.field-invalid]="errorFor('address')"
+            [attr.aria-invalid]="errorFor('address') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('address') ? 'address-error' : null"
+           id="address"></textarea>
+        </div>
+        <p *ngIf="errorFor('address')" id="address-error" role="alert" class="field-error">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('address') }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="flex gap-3 pt-2">
+      <button
+        type="submit"
+        class="glass-button justify-center"
+        [disabled]="isLoading"
+        [class.opacity-50]="isLoading"
+        [class.cursor-not-allowed]="isLoading"
+      >
+        <i class="fas fa-check-circle mr-2"></i>
+        Register Customer
+      </button>
+    </div>
+  </form>
+</section>

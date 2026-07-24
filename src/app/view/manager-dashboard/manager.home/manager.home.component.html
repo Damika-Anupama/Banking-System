@@ -1,0 +1,275 @@
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-chart-line"></i> Manager command center</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Branch performance, risk, and loan decisions</h1>
+      <p class="demo-subtitle">A professional manager view for reviewing branch health, recent money movement, withdrawals, employee capacity, and pending loan approvals.</p>
+    </div>
+    <a routerLink="/manager-dashboard/manager-loan-approval" class="glass-button w-fit"><i class="fas fa-stamp mr-2"></i>Review loans</a>
+  </div>
+</section>
+<section class="demo-kpi-grid mb-8">
+  <a routerLink="/manager-dashboard/manager-reports" class="demo-kpi-card demo-kpi-card-link demo-tone-emerald" aria-label="View branch reports"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Branch health</p><h2 class="mt-2 text-3xl font-black text-white">{{ branchHealthScore }}%</h2><p class="mt-1 text-xs text-emerald-100">Composite operations score</p></div><div class="demo-kpi-icon"><i class="fas fa-heart-pulse"></i></div></div><span class="demo-kpi-go">View reports <i class="fas fa-arrow-right"></i></span></a>
+  <a routerLink="/manager-dashboard/manager-employees" class="demo-kpi-card demo-kpi-card-link demo-tone-blue" aria-label="View employees"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Accounts</p><h2 class="mt-2 text-3xl font-black text-white">{{ num_accounts | number }}</h2><p class="mt-1 text-xs text-blue-100">Active customer base</p></div><div class="demo-kpi-icon"><i class="fas fa-building-columns"></i></div></div><span class="demo-kpi-go">View team <i class="fas fa-arrow-right"></i></span></a>
+  <a routerLink="/manager-dashboard/manager-loan-approval" class="demo-kpi-card demo-kpi-card-link demo-tone-amber" aria-label="Review pending loans"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Loan queue</p><h2 class="mt-2 text-3xl font-black text-white">{{ pendingLoanCount }}</h2><p class="mt-1 text-xs text-amber-100">Pending decisions</p></div><div class="demo-kpi-icon"><i class="fas fa-file-signature"></i></div></div><span class="demo-kpi-go">Review loans <i class="fas fa-arrow-right"></i></span></a>
+  <a routerLink="/manager-dashboard/manager-loan-approval" class="demo-kpi-card demo-kpi-card-link demo-tone-rose" aria-label="Review overdue installments"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Overdue risk</p><h2 class="mt-2 text-3xl font-black text-white">{{ overdueCount }}</h2><p class="mt-1 text-xs text-rose-100">Installments to review</p></div><div class="demo-kpi-icon"><i class="fas fa-shield-halved"></i></div></div><span class="demo-kpi-go">Review risk <i class="fas fa-arrow-right"></i></span></a>
+</section>
+<section class="grid grid-cols-1 gap-5 xl:grid-cols-3 mb-8">
+  <article class="demo-section-card xl:col-span-2">
+    <div class="flex items-start justify-between gap-4">
+      <div><h2 class="demo-section-title">Transaction volume trend</h2><p class="demo-section-helper">Daily branch movement over the last 7 days.</p></div>
+      <span class="demo-status-pill" [ngClass]="volumeTrendPct >= 0 ? 'demo-status-success' : 'demo-status-danger'">
+        <i class="fas" [ngClass]="volumeTrendPct >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+        {{ volumeTrendPct >= 0 ? '+' : '' }}{{ volumeTrendPct }}%
+      </span>
+    </div>
+    <div class="relative mt-4 h-52">
+      <canvas id="volumeTrendChart"></canvas>
+    </div>
+  </article>
+  <article class="demo-section-card">
+    <h2 class="demo-section-title">Branch health</h2>
+    <p class="demo-section-helper">Signals derived from live branch activity.</p>
+    <div class="mt-5 space-y-4">
+      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Composite health</span><strong>{{ branchHealthScore }}%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-emerald-400" [style.width.%]="branchHealthScore"></div></div></div>
+      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Approval workload</span><strong>{{ approvalWorkloadPct }}%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-cyan-400" [style.width.%]="approvalWorkloadPct"></div></div></div>
+      <div><div class="mb-2 flex justify-between text-sm text-slate-200"><span>Overdue exposure</span><strong>{{ overdueExposurePct }}%</strong></div><div class="h-2 rounded-full bg-white/10"><div class="h-2 rounded-full bg-amber-400" [style.width.%]="overdueExposurePct"></div></div></div>
+    </div>
+  </article>
+</section>
+<!-- Branch context -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="demo-tile">
+      <p class="text-xs uppercase tracking-wider text-slate-400"><i class="fas fa-id-badge mr-2 text-glass-pink"></i>Manager ID</p>
+      <p class="mt-1 text-xl font-extrabold">{{ manager_id || '—' }}</p>
+    </div>
+    <div class="demo-tile">
+      <p class="text-xs uppercase tracking-wider text-slate-400"><i class="fas fa-building mr-2 text-glass-cyan"></i>Branch</p>
+      <p class="mt-1 text-xl font-extrabold">{{ branch_name || '—' }}</p>
+    </div>
+    <div class="demo-tile">
+      <p class="text-xs uppercase tracking-wider text-slate-400"><i class="fas fa-users mr-2 text-glass-emerald"></i>Employees</p>
+      <p class="mt-1 text-xl font-extrabold">{{ num_employees }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Branch Transactions -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <div class="mb-5">
+    <h2 class="demo-section-title"><i class="fas fa-exchange-alt mr-2 text-glass-cyan"></i>Branch transactions</h2>
+    <p class="demo-section-helper">Recent money movement across branch accounts.</p>
+  </div>
+
+  <app-skeleton-table
+    *ngIf="isLoading"
+    class="block"
+    [columns]="transactionSkeletonColumns"
+    [rows]="transactionPageSize"
+    label="Loading branch transactions"
+  ></app-skeleton-table>
+
+  <div *ngIf="!isLoading" class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Branch transactions">
+    <div class="demo-table-toolbar">
+      <div class="relative w-full md:max-w-xs">
+        <input class="glass-input pl-9 w-full" placeholder="Search ID, account, amount…" [(ngModel)]="transactionSearch" (ngModelChange)="onTransactionSearchChange()" name="managerTxSearch" id="managerTxSearch" aria-label="Search branch transactions"/>
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+      </div>
+    </div>
+    <table class="w-full table-fixed">
+        <caption class="sr-only">Branch transactions</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="hidden sm:table-cell w-10 text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Transaction ID</th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th scope="col" class="hidden lg:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">From</th>
+          <th scope="col" class="hidden lg:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">To</th>
+          <th scope="col" class="hidden md:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Time</th>
+          <th scope="col" class="hidden sm:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Direction</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of pagedTransactions; let i = index" class="transition-all duration-300 hover:bg-white/5">
+          <td class="hidden sm:table-cell px-5 py-4 text-white/90 font-mono">{{ transactionRangeStart + i }}</td>
+          <td class="px-5 py-4">
+            <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">{{ transaction.transfer_id }}</span>
+          </td>
+          <td class="px-5 py-4 text-white font-semibold whitespace-nowrap">Rs. {{ transaction.amount | number }}</td>
+          <td class="hidden lg:table-cell px-5 py-4 text-white/90 font-mono truncate">{{ transaction.from_account }}</td>
+          <td class="hidden lg:table-cell px-5 py-4 text-white/90 font-mono truncate">{{ transaction.to_account }}</td>
+          <td class="hidden md:table-cell px-5 py-4 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ transaction.transferd_time | date: 'MMM d, y' }}</td>
+          <td class="hidden sm:table-cell px-5 py-4">
+            <span *ngIf="transaction.direction == 'up'" class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80"><i class="fas fa-arrow-down mr-1"></i>In</span>
+            <span *ngIf="transaction.direction == 'down'" class="glass-badge bg-gradient-to-r from-glass-orange/80 to-glass-pink/80"><i class="fas fa-arrow-up mr-1"></i>Out</span>
+            <span *ngIf="transaction.direction == 'no-change'" class="glass-badge bg-gradient-to-r from-glass-blue/80 to-glass-purple/80"><i class="fas fa-minus mr-1"></i>No Change</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="filteredTransactions.length === 0" class="demo-state-card m-5">
+      <i class="fas fa-exchange-alt"></i>
+      <h3>{{ (transactions && transactions.length) ? 'No matching transactions' : 'No transactions yet' }}</h3>
+      <p>{{ (transactions && transactions.length) ? 'No transactions match your search. Try a different ID, account, or amount.' : 'Branch money movement will appear here as accounts transact.' }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && transactionCount > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+    <p class="text-xs text-white/60">Showing {{ transactionRangeStart }}–{{ transactionRangeEnd }} of {{ transactionCount }} transactions</p>
+    <div class="flex items-center gap-2">
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="transactionPage === 1" [class.opacity-40]="transactionPage === 1" (click)="setTransactionPage(transactionPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+      <span class="text-xs text-white/70">Page {{ transactionPage }} of {{ totalTransactionPages }}</span>
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="transactionPage === totalTransactionPages" [class.opacity-40]="transactionPage === totalTransactionPages" (click)="setTransactionPage(transactionPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- Branch Withdrawals -->
+<section class="demo-section-card mb-8 animate-slide-up">
+  <div class="mb-5">
+    <h2 class="demo-section-title"><i class="fas fa-money-bill-wave mr-2 text-glass-emerald"></i>Branch withdrawals</h2>
+    <p class="demo-section-helper">Cash withdrawal activity for the branch.</p>
+  </div>
+
+  <app-skeleton-table
+    *ngIf="isLoading"
+    class="block"
+    [columns]="withdrawalSkeletonColumns"
+    [rows]="withdrawalPageSize"
+    label="Loading branch withdrawals"
+  ></app-skeleton-table>
+
+  <div *ngIf="!isLoading" class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Branch withdrawals">
+    <table class="w-full table-fixed">
+        <caption class="sr-only">Branch withdrawals</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="hidden sm:table-cell w-10 text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Withdrawal ID</th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th scope="col" class="hidden md:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Account ID</th>
+          <th scope="col" class="hidden md:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Withdrawal Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let withdrawal of pagedWithdrawals; let i = index" class="transition-all duration-300 hover:bg-white/5">
+          <td class="hidden sm:table-cell px-5 py-4 text-white/90 font-mono">{{ withdrawalRangeStart + i }}</td>
+          <td class="px-5 py-4">
+            <span class="glass-badge bg-gradient-to-r from-glass-emerald/80 to-glass-cyan/80">{{ withdrawal.withdrawal_id }}</span>
+          </td>
+          <td class="px-5 py-4 text-white font-semibold whitespace-nowrap">Rs. {{ withdrawal.amount | number }}</td>
+          <td class="hidden md:table-cell px-5 py-4 text-white/90 font-mono truncate">{{ withdrawal.account_id }}</td>
+          <td class="hidden md:table-cell px-5 py-4 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2"></i>{{ withdrawal.withdrawal_time | date: 'MMM d, y' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="withdrawalCount === 0" class="demo-state-card m-5">
+      <i class="fas fa-money-bill-wave"></i>
+      <h3>No withdrawals yet</h3>
+      <p>Cash withdrawal activity for the branch will appear here.</p>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && withdrawalCount > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+    <p class="text-xs text-white/60">Showing {{ withdrawalRangeStart }}–{{ withdrawalRangeEnd }} of {{ withdrawalCount }} withdrawals</p>
+    <div class="flex items-center gap-2">
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="withdrawalPage === 1" [class.opacity-40]="withdrawalPage === 1" (click)="setWithdrawalPage(withdrawalPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+      <span class="text-xs text-white/70">Page {{ withdrawalPage }} of {{ totalWithdrawalPages }}</span>
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="withdrawalPage === totalWithdrawalPages" [class.opacity-40]="withdrawalPage === totalWithdrawalPages" (click)="setWithdrawalPage(withdrawalPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- Late Loan Installments -->
+<section class="demo-section-card animate-slide-up">
+  <div class="mb-5">
+    <h2 class="demo-section-title"><i class="fas fa-exclamation-triangle mr-2 text-glass-orange"></i>Late loan installments</h2>
+    <p class="demo-section-helper">Overdue loan payments requiring attention.</p>
+  </div>
+
+  <app-skeleton-table
+    *ngIf="isLoading"
+    class="block"
+    [columns]="lateInstallmentSkeletonColumns"
+    [rows]="latePageSize"
+    label="Loading late loan installments"
+  ></app-skeleton-table>
+
+  <div *ngIf="!isLoading" class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Late loan installments">
+    <table class="w-full table-fixed">
+        <caption class="sr-only">Late loan installments</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="hidden sm:table-cell w-10 text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">#</th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Installment ID</th>
+          <th scope="col" class="hidden md:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Installment #</th>
+          <th scope="col" class="hidden sm:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Due Date</th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Amount</th>
+          <th scope="col" class="hidden lg:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let loan of pagedLateInstallments; let i = index" class="transition-all duration-300 hover:bg-white/5">
+          <td class="hidden sm:table-cell px-5 py-4 text-white/90 font-mono">{{ lateRangeStart + i }}</td>
+          <td class="px-5 py-4">
+            <span class="glass-badge bg-gradient-to-r from-glass-pink/80 to-glass-orange/80">{{ loan.installment_id }}</span>
+          </td>
+          <td class="hidden md:table-cell px-5 py-4 text-white/90">{{ loan.installment_number }}</td>
+          <td class="hidden sm:table-cell px-5 py-4 text-white/90 whitespace-nowrap"><i class="far fa-calendar mr-2 text-red-400"></i>{{ loan.due_date | date: 'MMM d, y' }}</td>
+          <td class="px-5 py-4 text-white font-semibold whitespace-nowrap">Rs. {{ loan.amount | number }}</td>
+          <td class="hidden lg:table-cell px-5 py-4 text-white/90 font-mono truncate">{{ loan.loan_basic_detail_id }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="lateCount === 0" class="demo-state-card m-5">
+      <i class="fas fa-clipboard-check"></i>
+      <h3>No late installments</h3>
+      <p>Every loan installment in the branch is currently paid on time.</p>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && lateCount > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+    <p class="text-xs text-white/60">Showing {{ lateRangeStart }}–{{ lateRangeEnd }} of {{ lateCount }} installments</p>
+    <div class="flex items-center gap-2">
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="latePage === 1" [class.opacity-40]="latePage === 1" (click)="setLatePage(latePage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+      <span class="text-xs text-white/70">Page {{ latePage }} of {{ totalLatePages }}</span>
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="latePage === totalLatePages" [class.opacity-40]="latePage === totalLatePages" (click)="setLatePage(latePage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- Loan Pipeline Summary -->
+<section class="demo-section-card mt-8 animate-slide-up">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
+    <div>
+      <h2 class="demo-section-title"><i class="fas fa-sitemap mr-2 text-glass-violet"></i>Loan pipeline summary</h2>
+      <p class="demo-section-helper">Application breakdown across all statuses in the current queue.</p>
+    </div>
+    <a routerLink="/manager-dashboard/manager-loan-approval" class="glass-button-secondary text-xs w-fit shrink-0">
+      <i class="fas fa-stamp mr-1"></i>Review queue
+    </a>
+  </div>
+  <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+    <div class="demo-tile text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider"><i class="fas fa-hourglass-half mr-1 text-amber-400"></i>Pending</p>
+      <strong class="mt-2 block text-3xl font-black">{{ pendingLoanCount }}</strong>
+      <p class="mt-1 text-xs text-slate-400">Awaiting decision</p>
+    </div>
+    <div class="demo-tile text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider"><i class="fas fa-circle-check mr-1 text-emerald-400"></i>Approved</p>
+      <strong class="mt-2 block text-3xl font-black">{{ approvedLoanCount }}</strong>
+      <p class="mt-1 text-xs text-slate-400">Cleared for disbursement</p>
+    </div>
+    <div class="demo-tile text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider"><i class="fas fa-circle-xmark mr-1 text-rose-400"></i>Rejected</p>
+      <strong class="mt-2 block text-3xl font-black">{{ rejectedLoanCount }}</strong>
+      <p class="mt-1 text-xs text-slate-400">Declined applications</p>
+    </div>
+    <div class="demo-tile text-center">
+      <p class="text-xs text-slate-400 uppercase tracking-wider"><i class="fas fa-percentage mr-1 text-blue-400"></i>Approval Rate</p>
+      <strong class="mt-2 block text-3xl font-black">{{ loanApprovalRate }}%</strong>
+      <p class="mt-1 text-xs text-slate-400">Of decided applications</p>
+    </div>
+  </div>
+</section>

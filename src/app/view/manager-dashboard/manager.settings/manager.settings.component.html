@@ -1,0 +1,190 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-user-gear"></i> Account settings</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Settings</h1>
+      <p class="demo-subtitle">Update your personal information and preferences.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Loading skeletons mirror the profile/security two-card layout -->
+<div *ngIf="isLoading" class="grid grid-cols-1 gap-6 xl:grid-cols-[1.6fr_1fr]">
+  <app-skeleton-table class="block" [columns]="profileSkeletonColumns" [rows]="4" label="Loading your details"></app-skeleton-table>
+  <app-skeleton-table class="block" [columns]="securitySkeletonColumns" [rows]="4" label="Loading security settings"></app-skeleton-table>
+</div>
+
+<!-- Settings Form -->
+<form *ngIf="!isLoading" (ngSubmit)="saveSettings()" #settingsForm="ngForm" class="space-y-6">
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1.6fr_1fr]">
+    <section class="demo-section-card animate-slide-up">
+      <div class="mb-6">
+        <h2 class="demo-section-title"><i class="fas fa-user-edit mr-2 text-glass-purple"></i>Your details</h2>
+        <p class="demo-section-helper">Update the profile information for your manager account.</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <!-- Username -->
+        <div class="min-w-0">
+          <label class="auth-field-label" for="username">Username <span class="text-red-300">*</span></label>
+          <input
+            type="text"
+            [(ngModel)]="username"
+            name="username"
+            (blur)="markTouched('username')"
+            [class.field-invalid]="errorFor('username')"
+            [attr.aria-invalid]="errorFor('username') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('username') ? 'username-error' : null"
+            class="glass-input w-full"
+            placeholder="Enter username"
+            required
+            minlength="3"
+            id="username"/>
+          <p *ngIf="errorFor('username')" id="username-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('username') }}</p>
+        </div>
+
+        <!-- Full Name -->
+        <div class="min-w-0">
+          <label class="auth-field-label" for="fullname">Full name <span class="text-red-300">*</span></label>
+          <input
+            type="text"
+            [(ngModel)]="fullname"
+            name="fullname"
+            (blur)="markTouched('fullname')"
+            [class.field-invalid]="errorFor('fullname')"
+            [attr.aria-invalid]="errorFor('fullname') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('fullname') ? 'fullname-error' : null"
+            class="glass-input w-full"
+            placeholder="Enter full name"
+            required
+            id="fullname"/>
+          <p *ngIf="errorFor('fullname')" id="fullname-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('fullname') }}</p>
+        </div>
+
+        <!-- Email -->
+        <div class="min-w-0">
+          <label class="auth-field-label" for="email">Email address <span class="text-red-300">*</span></label>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            (blur)="markTouched('email')"
+            [class.field-invalid]="errorFor('email')"
+            [attr.aria-invalid]="errorFor('email') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('email') ? 'email-error' : null"
+            class="glass-input w-full"
+            placeholder="Enter email address"
+            required
+            email
+            id="email"/>
+          <p *ngIf="errorFor('email')" id="email-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('email') }}</p>
+        </div>
+
+        <!-- Contact Number -->
+        <div class="min-w-0">
+          <label class="auth-field-label" for="contactNo">Contact number</label>
+          <input
+            type="tel"
+            [(ngModel)]="contactNo"
+            name="contactNo"
+            class="glass-input w-full"
+            placeholder="Enter contact number"
+            pattern="[0-9]{10}"
+            id="contactNo"/>
+        </div>
+
+        <!-- Date of Birth -->
+        <div class="min-w-0">
+          <label class="auth-field-label" for="dob">Date of birth</label>
+          <input
+            type="date"
+            [(ngModel)]="dob"
+            name="dob"
+            class="glass-input w-full cursor-pointer"
+            id="dob"/>
+        </div>
+
+        <!-- Gender -->
+        <div class="min-w-0">
+          <label class="auth-field-label" for="gender">Gender</label>
+          <select [(ngModel)]="gender" name="gender" id="gender" class="glass-input w-full appearance-none cursor-pointer pr-10">
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+
+        <!-- Address -->
+        <div class="min-w-0 md:col-span-2">
+          <label class="auth-field-label" for="address">Address</label>
+          <textarea
+            [(ngModel)]="address"
+            name="address"
+            class="glass-input w-full resize-none"
+            rows="3"
+            placeholder="Enter address"
+            id="address"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-section-card animate-slide-up self-start">
+      <div class="mb-6">
+        <h2 class="demo-section-title"><i class="fas fa-lock mr-2 text-glass-cyan"></i>Security</h2>
+        <p class="demo-section-helper">Set a new password, or leave empty to keep your current one.</p>
+      </div>
+
+      <div class="min-w-0">
+        <label class="auth-field-label" for="password">Password <span class="text-white/50 text-xs font-normal">(leave empty to keep current)</span></label>
+        <div class="relative">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            (blur)="markTouched('password')"
+            [class.field-invalid]="errorFor('password')"
+            [attr.aria-invalid]="errorFor('password') ? 'true' : null"
+            [attr.aria-describedby]="errorFor('password') ? 'password-error' : null"
+            class="glass-input w-full pr-12"
+            placeholder="Enter new password"
+            id="password"/>
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword">
+            <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        <p *ngIf="errorFor('password')" id="password-error" role="alert" class="field-error"><i class="fas fa-circle-exclamation" aria-hidden="true"></i>{{ errorFor('password') }}</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Actions: stacked full-width on mobile so labels never wrap -->
+  <div class="flex flex-col gap-3 sm:flex-row">
+    <button
+      type="submit"
+      [disabled]="isSaving"
+      class="glass-button w-full justify-center whitespace-nowrap sm:w-auto"
+      [class.opacity-50]="isSaving"
+      [class.cursor-not-allowed]="isSaving"
+    >
+      <i *ngIf="!isSaving" class="fas fa-save mr-2"></i>
+      <i *ngIf="isSaving" class="fas fa-spinner fa-spin mr-2"></i>
+      {{ isSaving ? 'Saving...' : 'Save Changes' }}
+    </button>
+    <button
+      type="button"
+      (click)="resetForm()"
+      [disabled]="isSaving"
+      class="glass-button-secondary w-full justify-center whitespace-nowrap sm:w-auto"
+      [class.opacity-50]="isSaving"
+      [class.cursor-not-allowed]="isSaving"
+    >
+      <i class="fas fa-undo mr-2"></i>
+      Reset
+    </button>
+  </div>
+</form>

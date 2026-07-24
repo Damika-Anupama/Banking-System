@@ -1,0 +1,25 @@
+.route-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.route-progress.is-active {
+  opacity: 1;
+}
+
+.route-progress__bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #3b82f6, #22d3ee, #67e8f9);
+  background-size: 200% 100%;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.7), 0 0 4px rgba(59, 130, 246, 0.6);
+  border-radius: 0 2px 2px 0;
+  transition: width 200ms ease;
+}

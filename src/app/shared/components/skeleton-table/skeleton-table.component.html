@@ -1,0 +1,17 @@
+<div class="skeleton-table" role="status" [attr.aria-label]="label" aria-busy="true">
+  <!-- The shimmer grid is decorative; the role="status" label above is what gets announced. -->
+  <table class="skeleton-table__grid" aria-hidden="true">
+    <thead>
+      <tr>
+        <th scope="col" *ngFor="let column of columnRange">{{ column }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rowRange">
+        <td *ngFor="let column of columnRange; index as columnIndex">
+          <span class="skeleton-table__bar" [style.width]="widthFor(row, columnIndex)"></span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

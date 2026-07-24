@@ -1,0 +1,370 @@
+import { test, expect, Page } from "@playwright/test";
+
+/**
+ * End-to-end coverage for the customer journeys.
+ *
+ * The unit suite spent 1478 green tests while the transaction ledger threw on
+ * every row, because nothing rendered it. These tests drive the real screens in
+ * a real browser, which is the only layer that fails the way a user does.
+ */
+
+const openCustomerDemo = async (page: Page) => {
+  await page.goto("/sign-in");
+  await page
+    .getByRole("button", { name: /Open customer dashboard without sign in/i })
+    .click();
+  await expect(page).toHaveURL(/\/dashboard\/home/);
+};
+
+test.describe("Customer — transaction ledger", () => {
+  test.beforeEach(async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/transaction");
+  });
+
+  test("renders the ledger with rows", async ({ page }) => {
+    const table = page.getByRole("table", { name: /transaction history/i });
+    await expect(table).toBeVisible();
+
+    // The trackBy crash only appeared once a row rendered, so an empty table
+    // would have passed a weaker check than this.
+    await expect(table.locator("tbody tr").first()).toBeVisible();
+  });
+
+  test("sorting by amount reorders the rows and announces the state", async ({
+    page,
+  }) => {
+    const table = page.getByRole("table", { name: /transaction history/i });
+    const amountHeader = table.getByRole("columnheader", { name: /amount/i });
+
+    // The ledger renders in two passes (accounts, then that account's rows);
+    // clicking a header before the rows land can hit a node the re-render
+    // replaces, and the click dies with it.
+    await expect(table.locator("tbody tr").first()).toBeVisible();
+    await expect(amountHeader).toHaveAttribute("aria-sort", "none");
+
+    await amountHeader.getByRole("button").click();
+    await expect(amountHeader).toHaveAttribute("aria-sort", "descending");
+
+    const amounts = await table
+      .locator("tbody tr td:nth-child(5)")
+      .allInnerTexts();
+    // "Rs. 185,000" — strip everything that is not a digit. Keeping "." would
+    // pick up the period in "Rs." and turn 185,000 into 0.185.
+    const numeric = amounts.map((t) => Number(t.replace(/\D/g, "")));
+    expect(numeric).toEqual([...numeric].sort((a, b) => b - a));
+
+    // Third click returns to the ledger's own order.
+    await amountHeader.getByRole("button").click();
+    await expect(amountHeader).toHaveAttribute("aria-sort", "ascending");
+    await amountHeader.getByRole("button").click();
+    await expect(amountHeader).toHaveAttribute("aria-sort", "none");
+  });
+
+  test("column headers are reachable and operable by keyboard", async ({
+    page,
+  }) => {
+    const amountHeader = page
+      .getByRole("table", { name: /transaction history/i })
+      .getByRole("columnheader", { name: /amount/i });
+
+    await amountHeader.getByRole("button").focus();
+    await page.keyboard.press("Enter");
+
+    await expect(amountHeader).toHaveAttribute("aria-sort", "descending");
+  });
+});
+
+test.describe("Customer — linked accounts table", () => {
+  test.beforeEach(async ({ page }) => {
+    await openCustomerDemo(page);
+  });
+
+  test("sorting by balance reorders the accounts and announces the state", async ({
+    page,
+  }) => {
+    const table = page.getByRole("table", { name: /your accounts/i });
+    const balanceHeader = table.getByRole("columnheader", { name: /balance/i });
+
+    await expect(balanceHeader).toHaveAttribute("aria-sort", "none");
+
+    await balanceHeader.getByRole("button").click();
+    await expect(balanceHeader).toHaveAttribute("aria-sort", "descending");
+
+    const balances = await table
+      .locator("tbody tr td:nth-child(6)")
+      .allInnerTexts();
+    const numeric = balances.map((t) => Number(t.replace(/\D/g, "")));
+    expect(numeric).toEqual([...numeric].sort((a, b) => b - a));
+
+    // Third click returns to the account list's own order.
+    await balanceHeader.getByRole("button").click();
+    await expect(balanceHeader).toHaveAttribute("aria-sort", "ascending");
+    await balanceHeader.getByRole("button").click();
+    await expect(balanceHeader).toHaveAttribute("aria-sort", "none");
+  });
+});
+
+test.describe("Customer — print output", () => {
+  test("print media hides the app chrome", async ({ page }) => {
+    await openCustomerDemo(page);
+    await expect(page.locator("aside.glass-sidebar")).toBeVisible();
+
+    await page.emulateMedia({ media: "print" });
+
+    // Paper gets the content, not the navigation shell.
+    await expect(page.locator("aside.glass-sidebar")).toBeHidden();
+    await expect(page.locator(".back-to-top-btn")).toBeHidden();
+  });
+
+  test("the receipt dialog prints, and stays open while doing so", async ({
+    page,
+  }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/transaction");
+
+    await page.evaluate(() => {
+      (window as any).__printCalls = 0;
+      window.print = () => {
+        (window as any).__printCalls++;
+      };
+    });
+
+    await page
+      .getByRole("button", { name: /receipt/i })
+      .first()
+      .click();
+    const dialog = page.locator(".swal2-popup");
+    await expect(dialog).toBeVisible();
+
+    await page.getByRole("button", { name: /print receipt/i }).click();
+
+    expect(await page.evaluate(() => (window as any).__printCalls)).toBe(1);
+    // The receipt is the print content, so it must not close itself first.
+    await expect(dialog).toBeVisible();
+  });
+});
+
+test.describe("Customer — printable documents", () => {
+  test("the FD certificate dialog prints and stays open", async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/fixed-deposit");
+    await page.evaluate(() => {
+      (window as any).__printCalls = 0;
+      window.print = () => {
+        (window as any).__printCalls++;
+      };
+    });
+
+    await page.getByRole("button", { name: /certificate/i }).first().click();
+    const dialog = page.locator(".swal2-popup");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(/maturity value/i)).toBeVisible();
+
+    await page.getByRole("button", { name: /print certificate/i }).click();
+    expect(await page.evaluate(() => (window as any).__printCalls)).toBe(1);
+    await expect(dialog).toBeVisible();
+  });
+
+  test("the loan agreement dialog prints and stays open", async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/loan");
+    await page.evaluate(() => {
+      (window as any).__printCalls = 0;
+      window.print = () => {
+        (window as any).__printCalls++;
+      };
+    });
+
+    await page
+      .getByRole("button", { name: /view loan agreement/i })
+      .first()
+      .click();
+    const dialog = page.locator(".swal2-popup");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(/principal/i)).toBeVisible();
+
+    await page.getByRole("button", { name: /print agreement/i }).click();
+    expect(await page.evaluate(() => (window as any).__printCalls)).toBe(1);
+    await expect(dialog).toBeVisible();
+  });
+});
+
+test.describe("Customer — standing order form", () => {
+  test.beforeEach(async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/payments");
+  });
+
+  test("an empty submission marks each missing field inline, not just a toast", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /create standing order/i }).click();
+
+    for (const field of ["#payee", "#accountId", "#amount"]) {
+      await expect(page.locator(field)).toHaveAttribute("aria-invalid", "true");
+    }
+    await expect(page.locator("#payee-error")).toBeVisible();
+
+    // Focus lands on the first offending field, so keyboard and screen-reader
+    // users are taken to the problem instead of being left on the button.
+    await expect(page.locator("#payee")).toBeFocused();
+  });
+
+  test("a past first-payment date is rejected inline", async ({ page }) => {
+    await page.locator("#payee").fill("Ceylon Electricity Board");
+    await page.locator("#accountId").fill("ACC-880021");
+    await page.locator("#amount").fill("4500");
+    await page.locator("#nextDate").fill("2020-01-01");
+    await page.getByRole("button", { name: /create standing order/i }).click();
+
+    await expect(page.locator("#nextDate-error")).toBeVisible();
+    await expect(page.locator("#nextDate-error")).toHaveText(/cannot be in the past/i);
+  });
+
+  test("seeded orders are upcoming, never overdue", async ({ page }) => {
+    // Fixture dates were once absolute and rotted into "Overdue by 45d";
+    // they are relative now, and this pins that.
+    const table = page.getByRole("table", { name: /standing orders/i });
+    await expect(table.locator("tbody tr").first()).toBeVisible();
+    await expect(table.getByText(/overdue/i)).toHaveCount(0);
+    // The due label renders twice per row — the responsive mobile copy is
+    // display:none at this viewport — so scope to the one actually shown.
+    await expect(
+      table.getByText(/due tomorrow/i).filter({ visible: true })
+    ).toBeVisible();
+  });
+
+  test("a known payee chip prefills the form and moves focus to the amount", async ({
+    page,
+  }) => {
+    // Seeded beneficiaries surface as quick-fill chips.
+    const chip = page.getByRole("button", { name: /Sunil Construction/i });
+    await chip.click();
+
+    await expect(page.locator("#payee")).toHaveValue("Sunil Construction");
+    await expect(page.locator("#accountId")).toHaveValue("ACC-772901");
+    await expect(page.locator("#amount")).toBeFocused();
+  });
+
+  test("a valid order is created and appears in the list", async ({ page }) => {
+    await page.locator("#payee").fill("Dialog Broadband");
+    await page.locator("#accountId").fill("ACC-771234");
+    await page.locator("#amount").fill("3200");
+    await page.getByRole("button", { name: /create standing order/i }).click();
+
+    const table = page.getByRole("table", { name: /standing orders/i });
+    await expect(table.getByText("Dialog Broadband")).toBeVisible();
+  });
+});
+
+test.describe("Customer — transfer form", () => {
+  test.beforeEach(async ({ page }) => {
+    await openCustomerDemo(page);
+    await page.goto("/dashboard/transaction");
+  });
+
+  test("an invalid transfer is rejected inline, not in a blocking dialog", async ({
+    page,
+  }) => {
+    // Step 1 gates on a valid beneficiary account, so a bad one must be named
+    // against the field rather than thrown up as a modal.
+    const beneficiary = page.locator('input[name="to_account"]');
+    await beneficiary.fill("not-an-account");
+    await beneficiary.blur();
+
+    const error = page.locator("#to_account-error");
+    await expect(error).toBeVisible();
+    await expect(error).toHaveText(/valid account format/i);
+    await expect(beneficiary).toHaveAttribute("aria-invalid", "true");
+
+    // No SweetAlert modal: validation must not block.
+    await expect(page.locator(".swal2-container")).toHaveCount(0);
+  });
+
+  test("the error clears once the field is corrected", async ({ page }) => {
+    const beneficiary = page.locator('input[name="to_account"]');
+
+    await beneficiary.fill("nope");
+    await beneficiary.blur();
+    await expect(page.locator("#to_account-error")).toBeVisible();
+
+    await beneficiary.fill("ACC-492811");
+    await expect(page.locator("#to_account-error")).toHaveCount(0);
+  });
+
+  test("clicking a field label focuses its control", async ({ page }) => {
+    // A label with no `for` is decorative; this is the check that it is wired.
+    await page.locator('label[for="to_account"]').click();
+
+    await expect(page.locator('input[name="to_account"]')).toBeFocused();
+  });
+});
+
+test.describe("Customer — navigation and shell", () => {
+  test.beforeEach(async ({ page }) => {
+    await openCustomerDemo(page);
+  });
+
+  test("the current page is marked for assistive tech, not just coloured", async ({
+    page,
+  }) => {
+    await page.goto("/dashboard/transaction");
+
+    const current = page.locator('nav[aria-label="Main"] a[aria-current="page"]');
+    await expect(current).toHaveCount(1);
+    await expect(current).toContainText(/transaction/i);
+  });
+
+  test("breadcrumbs name where the user is", async ({ page }) => {
+    await page.goto("/dashboard/transaction");
+
+    const crumb = page.getByRole("navigation", { name: /breadcrumb/i });
+    await expect(crumb).toBeVisible();
+    await expect(crumb.locator('[aria-current="page"]')).toContainText(
+      /transaction/i
+    );
+  });
+
+  test("pressing ? opens the shortcut sheet, and Esc closes only the sheet", async ({
+    page,
+  }) => {
+    await page.keyboard.press("Shift+Slash");
+    const sheet = page.getByRole("dialog", { name: /keyboard shortcuts/i });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByText(/command palette/i)).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+  });
+
+  test("typing ? into a search field does not open the shortcut sheet", async ({
+    page,
+  }) => {
+    await page.locator("#table_search").click();
+    await page.keyboard.press("Shift+Slash");
+
+    await expect(page.getByRole("dialog", { name: /keyboard shortcuts/i })).toBeHidden();
+    await expect(page.locator("#table_search")).toHaveValue("?");
+  });
+
+  test("the command palette opens, traps focus, and closes on Escape", async ({
+    page,
+  }) => {
+    await page.keyboard.press("Meta+k");
+
+    const dialog = page.getByRole("dialog", { name: /command palette/i });
+    await expect(dialog).toBeVisible();
+    await expect(page.locator("#palette-search-input")).toBeFocused();
+
+    // Tab must not escape a dialog that claims aria-modal.
+    await page.keyboard.press("Tab");
+    const focusedInsideDialog = await dialog.evaluate((el) =>
+      el.contains(document.activeElement)
+    );
+    expect(focusedInsideDialog).toBe(true);
+
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+  });
+});

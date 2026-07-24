@@ -1,0 +1,32 @@
+<main class="auth-shell">
+  <section class="auth-panel">
+    <div class="auth-card animate-scale-in text-center">
+      <img src="assets/logo-dark.png" alt="Banking System logo" class="auth-logo logo-dark-static auth-entry-logo" />
+
+      <div class="my-6">
+        <p class="text-8xl font-black bg-gradient-to-r from-rose-300 to-amber-300 bg-clip-text text-transparent leading-none">500</p>
+        <h1 class="auth-title text-2xl mt-3">Something went wrong</h1>
+        <p class="auth-subtitle text-sm mt-2">
+          A temporary problem stopped this page from loading. Your data is safe — please try again in a moment.
+        </p>
+      </div>
+
+      <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-5 mb-6 text-left space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-wider text-white/50 mb-3">What you can do</p>
+        <button type="button" (click)="retry()" class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-white/80 transition hover:bg-white/10 hover:text-white">
+          <i class="fas fa-rotate-right w-4 text-amber-300"></i> Reload this page
+        </button>
+        <a routerLink="/welcome" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white/80 transition hover:bg-white/10 hover:text-white">
+          <i class="fas fa-home w-4 text-cyan-300"></i> Return to welcome page
+        </a>
+        <a routerLink="/dashboard/home" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white/80 transition hover:bg-white/10 hover:text-white">
+          <i class="fas fa-gauge w-4 text-violet-300"></i> Customer dashboard
+        </a>
+      </div>
+
+      <button type="button" class="glass-button w-full justify-center" (click)="goBack()">
+        <i class="fas fa-arrow-left mr-2"></i> Go back
+      </button>
+    </div>
+  </section>
+</main>

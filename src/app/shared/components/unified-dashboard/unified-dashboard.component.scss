@@ -1,0 +1,259 @@
+// Dashboard specific styles - Combined from all dashboards
+
+// Shared brand constants (accents that are identical in both themes; theme-
+// dependent colours use the CSS custom properties instead).
+$brand-gradient: linear-gradient(135deg, #3b82f6, #22d3ee);
+$brand-gradient-strong: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(34, 211, 238, 0.95));
+$accent-bar-gradient: linear-gradient(180deg, #67e8f9, #3b82f6);
+$accent-cyan: #67e8f9;
+$focus-ring: rgba(34, 211, 238, 0.75);
+
+// Skip to main content link (accessibility) — hidden until keyboard-focused
+.skip-to-content {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -150%);
+  z-index: 9999;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: $brand-gradient;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.5);
+  transition: transform 200ms ease;
+}
+
+.skip-to-content:focus,
+.skip-to-content:focus-visible {
+  transform: translate(-50%, 0);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+main:focus,
+main:focus-visible {
+  outline: none;
+}
+
+// Floating "back to top" button
+.back-to-top-btn {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(103, 232, 249, 0.35);
+  border-radius: 9999px;
+  background: $brand-gradient-strong;
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 10px 30px rgba(8, 145, 178, 0.45);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(16px) scale(0.85);
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
+}
+
+.back-to-top-btn.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.back-to-top-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 14px 38px rgba(8, 145, 178, 0.6);
+}
+
+.back-to-top-btn:focus-visible {
+  outline: 2px solid $focus-ring;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top-btn {
+    transition: opacity 220ms ease;
+    transform: none;
+  }
+  .back-to-top-btn.is-visible {
+    transform: none;
+  }
+}
+
+// Customer dashboard nav links
+.nav-link-item {
+  position: relative;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--text-primary);
+    outline: 2px solid $focus-ring;
+    outline-offset: 3px;
+  }
+}
+
+// Employee/Manager dashboard nav links
+.nav-item {
+  position: relative;
+  color: var(--text-secondary);
+  background: transparent;
+  text-decoration: none;
+  @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--text-primary);
+    background: var(--glass-bg);
+    text-decoration: none;
+    outline: 2px solid $focus-ring;
+    outline-offset: 3px;
+  }
+}
+
+// Active nav state — one definition shared by both dashboard flavours.
+.nav-link-item.active-link,
+.nav-item.active-nav-item {
+  color: var(--text-primary);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3));
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+
+  // "You are here" accent bar on the active item
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 58%;
+    border-radius: 0 4px 4px 0;
+    background: $accent-bar-gradient;
+    box-shadow: 0 0 8px rgba(103, 232, 249, 0.7);
+  }
+
+  i {
+    color: $accent-cyan;
+  }
+}
+
+.sidebar-action-btn {
+  color: var(--text-secondary);
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid var(--glass-border);
+  @apply flex h-10 items-center justify-center rounded-xl transition-all duration-300;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--text-primary);
+    background: var(--glass-hover);
+    transform: translateY(-1px);
+    outline: 2px solid $focus-ring;
+    outline-offset: 3px;
+  }
+}
+
+/* NB: the light-mode nav-state overrides (hover tint, active colours) live in
+   the GLOBAL demo-design-system.scss — `html:not(.dark)` selectors inside this
+   encapsulated stylesheet would be scoped to `html[_ngcontent-…]` and never
+   match the real <html>. */
+
+.nav-icon {
+  @apply text-xl;
+}
+
+// Animations
+.animate-slide-right {
+  animation: slideRight 0.3s ease-out;
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .customer-dashboard-shell {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .customer-dashboard-content {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .sidebar-wrapper {
+    left: 0;
+  }
+}
+
+/* Breadcrumb */
+.demo-breadcrumb ol {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+}
+
+.demo-breadcrumb a {
+  color: var(--text-secondary);
+  opacity: 0.85;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.demo-breadcrumb a:hover {
+  color: var(--text-primary);
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.demo-breadcrumb a:focus-visible {
+  outline: 2px solid rgba(96, 165, 250, 0.9);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+.demo-breadcrumb [aria-current='page'] {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.demo-breadcrumb-sep {
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  font-size: 0.6rem;
+}
+
+/* NB: the light-mode breadcrumb overrides live in the GLOBAL stylesheet
+   (demo-design-system.scss), not here. An `html:not(.dark)` selector inside a
+   component's encapsulated SCSS gets scoped to `html[_ngcontent-…]`, which never
+   matches the real <html>, so it would be dead. */

@@ -1,0 +1,6 @@
+// All page styling comes from the shared demo-* primitives and Tailwind
+// utilities in the template; only the host layout rule remains.
+:host {
+  display: block;
+  width: 100%;
+}

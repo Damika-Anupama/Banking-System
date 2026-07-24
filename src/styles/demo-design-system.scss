@@ -1,0 +1,1472 @@
+/* Shared client-demo dashboard design system.
+   Use these primitives before adding page-specific one-off classes. */
+
+.settings-readonly-card,
+.settings-security-row {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.settings-readonly-card span,
+.settings-security-row span {
+  display: block;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+}
+
+.settings-readonly-card strong,
+.settings-security-row strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.settings-security-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Native date inputs: match the browser widget colours to the active theme
+   so webkit stops rendering light field segments on dark glass inputs. */
+input[type="date"] {
+  color-scheme: light;
+}
+
+html.dark input[type="date"],
+.auth-shell input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+/* Sidebar profile card + identity — theme-aware so the name and dividers stay visible in light mode. */
+.profile-name { color: #ffffff; }
+
+html:not(.dark) .profile-name { color: #0f172a; }
+
+html:not(.dark) .profile-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(37, 99, 235, 0.18);
+}
+
+html:not(.dark) .profile-card .text-white\/50 { color: #64748b; }
+html:not(.dark) .profile-card .text-white\/40 { color: #94a3b8; }
+
+/* Faint white dividers inside the sidebar need a darker tint to show in light mode. */
+html:not(.dark) .glass-sidebar .border-white\/10 {
+  border-color: rgba(37, 99, 235, 0.14);
+}
+
+/* Compact icon action buttons (loan table) — theme-aware. */
+.loan-action-btn {
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm transition;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+.loan-action-btn:hover { background: rgba(255, 255, 255, 0.14); }
+.loan-action-btn--primary {
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #ffffff;
+  border-color: transparent;
+}
+.loan-action-btn--primary:hover { filter: brightness(1.08); background: linear-gradient(135deg, #2563eb, #06b6d4); }
+
+html:not(.dark) .loan-action-btn { border-color: rgba(15, 23, 42, 0.14); background: rgba(15, 23, 42, 0.04); color: #334155; }
+html:not(.dark) .loan-action-btn:hover { background: rgba(15, 23, 42, 0.09); }
+html:not(.dark) .loan-action-btn--primary { color: #ffffff; }
+
+/* Approve / reject decision buttons (loan approvals, requests) */
+.decision-btn {
+  @apply inline-flex items-center justify-center gap-1 rounded-xl px-4 py-2 text-xs font-semibold transition active:scale-95;
+  border: 1px solid transparent;
+}
+.decision-btn--approve {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #6ee7b7;
+}
+.decision-btn--approve:hover { background: rgba(16, 185, 129, 0.28); color: #d1fae5; }
+.decision-btn--reject {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #fda4af;
+}
+.decision-btn--reject:hover { background: rgba(244, 63, 94, 0.26); color: #ffe4e6; }
+
+/* Stronger fills + darker ink in light mode — the pale washes read as disabled. */
+html:not(.dark) .decision-btn--approve { background: rgba(16, 185, 129, 0.18); border-color: rgba(5, 150, 105, 0.55); color: #065f46; }
+html:not(.dark) .decision-btn--approve:hover { background: rgba(16, 185, 129, 0.3); color: #064e3b; }
+html:not(.dark) .decision-btn--reject { background: rgba(244, 63, 94, 0.16); border-color: rgba(190, 18, 60, 0.5); color: #9f1239; }
+html:not(.dark) .decision-btn--reject:hover { background: rgba(244, 63, 94, 0.26); color: #881337; }
+
+/* Card tiles (payment cards page): hover lift + motion. Hoisted from the cards
+   component so the page can drop its local stylesheet on migration. */
+.card-tile {
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 240ms ease;
+  will-change: transform;
+}
+
+.card-tile:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 18px 40px rgba(8, 47, 73, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-tile,
+  .card-tile:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Card tiles keep light text on their coloured gradient regardless of app theme. */
+html:not(.dark) .card-tile,
+html:not(.dark) .card-tile * {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.settings-toggle {
+  position: relative;
+  height: 1.5rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.18);
+  transition: background-color 180ms ease;
+  cursor: pointer;
+}
+
+/* Off-state track: the white-alpha fill vanishes on light cards. */
+html:not(.dark) .settings-toggle {
+  background: rgba(15, 23, 42, 0.18);
+}
+
+.settings-toggle.is-on {
+  background: rgba(52, 211, 153, 0.85);
+}
+
+/* On-state track in light mode: the light-mode off-track rule above outranks
+   `.settings-toggle.is-on`, so without this the toggle read as permanently off. */
+html:not(.dark) .settings-toggle.is-on {
+  background: rgba(5, 150, 105, 0.9);
+}
+
+.settings-toggle::after {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 180ms ease;
+}
+
+.settings-toggle.is-on::after {
+  transform: translateX(1.25rem);
+}
+
+.settings-security-row span {
+  margin-bottom: 0;
+}
+
+html:not(.dark) .settings-readonly-card,
+html:not(.dark) .settings-security-row {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(37, 99, 235, 0.12);
+}
+
+html:not(.dark) .settings-readonly-card span,
+html:not(.dark) .settings-security-row span {
+  color: #64748b;
+}
+
+html:not(.dark) .settings-readonly-card strong,
+html:not(.dark) .settings-security-row strong {
+  color: #0f172a;
+}
+
+.auth-shell {
+  @apply overflow-x-hidden px-4 sm:px-6 lg:px-8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Responsive vertical breathing room that shrinks on short viewports so the
+     card can stay fully on screen without introducing a scrollbar. */
+  padding-top: clamp(0.75rem, 3vh, 2rem);
+  padding-bottom: clamp(0.75rem, 3vh, 2rem);
+  color: #f8fafc;
+  background:
+    radial-gradient(ellipse at 18% 12%, rgba(37, 99, 235, 0.42) 0%, transparent 38%),
+    radial-gradient(ellipse at 85% 8%, rgba(6, 182, 212, 0.26) 0%, transparent 32%),
+    radial-gradient(ellipse at 50% 92%, rgba(67, 56, 202, 0.20) 0%, transparent 44%),
+    linear-gradient(155deg, #040c1c 0%, #07132a 48%, #0b1c3f 100%);
+  background-attachment: fixed;
+}
+
+/* ------------------------------------------------------------------ *
+ * The auth shell (welcome / sign-in / sign-up / 404 / 500) is an       *
+ * intentional dark brand surface in BOTH themes. The global light-mode *
+ * utility mappings resolve foreground text to dark ink via the theme   *
+ * tokens, which turned CTA labels, feature cards, dividers and the 404 *
+ * quick-links panel dark-on-dark. Re-pinning the text tokens inside    *
+ * the shell flips every var()-based mapping (element resets, .text-    *
+ * white, text-white/*, slate/gray mappings, labels) back to            *
+ * light-on-dark without duplicating any of those rules.                *
+ * ------------------------------------------------------------------ */
+html:not(.dark) .auth-shell {
+  --text-primary: #f8fafc;
+  --text-secondary: rgba(226, 232, 240, 0.85);
+}
+
+/* Hex-based light-mode overrides that leak into the shell get re-pinned to
+   their dark-surface values ("Trusted digital banking" pill on welcome). */
+html:not(.dark) .auth-shell .demo-status-info {
+  border-color: rgba(103, 232, 249, 0.40);
+  background: rgba(6, 182, 212, 0.15);
+  color: #a5f3fc;
+}
+
+.auth-panel {
+  /* No forced min-height here: the shell already centres content and owns the
+     viewport height. Stacking a min-height on the panel used to push total
+     content past 100vh and create a permanent vertical scrollbar. */
+  @apply mx-auto flex w-full items-center justify-center;
+}
+
+.auth-brand-card,
+.auth-card {
+  @apply w-full rounded-[2rem] p-6 backdrop-blur-xl sm:p-8;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 32px 64px rgba(2, 6, 23, 0.6),
+    0 0 80px rgba(37, 99, 235, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.auth-brand-card {
+  @apply mx-auto max-w-2xl text-center;
+}
+
+.auth-card {
+  @apply max-w-md;
+}
+
+.auth-logo-switcher {
+  @apply mx-auto flex justify-center;
+}
+
+.auth-logo {
+  @apply mx-auto mb-5 h-24 w-auto rounded-3xl px-5 py-3 shadow-2xl shadow-blue-950/30 ring-1;
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(226, 232, 240, 0.9);
+  object-fit: contain;
+}
+
+.logo-dark,
+.logo-dark-static {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(34, 211, 238, 0.24);
+}
+
+.logo-dark {
+  display: none;
+}
+
+.dark .logo-light {
+  display: none;
+}
+
+.dark .logo-dark {
+  display: block;
+}
+
+.auth-error-text {
+  @apply mt-2 text-sm font-medium text-rose-200;
+}
+
+/* Advisory, not blocking: Caps Lock warnings under masked password fields. */
+.auth-warning-text {
+  @apply mt-2 text-sm font-medium text-amber-200;
+}
+
+.auth-input-error {
+  border-color: rgba(251, 113, 133, 0.75) !important;
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.16) !important;
+}
+
+.auth-title {
+  @apply mt-4 text-2xl font-black tracking-tight sm:text-4xl;
+  color: #f8fafc !important;
+  text-shadow: 0 2px 24px rgba(37, 99, 235, 0.18);
+}
+
+.auth-subtitle {
+  @apply mx-auto mt-3 max-w-2xl text-sm leading-6 sm:text-base sm:leading-7;
+  color: rgba(186, 200, 220, 0.90) !important;
+}
+
+.auth-actions {
+  @apply mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row;
+}
+
+.auth-note {
+  @apply mt-5 text-sm text-slate-400;
+}
+
+.welcome-bank-card {
+  @apply relative overflow-hidden;
+}
+
+.welcome-logo,
+.auth-entry-logo {
+  @apply mb-4 h-24 px-6 py-4 sm:mb-5 sm:h-28;
+}
+
+.welcome-bank-card::before {
+  content: '';
+  position: absolute;
+  inset: 1rem;
+  z-index: -1;
+  border-radius: 1.75rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%, rgba(34, 211, 238, 0.08));
+}
+
+.welcome-value-grid {
+  @apply mx-auto mt-6 grid max-w-4xl grid-cols-2 gap-3 lg:grid-cols-4;
+}
+
+.welcome-value-card {
+  @apply flex flex-col items-center justify-center gap-2 rounded-2xl px-3 py-3 text-sm font-bold shadow-lg transition duration-300 hover:-translate-y-1 sm:rounded-3xl sm:px-4 sm:py-4;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 8px 32px rgba(2, 6, 23, 0.35), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  &:hover {
+    background: rgba(255, 255, 255, 0.10) !important;
+    border-color: rgba(103, 232, 249, 0.30) !important;
+  }
+}
+
+.welcome-value-card i {
+  @apply text-2xl;
+  color: #5eead4 !important;
+}
+
+.auth-field-label {
+  @apply mb-2 block text-sm font-semibold;
+  color: rgba(186, 200, 220, 0.95) !important;
+}
+
+/* Light-mode label ink: the pale lavender base reads well below 4.5:1 on white
+   cards. var(--text-secondary) resolves to slate-600 (#475569) on light
+   surfaces and is re-pinned to light ink inside the always-dark auth shell,
+   so this single rule darkens dashboard form labels without touching the
+   auth pages or dark mode. */
+html:not(.dark) .auth-field-label {
+  color: var(--text-secondary, #475569) !important;
+}
+
+/* Dark glass inputs for auth pages (override light-mode --input-bg variable) */
+.auth-shell .glass-input {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #f8fafc !important;
+  &::placeholder { color: rgba(148, 163, 184, 0.55) !important; }
+  &:focus {
+    border-color: rgba(103, 232, 249, 0.55) !important;
+    box-shadow: 0 0 0 3px rgba(103, 232, 249, 0.12) !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+  }
+}
+
+.auth-demo-grid {
+  @apply grid grid-cols-3 gap-2 sm:gap-3;
+}
+
+.auth-demo-btn {
+  @apply flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition hover:-translate-y-0.5 focus-visible:outline-cyan-300;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(103, 232, 249, 0.28) !important;
+  color: #e2f8ff !important;
+  &:hover {
+    background: rgba(6, 182, 212, 0.18) !important;
+    border-color: rgba(103, 232, 249, 0.55) !important;
+    color: #fff !important;
+  }
+}
+
+.auth-link {
+  @apply font-semibold transition;
+  color: #67e8f9 !important;
+  &:hover { color: #ffffff !important; }
+}
+.auth-shell .auth-link:focus-visible {
+  outline: 2px solid rgba(103, 232, 249, 0.7);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* ------------------------------------------------------------------ *
+ * Inline leading icons inside auth inputs. The icon lives in the      *
+ * field (not the label) and lights up cyan on focus / rose on error.  *
+ * Height-neutral: it overlays the input, so the no-scroll tiers below *
+ * are unaffected.                                                     *
+ * ------------------------------------------------------------------ */
+.auth-input-wrap { position: relative; }
+/* Two-class specificity so the icon colour wins over the global
+   `i, .fa, .fas { color: inherit }` reset (which would otherwise make it white). */
+.auth-shell .auth-input-icon {
+  position: absolute;
+  left: 0.95rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: rgba(148, 163, 184, 0.6);
+  pointer-events: none;
+  transition: color 160ms ease;
+  z-index: 1;
+}
+.auth-shell .glass-input.has-leading-icon { padding-left: 2.65rem; }
+.auth-input-wrap:focus-within .auth-input-icon { color: rgba(103, 232, 249, 0.95); }
+.auth-input-wrap:has(.auth-input-error) .auth-input-icon { color: rgba(251, 113, 133, 0.85); }
+
+/* ------------------------------------------------------------------ *
+ * Demo role launchers — the landing page's headline feature. The icon *
+ * gets a rounded chip and the whole control has clear hover / active /*
+ * focus feedback. Kept as a single row so button height barely grows  *
+ * and the short-viewport tiers still fit.                             *
+ * ------------------------------------------------------------------ */
+.auth-shell .auth-demo-btn i {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 1.75rem !important;
+  height: 1.75rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: #67e8f9 !important;
+  background: rgba(103, 232, 249, 0.12);
+  border: 1px solid rgba(103, 232, 249, 0.26);
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+.auth-demo-btn:hover i {
+  transform: translateY(-1px) scale(1.06);
+  background: rgba(103, 232, 249, 0.22);
+  border-color: rgba(103, 232, 249, 0.5);
+}
+.auth-demo-btn:active { transform: translateY(0) scale(0.985); }
+.auth-demo-btn:focus-visible {
+  outline: 2px solid rgba(103, 232, 249, 0.7);
+  outline-offset: 2px;
+}
+
+/* A crisper focus ring on the primary auth CTA and the password toggle. */
+.auth-shell .glass-button:focus-visible {
+  outline: 2px solid rgba(103, 232, 249, 0.85);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Password show/hide toggle — one definition for every auth form      *
+ * (was duplicated byte-for-byte in sign-in and sign-up).              *
+ * ------------------------------------------------------------------ */
+.password-field-wrap {
+  position: relative;
+}
+
+.password-field-wrap .password-input {
+  padding-right: 3rem;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.55);
+  background: transparent;
+  border: none;
+  border-radius: 0 0.9rem 0.9rem 0;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.password-toggle-btn:hover,
+.password-toggle-btn:focus-visible {
+  color: rgba(103, 232, 249, 0.95);
+  outline: none;
+}
+
+.password-toggle-btn:focus-visible {
+  box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.5);
+}
+
+/* Demo role launchers — disabled / loading feedback (shared by welcome and
+   sign-in; !important so the states beat the base .auth-demo-btn fills). */
+.auth-demo-btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.auth-demo-btn.is-loading {
+  opacity: 1;
+  border-color: rgba(103, 232, 249, 0.55) !important;
+  background: rgba(34, 211, 238, 0.16) !important;
+}
+
+/* "No sign-in required" divider row: replaces the utility string + two
+   flanking <span class="h-px flex-1 bg-white/15"> lines with one class —
+   <div class="auth-divider">label</div>. */
+.auth-divider {
+  @apply my-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em];
+  color: #94a3b8;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  height: 1px;
+  flex: 1 1 0%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ------------------------------------------------------------------ *
+ * Welcome platform-stats strip + reveal animation (hoisted from       *
+ * welcome.component.scss, tokenized; keeps the --reveal-delay API).   *
+ * ------------------------------------------------------------------ */
+.welcome-stats-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 1.25rem 0 0;
+  padding: 0.875rem 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  flex-wrap: wrap;
+  row-gap: 0.75rem;
+}
+
+.welcome-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1.25rem;
+  flex: 1;
+  min-width: 80px;
+}
+
+.welcome-stat-number {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.welcome-stat-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.2rem;
+  text-align: center;
+}
+
+.welcome-stat-divider {
+  width: 1px;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+/* Staggered entrance for the value highlight cards. */
+.welcome-value-card.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: welcome-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+@keyframes welcome-reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-value-card.reveal {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Auth pages (welcome / sign-in / sign-up): fit within the viewport   *
+ * at any display size without a horizontal or vertical scrollbar.     *
+ * The rules below progressively compress vertical rhythm as the       *
+ * viewport gets shorter, so tall content (e.g. the sign-up form) still *
+ * fits on landscape phones and small laptops. Selectors are scoped to  *
+ * `.auth-shell` and use a two-class specificity so they win over the   *
+ * Tailwind utilities in the markup.                                    *
+ * ------------------------------------------------------------------ */
+
+/* The cards size via w-full + their own max-w-* utility (sign-in md, sign-up
+   xl, welcome 2xl). The shell's overflow-x-hidden and px padding already keep
+   them within the viewport, so we deliberately do NOT force max-width:100% here
+   — that higher-specificity rule used to override the max-w-* utilities and
+   stretch every card to the full shell width. */
+
+/* Always-on compaction so even tall phones fit the whole card on screen. */
+.auth-shell .auth-logo { height: 3.75rem; }
+.auth-shell .welcome-logo,
+.auth-shell .auth-entry-logo { height: 4.5rem; }
+.auth-shell form { margin-top: 1.5rem; }
+.auth-shell form > * + * { margin-top: 1.1rem; }
+.auth-shell .my-6,
+.auth-shell .auth-divider { margin-top: 1.1rem; margin-bottom: 1.1rem; }
+.auth-shell .mt-6 { margin-top: 1.1rem; }
+.auth-shell .mt-7 { margin-top: 1.35rem; }
+
+/* Tier 1 — most laptops and every phone (<=900px tall): trim rhythm. */
+@media (max-height: 900px) {
+  .auth-shell .auth-card,
+  .auth-shell .auth-brand-card { padding: 1.2rem; }
+  .auth-shell .auth-logo { margin-bottom: 0.55rem; height: 3rem; padding-top: 0.4rem; padding-bottom: 0.4rem; }
+  .auth-shell .welcome-logo,
+  .auth-shell .auth-entry-logo { margin-bottom: 0.55rem; height: 3.4rem; }
+  .auth-shell .auth-title { margin-top: 0.5rem; font-size: 1.4rem; line-height: 1.12; }
+  .auth-shell .auth-subtitle { margin-top: 0.4rem; font-size: 0.82rem; line-height: 1.35; }
+  .auth-shell form { margin-top: 1rem; }
+  .auth-shell form > * + * { margin-top: 0.85rem; }
+  .auth-shell .my-6,
+  .auth-shell .auth-divider { margin-top: 0.8rem; margin-bottom: 0.8rem; }
+  .auth-shell .mt-6 { margin-top: 0.8rem; }
+  .auth-shell .mt-7 { margin-top: 1rem; }
+  .auth-shell .welcome-value-grid { margin-top: 0.7rem; gap: 0.5rem; }
+  .auth-shell .welcome-value-card { min-height: 0; padding: 0.5rem; gap: 0.3rem; }
+  .auth-shell .welcome-value-card i { font-size: 1rem; }
+  .auth-shell .welcome-stats-strip { margin-top: 0.6rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .auth-shell .auth-actions { margin-top: 0.8rem; }
+  .auth-shell .glass-input { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+  .auth-shell .glass-button { padding-top: 0.7rem !important; padding-bottom: 0.7rem !important; }
+  .auth-shell .auth-demo-btn { padding-top: 0.55rem; padding-bottom: 0.55rem; }
+  .auth-shell label.flex { padding: 0.7rem; }
+}
+
+/* The platform-stats strip on the welcome page is purely decorative; drop it
+   on narrow (phone) viewports where the content-heavy landing page would
+   otherwise overflow. Wide laptops — which fit it thanks to less text wrap —
+   keep it. Very short landscape phones are handled by Tier 3 below.
+   !important: this element is styled in the component's encapsulated
+   stylesheet, whose attribute-scoped selector ties on specificity and would
+   otherwise win by source order. */
+@media (max-width: 540px) and (max-height: 900px) {
+  .auth-shell .welcome-stats-strip { display: none !important; }
+}
+
+/* On any shortish viewport, pair up the sign-up field grid (name/email,
+   password/confirm) into two columns so four stacked inputs become two rows
+   and the form fits vertically. Triggered generously (<=820px tall) so small
+   portrait phones (e.g. 360x740) fit without a scrollbar. */
+@media (max-height: 820px) {
+  .auth-shell .grid.gap-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+}
+
+/* Tier 2 — small phones / short laptops (<=720px tall). */
+@media (max-height: 720px) {
+  .auth-shell .auth-card,
+  .auth-shell .auth-brand-card { padding: 1.15rem; }
+  .auth-shell .auth-logo { height: 2.85rem; margin-bottom: 0.5rem; }
+  .auth-shell .welcome-logo,
+  .auth-shell .auth-entry-logo { height: 3.1rem; margin-bottom: 0.5rem; }
+  .auth-shell .auth-title { margin-top: 0.45rem; font-size: 1.2rem; }
+  .auth-shell .auth-subtitle { margin-top: 0.3rem; font-size: 0.78rem; line-height: 1.3; }
+  .auth-shell form { margin-top: 0.5rem; }
+  .auth-shell form > * + * { margin-top: 0.4rem; }
+  .auth-shell .grid.gap-4 { gap: 0.4rem; }
+  .auth-shell .welcome-value-grid { margin-top: 0.5rem; gap: 0.4rem; }
+  .auth-shell .welcome-value-card { padding: 0.4rem; }
+  .auth-shell .welcome-stats-strip { margin-top: 0.5rem; }
+  .auth-shell .auth-actions { margin-top: 0.5rem; }
+  .auth-shell .my-6,
+  .auth-shell .auth-divider { margin-top: 0.45rem; margin-bottom: 0.45rem; }
+  .auth-shell .mt-6 { margin-top: 0.45rem; }
+  .auth-shell .glass-input { padding-top: 0.35rem; padding-bottom: 0.35rem; }
+  .auth-shell .glass-button { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+  .auth-shell .auth-demo-btn { padding-top: 0.4rem; padding-bottom: 0.4rem; }
+  .auth-shell label.flex { padding: 0.45rem; }
+  .auth-shell .auth-field-label { margin-bottom: 0.15rem; }
+  .auth-shell .auth-error-text,
+  .auth-shell .auth-warning-text { margin-top: 0.15rem; }
+}
+
+/* Tier 3 — landscape phones and other very short viewports (<=560px tall):
+   compress to the minimum and drop purely decorative rows so the actionable
+   content still fits without a scrollbar. */
+@media (max-height: 560px) {
+  .auth-shell .auth-card,
+  .auth-shell .auth-brand-card { padding: 0.65rem; }
+  .auth-shell { padding-top: 0.4rem; padding-bottom: 0.4rem; }
+  .auth-shell .auth-logo,
+  .auth-shell .welcome-logo,
+  .auth-shell .auth-entry-logo { height: 1.6rem; margin-bottom: 0.25rem; }
+  .auth-shell .auth-title { margin-top: 0.2rem; font-size: 0.95rem; line-height: 1.1; }
+  /* The descriptive subtitle, decorative stats strip and demo helper line are
+     dropped on ultra-short viewports so the actual controls stay on screen. */
+  .auth-shell .auth-subtitle { display: none; }
+  .auth-shell .welcome-stats-strip { display: none !important; }
+  .auth-shell .text-cyan-50 { display: none; }
+  /* Drop the decorative "no sign-in required" separator rows and tighten the
+     info box so the demo entry buttons and form stay on screen. */
+  .auth-shell .my-6.flex,
+  .auth-shell .auth-divider { display: none; }
+  .auth-shell .p-4 { padding: 0.45rem; }
+  .auth-shell form { margin-top: 0.4rem; }
+  .auth-shell form > * + * { margin-top: 0.3rem; }
+  /* Two-up the sign-up field pairs on short viewports so 4 stacked inputs
+     become 2 rows and the form fits without scrolling. */
+  .auth-shell .grid.gap-4 { gap: 0.4rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .auth-shell .auth-demo-grid { gap: 0.3rem; }
+  .auth-shell .welcome-value-grid { margin-top: 0.35rem; gap: 0.35rem; }
+  .auth-shell .welcome-value-card { padding: 0.3rem; }
+  .auth-shell .welcome-value-card span { font-size: 0.72rem; }
+  .auth-shell .welcome-value-card i { font-size: 0.9rem; }
+  .auth-shell .auth-actions { margin-top: 0.4rem; }
+  .auth-shell .my-6 { margin-top: 0.4rem; margin-bottom: 0.4rem; }
+  .auth-shell .auth-divider { margin-top: 0.4rem; margin-bottom: 0.4rem; }
+  .auth-shell .mt-6 { margin-top: 0.35rem; }
+  .auth-shell .glass-input { padding-top: 0.3rem; padding-bottom: 0.3rem; }
+  .auth-shell .glass-button { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; }
+  .auth-shell .auth-demo-btn { padding-top: 0.3rem; padding-bottom: 0.3rem; }
+  .auth-shell label.flex { padding: 0.35rem; }
+}
+
+/* Tier 4 — the shortest landscape phones (<=420px tall). Final squeeze. */
+@media (max-height: 420px) {
+  .auth-shell .auth-card,
+  .auth-shell .auth-brand-card { padding: 0.55rem; }
+  .auth-shell .auth-logo,
+  .auth-shell .welcome-logo,
+  .auth-shell .auth-entry-logo { height: 1.35rem; margin-bottom: 0.2rem; }
+  .auth-shell .auth-title { margin-top: 0.15rem; font-size: 0.88rem; }
+  .auth-shell .auth-field-label { font-size: 0.78rem; margin-bottom: 0.1rem; }
+  .auth-shell form { margin-top: 0.25rem; }
+  .auth-shell form > * + * { margin-top: 0.2rem; }
+  .auth-shell .glass-input { padding-top: 0.22rem; padding-bottom: 0.22rem; }
+  .auth-shell .glass-button { padding-top: 0.32rem !important; padding-bottom: 0.32rem !important; }
+  .auth-shell .auth-demo-btn { padding-top: 0.28rem; padding-bottom: 0.28rem; }
+  .auth-shell .mt-6 { margin-top: 0.3rem; }
+  .auth-shell .auth-actions { margin-top: 0.3rem; }
+  .auth-shell .welcome-value-grid { margin-top: 0.3rem; }
+}
+
+/* The demo-launcher icon chip is a nice touch on roomy viewports, but its fixed
+   size adds height the short-viewport tiers can't spare. Below 720px tall it
+   collapses back to a plain inline icon so the launcher row stays compact and
+   the page keeps fitting without a scrollbar. */
+@media (max-height: 720px) {
+  .auth-shell .auth-demo-btn i {
+    width: auto !important;
+    height: auto;
+    background: transparent;
+    border-color: transparent;
+    font-size: 0.95rem;
+  }
+}
+
+/* The welcome page's platform-stats strip is decorative; drop it on any short
+   window (not just narrow phones) so the actionable content still fits. */
+@media (max-height: 640px) {
+  .auth-shell .welcome-stats-strip { display: none !important; }
+}
+
+/* Roomy viewports only — comfortably wide AND tall (laptops, tablets,
+   desktops). Give the auth cards noticeably more padding and breathing room.
+   Gated on min-width/min-height so the short/narrow no-scroll tiers above are
+   left completely untouched and phones/short windows still fit without a
+   scrollbar. Placed after the tiers so it wins on source order. */
+@media (min-width: 700px) and (min-height: 800px) {
+  .auth-shell {
+    padding-top: clamp(1.5rem, 4vh, 3rem);
+    padding-bottom: clamp(1.5rem, 4vh, 3rem);
+  }
+
+  /* --- Sign-in / sign-up: generous (little content, room to spare). --- */
+  .auth-shell .auth-card { padding: 2.5rem; }
+  .auth-shell .auth-card form { margin-top: 1.75rem; }
+  .auth-shell .auth-card form > * + * { margin-top: 1.4rem; }
+  .auth-shell .auth-card .my-6,
+  .auth-shell .auth-card .auth-divider { margin-top: 1.5rem; margin-bottom: 1.5rem; }
+  .auth-shell .auth-card .mt-6 { margin-top: 1.5rem; }
+  .auth-shell .auth-entry-logo { height: 5.5rem; margin-bottom: 1.1rem; }
+  /* On the narrow sign-in card the three launchers stack (chip over label) so
+     the text never feels packed; sign-in has vertical room to spare. */
+  .auth-shell .auth-card .auth-demo-grid { gap: 0.85rem; }
+  .auth-shell .auth-card .auth-demo-btn {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
+  }
+  .auth-shell .auth-card .auth-demo-btn i {
+    width: 2.4rem !important;
+    height: 2.4rem;
+    font-size: 1.05rem;
+  }
+
+  /* --- Welcome: content-dense, so a lighter touch that still fits. --- */
+  .auth-shell .auth-brand-card { padding: 2rem; }
+  .auth-shell .welcome-logo { height: 4.75rem; margin-bottom: 0.85rem; }
+  .auth-shell .auth-brand-card .my-6,
+  .auth-shell .auth-brand-card .auth-divider { margin-top: 1.25rem; margin-bottom: 1.25rem; }
+  .auth-shell .auth-brand-card .mt-6 { margin-top: 1.25rem; }
+  .auth-shell .auth-brand-card .auth-actions { margin-top: 1.1rem; }
+  .auth-shell .welcome-value-grid { margin-top: 1rem; gap: 0.85rem; }
+  .auth-shell .welcome-stats-strip { margin-top: 0.9rem; }
+  /* Welcome launchers sit in a wider card, so a roomier row (bigger chip + gap)
+     de-cramps them without stacking. */
+  .auth-shell .auth-brand-card .auth-demo-grid { gap: 0.85rem; }
+  .auth-shell .auth-brand-card .auth-demo-btn { gap: 0.6rem; padding-top: 0.8rem; padding-bottom: 0.8rem; }
+  .auth-shell .auth-brand-card .auth-demo-btn i { width: 2.1rem !important; height: 2.1rem; font-size: 0.95rem; }
+}
+
+/* Light-mode breadcrumb. The breadcrumb's default colours (set in the
+   unified-dashboard component's encapsulated SCSS) are white-based and vanish on
+   the light background. These global overrides use !important to win over the
+   component's attribute-boosted specificity, and must live here (not in the
+   component) so the `html:not(.dark)` selector isn't scoped away. */
+html:not(.dark) .demo-breadcrumb a { color: #64748b !important; }
+html:not(.dark) .demo-breadcrumb a:hover { color: #0f172a !important; }
+html:not(.dark) .demo-breadcrumb [aria-current='page'] { color: #0f172a !important; }
+html:not(.dark) .demo-breadcrumb-sep { color: #94a3b8 !important; }
+
+.demo-page-header {
+  @apply mb-6 rounded-3xl border border-white/10 bg-slate-950/45 p-6 shadow-2xl backdrop-blur-xl;
+}
+
+.demo-eyebrow {
+  @apply mb-2 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.24em] text-cyan-100;
+}
+
+.demo-title {
+  @apply text-3xl font-black tracking-tight text-white md:text-4xl;
+}
+
+.demo-subtitle {
+  @apply mt-2 max-w-3xl text-sm leading-6 text-slate-300 md:text-base;
+}
+
+.demo-kpi-grid {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4;
+}
+
+.demo-kpi-card {
+  @apply rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-xl backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-200/30 hover:bg-white/[0.10];
+}
+
+/* Actionable KPI card — navigates to where the metric is acted on. */
+.demo-kpi-card-link {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.demo-kpi-card-link:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.75);
+  outline-offset: 3px;
+}
+
+.demo-kpi-go {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  @apply text-xs font-semibold text-cyan-200;
+}
+
+.demo-kpi-card-link:hover .demo-kpi-go,
+.demo-kpi-card-link:focus-visible .demo-kpi-go {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.demo-kpi-icon {
+  @apply flex h-12 w-12 items-center justify-center rounded-2xl text-lg shadow-lg;
+}
+
+.demo-tone-blue .demo-kpi-icon { @apply bg-blue-500/20 text-blue-100; }
+.demo-tone-cyan .demo-kpi-icon { @apply bg-cyan-500/20 text-cyan-100; }
+.demo-tone-emerald .demo-kpi-icon { @apply bg-emerald-500/20 text-emerald-100; }
+.demo-tone-amber .demo-kpi-icon { @apply bg-amber-500/20 text-amber-100; }
+.demo-tone-rose .demo-kpi-icon { @apply bg-rose-500/20 text-rose-100; }
+.demo-tone-violet .demo-kpi-icon { @apply bg-violet-500/20 text-violet-100; }
+
+html:not(.dark) .demo-page-header {
+  border-color: rgba(37, 99, 235, 0.16);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+html:not(.dark) .demo-eyebrow {
+  border-color: rgba(14, 165, 233, 0.24);
+  background: rgba(224, 242, 254, 0.9);
+  color: #075985;
+}
+
+html:not(.dark) .demo-title,
+html:not(.dark) .demo-section-title,
+html:not(.dark) .demo-kpi-card h2,
+html:not(.dark) .demo-action-card strong {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .demo-subtitle,
+html:not(.dark) .demo-section-helper,
+html:not(.dark) .demo-kpi-card p,
+html:not(.dark) .demo-action-card span span,
+html:not(.dark) .demo-section-card .text-slate-300,
+html:not(.dark) .demo-section-card .text-slate-400 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .demo-kpi-card,
+html:not(.dark) .demo-section-card {
+  border-color: rgba(37, 99, 235, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+}
+
+html:not(.dark) .demo-action-card {
+  border-color: rgba(37, 99, 235, 0.14);
+  background: rgba(248, 250, 252, 0.9);
+}
+
+html:not(.dark) .demo-action-card:hover {
+  background: rgba(239, 246, 255, 0.96);
+}
+
+html:not(.dark) .demo-kpi-icon {
+  color: #0f172a;
+}
+
+html:not(.dark) .demo-tone-blue .demo-kpi-icon { background: rgba(59, 130, 246, 0.16); color: #1d4ed8; }
+html:not(.dark) .demo-tone-cyan .demo-kpi-icon { background: rgba(6, 182, 212, 0.16); color: #0e7490; }
+html:not(.dark) .demo-tone-emerald .demo-kpi-icon { background: rgba(16, 185, 129, 0.16); color: #047857; }
+html:not(.dark) .demo-tone-amber .demo-kpi-icon { background: rgba(245, 158, 11, 0.18); color: #92400e; }
+html:not(.dark) .demo-tone-rose .demo-kpi-icon { background: rgba(244, 63, 94, 0.16); color: #be123c; }
+html:not(.dark) .demo-tone-violet .demo-kpi-icon { background: rgba(139, 92, 246, 0.16); color: #6d28d9; }
+
+.demo-section-card {
+  @apply rounded-3xl border border-white/10 bg-slate-950/35 p-5 shadow-xl backdrop-blur-xl;
+}
+
+.demo-section-title {
+  @apply text-lg font-bold text-white;
+}
+
+.demo-section-helper {
+  @apply mt-1 text-sm text-slate-300;
+}
+
+.demo-action-card {
+  @apply flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-left no-underline transition hover:border-cyan-200/30 hover:bg-white/[0.10];
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: none;
+  }
+}
+
+/* Raw stat tile: the inset fact panel repeated across every dashboard as
+   `rounded-2xl border border-white/10 bg-white/[0.06] p-4`. Pages should use
+   this class instead of restating the utility string. */
+.demo-tile {
+  @apply rounded-2xl border border-white/10 bg-white/[0.06] p-4;
+}
+
+html:not(.dark) .demo-tile {
+  border-color: rgba(15, 23, 42, 0.12);
+  background: rgba(15, 23, 42, 0.035);
+  color: #0f172a;
+}
+
+.demo-status-pill {
+  @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold;
+}
+
+.demo-status-success { @apply border-emerald-300/30 bg-emerald-300/15 text-emerald-200; }
+.demo-status-warning { @apply border-amber-300/30 bg-amber-300/15 text-amber-200; }
+.demo-status-info {
+  border: 1px solid rgba(103, 232, 249, 0.40);
+  background: rgba(6, 182, 212, 0.15);
+  color: #a5f3fc;
+  letter-spacing: 0.04em;
+}
+.demo-status-danger { @apply border-rose-300/30 bg-rose-300/15 text-rose-200; }
+
+/* Light-mode status pills — stronger tints + darker text so they read clearly. */
+html:not(.dark) .demo-status-success { border-color: rgba(5, 150, 105, 0.35); background: rgba(16, 185, 129, 0.16); color: #047857; }
+html:not(.dark) .demo-status-warning { border-color: rgba(217, 119, 6, 0.35); background: rgba(245, 158, 11, 0.18); color: #b45309; }
+html:not(.dark) .demo-status-info { border-color: rgba(8, 145, 178, 0.35); background: rgba(6, 182, 212, 0.16); color: #0e7490; }
+html:not(.dark) .demo-status-danger { border-color: rgba(225, 29, 72, 0.35); background: rgba(244, 63, 94, 0.16); color: #be123c; }
+
+.demo-table-shell {
+  @apply overflow-hidden rounded-3xl border border-white/10 bg-slate-950/30 shadow-xl backdrop-blur-xl;
+}
+
+.demo-table-shell table,
+.glass-card table {
+  min-width: 720px;
+}
+
+/* Fluid variant: table flexes to its container (no forced horizontal scroll).
+   Pair with `table-fixed w-full` + responsive `hidden md:table-cell` columns. */
+.demo-table-shell.is-fluid table {
+  min-width: 0;
+  width: 100%;
+}
+
+.demo-table-shell thead th,
+.glass-card thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  backdrop-filter: blur(14px);
+}
+
+.demo-table-shell tbody tr,
+.glass-card tbody tr {
+  cursor: pointer;
+}
+
+.demo-table-shell tbody tr:hover,
+.glass-card tbody tr:hover {
+  box-shadow: inset 3px 0 0 rgba(103, 232, 249, 0.7);
+}
+
+@media (max-width: 768px) {
+  .demo-table-shell,
+  .glass-card .overflow-x-auto {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .demo-table-shell table,
+  .glass-card table {
+    min-width: 680px;
+  }
+
+  .demo-table-shell th,
+  .demo-table-shell td,
+  .glass-card th,
+  .glass-card td {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+.demo-table-toolbar {
+  @apply flex flex-col gap-3 border-b border-white/10 p-4 md:flex-row md:items-center md:justify-between;
+}
+
+/* The white-alpha divider under the toolbar disappears on light table shells. */
+html:not(.dark) .demo-table-toolbar {
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+.demo-state-card {
+  @apply rounded-3xl border border-dashed border-white/15 bg-white/[0.06] p-6 text-center shadow-xl backdrop-blur-xl;
+}
+
+.demo-state-card i {
+  @apply mb-3 text-3xl text-cyan-200;
+}
+
+.demo-state-card h3 {
+  @apply text-lg font-bold text-white;
+}
+
+.demo-state-card p {
+  @apply mt-1 text-sm text-slate-300;
+}
+
+html:not(.dark) .demo-state-card {
+  border-color: rgba(37, 99, 235, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+html:not(.dark) .demo-state-card i { color: #0e7490; }
+html:not(.dark) .demo-state-card h3 { color: #0f172a; }
+html:not(.dark) .demo-state-card p { color: #475569; }
+
+.demo-input {
+  @apply w-full rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/20;
+}
+
+.swal2-popup.demo-detail-modal,
+.swal2-popup {
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  border-radius: 1.5rem !important;
+  background: rgba(15, 23, 42, 0.96) !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 24px 80px rgba(2, 6, 23, 0.55) !important;
+  backdrop-filter: blur(20px);
+}
+
+.swal2-title {
+  color: #f8fafc !important;
+  font-weight: 800 !important;
+}
+
+.swal2-html-container {
+  color: #cbd5e1 !important;
+}
+
+/* Action buttons — consistent pill shape, weight, and spacing across all modals. */
+.swal2-actions {
+  gap: 0.6rem !important;
+}
+
+.swal2-confirm,
+.swal2-deny,
+.swal2-cancel {
+  border-radius: 999px !important;
+  font-weight: 600 !important;
+  padding: 0.6rem 1.5rem !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transition: filter 160ms ease, background 160ms ease !important;
+}
+
+.swal2-confirm {
+  background: linear-gradient(135deg, #2563eb, #06b6d4) !important;
+  color: #ffffff !important;
+}
+.swal2-confirm:hover { filter: brightness(1.08); }
+
+.swal2-deny {
+  background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
+  color: #ffffff !important;
+}
+.swal2-deny:hover { filter: brightness(1.08); }
+
+.swal2-cancel {
+  background: rgba(148, 163, 184, 0.16) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(148, 163, 184, 0.32) !important;
+}
+.swal2-cancel:hover { background: rgba(148, 163, 184, 0.26) !important; }
+
+/* ----- Light-mode modal ----- */
+html:not(.dark) .swal2-popup,
+html:not(.dark) .swal2-popup.demo-detail-modal {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(37, 99, 235, 0.14) !important;
+  color: #0f172a !important;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18) !important;
+}
+html:not(.dark) .swal2-title { color: #0f172a !important; }
+html:not(.dark) .swal2-html-container { color: #475569 !important; }
+html:not(.dark) .demo-detail-row { border-color: rgba(15, 23, 42, 0.10) !important; }
+html:not(.dark) .demo-detail-row span { color: #64748b !important; }
+html:not(.dark) .demo-detail-row strong { color: #0f172a !important; }
+html:not(.dark) .swal2-cancel {
+  background: rgba(15, 23, 42, 0.06) !important;
+  color: #334155 !important;
+  border-color: rgba(15, 23, 42, 0.16) !important;
+}
+html:not(.dark) .swal2-cancel:hover { background: rgba(15, 23, 42, 0.12) !important; }
+
+/* ----- Light-mode command palette (same treatment as the Swal modals:
+   light surface, dark text, cyan accent kept). Lives here because the
+   component stylesheet cannot express `html:not(.dark)` under emulated
+   encapsulation. ----- */
+html:not(.dark) .palette-overlay { background: rgba(15, 23, 42, 0.32) !important; }
+html:not(.dark) .palette-modal {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(37, 99, 235, 0.16) !important;
+  box-shadow: 0 32px 80px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(8, 145, 178, 0.08) !important;
+}
+html:not(.dark) .palette-search-icon { color: #64748b !important; }
+html:not(.dark) .palette-input { color: #0f172a !important; caret-color: #0891b2 !important; }
+html:not(.dark) .palette-input::placeholder { color: #94a3b8 !important; }
+html:not(.dark) .palette-esc-hint { color: #64748b !important; border-color: rgba(15, 23, 42, 0.18) !important; }
+html:not(.dark) .palette-divider { background: rgba(15, 23, 42, 0.08) !important; }
+html:not(.dark) .palette-item--active { background: rgba(6, 182, 212, 0.10) !important; border-color: rgba(8, 145, 178, 0.25) !important; }
+html:not(.dark) .palette-item-icon { background: rgba(15, 23, 42, 0.05) !important; color: #475569 !important; }
+html:not(.dark) .palette-item--active .palette-item-icon { background: rgba(6, 182, 212, 0.16) !important; color: #0e7490 !important; }
+html:not(.dark) .palette-item-label { color: #0f172a !important; }
+html:not(.dark) .palette-item-desc { color: #64748b !important; }
+html:not(.dark) .palette-item-arrow { color: #0891b2 !important; }
+html:not(.dark) .palette-empty { color: #64748b !important; }
+html:not(.dark) .palette-empty p strong { color: #334155 !important; }
+html:not(.dark) .palette-footer { border-color: rgba(15, 23, 42, 0.08) !important; color: #64748b !important; }
+html:not(.dark) .palette-footer kbd { border-color: rgba(15, 23, 42, 0.16) !important; color: #475569 !important; background: rgba(15, 23, 42, 0.04) !important; }
+html:not(.dark) .palette-footer-brand { color: #94a3b8 !important; }
+
+/* ----- Light-mode shortcut-help modal ----- */
+html:not(.dark) .shortcut-overlay { background: rgba(15, 23, 42, 0.32) !important; }
+html:not(.dark) .shortcut-modal {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(37, 99, 235, 0.16) !important;
+  box-shadow: 0 32px 80px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(8, 145, 178, 0.08) !important;
+}
+html:not(.dark) .shortcut-title { color: #0f172a !important; }
+html:not(.dark) .shortcut-title i { color: #0e7490 !important; }
+html:not(.dark) .shortcut-close {
+  border-color: rgba(15, 23, 42, 0.16) !important;
+  background: rgba(15, 23, 42, 0.04) !important;
+  color: #475569 !important;
+}
+html:not(.dark) .shortcut-close:hover { color: #0f172a !important; background: rgba(15, 23, 42, 0.10) !important; }
+html:not(.dark) .shortcut-modal kbd { border-color: rgba(15, 23, 42, 0.2) !important; color: #334155 !important; background: rgba(15, 23, 42, 0.04) !important; }
+html:not(.dark) .shortcut-description { color: #475569 !important; }
+html:not(.dark) .shortcut-footnote { color: #64748b !important; }
+
+/* ----- Light-mode shell nav states. These used to sit (dead) inside the
+   unified-dashboard component stylesheet, where `html:not(.dark)` gets
+   scoped away by emulated encapsulation; they must live globally. ----- */
+html:not(.dark) .nav-link-item:hover,
+html:not(.dark) .nav-item:hover,
+html:not(.dark) .sidebar-action-btn:hover {
+  background: rgba(219, 234, 254, 0.95) !important;
+}
+
+html:not(.dark) .nav-link-item.active-link,
+html:not(.dark) .nav-item.active-nav-item {
+  color: #1d4ed8 !important;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.14), rgba(6, 182, 212, 0.16)) !important;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12) !important;
+}
+
+html:not(.dark) .nav-link-item.active-link i,
+html:not(.dark) .nav-item.active-nav-item i {
+  color: #0e7490 !important;
+}
+
+.demo-detail-grid {
+  display: grid;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.demo-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  padding-bottom: 0.55rem;
+}
+
+.demo-detail-row strong {
+  color: #f8fafc;
+}
+
+@media (max-width: 1024px) {
+  .glass-navbar {
+    margin: 0.75rem;
+    border-radius: 1.25rem;
+  }
+
+  main[class*="p-6"],
+  main[class*="lg:p-8"] {
+    padding: 1rem !important;
+  }
+
+  .demo-page-header,
+  .demo-section-card,
+  .demo-kpi-card,
+  .glass-card {
+    border-radius: 1.25rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .demo-title,
+  h1.text-4xl {
+    font-size: 1.85rem !important;
+    line-height: 2.2rem !important;
+  }
+
+  .demo-page-header,
+  .demo-section-card,
+  .demo-kpi-card,
+  .glass-card {
+    padding: 1rem !important;
+  }
+
+  .demo-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-table-shell {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .demo-table-shell table,
+  .glass-card table {
+    min-width: 600px;
+  }
+
+  .demo-table-shell thead th,
+  .demo-table-shell tbody td {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    white-space: nowrap;
+  }
+
+  .glass-button,
+  .glass-button-secondary,
+  .glass-button-danger,
+  .demo-action-card {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sidebar-wrapper,
+  aside.glass-sidebar {
+    max-width: min(20rem, 88vw);
+  }
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(103, 232, 249, 0.9) !important;
+  outline-offset: 3px !important;
+}
+
+button[disabled],
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* Inline field validation — the error sits with the field that caused it.
+   One definition for every form: eight components each carried an identical
+   copy of this block before it was hoisted. */
+.glass-input.field-invalid {
+  border-color: rgba(248, 113, 113, 0.85);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.18);
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  /* Colour is not the only signal: the message text and icon carry it too. */
+  color: #fca5a5;
+}
+
+/* Light rose reads at ~1.9:1 on white cards; darken it in light mode. */
+html:not(.dark) .field-error {
+  color: #dc2626;
+}
+
+/* Sortable table headers. One definition for every table: five components
+   each carried their own drifting copy of this block before it was hoisted. */
+.th-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+/* Right-aligned columns reverse the row so the arrow hugs the table edge. */
+.th-sort--right {
+  flex-direction: row-reverse;
+}
+
+.th-sort:hover {
+  color: #fff;
+}
+
+/* White-on-white hover in light mode; darken instead. */
+html:not(.dark) .th-sort:hover {
+  color: #0f172a;
+}
+
+.th-sort:focus-visible {
+  outline: 2px solid rgba(96, 165, 250, 0.9);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+.th-sort i {
+  font-size: 0.85em;
+  opacity: 0.45;
+}
+
+th[aria-sort='ascending'] .th-sort i,
+th[aria-sort='descending'] .th-sort i {
+  opacity: 1;
+  color: #67e8f9;
+}
+
+/* Cyan-300 arrow is near-invisible on light headers; use the light cyan accent. */
+html:not(.dark) th[aria-sort='ascending'] .th-sort i,
+html:not(.dark) th[aria-sort='descending'] .th-sort i {
+  color: #0e7490;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

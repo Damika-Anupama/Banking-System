@@ -1,0 +1,10 @@
+// Welcome page specific styles. The stats strip, value-card reveal animation
+// and auth divider all live in src/styles/demo-design-system.scss.
+:host {
+  display: block;
+  width: 100%;
+  position: relative;
+  // Only clip horizontally (the reveal animation slides cards up); clipping
+  // vertically would hide content on short viewports instead of fitting it.
+  overflow-x: hidden;
+}

@@ -1,0 +1,319 @@
+<!-- Skip to main content (accessibility) -->
+<a href="javascript:void(0)" class="skip-to-content" (click)="focusMainContent()">Skip to main content</a>
+
+<!-- Sidebar footer (profile, quick actions, clock, copyright) — one template
+     rendered in all three sidebars so the copies can never drift apart. -->
+<ng-template #sidebarFooter>
+  <div class="shrink-0 p-4 border-t border-white/10">
+    <button type="button" class="profile-card mb-3 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3 text-left transition hover:bg-white/[0.10]" (click)="openProfileMenu()" aria-label="Open profile menu">
+      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-sm font-bold text-white">{{ sessionUser.initials }}</span>
+      <span class="min-w-0 flex-1">
+        <span class="block truncate text-sm font-semibold profile-name">{{ sessionUser.name }}</span>
+        <span class="block truncate text-xs text-white/50">{{ sessionUser.roleLabel }}</span>
+      </span>
+      <i class="fas fa-ellipsis-vertical text-white/40"></i>
+    </button>
+    <div class="mb-4 grid grid-cols-4 gap-2">
+      <button class="sidebar-action-btn relative" title="Notifications" aria-label="Notifications" (click)="openNotifications()">
+        <i class="fas fa-bell"></i>
+        <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">{{ unreadCount }}</span>
+      </button>
+      <button class="sidebar-action-btn" title="Toggle theme" aria-label="Toggle theme" (click)="toggleTheme()"><i class="fas" [ngClass]="(isDarkMode$ | async) ? 'fa-sun' : 'fa-moon'"></i></button>
+      <a [routerLink]="getSettingsRoute()" class="sidebar-action-btn" title="Settings" aria-label="Open settings"><i class="fas fa-cog"></i></a>
+      <button class="sidebar-action-btn" title="Logout" aria-label="Logout" (click)="exit()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+    <p class="text-white/30 text-[10px] text-center font-mono mb-1">{{ clockDisplay }}</p>
+    <p class="text-white/50 text-xs text-center">
+      &copy; {{ currentYear }} Banking System
+    </p>
+  </div>
+</ng-template>
+
+<!-- Customer Dashboard Layout (original style with different structure) -->
+<div *ngIf="isCustomerDashboard()" class="customer-dashboard-shell min-h-screen lg:h-screen lg:overflow-hidden lg:flex">
+  <!-- Sidebar -->
+  <aside class="sidebar-wrapper glass-sidebar hidden lg:flex lg:flex-col w-64 fixed h-full z-20">
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10">
+      <a [routerLink]="config.logoRoute" class="flex items-center justify-center">
+        <img
+          [src]="(isDarkMode$ | async) ? 'assets/logo-dark.png' : 'assets/logo.png'"
+          alt="Banking System logo"
+          class="h-32 w-auto max-w-full rounded-2xl px-4 py-3 object-contain shadow-lg ring-1"
+          [ngClass]="(isDarkMode$ | async) ? 'bg-slate-950 ring-cyan-300/20' : 'bg-white ring-slate-200'"
+        >
+      </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-6 overflow-y-auto" aria-label="Main">
+      <ul class="space-y-2">
+        <li *ngFor="let item of navigationItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            #rla="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: false }"
+            [attr.aria-label]="item.label"
+            [attr.aria-current]="rla.isActive ? 'page' : null"
+            class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
+          >
+            <i [class]="'fas ' + item.icon + ' text-xl'"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+      <!-- Command palette shortcut hint -->
+      <button type="button" class="mt-4 w-full flex items-center gap-2 rounded-xl border border-white/8 bg-white/[0.04] px-3 py-2 text-xs text-white/35 cursor-pointer hover:bg-white/[0.08] transition" (click)="openCommandPalette()" title="Open command palette" aria-label="Open command palette">
+        <i class="fas fa-search text-[10px]"></i>
+        <span>Search pages...</span>
+        <span class="ml-auto font-mono text-[10px] border border-white/15 rounded px-1">⌘K</span>
+      </button>
+    </nav>
+
+    <!-- Footer Links -->
+    <ng-container *ngTemplateOutlet="sidebarFooter"></ng-container>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col lg:ml-64 min-w-0 lg:h-screen lg:overflow-hidden">
+    <!-- Top Navbar -->
+    <header class="glass-navbar sticky top-0 z-10 lg:hidden">
+      <div class="flex items-center justify-between px-4 lg:px-8 py-4">
+        <!-- Mobile Menu Button & Logo -->
+        <div class="flex items-center gap-4">
+          <button
+            class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+            [attr.aria-label]="isSidebarOpen ? 'Close navigation menu' : 'Open navigation menu'"
+            [attr.title]="isSidebarOpen ? 'Close navigation menu' : 'Open navigation menu'"
+            [attr.aria-expanded]="isSidebarOpen"
+            aria-controls="mobile-sidebar"
+            (click)="toggleSidebar()"
+          >
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+          <!-- Constrained: the raster lockup includes a tagline that turns to
+               noise below ~9px, so cap both dimensions on the phone navbar. -->
+          <img
+            [src]="(isDarkMode$ | async) ? 'assets/logo-dark.png' : 'assets/logo.png'"
+            alt="Banking System logo"
+            class="h-9 w-auto max-w-[150px] object-contain lg:hidden"
+          >
+        </div>
+        <!-- On desktop the sidebar carries the palette launcher; on a phone
+             this is the only way to open it without a keyboard. -->
+        <button
+          class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+          aria-label="Search pages and actions"
+          title="Search pages and actions"
+          (click)="openCommandPalette()"
+        >
+          <i class="fas fa-search text-xl"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main id="main-content" tabindex="-1" class="customer-dashboard-content flex-1 min-h-0 p-4 lg:p-8 overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
+      <div class="max-w-7xl mx-auto">
+        <!-- Breadcrumb: names where the user is, for sighted and screen-reader users alike. -->
+        <nav aria-label="Breadcrumb" class="demo-breadcrumb mb-4" *ngIf="currentPageLabel">
+          <ol>
+            <li>
+              <a [routerLink]="config.logoRoute">{{ dashboardLabel }}</a>
+            </li>
+            <li aria-hidden="true" class="demo-breadcrumb-sep"><i class="fas fa-chevron-right"></i></li>
+            <li>
+              <span aria-current="page">{{ currentPageLabel }}</span>
+            </li>
+          </ol>
+        </nav>
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+
+    <!-- Back to top -->
+    <button
+      type="button"
+      class="back-to-top-btn"
+      [class.is-visible]="showBackToTop"
+      (click)="scrollToTop()"
+      aria-label="Scroll back to top"
+      title="Back to top"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
+  </div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div
+    *ngIf="isSidebarOpen"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <!-- Mobile Sidebar -->
+  <aside
+    *ngIf="isSidebarOpen"
+    id="mobile-sidebar"
+    class="sidebar-wrapper glass-sidebar flex flex-col w-64 fixed h-full z-40 lg:hidden animate-slide-right"
+  >
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+      <a [routerLink]="config.logoRoute" class="flex items-center">
+        <img
+          [src]="(isDarkMode$ | async) ? 'assets/logo-dark.png' : 'assets/logo.png'"
+          alt="Banking System logo"
+          class="h-28 w-auto max-w-full rounded-2xl px-4 py-3 object-contain shadow-lg ring-1"
+          [ngClass]="(isDarkMode$ | async) ? 'bg-slate-950 ring-cyan-300/20' : 'bg-white ring-slate-200'"
+        >
+      </a>
+      <button
+        class="text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+        aria-label="Close navigation menu" title="Close navigation menu"
+        (click)="toggleSidebar()"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-6 overflow-y-auto" aria-label="Main (mobile)">
+      <ul class="space-y-2">
+        <li *ngFor="let item of navigationItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            #rlaMobile="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: false }"
+            [attr.aria-label]="item.label"
+            [attr.aria-current]="rlaMobile.isActive ? 'page' : null"
+            class="nav-link-item flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10"
+            (click)="toggleSidebar()"
+          >
+            <i [class]="'fas ' + item.icon + ' text-xl'"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer Links -->
+    <ng-container *ngTemplateOutlet="sidebarFooter"></ng-container>
+  </aside>
+</div>
+
+<!-- Employee/Manager Dashboard Layout -->
+<div *ngIf="!isCustomerDashboard()" class="min-h-screen lg:h-screen lg:overflow-hidden">
+  <!-- Mobile Sidebar Overlay -->
+  <div
+    *ngIf="isSidebarOpen"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <!-- Sidebar -->
+  <aside
+    id="mobile-sidebar"
+    class="fixed left-0 top-0 flex h-full w-72 flex-col glass-sidebar z-50 transform transition-transform duration-300 ease-in-out"
+    [ngClass]="{'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen, 'lg:translate-x-0': true}"
+  >
+    <!-- Logo -->
+    <div class="shrink-0 p-6 border-b border-white/10">
+      <a [routerLink]="config.logoRoute" class="flex items-center gap-3">
+        <img [src]="(isDarkMode$ | async) ? 'assets/logo-dark.png' : 'assets/logo.png'" alt="Banking System logo" class="h-32 w-auto max-w-full rounded-2xl px-4 py-3 object-contain shadow-lg ring-1"
+          [ngClass]="(isDarkMode$ | async) ? 'bg-slate-950 ring-cyan-300/20' : 'bg-white ring-slate-200'" />
+      </a>
+    </div>
+
+    <!-- Navigation — flex-grows and scrolls internally so a long menu never
+         overlaps the footer below (which used to be absolutely positioned).
+         Same list semantics + aria-current as the customer nav. -->
+    <nav class="min-h-0 flex-1 overflow-y-auto p-4" aria-label="Main">
+      <ul class="space-y-2">
+        <li *ngFor="let item of navigationItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active-nav-item"
+            #rlaEmployee="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: false }"
+            [attr.aria-label]="item.label"
+            [attr.aria-current]="rlaEmployee.isActive ? 'page' : null"
+            class="nav-item"
+          >
+            <i [class]="'fas ' + item.icon + ' nav-icon'"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+      <!-- Command palette shortcut hint -->
+      <button type="button" class="mt-2 w-full flex items-center gap-2 rounded-xl border border-white/8 bg-white/[0.04] px-3 py-2 text-xs text-white/35 cursor-pointer hover:bg-white/[0.08] transition" (click)="openCommandPalette()" title="Open command palette" aria-label="Open command palette">
+        <i class="fas fa-search text-[10px]"></i>
+        <span>Search pages...</span>
+        <span class="ml-auto font-mono text-[10px] border border-white/15 rounded px-1">⌘K</span>
+      </button>
+    </nav>
+
+    <!-- Footer — a normal flex child (no longer absolutely positioned), so the
+         scrollable nav above never renders on top of it. -->
+    <ng-container *ngTemplateOutlet="sidebarFooter"></ng-container>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="lg:ml-72 min-w-0 lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
+    <!-- Top Navbar -->
+    <nav class="glass-navbar sticky top-0 z-30 lg:hidden">
+      <div class="flex items-center justify-between">
+        <!-- Left: Mobile Menu Button -->
+        <button
+          class="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+          [attr.aria-label]="isSidebarOpen ? 'Close navigation menu' : 'Open navigation menu'"
+          [attr.title]="isSidebarOpen ? 'Close navigation menu' : 'Open navigation menu'"
+          [attr.aria-expanded]="isSidebarOpen"
+          aria-controls="mobile-sidebar"
+          (click)="toggleSidebar()"
+        >
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+        <!-- Touch users cannot press Ctrl+K; give the palette a tap target. -->
+        <button
+          class="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+          aria-label="Search pages and actions"
+          title="Search pages and actions"
+          (click)="openCommandPalette()"
+        >
+          <i class="fas fa-search text-xl"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main id="main-content" tabindex="-1" class="p-6 flex-1 min-h-0 lg:overflow-y-auto overscroll-contain" (scroll)="onContentScroll($event)">
+      <!-- Breadcrumb: names where the user is, for sighted and screen-reader users alike. -->
+        <nav aria-label="Breadcrumb" class="demo-breadcrumb mb-4" *ngIf="currentPageLabel">
+          <ol>
+            <li>
+              <a [routerLink]="config.logoRoute">{{ dashboardLabel }}</a>
+            </li>
+            <li aria-hidden="true" class="demo-breadcrumb-sep"><i class="fas fa-chevron-right"></i></li>
+            <li>
+              <span aria-current="page">{{ currentPageLabel }}</span>
+            </li>
+          </ol>
+        </nav>
+        <router-outlet></router-outlet>
+    </main>
+
+    <!-- Back to top -->
+    <button
+      type="button"
+      class="back-to-top-btn"
+      [class.is-visible]="showBackToTop"
+      (click)="scrollToTop()"
+      aria-label="Scroll back to top"
+      title="Back to top"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
+  </div>
+</div>

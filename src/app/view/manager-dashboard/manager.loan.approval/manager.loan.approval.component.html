@@ -1,0 +1,131 @@
+<!-- Page Header -->
+<section class="demo-page-header animate-fade-in">
+  <span class="demo-eyebrow"><i class="fas fa-stamp"></i> Loan decisions</span>
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 class="demo-title">Loan Approvals</h1>
+      <p class="demo-subtitle">Review pending applications and approve or reject with a recorded reason.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KPI summary bar -->
+<section class="demo-kpi-grid mb-8" *ngIf="(loans && loans.length) || decidedCount">
+  <article class="demo-kpi-card demo-tone-amber"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Pending decisions</p><h2 class="mt-2 text-3xl font-black text-white">{{ pendingCount }}</h2><p class="mt-1 text-xs text-amber-100">Awaiting review</p></div><div class="demo-kpi-icon"><i class="fas fa-file-signature"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-blue"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Total requested</p><h2 class="mt-2 text-2xl font-black text-white">Rs. {{ totalRequestedAmount | number }}</h2><p class="mt-1 text-xs text-blue-100">Across applications</p></div><div class="demo-kpi-icon"><i class="fas fa-sack-dollar"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-cyan"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Average interest</p><h2 class="mt-2 text-3xl font-black text-white">{{ averageInterest }}%</h2><p class="mt-1 text-xs text-cyan-100">Requested rate</p></div><div class="demo-kpi-icon"><i class="fas fa-percentage"></i></div></div></article>
+  <article class="demo-kpi-card demo-tone-emerald"><div class="flex items-start justify-between"><div><p class="text-sm text-slate-300">Decided this session</p><h2 class="mt-2 text-3xl font-black text-white">{{ decidedCount }}</h2><p class="mt-1 text-xs text-emerald-100">{{ approvedCount }} approved · {{ rejectedCount }} rejected</p></div><div class="demo-kpi-icon"><i class="fas fa-gauge-high"></i></div></div></article>
+</section>
+
+<!-- Loans Table -->
+<section class="demo-section-card animate-slide-up">
+  <div class="mb-5">
+    <h2 class="demo-section-title"><i class="fas fa-handshake mr-2 text-glass-emerald"></i>Pending loan applications</h2>
+    <p class="demo-section-helper">Click a row for full detail, or act directly from the table.</p>
+  </div>
+
+  <app-skeleton-table
+    *ngIf="isLoading"
+    class="block"
+    [columns]="loanSkeletonColumns"
+    [rows]="loanPageSize"
+    label="Loading pending loan applications"
+  ></app-skeleton-table>
+
+  <div *ngIf="!isLoading" class="demo-table-shell is-fluid overflow-x-auto" tabindex="0" role="region" aria-label="Pending loan applications">
+    <div class="demo-table-toolbar">
+      <div class="relative w-full md:max-w-xs">
+        <input class="glass-input pl-9 w-full" placeholder="Search loan, customer, type…" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" name="loanApprovalSearch" id="loanApprovalSearch" aria-label="Search loan applications"/>
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"></i>
+      </div>
+    </div>
+    <table class="w-full table-fixed">
+        <caption class="sr-only">Loan applications awaiting approval</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Loan ID</th>
+          <th scope="col" class="hidden lg:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('customer')">
+            <button type="button" class="th-sort" (click)="toggleSort('customer')">Customer<i class="fas ml-1" [ngClass]="sort.iconFor('customer')" aria-hidden="true"></i></button>
+          </th>
+          <th scope="col" class="text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider" [attr.aria-sort]="sort.stateFor('amount')">
+            <button type="button" class="th-sort" (click)="toggleSort('amount')">Amount<i class="fas ml-1" [ngClass]="sort.iconFor('amount')" aria-hidden="true"></i></button>
+          </th>
+          <th scope="col" class="hidden lg:table-cell text-left px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Type</th>
+          <th scope="col" class="text-center px-5 py-4 text-white/80 font-semibold text-xs uppercase tracking-wider">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let loan of pagedLoans; let i = index"
+          class="cursor-pointer transition-all duration-300 hover:bg-white/5"
+          (click)="showLoanDetails(loan)"
+          title="View loan details"
+        >
+          <td class="px-5 py-4">
+            <span class="glass-badge bg-gradient-to-r from-glass-purple/80 to-glass-blue/80">
+              <i class="fas fa-fingerprint mr-1"></i>
+              {{ loan.loan_basic_detail_id }}
+            </span>
+          </td>
+          <td class="hidden lg:table-cell px-5 py-4 text-white/90 font-mono truncate">{{ loan.customer_id }}</td>
+          <td class="px-5 py-4">
+            <span class="text-white font-semibold whitespace-nowrap">Rs. {{ loan.amount | number }}</span>
+            <small class="block text-xs text-white/50">{{ loan.interest }}% · {{ loan.duration_days }} days</small>
+          </td>
+          <td class="hidden lg:table-cell px-5 py-4">
+            <span
+              class="glass-badge"
+              [ngClass]="{
+                'bg-gradient-to-r from-glass-purple/80 to-glass-pink/80': loan.loan_type === 'Personal',
+                'bg-gradient-to-r from-glass-cyan/80 to-glass-blue/80': loan.loan_type === 'Business'
+              }"
+            >
+              <i
+                [ngClass]="{
+                  'fas fa-user': loan.loan_type === 'Personal',
+                  'fas fa-briefcase': loan.loan_type === 'Business'
+                }"
+                class="mr-1"
+              ></i>
+              {{ loan.loan_type }}
+            </span>
+          </td>
+          <td class="px-5 py-4">
+            <div class="flex flex-col items-stretch justify-center gap-2 md:flex-row md:items-center">
+              <button
+                class="decision-btn decision-btn--approve"
+                (click)="$event.stopPropagation(); approve(loan.loan_basic_detail_id)"
+              >
+                <i class="fas fa-check"></i>
+                Approve
+              </button>
+              <button
+                class="decision-btn decision-btn--reject"
+                (click)="$event.stopPropagation(); reject(loan.loan_basic_detail_id)"
+              >
+                <i class="fas fa-times"></i>
+                Reject
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredLoans.length === 0" class="demo-state-card m-5">
+      <i class="fas fa-clipboard-check"></i>
+      <h3>{{ (loans && loans.length) ? 'No matching applications' : 'No pending loan applications' }}</h3>
+      <p>{{ (loans && loans.length) ? 'No applications match your search. Try a different loan ID, customer, or type.' : 'All loans have been processed.' }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && loanCount > 0" class="mt-4 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-4 sm:flex-row">
+    <p class="text-xs text-white/60">Showing {{ loanRangeStart }}–{{ loanRangeEnd }} of {{ loanCount }} applications</p>
+    <div class="flex items-center gap-2">
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="loanPage === 1" [class.opacity-40]="loanPage === 1" (click)="setLoanPage(loanPage - 1)"><i class="fas fa-chevron-left"></i> Prev</button>
+      <span class="text-xs text-white/70">Page {{ loanPage }} of {{ totalLoanPages }}</span>
+      <button type="button" class="glass-button-secondary text-xs" [disabled]="loanPage === totalLoanPages" [class.opacity-40]="loanPage === totalLoanPages" (click)="setLoanPage(loanPage + 1)">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+</section>
